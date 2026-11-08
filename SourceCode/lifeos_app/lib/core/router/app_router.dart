@@ -6,6 +6,7 @@ import '../../features/home/home_screen.dart';
 import '../../features/money/money_screen.dart';
 import '../../features/more/more_screen.dart';
 import '../../features/tasks/tasks_screen.dart';
+import '../../features/tasks/ui/task_detail_screen.dart';
 import '../../features/vault/vault_screen.dart';
 import '../../shared/widgets/app_shell.dart';
 
@@ -26,7 +27,17 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state, shell) => AppShell(navigationShell: shell),
         branches: [
           _branch(Routes.home, const HomeScreen()),
-          _branch(Routes.tasks, const TasksScreen()),
+          _branch(
+            Routes.tasks,
+            const TasksScreen(),
+            routes: [
+              GoRoute(
+                path: 'task/:id',
+                builder: (context, state) =>
+                    TaskDetailScreen(taskId: state.pathParameters['id']!),
+              ),
+            ],
+          ),
           _branch(Routes.vault, const VaultScreen()),
           _branch(Routes.money, const MoneyScreen()),
           _branch(Routes.more, const MoreScreen()),
@@ -38,10 +49,14 @@ final routerProvider = Provider<GoRouter>((ref) {
   return router;
 });
 
-StatefulShellBranch _branch(String path, Widget screen) {
+StatefulShellBranch _branch(
+  String path,
+  Widget screen, {
+  List<RouteBase> routes = const [],
+}) {
   return StatefulShellBranch(
     routes: [
-      GoRoute(path: path, builder: (context, state) => screen),
+      GoRoute(path: path, builder: (context, state) => screen, routes: routes),
     ],
   );
 }

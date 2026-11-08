@@ -25,8 +25,10 @@ void main() {
     });
 
     test('0.1 + 0.2 style inputs stay exact', () {
-      expect(Money.parseMinor('0.10')! + Money.parseMinor('0.20')!,
-          Money.parseMinor('0.30'));
+      expect(
+        Money.parseMinor('0.10')! + Money.parseMinor('0.20')!,
+        Money.parseMinor('0.30'),
+      );
     });
   });
 

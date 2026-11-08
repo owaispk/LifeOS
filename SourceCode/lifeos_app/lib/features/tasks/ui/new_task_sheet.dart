@@ -1,0 +1,281 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../core/theme/tokens.dart';
+import '../../../shared/format.dart';
+import '../domain/task_rules.dart';
+import '../tasks_providers.dart';
+import 'task_tile.dart';
+
+/// 2.4 New Task — a bottom sheet with one field; the full form lives under
+/// "More options" (UI flow §2.4).
+Future<void> showNewTaskSheet(BuildContext context) {
+  return showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    builder: (context) => const NewTaskSheet(),
+  );
+}
+
+class NewTaskSheet extends ConsumerStatefulWidget {
+  const NewTaskSheet({super.key});
+
+  @override
+  ConsumerState<NewTaskSheet> createState() => _NewTaskSheetState();
+}
+
+class _NewTaskSheetState extends ConsumerState<NewTaskSheet> {
+  final _title = TextEditingController();
+  bool _expanded = false;
+  bool _saving = false;
+
+  DateTime? _dueDate;
+  TimeOfDay? _time;
+  int _priority = 1;
+  String _domain = 'mind';
+  String? _personId;
+  RepeatFreq? _repeat;
+  int _duration = 30;
+
+  @override
+  void dispose() {
+    _title.dispose();
+    super.dispose();
+  }
+
+  bool get _canSave => _title.text.trim().isNotEmpty && !_saving;
+
+  Future<void> _save() async {
+    if (!_canSave) return;
+    setState(() => _saving = true);
+    final date = _dueDate;
+    final time = _time;
+    final due = date == null
+        ? null
+        : time == null
+        ? date
+        : DateTime(date.year, date.month, date.day, time.hour, time.minute);
+    await ref
+        .read(taskServiceProvider)
+        .create(
+          title: _title.text,
+          due: due,
+          allDay: time == null,
+          priority: _priority,
+          domain: _domain,
+          personId: _personId,
+          durationMin: _duration,
+          repeat: _repeat,
+        );
+    if (mounted) Navigator.pop(context);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final now = ref.watch(nowProvider)();
+    final today = startOfDay(now);
+    final tomorrow = DateTime(today.year, today.month, today.day + 1);
+    final persons = ref.watch(personsProvider).value ?? const [];
+
+    return Padding(
+      padding: EdgeInsets.only(
+        left: Tokens.spaceM,
+        right: Tokens.spaceM,
+        bottom: MediaQuery.viewInsetsOf(context).bottom + Tokens.spaceM,
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text('New task', style: Theme.of(context).textTheme.titleLarge),
+            const SizedBox(height: Tokens.spaceM),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    key: const ValueKey('new-task-title'),
+                    controller: _title,
+                    autofocus: true,
+                    textCapitalization: TextCapitalization.sentences,
+                    textInputAction: TextInputAction.done,
+                    decoration: const InputDecoration(
+                      hintText: 'What needs doing?',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (_) => setState(() {}),
+                    onSubmitted: (_) => _save(),
+                  ),
+                ),
+                const SizedBox(width: Tokens.spaceS),
+                FilledButton(
+                  key: const ValueKey('new-task-save'),
+                  style: FilledButton.styleFrom(
+                    minimumSize: const Size(72, Tokens.minTouchTarget),
+                  ),
+                  onPressed: _canSave ? _save : null,
+                  child: const Text('Add'),
+                ),
+              ],
+            ),
+            const SizedBox(height: Tokens.spaceS),
+            Wrap(
+              spacing: Tokens.spaceS,
+              children: [
+                // Tapping a selected day again clears the date.
+                _choice('Today', _dueDate == today, () => _toggleDate(today)),
+                _choice(
+                  'Tomorrow',
+                  _dueDate == tomorrow,
+                  () => _toggleDate(tomorrow),
+                ),
+                ActionChip(
+                  avatar: const Icon(Icons.event, size: 18),
+                  label: Text(
+                    _dueDate == null ||
+                            _dueDate == today ||
+                            _dueDate == tomorrow
+                        ? 'Pick date'
+                        : formatDay(_dueDate!, now: now),
+                  ),
+                  onPressed: () async {
+                    final picked = await showDatePicker(
+                      context: context,
+                      initialDate: _dueDate ?? today,
+                      firstDate: DateTime(today.year - 1),
+                      lastDate: DateTime(today.year + 5),
+                    );
+                    if (picked != null) setState(() => _dueDate = picked);
+                  },
+                ),
+                if (_dueDate != null)
+                  ActionChip(
+                    avatar: const Icon(Icons.schedule, size: 18),
+                    label: Text(
+                      _time == null
+                          ? 'All day'
+                          : formatTime(
+                              DateTime(0, 1, 1, _time!.hour, _time!.minute),
+                            ),
+                    ),
+                    onPressed: () async {
+                      final picked = await showTimePicker(
+                        context: context,
+                        initialTime:
+                            _time ?? const TimeOfDay(hour: 9, minute: 0),
+                      );
+                      setState(() => _time = picked);
+                    },
+                  ),
+              ],
+            ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton.icon(
+                key: const ValueKey('new-task-more'),
+                onPressed: () => setState(() => _expanded = !_expanded),
+                icon: Icon(_expanded ? Icons.expand_less : Icons.expand_more),
+                label: Text(_expanded ? 'Fewer options' : 'More options'),
+              ),
+            ),
+            if (_expanded) ...[
+              const _Label('Priority'),
+              SegmentedButton<int>(
+                showSelectedIcon: false,
+                segments: const [
+                  ButtonSegment(value: 0, label: Text('Low')),
+                  ButtonSegment(value: 1, label: Text('Medium')),
+                  ButtonSegment(value: 2, label: Text('High')),
+                ],
+                selected: {_priority},
+                onSelectionChanged: (s) => setState(() => _priority = s.first),
+              ),
+              const _Label('Life area'),
+              Wrap(
+                spacing: Tokens.spaceS,
+                children: [
+                  for (final d in domainOrder)
+                    ChoiceChip(
+                      avatar: CircleAvatar(
+                        backgroundColor: domainColor(d),
+                        radius: 5,
+                      ),
+                      label: Text(domainLabel(d)),
+                      selected: _domain == d,
+                      onSelected: (_) => setState(() => _domain = d),
+                    ),
+                ],
+              ),
+              if (persons.isNotEmpty) ...[
+                const _Label('For'),
+                Wrap(
+                  spacing: Tokens.spaceS,
+                  children: [
+                    for (final p in persons)
+                      ChoiceChip(
+                        label: Text('${p.avatar ?? '👤'} ${p.name}'),
+                        selected: _personId == p.id,
+                        onSelected: (on) =>
+                            setState(() => _personId = on ? p.id : null),
+                      ),
+                  ],
+                ),
+              ],
+              const _Label('Repeat'),
+              Wrap(
+                spacing: Tokens.spaceS,
+                children: [
+                  _choice(
+                    'Never',
+                    _repeat == null,
+                    () => setState(() => _repeat = null),
+                  ),
+                  for (final f in RepeatFreq.values)
+                    _choice(
+                      RepeatRule(f).describe(),
+                      _repeat == f,
+                      () => setState(() => _repeat = f),
+                    ),
+                ],
+              ),
+              const _Label('Takes about'),
+              Wrap(
+                spacing: Tokens.spaceS,
+                children: [
+                  for (final m in [15, 30, 45, 60, 90, 120])
+                    _choice(
+                      m < 60 ? '$m min' : '${m / 60} h'.replaceAll('.0', ''),
+                      _duration == m,
+                      () => setState(() => _duration = m),
+                    ),
+                ],
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _toggleDate(DateTime day) => setState(() {
+    _dueDate = _dueDate == day ? null : day;
+    if (_dueDate == null) _time = null;
+  });
+
+  Widget _choice(String label, bool selected, VoidCallback onTap) => ChoiceChip(
+    label: Text(label),
+    selected: selected,
+    onSelected: (_) => onTap(),
+  );
+}
+
+class _Label extends StatelessWidget {
+  const _Label(this.text);
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(top: Tokens.spaceM, bottom: Tokens.spaceS),
+    child: Text(text, style: Theme.of(context).textTheme.labelLarge),
+  );
+}

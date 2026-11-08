@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/theme/tokens.dart';
+import '../../features/tasks/ui/new_task_sheet.dart';
 import 'quick_actions.dart';
 
 /// Whether the FAB quick-action menu is open.
@@ -14,8 +15,9 @@ class FabExpandedNotifier extends Notifier<bool> {
   void collapse() => state = false;
 }
 
-final fabExpandedProvider =
-    NotifierProvider<FabExpandedNotifier, bool>(FabExpandedNotifier.new);
+final fabExpandedProvider = NotifierProvider<FabExpandedNotifier, bool>(
+  FabExpandedNotifier.new,
+);
 
 /// One entry of the bottom bar.
 class _Tab {
@@ -32,8 +34,11 @@ const _tabs = <_Tab>[
   _Tab('Home', Icons.home_outlined, Icons.home),
   _Tab('Tasks', Icons.check_circle_outline, Icons.check_circle),
   _Tab('Vault', Icons.folder_outlined, Icons.folder),
-  _Tab('Money', Icons.account_balance_wallet_outlined,
-      Icons.account_balance_wallet),
+  _Tab(
+    'Money',
+    Icons.account_balance_wallet_outlined,
+    Icons.account_balance_wallet,
+  ),
   _Tab('More', Icons.more_horiz, Icons.more_horiz),
 ];
 
@@ -79,7 +84,11 @@ class AppShell extends ConsumerWidget {
                   child: _QuickActionMenu(
                     onSelected: (action) {
                       fab.collapse();
-                      showQuickActionSheet(context, action);
+                      if (action == QuickAction.task) {
+                        showNewTaskSheet(context);
+                      } else {
+                        showQuickActionSheet(context, action);
+                      }
                     },
                   ),
                 ),

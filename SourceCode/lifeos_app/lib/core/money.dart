@@ -39,8 +39,9 @@ abstract final class Money {
       if (i > 0 && (digits.length - i) % 3 == 0) grouped.write(',');
       grouped.write(digits[i]);
     }
-    final decimals =
-        fraction == 0 ? '' : '.${fraction.toString().padLeft(2, '0')}';
+    final decimals = fraction == 0
+        ? ''
+        : '.${fraction.toString().padLeft(2, '0')}';
     return '${negative ? '-' : ''}$symbol $grouped$decimals';
   }
 

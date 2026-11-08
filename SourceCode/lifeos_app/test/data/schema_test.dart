@@ -12,8 +12,10 @@ void main() {
 
   test('schema v1 creates all synced and local-only tables', () async {
     final rows = await db
-        .customSelect("SELECT name FROM sqlite_master WHERE type = 'table' "
-            "AND name NOT LIKE 'sqlite_%'")
+        .customSelect(
+          "SELECT name FROM sqlite_master WHERE type = 'table' "
+          "AND name NOT LIKE 'sqlite_%'",
+        )
         .get();
     final tables = rows.map((r) => r.read<String>('name')).toSet();
 
@@ -31,13 +33,22 @@ void main() {
   test('every synced table carries sync metadata columns', () async {
     for (final table in db.allTables) {
       final names = table.$columns.map((c) => c.name).toSet();
-      if ({'pending_ops', 'conflict_log', 'blob_cache', 'app_meta'}
-          .contains(table.actualTableName)) {
+      if ({
+        'pending_ops',
+        'conflict_log',
+        'blob_cache',
+        'app_meta',
+      }.contains(table.actualTableName)) {
         continue;
       }
       expect(
-        names.containsAll(
-            {'id', 'user_id', 'updated_at', 'deleted_at', 'version'}),
+        names.containsAll({
+          'id',
+          'user_id',
+          'updated_at',
+          'deleted_at',
+          'version',
+        }),
         isTrue,
         reason: table.actualTableName,
       );
@@ -47,8 +58,11 @@ void main() {
   test('money columns are integers (minor units), never REAL', () async {
     for (final table in db.allTables) {
       for (final c in table.$columns.where((c) => c.name.contains('amount'))) {
-        expect(c.type, DriftSqlType.int,
-            reason: '${table.actualTableName}.${c.name}');
+        expect(
+          c.type,
+          DriftSqlType.int,
+          reason: '${table.actualTableName}.${c.name}',
+        );
       }
     }
   });

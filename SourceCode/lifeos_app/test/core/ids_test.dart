@@ -45,7 +45,10 @@ void main() {
 
 void _expectStrictlySorted(List<String> ids) {
   for (var i = 1; i < ids.length; i++) {
-    expect(ids[i].compareTo(ids[i - 1]), greaterThan(0),
-        reason: 'id $i (${ids[i]}) must sort after ${ids[i - 1]}');
+    expect(
+      ids[i].compareTo(ids[i - 1]),
+      greaterThan(0),
+      reason: 'id $i (${ids[i]}) must sort after ${ids[i - 1]}',
+    );
   }
 }

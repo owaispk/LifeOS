@@ -1,37 +1,25 @@
 // PBI-001 acceptance tests: app shell, navigation, FAB, accessibility.
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lifeos_app/app.dart';
 import 'package:lifeos_app/features/tasks/tasks_screen.dart';
 import 'package:lifeos_app/shared/widgets/empty_state.dart';
 
-Future<void> pumpApp(WidgetTester tester) async {
-  await tester.pumpWidget(const ProviderScope(child: LifeOsApp()));
-  await tester.pumpAndSettle();
-}
+import 'widget_test_utils.dart';
 
-Finder appBarTitle(String title) => find.descendant(
-      of: find.byType(AppBar),
-      matching: find.text(title),
-    );
-
-Finder navItem(String label) => find.descendant(
-      of: find.byType(NavigationBar),
-      matching: find.text(label),
-    );
+Finder appBarTitle(String title) =>
+    find.descendant(of: find.byType(AppBar), matching: find.text(title));
 
 void main() {
   const tabs = ['Home', 'Tasks', 'Vault', 'Money', 'More'];
 
-  testWidgets('AC1: opens on the Home tab', (tester) async {
-    await pumpApp(tester);
+  appTest('AC1: opens on the Home tab', (tester, app) async {
     expect(appBarTitle('Home'), findsOneWidget);
   });
 
-  testWidgets('AC2/AC7: every tab opens its screen with an empty state',
-      (tester) async {
-    await pumpApp(tester);
+  appTest('AC2/AC7: every tab opens its screen with an empty state', (
+    tester,
+    app,
+  ) async {
     for (final tab in tabs) {
       await tester.tap(navItem(tab));
       await tester.pumpAndSettle();
@@ -40,9 +28,10 @@ void main() {
     }
   });
 
-  testWidgets('AC2: tab state is preserved when switching tabs',
-      (tester) async {
-    await pumpApp(tester);
+  appTest('AC2: tab state is preserved when switching tabs', (
+    tester,
+    app,
+  ) async {
     await tester.tap(navItem('Tasks'));
     await tester.pumpAndSettle();
     final tasksElement = tester.element(find.byType(TasksScreen));
@@ -57,9 +46,10 @@ void main() {
     expect(tester.element(find.byType(TasksScreen)), same(tasksElement));
   });
 
-  testWidgets('AC3: FAB expands 4 actions and each opens a sheet',
-      (tester) async {
-    await pumpApp(tester);
+  appTest('AC3: FAB expands 4 actions and each opens a sheet', (
+    tester,
+    app,
+  ) async {
     for (final action in ['task', 'scan', 'voice', 'expense']) {
       await tester.tap(find.byKey(const ValueKey('quick-action-fab')));
       await tester.pumpAndSettle();
@@ -69,10 +59,21 @@ void main() {
 
       await tester.tap(find.byKey(ValueKey('quick-action-$action')));
       await tester.pumpAndSettle();
-      expect(find.byKey(ValueKey('quick-action-sheet-$action')),
-          findsOneWidget);
-      expect(find.byKey(const ValueKey('quick-action-task')), findsNothing,
-          reason: 'menu collapses once an action is chosen');
+      // Task opens the real New Task sheet (PBI-009); the rest are
+      // placeholders until their PBIs land.
+      expect(
+        find.byKey(
+          ValueKey(
+            action == 'task' ? 'new-task-title' : 'quick-action-sheet-$action',
+          ),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey('quick-action-task')),
+        findsNothing,
+        reason: 'menu collapses once an action is chosen',
+      );
 
       // Dismiss the sheet.
       await tester.tapAt(const Offset(20, 20));
@@ -80,8 +81,7 @@ void main() {
     }
   });
 
-  testWidgets('AC3: tapping outside collapses the FAB menu', (tester) async {
-    await pumpApp(tester);
+  appTest('AC3: tapping outside collapses the FAB menu', (tester, app) async {
     await tester.tap(find.byKey(const ValueKey('quick-action-fab')));
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('fab-barrier')), findsOneWidget);
@@ -92,8 +92,7 @@ void main() {
     expect(find.byKey(const ValueKey('quick-action-scan')), findsNothing);
   });
 
-  testWidgets('AC3: switching tabs collapses the FAB menu', (tester) async {
-    await pumpApp(tester);
+  appTest('AC3: switching tabs collapses the FAB menu', (tester, app) async {
     await tester.tap(find.byKey(const ValueKey('quick-action-fab')));
     await tester.pumpAndSettle();
     await tester.tap(navItem('Vault'));
@@ -102,9 +101,9 @@ void main() {
     expect(appBarTitle('Vault'), findsOneWidget);
   });
 
-  testWidgets('AC5: tap targets are ≥ 48dp and labelled', (tester) async {
+  appTest('AC5: tap targets are ≥ 48dp and labelled', (tester, app) async {
     final handle = tester.ensureSemantics();
-    await pumpApp(tester);
+    await tester.pumpAndSettle();
     await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
     await expectLater(tester, meetsGuideline(labeledTapTargetGuideline));
 
@@ -115,10 +114,10 @@ void main() {
     handle.dispose();
   });
 
-  testWidgets('AC4: theme follows the system brightness', (tester) async {
+  appTest('AC4: theme follows the system brightness', (tester, app) async {
     tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
     addTearDown(tester.platformDispatcher.clearPlatformBrightnessTestValue);
-    await pumpApp(tester);
+    await tester.pumpAndSettle();
     final context = tester.element(find.byType(Scaffold).first);
     expect(Theme.of(context).brightness, Brightness.dark);
   });

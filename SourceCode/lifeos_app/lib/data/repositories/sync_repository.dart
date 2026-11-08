@@ -20,7 +20,13 @@ class DbContext {
 }
 
 /// Sync columns callers may never set directly.
-const _managedColumns = {'id', 'user_id', 'updated_at', 'deleted_at', 'version'};
+const _managedColumns = {
+  'id',
+  'user_id',
+  'updated_at',
+  'deleted_at',
+  'version',
+};
 
 /// Offline-first CRUD for one syncable table (data model §1, §4.1).
 ///
@@ -54,8 +60,21 @@ class SyncRepository<T extends SyncColumns, D extends DataClass> {
   }
 
   Stream<List<D>> watchAll({bool includeDeleted = false}) {
-    return (_db.select(_table)..where((t) => _live(t, includeDeleted)))
-        .watch();
+    return (_db.select(_table)..where((t) => _live(t, includeDeleted))).watch();
+  }
+
+  /// Live rows matching [filter].
+  Future<List<D>> getWhere(Expression<bool> Function(T t) filter) {
+    return (_db.select(
+      _table,
+    )..where((t) => _live(t, false) & filter(t))).get();
+  }
+
+  /// Live rows matching [filter], re-emitted on every change.
+  Stream<List<D>> watchWhere(Expression<bool> Function(T t) filter) {
+    return (_db.select(
+      _table,
+    )..where((t) => _live(t, false) & filter(t))).watch();
   }
 
   // ── Writes ──────────────────────────────────────────────────────────────
@@ -65,13 +84,17 @@ class SyncRepository<T extends SyncColumns, D extends DataClass> {
     return _db.transaction(() async {
       final id = _ctx.ids.next();
       final now = _ctx.clock();
-      await _db.into(_table).insert(RawValuesInsertable<D>({
-        ..._userColumns(row),
-        'id': Variable<String>(id),
-        'user_id': Variable<String>(_ctx.userId),
-        'updated_at': Variable<int>(now),
-        'version': const Variable<int>(1),
-      }));
+      await _db
+          .into(_table)
+          .insert(
+            RawValuesInsertable<D>({
+              ..._userColumns(row),
+              'id': Variable<String>(id),
+              'user_id': Variable<String>(_ctx.userId),
+              'updated_at': Variable<int>(now),
+              'version': const Variable<int>(1),
+            }),
+          );
       final stored = (await getById(id))!;
       await _queue(id, 'insert', stored, baseVersion: 0, now: now);
       return stored;
@@ -124,8 +147,9 @@ class SyncRepository<T extends SyncColumns, D extends DataClass> {
   Future<int> _requireVersion(String id) async {
     final query = _db.selectOnly(_table)
       ..addColumns([_table.asDslTable.version])
-      ..where(_table.asDslTable.id.equals(id) &
-          _table.asDslTable.deletedAt.isNull());
+      ..where(
+        _table.asDslTable.id.equals(id) & _table.asDslTable.deletedAt.isNull(),
+      );
     final row = await query.getSingleOrNull();
     if (row == null) {
       throw StateError('$tableName row $id not found or deleted');
@@ -134,8 +158,9 @@ class SyncRepository<T extends SyncColumns, D extends DataClass> {
   }
 
   Future<void> _writeById(String id, Map<String, Expression<Object>> values) {
-    return (_db.update(_table)..where((t) => t.id.equals(id)))
-        .write(RawValuesInsertable<D>(values));
+    return (_db.update(
+      _table,
+    )..where((t) => t.id.equals(id))).write(RawValuesInsertable<D>(values));
   }
 
   Future<void> _queue(
@@ -145,14 +170,18 @@ class SyncRepository<T extends SyncColumns, D extends DataClass> {
     required int baseVersion,
     required int now,
   }) {
-    return _db.into(_db.pendingOps).insert(PendingOpsCompanion.insert(
-          id: _ctx.ids.next(),
-          targetTable: tableName,
-          rowId: rowId,
-          op: op,
-          payload: jsonEncode(row.toJson()),
-          baseVersion: baseVersion,
-          queuedAt: now,
-        ));
+    return _db
+        .into(_db.pendingOps)
+        .insert(
+          PendingOpsCompanion.insert(
+            id: _ctx.ids.next(),
+            targetTable: tableName,
+            rowId: rowId,
+            op: op,
+            payload: jsonEncode(row.toJson()),
+            baseVersion: baseVersion,
+            queuedAt: now,
+          ),
+        );
   }
 }

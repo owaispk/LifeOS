@@ -9,8 +9,8 @@ import 'dart:math';
 /// string form always sorts in creation order.
 class IdGenerator {
   IdGenerator({int Function()? nowMs, Random? random})
-      : _nowMs = nowMs ?? (() => DateTime.now().millisecondsSinceEpoch),
-        _random = random ?? Random.secure();
+    : _nowMs = nowMs ?? (() => DateTime.now().millisecondsSinceEpoch),
+      _random = random ?? Random.secure();
 
   final int Function() _nowMs;
   final Random _random;

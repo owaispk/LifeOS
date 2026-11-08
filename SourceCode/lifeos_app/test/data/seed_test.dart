@@ -11,38 +11,52 @@ void main() {
   setUp(() => db = memoryDb());
   tearDown(() => db.close());
 
-  test('fresh install has Me, 8 system folders, categories, settings',
-      () async {
-    final r = await openLocalData(db);
+  test(
+    'fresh install has Me, 8 system folders, categories, settings',
+    () async {
+      final r = await openLocalData(db);
 
-    final people = await r.persons.getAll();
-    expect(people.map((p) => (p.name, p.relation)), [('Me', 'self')]);
+      final people = await r.persons.getAll();
+      expect(people.map((p) => (p.name, p.relation)), [('Me', 'self')]);
 
-    final folders = await r.folders.getAll();
-    expect(folders.map((f) => f.kind).toSet(), {
-      'identity', 'education', 'medical', 'bills',
-      'property', 'vehicles', 'insurance', 'work',
-    });
-    expect(folders.map((f) => f.name), contains('Bills & Receipts'));
+      final folders = await r.folders.getAll();
+      expect(folders.map((f) => f.kind).toSet(), {
+        'identity',
+        'education',
+        'medical',
+        'bills',
+        'property',
+        'vehicles',
+        'insurance',
+        'work',
+      });
+      expect(folders.map((f) => f.name), contains('Bills & Receipts'));
 
-    final categories = await r.categories.getAll();
-    expect(categories.map((c) => c.systemKey).toSet(), {
-      'rent', 'fees', 'utilities', 'internet',
-      'mobile', 'installment', 'subscription', 'other',
-    });
+      final categories = await r.categories.getAll();
+      expect(categories.map((c) => c.systemKey).toSet(), {
+        'rent',
+        'fees',
+        'utilities',
+        'internet',
+        'mobile',
+        'installment',
+        'subscription',
+        'other',
+      });
 
-    final settings = await r.userSettings.getAll();
-    expect(settings, hasLength(1));
-    expect(settings.single.themeTemplate, 'flagship');
-    expect(settings.single.quietStart, '22:00');
-    expect(settings.single.digestTime, '07:30');
-    expect(settings.single.vaultLock, isTrue);
+      final settings = await r.userSettings.getAll();
+      expect(settings, hasLength(1));
+      expect(settings.single.themeTemplate, 'flagship');
+      expect(settings.single.quietStart, '22:00');
+      expect(settings.single.digestTime, '07:30');
+      expect(settings.single.vaultLock, isTrue);
 
-    // Seeded rows are owned by the local user and queued for sync.
-    expect(folders.every((f) => f.userId == r.context.userId), isTrue);
-    final ops = await db.select(db.pendingOps).get();
-    expect(ops, hasLength(1 + 8 + 8 + 1));
-  });
+      // Seeded rows are owned by the local user and queued for sync.
+      expect(folders.every((f) => f.userId == r.context.userId), isTrue);
+      final ops = await db.select(db.pendingOps).get();
+      expect(ops, hasLength(1 + 8 + 8 + 1));
+    },
+  );
 
   test('seeding again creates no duplicates', () async {
     final r = await openLocalData(db);
@@ -61,8 +75,9 @@ void main() {
     await r.folders.update(work.id, const FoldersCompanion());
 
     await seedDefaults(r);
-    final works =
-        (await r.folders.getAll()).where((f) => f.kind == 'work').toList();
+    final works = (await r.folders.getAll())
+        .where((f) => f.kind == 'work')
+        .toList();
     expect(works, hasLength(1));
     expect(works.single.id, work.id);
   });

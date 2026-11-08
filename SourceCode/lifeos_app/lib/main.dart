@@ -12,10 +12,12 @@ Future<void> main() async {
   // sqlite3.wasm/worker assets, which are not part of the MVP.
   final repos = kIsWeb ? null : await openLocalData();
 
-  runApp(ProviderScope(
-    overrides: [
-      if (repos != null) repositoriesProvider.overrideWithValue(repos),
-    ],
-    child: const LifeOsApp(),
-  ));
+  runApp(
+    ProviderScope(
+      overrides: [
+        if (repos != null) repositoriesProvider.overrideWithValue(repos),
+      ],
+      child: const LifeOsApp(),
+    ),
+  );
 }

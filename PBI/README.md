@@ -19,7 +19,7 @@
 | 6 | [PBI-006 Vault Full-Text Search](PBI-006-vault-search.md) | E1 Vault | 5 | 002, 004 | Ready |
 | 7 | [PBI-007 Document Viewer & Trash](PBI-007-document-viewer.md) | E1 Vault | 5 | 005 | Ready |
 | 8 | [PBI-008 Expiry Guard](PBI-008-expiry-guard.md) | E1 Vault | 5 | 002, 012 | Ready |
-| 9 | [PBI-009 Tasks: Today & Upcoming](PBI-009-tasks-today-upcoming.md) | E2 Mind | 8 | 002 | Ready |
+| 9 | [PBI-009 Tasks: Today & Upcoming](PBI-009-tasks-today-upcoming.md) | E2 Mind | 8 | 002 | Done |
 | 10 | [PBI-010 Natural-Language & Voice Add](PBI-010-natural-language-voice-add.md) | E2 Mind | 8 | 009 | Ready |
 | 11 | [PBI-011 Overload Shield](PBI-011-overload-shield.md) | E2 Mind | 5 | 009 | Ready |
 | 12 | [PBI-012 Local Reminders & Actionable Notifications](PBI-012-local-notifications.md) | E5 Platform | 8 | 009 | Ready |

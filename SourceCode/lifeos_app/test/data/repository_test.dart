@@ -51,8 +51,11 @@ void main() {
     final m2 = updated.toJson();
     expect(field(updated), expectedAfterChange, reason: '$name update');
     expect(m2['version'], 2, reason: '$name version bump');
-    expect(m2['updatedAt'] as int, greaterThan(m1['updatedAt'] as int),
-        reason: '$name updated_at');
+    expect(
+      m2['updatedAt'] as int,
+      greaterThan(m1['updatedAt'] as int),
+      reason: '$name updated_at',
+    );
     expect(m2['id'], id);
 
     // Soft delete.
@@ -61,8 +64,11 @@ void main() {
     final deleted = (await repo.getById(id, includeDeleted: true))!.toJson();
     expect(deleted['deletedAt'], isNotNull, reason: '$name deleted_at');
     expect(deleted['version'], 3, reason: name);
-    await expectLater(repo.update(id, change), throwsStateError,
-        reason: '$name: deleted rows are read-only');
+    await expectLater(
+      repo.update(id, change),
+      throwsStateError,
+      reason: '$name: deleted rows are read-only',
+    );
 
     // AC3: exactly one outbox op per write, with the right base version.
     final ops = await opsFor(db, id);
@@ -71,111 +77,177 @@ void main() {
       ('update', 1, name),
       ('delete', 2, name),
     ], reason: '$name outbox');
-    expect(jsonDecode(ops[1].payload)['version'], 2,
-        reason: '$name payload is the row after the write');
+    expect(
+      jsonDecode(ops[1].payload)['version'],
+      2,
+      reason: '$name payload is the row after the write',
+    );
   }
 
-  test('every syncable table supports CRUD + soft delete with outbox',
-      () async {
-    // Parent rows for foreign keys.
-    final person = await r.persons.insert(PersonsCompanion.insert(name: 'Ali'));
-    final doc = await r.documents
-        .insert(DocumentsCompanion.insert(title: 'K-Electric Bill — Nov 2026'));
-    final task = await r.tasks.insert(TasksCompanion.insert(title: 'Pay rent'));
+  test(
+    'every syncable table supports CRUD + soft delete with outbox',
+    () async {
+      // Parent rows for foreign keys.
+      final person = await r.persons.insert(
+        PersonsCompanion.insert(name: 'Ali'),
+      );
+      final doc = await r.documents.insert(
+        DocumentsCompanion.insert(title: 'K-Electric Bill — Nov 2026'),
+      );
+      final task = await r.tasks.insert(
+        TasksCompanion.insert(title: 'Pay rent'),
+      );
 
-    await exercise(r.userSettings,
+      await exercise(
+        r.userSettings,
         create: const UserSettingsCompanion(),
         change: const UserSettingsCompanion(themeTemplate: Value('classic')),
         field: (s) => s.themeTemplate,
-        expectedAfterChange: 'classic');
-    await exercise(r.persons,
+        expectedAfterChange: 'classic',
+      );
+      await exercise(
+        r.persons,
         create: PersonsCompanion.insert(name: 'Ayesha'),
         change: const PersonsCompanion(relation: Value('spouse')),
         field: (p) => p.relation,
-        expectedAfterChange: 'spouse');
-    await exercise(r.folders,
+        expectedAfterChange: 'spouse',
+      );
+      await exercise(
+        r.folders,
         create: FoldersCompanion.insert(name: 'Trips'),
         change: const FoldersCompanion(name: Value('Travel')),
         field: (f) => f.name,
-        expectedAfterChange: 'Travel');
-    await exercise(r.documents,
+        expectedAfterChange: 'Travel',
+      );
+      await exercise(
+        r.documents,
         create: DocumentsCompanion.insert(
-            title: 'Passport', personId: Value(person.id)),
+          title: 'Passport',
+          personId: Value(person.id),
+        ),
         change: const DocumentsCompanion(expiryDate: Value('2027-03-01')),
         field: (d) => d.expiryDate,
-        expectedAfterChange: '2027-03-01');
-    await exercise(r.documentFiles,
+        expectedAfterChange: '2027-03-01',
+      );
+      await exercise(
+        r.documentFiles,
         create: DocumentFilesCompanion.insert(
-            documentId: doc.id, byteSize: 1024, sha256: 'abc'),
+          documentId: doc.id,
+          byteSize: 1024,
+          sha256: 'abc',
+        ),
         change: const DocumentFilesCompanion(pageNo: Value(2)),
         field: (f) => f.pageNo,
-        expectedAfterChange: 2);
-    await exercise(r.extractedFields,
+        expectedAfterChange: 2,
+      );
+      await exercise(
+        r.extractedFields,
         create: ExtractedFieldsCompanion.insert(
-            documentId: doc.id, field: 'amount', value: '4850'),
+          documentId: doc.id,
+          field: 'amount',
+          value: '4850',
+        ),
         change: const ExtractedFieldsCompanion(
-            value: Value('4950'), corrected: Value(true)),
+          value: Value('4950'),
+          corrected: Value(true),
+        ),
         field: (f) => f.value,
-        expectedAfterChange: '4950');
-    await exercise(r.atcRules,
+        expectedAfterChange: '4950',
+      );
+      await exercise(
+        r.atcRules,
         create: AtcRulesCompanion.insert(kind: 'fixed', name: 'Rent'),
         change: const AtcRulesCompanion(status: Value('active')),
         field: (a) => a.status,
-        expectedAfterChange: 'active');
-    await exercise(r.tasks,
+        expectedAfterChange: 'active',
+      );
+      await exercise(
+        r.tasks,
         create: TasksCompanion.insert(title: 'Call electrician'),
         change: const TasksCompanion(priority: Value(2)),
         field: (t) => t.priority,
-        expectedAfterChange: 2);
-    await exercise(r.subtasks,
-        create: SubtasksCompanion.insert(taskId: task.id, title: 'Find receipt'),
+        expectedAfterChange: 2,
+      );
+      await exercise(
+        r.subtasks,
+        create: SubtasksCompanion.insert(
+          taskId: task.id,
+          title: 'Find receipt',
+        ),
         change: const SubtasksCompanion(done: Value(true)),
         field: (s) => s.done,
-        expectedAfterChange: true);
-    await exercise(r.taskReminders,
+        expectedAfterChange: true,
+      );
+      await exercise(
+        r.taskReminders,
         create: TaskRemindersCompanion.insert(
-            taskId: task.id, fireAt: 1793232000000),
+          taskId: task.id,
+          fireAt: 1793232000000,
+        ),
         change: const TaskRemindersCompanion(fireAt: Value(1793235600000)),
         field: (t) => t.fireAt,
-        expectedAfterChange: 1793235600000);
-    await exercise(r.categories,
+        expectedAfterChange: 1793235600000,
+      );
+      await exercise(
+        r.categories,
         create: CategoriesCompanion.insert(name: 'Groceries'),
         change: const CategoriesCompanion(icon: Value('🛒')),
         field: (c) => c.icon,
-        expectedAfterChange: '🛒');
-    await exercise(r.payments,
+        expectedAfterChange: '🛒',
+      );
+      await exercise(
+        r.payments,
         create: PaymentsCompanion.insert(
-            title: 'Rent', dueDate: '2026-11-01', periodMonth: '2026-11-01'),
+          title: 'Rent',
+          dueDate: '2026-11-01',
+          periodMonth: '2026-11-01',
+        ),
         change: const PaymentsCompanion(amountMinor: Value(4500000)),
         field: (p) => p.amountMinor,
-        expectedAfterChange: 4500000);
-    await exercise(r.expenses,
+        expectedAfterChange: 4500000,
+      );
+      await exercise(
+        r.expenses,
         create: ExpensesCompanion.insert(
-            amountMinor: 125000, spentOn: '2026-11-08'),
+          amountMinor: 125000,
+          spentOn: '2026-11-08',
+        ),
         change: const ExpensesCompanion(note: Value('Groceries')),
         field: (e) => e.note,
-        expectedAfterChange: 'Groceries');
-    await exercise(r.scoreSnapshots,
+        expectedAfterChange: 'Groceries',
+      );
+      await exercise(
+        r.scoreSnapshots,
         create: ScoreSnapshotsCompanion.insert(
-            day: '2026-11-08', score: 78, components: '{}', drags: '[]'),
+          day: '2026-11-08',
+          score: 78,
+          components: '{}',
+          drags: '[]',
+        ),
         change: const ScoreSnapshotsCompanion(score: Value(81)),
         field: (s) => s.score,
-        expectedAfterChange: 81);
-  });
+        expectedAfterChange: 81,
+      );
+    },
+  );
 
   test('callers cannot override managed sync columns', () async {
-    final p = await r.persons.insert(const PersonsCompanion(
-      id: Value('hand-made-id'),
-      name: Value('Bilal'),
-      version: Value(99),
-      userId: Value('someone-else'),
-    ));
+    final p = await r.persons.insert(
+      const PersonsCompanion(
+        id: Value('hand-made-id'),
+        name: Value('Bilal'),
+        version: Value(99),
+        userId: Value('someone-else'),
+      ),
+    );
     expect(p.id, isNot('hand-made-id'));
     expect(p.version, 1);
     expect(p.userId, r.context.userId);
 
-    final u = await r.persons
-        .update(p.id, const PersonsCompanion(version: Value(50)));
+    final u = await r.persons.update(
+      p.id,
+      const PersonsCompanion(version: Value(50)),
+    );
     expect(u.version, 2);
   });
 
@@ -191,7 +263,8 @@ void main() {
     final before = await db.select(db.pendingOps).get();
     await expectLater(
       r.subtasks.insert(
-          SubtasksCompanion.insert(taskId: 'missing', title: 'orphan')),
+        SubtasksCompanion.insert(taskId: 'missing', title: 'orphan'),
+      ),
       throwsA(anything),
     );
     expect(await db.select(db.subtasks).get(), isEmpty);

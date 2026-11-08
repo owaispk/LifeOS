@@ -20,10 +20,12 @@ abstract final class AppTheme {
     );
     return base.copyWith(
       textTheme: base.textTheme.copyWith(
-        bodyLarge: base.textTheme.bodyLarge
-            ?.copyWith(fontSize: Tokens.bodyFontSize),
-        bodyMedium: base.textTheme.bodyMedium
-            ?.copyWith(fontSize: Tokens.bodyFontSize),
+        bodyLarge: base.textTheme.bodyLarge?.copyWith(
+          fontSize: Tokens.bodyFontSize,
+        ),
+        bodyMedium: base.textTheme.bodyMedium?.copyWith(
+          fontSize: Tokens.bodyFontSize,
+        ),
       ),
       navigationBarTheme: NavigationBarThemeData(
         height: 72,

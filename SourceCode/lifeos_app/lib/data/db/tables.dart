@@ -35,8 +35,9 @@ mixin SyncColumns on Table {
 /// syncable table (spec uses `user_id` as PK); `user_id` is unique instead.
 @DataClassName('UserSettingsRow')
 class UserSettings extends Table with SyncColumns {
-  TextColumn get themeTemplate =>
-      text().withDefault(const Constant('flagship'))(); // flagship|funky|classic
+  TextColumn get themeTemplate => text().withDefault(
+    const Constant('flagship'),
+  )(); // flagship|funky|classic
   TextColumn get darkMode => text().withDefault(const Constant('system'))();
   RealColumn get textScale => real().withDefault(const Constant(1.0))();
   BoolColumn get appLock => boolean().withDefault(const Constant(false))();
@@ -51,8 +52,8 @@ class UserSettings extends Table with SyncColumns {
 
   @override
   List<Set<Column<Object>>> get uniqueKeys => [
-        {userId},
-      ];
+    {userId},
+  ];
 }
 
 /// Me / family profiles.
@@ -165,6 +166,7 @@ class Tasks extends Table with SyncColumns {
   TextColumn get notes => text().nullable()();
   IntColumn get dueAt => integer().nullable()();
   BoolColumn get allDay => boolean().withDefault(const Constant(true))();
+
   /// 0 low, 1 med, 2 high.
   IntColumn get priority => integer()
       .withDefault(const Constant(1))
@@ -251,8 +253,8 @@ class ScoreSnapshots extends Table with SyncColumns {
 
   @override
   List<Set<Column<Object>>> get uniqueKeys => [
-        {userId, day},
-      ];
+    {userId, day},
+  ];
 }
 
 // ─────────────────────── Local-only tables (data model §8.3) ───────────────

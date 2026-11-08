@@ -35,33 +35,42 @@ Future<void> seedDefaults(Repositories repos) {
   return db.transaction(() async {
     final people = await repos.persons.getAll();
     if (!people.any((p) => p.relation == 'self')) {
-      await repos.persons.insert(PersonsCompanion.insert(
-        name: 'Me',
-        relation: const Value('self'),
-        avatar: const Value('🙂'),
-      ));
+      await repos.persons.insert(
+        PersonsCompanion.insert(
+          name: 'Me',
+          relation: const Value('self'),
+          avatar: const Value('🙂'),
+        ),
+      );
     }
 
-    final folderKinds = (await repos.folders.getAll()).map((f) => f.kind).toSet();
+    final folderKinds = (await repos.folders.getAll())
+        .map((f) => f.kind)
+        .toSet();
     for (final (i, f) in systemFolders.indexed) {
       if (folderKinds.contains(f.kind)) continue;
-      await repos.folders.insert(FoldersCompanion.insert(
-        name: f.name,
-        icon: Value(f.icon),
-        kind: Value(f.kind),
-        sortOrder: Value(i),
-      ));
+      await repos.folders.insert(
+        FoldersCompanion.insert(
+          name: f.name,
+          icon: Value(f.icon),
+          kind: Value(f.kind),
+          sortOrder: Value(i),
+        ),
+      );
     }
 
-    final categoryKeys =
-        (await repos.categories.getAll()).map((c) => c.systemKey).toSet();
+    final categoryKeys = (await repos.categories.getAll())
+        .map((c) => c.systemKey)
+        .toSet();
     for (final c in systemCategories) {
       if (categoryKeys.contains(c.key)) continue;
-      await repos.categories.insert(CategoriesCompanion.insert(
-        name: c.name,
-        icon: Value(c.icon),
-        systemKey: Value(c.key),
-      ));
+      await repos.categories.insert(
+        CategoriesCompanion.insert(
+          name: c.name,
+          icon: Value(c.icon),
+          systemKey: Value(c.key),
+        ),
+      );
     }
 
     if ((await repos.userSettings.getAll()).isEmpty) {

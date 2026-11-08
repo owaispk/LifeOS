@@ -7,20 +7,20 @@ import 'sync_repository.dart';
 /// All repositories over one database, sharing one [DbContext].
 class Repositories {
   Repositories._(this.db, this.context)
-      : userSettings = SyncRepository(db, db.userSettings, context),
-        persons = SyncRepository(db, db.persons, context),
-        folders = SyncRepository(db, db.folders, context),
-        documents = SyncRepository(db, db.documents, context),
-        documentFiles = SyncRepository(db, db.documentFiles, context),
-        extractedFields = SyncRepository(db, db.extractedFields, context),
-        atcRules = SyncRepository(db, db.atcRules, context),
-        tasks = SyncRepository(db, db.tasks, context),
-        subtasks = SyncRepository(db, db.subtasks, context),
-        taskReminders = SyncRepository(db, db.taskReminders, context),
-        categories = SyncRepository(db, db.categories, context),
-        payments = SyncRepository(db, db.payments, context),
-        expenses = SyncRepository(db, db.expenses, context),
-        scoreSnapshots = SyncRepository(db, db.scoreSnapshots, context);
+    : userSettings = SyncRepository(db, db.userSettings, context),
+      persons = SyncRepository(db, db.persons, context),
+      folders = SyncRepository(db, db.folders, context),
+      documents = SyncRepository(db, db.documents, context),
+      documentFiles = SyncRepository(db, db.documentFiles, context),
+      extractedFields = SyncRepository(db, db.extractedFields, context),
+      atcRules = SyncRepository(db, db.atcRules, context),
+      tasks = SyncRepository(db, db.tasks, context),
+      subtasks = SyncRepository(db, db.subtasks, context),
+      taskReminders = SyncRepository(db, db.taskReminders, context),
+      categories = SyncRepository(db, db.categories, context),
+      payments = SyncRepository(db, db.payments, context),
+      expenses = SyncRepository(db, db.expenses, context),
+      scoreSnapshots = SyncRepository(db, db.scoreSnapshots, context);
 
   /// Opens repositories, creating the local (pre-signup) user id on first
   /// run. No account is needed to use the app (features spec §13).
@@ -43,19 +43,21 @@ class Repositories {
     AppDatabase db,
     IdGenerator ids,
   ) async {
-    final existing = await (db.select(db.appMeta)
-          ..where((m) => m.key.equals(localUserIdKey)))
-        .getSingleOrNull();
+    final existing = await (db.select(
+      db.appMeta,
+    )..where((m) => m.key.equals(localUserIdKey))).getSingleOrNull();
     if (existing != null) return existing.value;
     final id = ids.next();
-    await db.into(db.appMeta).insert(
+    await db
+        .into(db.appMeta)
+        .insert(
           AppMetaCompanion.insert(key: localUserIdKey, value: id),
           mode: InsertMode.insertOrIgnore,
         );
     // Re-read in case a concurrent opener won the race.
-    final row = await (db.select(db.appMeta)
-          ..where((m) => m.key.equals(localUserIdKey)))
-        .getSingle();
+    final row = await (db.select(
+      db.appMeta,
+    )..where((m) => m.key.equals(localUserIdKey))).getSingle();
     return row.value;
   }
 

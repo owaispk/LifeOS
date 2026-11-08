@@ -14,7 +14,8 @@ class MoreScreen extends StatelessWidget {
       body: EmptyState(
         emoji: '⋯',
         title: 'More is on the way',
-        message: 'Auto-task rules, settings and more life areas will live here.',
+        message:
+            'Auto-task rules, settings and more life areas will live here.',
       ),
     );
   }
