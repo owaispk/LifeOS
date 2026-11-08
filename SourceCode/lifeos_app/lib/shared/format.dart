@@ -50,3 +50,24 @@ String dueLabel(DateTime due, {required bool allDay, required DateTime now}) {
   if (day == 'Today') return formatTime(due);
   return '$day, ${formatTime(due)}';
 }
+
+const _monthNames = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
+
+/// "November 2026"
+String formatMonth(DateTime d) => '${_monthNames[d.month - 1]} ${d.year}';
+
+/// "Nov" (short month name).
+String shortMonth(DateTime d) => _months[d.month - 1];

@@ -1,11 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/now_provider.dart';
 import '../../data/data_providers.dart';
 import '../../data/db/app_database.dart';
 import 'data/task_service.dart';
 
-/// "Now" as a local DateTime. Overridden in tests for a fixed clock.
-final nowProvider = Provider<DateTime Function()>((ref) => DateTime.now);
+export '../../core/now_provider.dart';
 
 final taskServiceProvider = Provider<TaskService>(
   (ref) =>

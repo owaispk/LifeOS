@@ -59,13 +59,15 @@ void main() {
 
       await tester.tap(find.byKey(ValueKey('quick-action-$action')));
       await tester.pumpAndSettle();
-      // Task opens the real New Task sheet (PBI-009); the rest are
+      // Task and Expense open their real sheets (PBI-009, PBI-018); the rest are
       // placeholders until their PBIs land.
       expect(
         find.byKey(
-          ValueKey(
-            action == 'task' ? 'new-task-title' : 'quick-action-sheet-$action',
-          ),
+          ValueKey(switch (action) {
+            'task' => 'new-task-title',
+            'expense' => 'expense-amount',
+            _ => 'quick-action-sheet-$action',
+          }),
         ),
         findsOneWidget,
       );

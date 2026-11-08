@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/theme/tokens.dart';
+import '../../features/money/ui/expense_sheet.dart';
 import '../../features/tasks/ui/new_task_sheet.dart';
 import 'quick_actions.dart';
 
@@ -84,10 +85,13 @@ class AppShell extends ConsumerWidget {
                   child: _QuickActionMenu(
                     onSelected: (action) {
                       fab.collapse();
-                      if (action == QuickAction.task) {
-                        showNewTaskSheet(context);
-                      } else {
-                        showQuickActionSheet(context, action);
+                      switch (action) {
+                        case QuickAction.task:
+                          showNewTaskSheet(context);
+                        case QuickAction.expense:
+                          showExpenseSheet(context);
+                        case QuickAction.scan || QuickAction.voice:
+                          showQuickActionSheet(context, action);
                       }
                     },
                   ),

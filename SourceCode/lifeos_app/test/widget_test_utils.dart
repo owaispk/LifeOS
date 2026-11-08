@@ -89,3 +89,12 @@ Future<void> settle(WidgetTester tester) async {
     await tester.pumpAndSettle();
   }
 }
+
+/// A tall, phone-like viewport (logical 412×1600) so long lists build all
+/// their rows. Restored automatically after the test.
+Future<void> useTallScreen(WidgetTester tester) async {
+  tester.view.physicalSize = const Size(412, 1600);
+  tester.view.devicePixelRatio = 1.0;
+  addTearDown(tester.view.reset);
+  await tester.pumpAndSettle();
+}

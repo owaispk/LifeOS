@@ -28,7 +28,7 @@
 | 15 | [PBI-015 ATC Fees & Tuition](PBI-015-atc-fees-tuition.md) | E3 ATC | 5 | 013, 004 | Ready |
 | 16 | [PBI-016 Payment Completion Chain](PBI-016-payment-completion-chain.md) | E3 ATC | 5 | 013, 018, 003 | Ready |
 | 17 | [PBI-017 ATC Rules Manager](PBI-017-atc-rules-manager.md) | E3 ATC | 3 | 013 | Ready |
-| 18 | [PBI-018 Money Expense Log](PBI-018-money-expense-log.md) | E4 Money | 5 | 002 | Ready |
+| 18 | [PBI-018 Money Expense Log](PBI-018-money-expense-log.md) | E4 Money | 5 | 002 | Done |
 | 19 | [PBI-019 Monthly Forecast](PBI-019-monthly-forecast.md) | E4 Money | 5 | 013 | Ready |
 | 20 | [PBI-020 Life Score v1](PBI-020-life-score.md) | E6 Engagement | 8 | 009, 013, 008 | Ready |
 | 21 | [PBI-021 Home Dashboard](PBI-021-home-dashboard.md) | E6 Engagement | 5 | 020, 009, 008, 019 | Ready |
