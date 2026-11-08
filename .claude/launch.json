@@ -1,0 +1,15 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "lifeos-web",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "C:\\Workspace\\Personal Workspace\\LifeOS\\.claude\\serve-web.js",
+        "C:\\Workspace\\Personal Workspace\\LifeOS\\SourceCode\\lifeos_app\\build\\web",
+        "8686"
+      ],
+      "port": 8686
+    }
+  ]
+}

@@ -7,7 +7,7 @@
 | Story Points | 5 |
 | Spec refs | README "Recommended tech stack"; UI flow §1.1, §5 |
 | Depends on | — |
-| Status | Ready |
+| Status | In Review — AC1 Android check pending (no Android SDK on dev machine) |
 
 ## User Story
 As a **developer team**, we want a working Flutter app skeleton with navigation, theming and state management so every later feature has a consistent home.
@@ -33,3 +33,18 @@ Create the Flutter project in `SourceCode/lifeos_app` (Android + iOS) with:
 
 ## Out of Scope
 Real feature logic, database, notifications, localisation strings (PBI-025).
+
+## Implementation Notes (2026-11-08)
+Code: `SourceCode/lifeos_app` — Flutter 3.47.9 / Dart 3.13.7, flutter_riverpod 3.5, go_router 18.1.
+
+| AC | Result | Evidence |
+|---|---|---|
+| 1 | ⚠ Partial | App launches on Home in the web build (`flutter run -d web-server`). Android emulator run pending — Android SDK not installed yet. Widget test `AC1`. |
+| 2 | ✅ | `StatefulShellRoute.indexedStack`; tests `AC2` (all tabs + same element kept alive). |
+| 3 | ✅ | Expandable FAB with barrier; tests `AC3` ×3 (4 actions → sheets, tap-outside, tab switch collapses). |
+| 4 | ✅ | `core/theme/tokens.dart` + `app_theme.dart`; tests `tokens_test.dart`, `AC4` dark mode. |
+| 5 | ✅ | `androidTapTargetGuideline` + `labeledTapTargetGuideline` pass (menu closed and open). |
+| 6 | ✅ | `flutter analyze`: no issues · `flutter test`: 11/11 passed. |
+| 7 | ✅ | Every tab uses the shared `EmptyState` widget. |
+
+Deviation: the FAB uses `centerFloat` (sits above the bar) rather than a notched `centerDocked` bar, because a notch splits the 5-tab bar unevenly. Bug found and fixed during testing: the quick-action menu was drawn behind the FAB; it now stacks above it.
