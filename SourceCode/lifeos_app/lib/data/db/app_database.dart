@@ -28,6 +28,7 @@ part 'app_database.g.dart';
     BlobCache,
     AppMeta,
   ],
+  include: {'search.drift'},
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
@@ -43,7 +44,7 @@ class AppDatabase extends _$AppDatabase {
   );
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -53,6 +54,18 @@ class AppDatabase extends _$AppDatabase {
       if (from < 2) {
         await m.addColumn(userSettings, userSettings.dayCapacityMin);
         await m.addColumn(documentFiles, documentFiles.phash);
+      }
+      // v3 (Sprint 3): full-text search + archive/renewal links.
+      if (from < 3) {
+        await m.addColumn(documents, documents.archivedAt);
+        await m.addColumn(documents, documents.renewedById);
+        await m.create(documentsFts);
+        await m.create(documentsFtsAi);
+        await m.create(documentsFtsAd);
+        await m.create(documentsFtsAu);
+        await customStatement(
+          "INSERT INTO documents_fts(documents_fts) VALUES ('rebuild')",
+        );
       }
     },
     beforeOpen: (details) async {

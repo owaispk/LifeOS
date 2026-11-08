@@ -7,7 +7,7 @@
 | Story Points | 13 |
 | Spec refs | Features §1.2; UI flow §3.4 step 3; Data model `extracted_fields` |
 | Depends on | PBI-003 |
-| Status | Ready |
+| Status | Dev Complete — device QA pending (real-scan accuracy) |
 
 ## User Story
 As a **user**, I want the app to recognise what I scanned so I don't have to name and file it manually.
@@ -37,3 +37,72 @@ As a **user**, I want the app to recognise what I scanned so I don't have to nam
 
 ## Out of Scope
 Cloud LLM fallback (premium, PBI-027).
+
+## Grooming Clarifications (2026-11-08, Sprint 3, before development)
+- **OCR engine:** `google_mlkit_text_recognition` (on-device, offline) behind a `TextRecognizer` interface. Tests use recorded OCR text instead of a camera.
+- **What gets read:**
+  - Scanned or imported *images*: every page, joined in order.
+  - Imported/shared *PDFs* aren't OCR'd in the MVP. Reading a PDF's text layer needs a native library. They're saved as "Unclassified" and the user picks the type.
+- **Classifier:**
+  - Keyword + pattern scoring per type.
+  - Confidence = top score's share of all scores, adjusted for how far it leads the runner-up, clamped to 0–1.
+  - Below 0.7, no type is preselected and the user must pick one.
+- **Extractors:** regex-based, after normalising Urdu/Arabic digits (shared with `Money`):
+  - **Dates:** 14/11/2026, 14-11-2026, 14 Nov 2026, Nov 14, 2026, 14-NOV-26.
+  - **Amounts:** "Rs", "PKR", "Amount payable", "Total".
+  - **Billing month:** "Bill Month: NOV-26" / "November 2026".
+  - **Reference:** labelled "Reference / Consumer / Account / Customer ID".
+  - **CNIC:** 12345-1234567-1.
+  - **Passport:** AB1234567.
+  - **Names:** after "Name" / "Student".
+- **Known issuers:** K-Electric, LESCO, IESCO, MEPCO, PESCO, SSGC, SNGPL, PTCL, StormFiber, Nayatel, Jazz, Zong, Telenor, Ufone, WASA. Otherwise the first meaningful line.
+- **Auto-title:**
+  - "<Issuer> Bill — Nov 2026" for bills.
+  - "<Type> — <Name>" for IDs.
+  - "Unclassified · 8 Nov 2026" when no text was found.
+- **Folder:** set automatically from the type, unless the user already chose one (or the scan started from a folder):
+  - cnic, passport, visa, license → Identity
+  - degree, certificate, fee_voucher → Education
+  - prescription, report → Medical
+  - bill, receipt → Bills & Receipts
+  - warranty, policy → Insurance
+  - agreement → Property
+- **Confirm screen** (the existing Review & file screen):
+  - A type chip with confidence %, or a type picker.
+  - Every extracted field is an editable text field.
+  - Nothing is written until **Save to Vault**.
+- **What's stored:**
+  - On the document: `ocr_text`, `doc_type`, `classification_confidence`, `issuer`, `ref_number`, `amount_minor`, `due_date`, `period_month`, `issue_date`, `expiry_date`.
+  - One `extracted_fields` row per field. `corrected = true` when the user changed the value.
+- **Per-issuer learning (no new table):**
+  - When a corrected field exists for issuer X, the label in front of the corrected value on its OCR line (e.g. "Payable within due date") is remembered.
+  - The next extraction for issuer X prefers the value after that label.
+- **AC4 fixtures:** 24 OCR-text fixtures in `test/fixtures/ocr/` (bills, IDs, vouchers, prescriptions, warranties; English plus Urdu digits), each with expected values.
+  - They're realistic, but they were written for this project, not read from real scans.
+  - Accuracy on real phone scans is checked during device QA.
+
+## Dev & QA Notes (Sprint 3, 2026-11-09)
+Code: `lib/features/capture/ocr/`:
+- `doc_classifier.dart`: the classifier
+- `field_extractor.dart`: extractors, titles, folders, learning
+- `issuers.dart`
+- `document_analysis.dart`: ML Kit reader and the analysis pipeline
+
+The Review & file screen now shows a type chip with confidence or a picker, editable fields, and an auto-title and folder.
+
+| AC | Result | Evidence |
+|---|---|---|
+| 1 | ✅ | Widget: low-confidence text shows "Not sure what this is — please pick a type." No chip, Save disabled until a type is picked. |
+| 2 | ✅ | Widget: every field is an editable text field (dates use a date picker); nothing is in the database before **Save to Vault**. An edited amount is saved and marked `corrected`. |
+| 3 | ✅ | Pure Dart, offline. Urdu and Arabic digits are normalised: date, month and amount tests include ۱۸/۱۰/۲۰۲۶. |
+| 4 | ✅ on fixtures | 24 fixtures in `test/fixtures/ocr/`: **type 24/24 (100%)**, **amount + due date 26/26 (100%)**, other fields 39/39. |
+| 5 | ✅ | No text → `other`, "Unclassified · 8 Nov 2026", saveable. Imported PDFs aren't OCR'd (as groomed). |
+| 6 | ✅ | Unit: a correction teaches the label "Current Bill Charges", and the next SSGC bill uses it. Integration: same flow through the database (`hintsForIssuer`). |
+| 7 | ✅ | Classifier and extractors are pure Dart: 12 unit tests plus 7 flow tests. |
+
+**Honesty note on AC4:** the fixtures were written together with the extractor, so 100% is optimistic.
+- A robustness test damages every fixture the way phone OCR does (misread letters, merged lines, lost colons).
+- The first version recovered only **9/26** amounts and due dates. After adding OCR-tolerant label matching it recovers **26/26**, now kept as a regression guard.
+- Real-scan accuracy is measured during device QA.
+
+`flutter analyze`: no issues · full suite **245/245 passed** (41 new in Sprint 3), identical on three runs.

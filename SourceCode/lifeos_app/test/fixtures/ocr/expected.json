@@ -1,0 +1,139 @@
+{
+  "bill_kelectric_1": {
+    "type": "bill",
+    "issuer": "K-Electric",
+    "amount": 485000,
+    "due_date": "2026-11-14",
+    "period_month": "2026-11-01",
+    "ref_number": "0400012345678"
+  },
+  "bill_kelectric_2": {
+    "type": "bill",
+    "issuer": "K-Electric",
+    "amount": 312000,
+    "due_date": "2026-10-13",
+    "ref_number": "AL-0022871"
+  },
+  "bill_lesco": {
+    "type": "bill",
+    "issuer": "LESCO",
+    "amount": 241000,
+    "due_date": "2026-11-21",
+    "period_month": "2026-11-01"
+  },
+  "bill_iesco_urdu_digits": {
+    "type": "bill",
+    "issuer": "IESCO",
+    "amount": 397500,
+    "due_date": "2026-10-18",
+    "period_month": "2026-10-01"
+  },
+  "bill_ssgc": {
+    "type": "bill",
+    "issuer": "SSGC",
+    "amount": 186000,
+    "due_date": "2026-11-20",
+    "period_month": "2026-11-01",
+    "ref_number": "1122334455"
+  },
+  "bill_sngpl": {
+    "type": "bill",
+    "issuer": "SNGPL",
+    "amount": 230000,
+    "due_date": "2026-10-24",
+    "period_month": "2026-10-01",
+    "ref_number": "9988776655"
+  },
+  "bill_ptcl": {
+    "type": "bill",
+    "issuer": "PTCL",
+    "amount": 299900,
+    "due_date": "2026-11-25",
+    "period_month": "2026-11-01"
+  },
+  "bill_stormfiber": {
+    "type": "bill",
+    "issuer": "StormFiber",
+    "amount": 420000,
+    "due_date": "2026-11-10",
+    "period_month": "2026-11-01",
+    "ref_number": "SF-778899"
+  },
+  "bill_jazz_postpaid": {
+    "type": "bill",
+    "issuer": "Jazz",
+    "amount": 149900,
+    "due_date": "2026-10-15",
+    "period_month": "2026-10-01"
+  },
+  "bill_wasa": {
+    "type": "bill",
+    "issuer": "WASA",
+    "amount": 85000,
+    "due_date": "2026-11-30",
+    "period_month": "2026-11-01"
+  },
+  "cnic_1": {
+    "type": "cnic",
+    "number": "42101-1234567-1",
+    "expiry_date": "2029-06-15"
+  },
+  "cnic_2_urdu_digits": {
+    "type": "cnic",
+    "number": "35202-7654321-8",
+    "expiry_date": "2031-02-01"
+  },
+  "passport_1": {
+    "type": "passport",
+    "number": "AB1234567",
+    "expiry_date": "2027-03-09"
+  },
+  "passport_2": {
+    "type": "passport",
+    "number": "CD7654321",
+    "expiry_date": "2030-07-21"
+  },
+  "license": {
+    "type": "license",
+    "expiry_date": "2027-04-02"
+  },
+  "fee_voucher_1": {
+    "type": "fee_voucher",
+    "amount": 1200000,
+    "due_date": "2026-11-05"
+  },
+  "fee_voucher_2": {
+    "type": "fee_voucher",
+    "amount": 1450000,
+    "due_date": "2026-12-10"
+  },
+  "fee_voucher_university": {
+    "type": "fee_voucher",
+    "amount": 6500000,
+    "due_date": "2027-01-15"
+  },
+  "prescription_1": {
+    "type": "prescription",
+    "issue_date": "2026-11-02"
+  },
+  "prescription_2": {
+    "type": "prescription",
+    "issue_date": "2026-10-28"
+  },
+  "warranty_1": {
+    "type": "warranty",
+    "end_date": "2027-08-11"
+  },
+  "warranty_2": {
+    "type": "warranty",
+    "end_date": "2029-05-31"
+  },
+  "policy_car": {
+    "type": "policy",
+    "end_date": "2026-11-30"
+  },
+  "lab_report": {
+    "type": "report",
+    "issue_date": "2026-10-30"
+  }
+}

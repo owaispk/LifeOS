@@ -69,7 +69,8 @@ class VaultListScreen extends ConsumerWidget {
         const <Widget>[],
       ),
     };
-    final list = sortDocuments(scoped);
+    // Archived documents leave folder lists (still searchable).
+    final list = sortDocuments(scoped.where((d) => d.archivedAt == null));
 
     return Scaffold(
       appBar: AppBar(title: Text(title), actions: actions),

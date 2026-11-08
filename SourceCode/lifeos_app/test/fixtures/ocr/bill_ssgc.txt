@@ -1,0 +1,7 @@
+SUI SOUTHERN GAS COMPANY LIMITED
+GAS BILL
+Consumer No 1122334455
+Billing Month November 2026
+Due Date 20 Nov 2026
+Gas Consumed (HM3) 14
+Amount Payable Rs. 1,860

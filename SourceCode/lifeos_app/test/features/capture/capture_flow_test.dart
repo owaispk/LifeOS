@@ -52,8 +52,16 @@ Future<void> tapScanInVault(WidgetTester tester) async {
   await tester.tap(find.byKey(const ValueKey('vault-scan')));
 }
 
-Future<void> saveAndWait(WidgetTester tester) async {
+/// Waits for OCR ("Reading document…") to finish, then taps Save — the
+/// button stays disabled while the document is being read.
+Future<void> tapSave(WidgetTester tester) async {
+  await pumpUntilGone(tester, find.byKey(const ValueKey('review-reading')));
+  await tester.pump();
   await tester.tap(reviewSave);
+}
+
+Future<void> saveAndWait(WidgetTester tester) async {
+  await tapSave(tester);
   await tester.pump(); // spinner appears
   await pumpUntilGone(tester, find.byType(CircularProgressIndicator));
   await tester.pumpAndSettle();
@@ -75,7 +83,7 @@ void main() {
           .widget<TextField>(find.byKey(const ValueKey('review-name')))
           .controller!
           .text,
-      'Scan · 8 Nov 2026',
+      'Unclassified · 8 Nov 2026', // no OCR text in tests → AC5
     );
     await tester.enterText(
       find.byKey(const ValueKey('review-name')),
@@ -181,7 +189,7 @@ void main() {
 
     await tester.tap(find.byKey(const ValueKey('vault-scan')));
     await pumpUntilFound(tester, reviewSave);
-    await tester.tap(reviewSave);
+    await tapSave(tester);
     await pumpUntilFound(
       tester,
       find.byKey(const ValueKey('dialog-duplicate')),

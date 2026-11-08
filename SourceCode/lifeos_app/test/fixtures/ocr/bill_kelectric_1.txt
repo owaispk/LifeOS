@@ -1,0 +1,11 @@
+K-ELECTRIC
+Powering Karachi
+ELECTRICITY BILL
+Account No: 0400012345678
+Consumer Name: MUHAMMAD OWAIS
+Bill Month: NOV-26
+Reading Date 02/11/2026   Issue Date 05/11/2026
+Units Consumed  412 kWh
+Due Date: 14/11/2026
+Payable Within Due Date   Rs. 4,850
+Payable After Due Date    Rs. 5,335

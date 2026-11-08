@@ -72,25 +72,6 @@ void main() {
     });
   });
 
-  test('search matches title, issuer or tags; every word must match', () {
-    final docs = [
-      doc('Electricity bill Nov', issuer: 'K-Electric'),
-      doc('Passport', tags: '["travel","Ali"]'),
-      doc('Gas bill', issuer: 'SSGC'),
-      doc('Deleted passport', deletedAt: 1),
-    ];
-    expect(searchDocuments(docs, 'k-electric').map((d) => d.title), [
-      'Electricity bill Nov',
-    ]);
-    expect(searchDocuments(docs, 'PASSPORT').map((d) => d.title), ['Passport']);
-    expect(searchDocuments(docs, 'travel ali').map((d) => d.title), [
-      'Passport',
-    ]);
-    expect(searchDocuments(docs, 'bill'), hasLength(2));
-    expect(searchDocuments(docs, 'bill ssgc').single.title, 'Gas bill');
-    expect(searchDocuments(docs, '   '), isEmpty);
-  });
-
   group('expiring soon', () {
     final now = DateTime(2026, 11, 8, 10);
 

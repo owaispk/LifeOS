@@ -9,6 +9,8 @@ import '../../features/money/money_screen.dart';
 import '../../features/more/more_screen.dart';
 import '../../features/tasks/tasks_screen.dart';
 import '../../features/tasks/ui/task_detail_screen.dart';
+import '../../features/vault/document_viewer_screen.dart';
+import '../../features/vault/trash_screen.dart';
 import '../../features/vault/vault_list_screen.dart';
 import '../../features/vault/vault_screen.dart';
 import '../../shared/widgets/app_shell.dart';
@@ -26,6 +28,12 @@ final routerProvider = Provider<GoRouter>((ref) {
   final router = GoRouter(
     initialLocation: Routes.home,
     routes: [
+      // Full-screen document viewer, above the tabs (PBI-007).
+      GoRoute(
+        path: '/doc/:id',
+        builder: (context, state) =>
+            DocumentViewerScreen(documentId: state.pathParameters['id']!),
+      ),
       // Full-screen capture confirm step, above the tabs (PBI-003).
       GoRoute(
         path: captureRoute,
@@ -61,6 +69,10 @@ final routerProvider = Provider<GoRouter>((ref) {
                 builder: (context, state) => VaultListScreen(
                   scope: PersonScope(state.pathParameters['id']!),
                 ),
+              ),
+              GoRoute(
+                path: 'trash',
+                builder: (context, state) => const TrashScreen(),
               ),
               GoRoute(
                 path: 'unfiled',

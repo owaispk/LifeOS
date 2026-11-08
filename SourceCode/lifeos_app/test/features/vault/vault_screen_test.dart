@@ -32,6 +32,14 @@ Future<Document> addDoc(
   ),
 );
 
+/// Opens a document (viewer, PBI-007) and then its Edit sheet.
+Future<void> openSheet(WidgetTester tester, String docId) async {
+  await tester.tap(find.byKey(ValueKey('doc-$docId')));
+  await settle(tester);
+  await tester.tap(find.byKey(const ValueKey('viewer-edit')));
+  await tester.pumpAndSettle();
+}
+
 String countText(WidgetTester tester, String key) =>
     tester.widget<Text>(find.byKey(ValueKey('folder-count-$key'))).data!;
 
@@ -73,15 +81,16 @@ void main() {
     // Move (through the document sheet).
     await tester.tap(find.byKey(ValueKey('folder-${identity.id}')));
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(ValueKey('doc-${d.id}')));
-    await tester.pumpAndSettle();
+    await openSheet(tester, d.id);
     await tester.tap(find.byKey(const ValueKey('doc-folder')));
     await tester.pumpAndSettle();
     await tester.tap(find.text('🏥 Medical').last);
     await settle(tester);
     await tester.tapAt(const Offset(5, 5)); // close the sheet
     await tester.pumpAndSettle();
-    await tester.tap(find.byTooltip('Back'));
+    await tester.tap(find.byTooltip('Back')); // viewer → folder
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Back')); // folder → Vault
     await tester.pumpAndSettle();
     expect(countText(tester, identity.id), '0 docs');
     expect(countText(tester, medical.id), '1 doc');
@@ -90,10 +99,8 @@ void main() {
     await tester.tap(find.byKey(ValueKey('folder-${medical.id}')));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(ValueKey('doc-${d.id}')));
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('doc-delete')));
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('confirm-delete-doc')));
+    await settle(tester);
+    await tester.tap(find.byKey(const ValueKey('viewer-delete'))); // → Trash
     await settle(tester);
     expect(find.text('Nothing here yet'), findsOneWidget);
     await tester.tap(find.byTooltip('Back'));
@@ -190,8 +197,8 @@ void main() {
     await tester.tap(find.byKey(ValueKey('folder-${identity.id}'))); // tap 1
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(ValueKey('doc-${d.id}'))); // tap 2
-    await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('doc-title')), findsOneWidget);
+    await settle(tester);
+    expect(find.byKey(const ValueKey('viewer-details')), findsOneWidget);
   });
 
   appTest('tags, favourites first, search and the expiring strip', (
@@ -215,8 +222,7 @@ void main() {
     // Tag + favourite through the sheet.
     await tester.tap(find.byKey(ValueKey('folder-${identity.id}')));
     await tester.pumpAndSettle();
-    await tester.tap(find.byKey(ValueKey('doc-${passport.id}')));
-    await tester.pumpAndSettle();
+    await openSheet(tester, passport.id);
     await tester.enterText(find.byKey(const ValueKey('doc-add-tag')), 'travel');
     await tester.testTextInput.receiveAction(TextInputAction.done);
     await settle(tester);
@@ -225,6 +231,8 @@ void main() {
     await settle(tester);
     await tester.tapAt(const Offset(5, 5));
     await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Back')); // viewer → folder
+    await settle(tester);
 
     // Favourite is listed first even though it's not the oldest/newest rule.
     final firstTitle = tester
@@ -240,7 +248,7 @@ void main() {
       find.byKey(const ValueKey('vault-search')),
       'travel',
     );
-    await tester.pumpAndSettle();
+    await settle(tester);
     expect(find.byKey(const ValueKey('vault-search-results')), findsOneWidget);
     expect(find.text('Passport (Ali)'), findsOneWidget);
     expect(find.text('Old receipt'), findsNothing);

@@ -104,6 +104,13 @@ class Documents extends Table with SyncColumns {
   TextColumn get tags => text().withDefault(const Constant('[]'))(); // JSON
   TextColumn get source =>
       text().withDefault(const Constant('scan'))(); // scan|import|share_in
+
+  /// Archived (kept, out of folder lists, still searchable) — schema v3,
+  /// PBI-007 / PBI-008 renewal.
+  IntColumn get archivedAt => integer().nullable()();
+
+  /// The document that replaced this one when it was renewed (PBI-008).
+  TextColumn get renewedById => text().nullable()();
 }
 
 @DataClassName('DocumentFile')

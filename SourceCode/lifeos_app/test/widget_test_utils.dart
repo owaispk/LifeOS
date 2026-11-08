@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lifeos_app/app.dart';
 import 'package:lifeos_app/data/data_providers.dart';
@@ -26,6 +27,7 @@ class TestApp {
     WidgetTester tester, {
     NotificationGateway? gateway,
     CaptureFakes? capture,
+    List<Override> extra = const [],
   }) async {
     final db = memoryDb();
     final repos = await tester.runAsync(() => openLocalData(db));
@@ -42,7 +44,9 @@ class TestApp {
             fileImporterProvider.overrideWithValue(capture.importer),
             storageInfoProvider.overrideWithValue(capture.storage),
             shareInboxProvider.overrideWithValue(capture.inbox),
+            textReaderProvider.overrideWithValue(capture.reader),
           ],
+          ...extra,
         ],
         child: const LifeOsApp(),
       ),
@@ -76,12 +80,14 @@ void appTest(
   Future<void> Function(WidgetTester tester, TestApp app) body, {
   NotificationGateway? gateway,
   CaptureFakes? Function()? capture,
+  List<Override> Function()? extra,
 }) {
   testWidgets(description, (tester) async {
     final app = await TestApp.pump(
       tester,
       gateway: gateway,
       capture: capture?.call(),
+      extra: extra?.call() ?? const [],
     );
     try {
       await body(tester, app);

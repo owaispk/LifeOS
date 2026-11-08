@@ -1,0 +1,12 @@
+ISLAMIC REPUBLIC OF PAKISTAN
+PASSPORT
+Type P   Country Code PAK
+Passport No AB1234567
+Surname KHAN
+Given Names ALI
+Nationality PAKISTANI
+Date of Birth 05 JAN 2012
+Place of Birth KARACHI
+Date of Issue 10 MAR 2022
+Date of Expiry 09 MAR 2027
+P<PAKKHAN<<ALI<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

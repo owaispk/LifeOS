@@ -1,4 +1,5 @@
-// Schema upgrades: v1 (PBI-002) → v2 (Sprint 2: day capacity + phash).
+// Schema upgrades: v1 (PBI-002) → v2 (Sprint 2: day capacity + phash)
+// → v3 (Sprint 3: full-text search, archive/renewal).
 import 'package:drift/drift.dart';
 import 'package:drift_dev/api/migrations_native.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -12,23 +13,26 @@ void main() {
 
   setUpAll(() => verifier = SchemaVerifier(GeneratedHelper()));
 
-  test('v1 → v2 produces exactly the v2 schema', () async {
-    final connection = await verifier.startAt(1);
-    final db = AppDatabase(connection);
-    await verifier.migrateAndValidate(db, 2);
-    await db.close();
-  });
+  // The current database can only migrate to the current version; every
+  // older starting point is checked against it.
+  for (final (from, to) in [(1, 3), (2, 3)]) {
+    test('v$from → v$to produces exactly the v$to schema', () async {
+      final connection = await verifier.startAt(from);
+      final db = AppDatabase(connection);
+      await verifier.migrateAndValidate(db, to);
+      await db.close();
+    });
+  }
 
-  test('v1 data survives the upgrade and gets v2 defaults', () async {
+  test('v1 data survives the upgrades and gets the new defaults', () async {
     final schema = await verifier.schemaAt(1);
-    // Write v1 rows with raw SQL (the v1 app's shape).
     schema.rawDatabase.execute(
       "INSERT INTO user_settings (id, user_id, updated_at) "
       "VALUES ('s1', 'u1', 1)",
     );
     schema.rawDatabase.execute(
-      "INSERT INTO documents (id, user_id, updated_at, title) "
-      "VALUES ('d1', 'u1', 1, 'Passport')",
+      "INSERT INTO documents (id, user_id, updated_at, title, issuer, ocr_text) "
+      "VALUES ('d1', 'u1', 1, 'Passport', NULL, 'Passport No AB1234567')",
     );
     schema.rawDatabase.execute(
       "INSERT INTO document_files "
@@ -38,10 +42,19 @@ void main() {
 
     final db = AppDatabase(schema.newConnection());
     final settings = await db.select(db.userSettings).getSingle();
-    expect(settings.id, 's1');
-    expect(settings.dayCapacityMin, 360);
+    expect((settings.id, settings.dayCapacityMin), ('s1', 360));
     final file = await db.select(db.documentFiles).getSingle();
     expect((file.byteSize, file.sha256, file.phash), (2048, 'abc', null));
+    final doc = await db.select(db.documents).getSingle();
+    expect((doc.archivedAt, doc.renewedById), (null, null));
+
+    // v3: documents written before the index existed are searchable.
+    final hits = await db
+        .customSelect(
+          "SELECT rowid FROM documents_fts WHERE documents_fts MATCH 'AB1234567'",
+        )
+        .get();
+    expect(hits, hasLength(1));
     await db.close();
   });
 }

@@ -1,0 +1,8 @@
+CHUGHTAI LAB
+Laboratory Report
+Patient Name: Aized Ahmed
+Report Date: 30/10/2026
+Specimen: Blood
+Test Name        Result   Reference Range
+HbA1c            6.9 %    4.0 - 5.6
+Fasting Glucose  128      70 - 100

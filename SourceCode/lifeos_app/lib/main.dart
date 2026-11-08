@@ -9,6 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import 'app.dart';
 import 'data/data_providers.dart';
 import 'features/capture/capture_providers.dart';
+import 'features/capture/ocr/document_analysis.dart';
 import 'features/capture/platform/capture_platform.dart';
 import 'features/reminders/data/reminder_service.dart';
 import 'features/reminders/platform/local_notifications_gateway.dart';
@@ -57,6 +58,7 @@ Future<void> main() async {
           fileImporterProvider.overrideWithValue(const PickerFileImporter()),
           storageInfoProvider.overrideWithValue(const DeviceStorageInfo()),
           shareInboxProvider.overrideWithValue(const IntentShareInbox()),
+          textReaderProvider.overrideWithValue(const MlKitTextReader()),
         ],
       ],
       child: const LifeOsApp(),

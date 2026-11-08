@@ -23,7 +23,7 @@ List<Document> sortDocuments(Iterable<Document> docs) {
 Map<String?, int> folderCounts(Iterable<Document> docs) {
   final counts = <String?, int>{};
   for (final d in docs) {
-    if (d.deletedAt != null) continue;
+    if (d.deletedAt != null || d.archivedAt != null) continue;
     counts[d.folderId] = (counts[d.folderId] ?? 0) + 1;
   }
   return counts;
@@ -51,29 +51,6 @@ List<String> normaliseTags(Iterable<String> tags) {
 }
 
 String encodeTags(Iterable<String> tags) => jsonEncode(normaliseTags(tags));
-
-// ─────────────────────────────── Search ────────────────────────────────────
-
-/// Interim search until PBI-006 (FTS5): case-insensitive match on title,
-/// issuer or any tag; every word in [query] must match somewhere.
-List<Document> searchDocuments(Iterable<Document> docs, String query) {
-  final words = query
-      .toLowerCase()
-      .split(RegExp(r'\s+'))
-      .where((w) => w.isNotEmpty)
-      .toList();
-  if (words.isEmpty) return const [];
-  bool matches(Document d) {
-    final haystack = [
-      d.title,
-      d.issuer ?? '',
-      ...parseTags(d.tags),
-    ].join(' ').toLowerCase();
-    return words.every(haystack.contains);
-  }
-
-  return sortDocuments(docs.where((d) => d.deletedAt == null && matches(d)));
-}
 
 // ──────────────────────────── Expiring soon ────────────────────────────────
 
@@ -112,7 +89,9 @@ List<ExpiringDoc> expiringSoon(
   final today = DateTime(now.year, now.month, now.day);
   final list = <ExpiringDoc>[];
   for (final d in docs) {
-    if (d.deletedAt != null || d.expiryDate == null) continue;
+    if (d.deletedAt != null || d.archivedAt != null || d.expiryDate == null) {
+      continue;
+    }
     final p = d.expiryDate!.split('-').map(int.parse).toList();
     final expiry = DateTime(p[0], p[1], p[2]);
     // Calendar days (DST-safe): compare dates via UTC midnights.

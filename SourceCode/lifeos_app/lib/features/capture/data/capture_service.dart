@@ -45,20 +45,51 @@ class FilingDetails {
     this.folderId,
     this.personId,
     this.format = OutputFormat.pdf,
-    this.issuer,
-    this.refNumber,
-    this.periodMonth,
-  });
+    this.docType = 'other',
+    this.confidence,
+    this.ocrText,
+    this.fields = const {},
+    this.corrected = const {},
+    String? issuer,
+    String? refNumber,
+    String? periodMonth,
+  }) : issuerOverride = issuer,
+       refOverride = refNumber,
+       periodOverride = periodMonth;
 
   final String title;
   final String? folderId;
   final String? personId;
   final OutputFormat format;
 
-  /// Filled by OCR in PBI-004; part of the duplicate rule already.
-  final String? issuer;
-  final String? refNumber;
-  final String? periodMonth;
+  /// Classification and extraction from the confirm step (PBI-004).
+  final String docType;
+  final double? confidence;
+  final String? ocrText;
+
+  /// Final field values by `Fields` key (after the user's edits).
+  final Map<String, String> fields;
+
+  /// Field keys the user changed from what OCR extracted.
+  final Set<String> corrected;
+
+  /// Explicit values (tests, PBI-004 callers) that win over [fields].
+  final String? issuerOverride;
+  final String? refOverride;
+  final String? periodOverride;
+
+  String? _f(String key) {
+    final v = fields[key]?.trim();
+    return (v == null || v.isEmpty) ? null : v;
+  }
+
+  String? get issuer => issuerOverride ?? _f('issuer') ?? _f('institution');
+  String? get refNumber => refOverride ?? _f('ref_number') ?? _f('number');
+  String? get periodMonth => periodOverride ?? _f('period_month');
+  int? get amountMinor => int.tryParse(_f('amount') ?? '');
+  String? get dueDate => _f('due_date');
+  String? get issueDate => _f('issue_date') ?? _f('start_date');
+  String? get expiryDate => _f('expiry_date') ?? _f('end_date');
 }
 
 /// What an image page looks like to the checks (computed off the UI
@@ -184,8 +215,28 @@ class CaptureService {
             issuer: Value(details.issuer),
             refNumber: Value(details.refNumber),
             periodMonth: Value(details.periodMonth),
+            docType: Value(details.docType),
+            classificationConfidence: Value(details.confidence),
+            ocrText: Value(details.ocrText),
+            amountMinor: Value(details.amountMinor),
+            dueDate: Value(details.dueDate),
+            issueDate: Value(details.issueDate),
+            expiryDate: Value(details.expiryDate),
           ),
         );
+        // One row per extracted field; corrections feed per-issuer
+        // learning (PBI-004 AC6).
+        for (final e in details.fields.entries) {
+          if (e.value.trim().isEmpty) continue;
+          await _repos.extractedFields.insert(
+            ExtractedFieldsCompanion.insert(
+              documentId: doc.id,
+              field: e.key,
+              value: e.value.trim(),
+              corrected: Value(details.corrected.contains(e.key)),
+            ),
+          );
+        }
         dir = await Directory(p.join(_vaultRoot.path, doc.id))
             .create(recursive: true);
         for (var i = 0; i < files.length; i++) {

@@ -1,3 +1,5 @@
+import 'text.dart';
+
 /// Money is always integer minor units (paisa/cents) — never floats
 /// (data model §3, "Money rule").
 abstract final class Money {
@@ -7,7 +9,7 @@ abstract final class Money {
   /// or Urdu/Eastern-Arabic digits ("۴۸۵۰") into minor units.
   /// Returns null if no amount can be read. Uses integer maths only.
   static int? parseMinor(String input) {
-    final text = _normaliseDigits(input);
+    final text = normalizeDigits(input);
     final match = RegExp(r'-?\d[\d,]*(?:\.\d{1,2})?').firstMatch(text);
     if (match == null) return null;
 
@@ -43,25 +45,5 @@ abstract final class Money {
         ? ''
         : '.${fraction.toString().padLeft(2, '0')}';
     return '${negative ? '-' : ''}$symbol $grouped$decimals';
-  }
-
-  /// Maps Urdu (U+06F0–06F9) and Arabic-Indic (U+0660–0669) digits to 0–9,
-  /// and the Arabic decimal/thousands separators to "." and ",".
-  static String _normaliseDigits(String s) {
-    final out = StringBuffer();
-    for (final rune in s.runes) {
-      if (rune >= 0x06F0 && rune <= 0x06F9) {
-        out.writeCharCode(0x30 + rune - 0x06F0);
-      } else if (rune >= 0x0660 && rune <= 0x0669) {
-        out.writeCharCode(0x30 + rune - 0x0660);
-      } else if (rune == 0x066B) {
-        out.write('.');
-      } else if (rune == 0x066C) {
-        out.write(',');
-      } else {
-        out.writeCharCode(rune);
-      }
-    }
-    return out.toString();
   }
 }

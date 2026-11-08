@@ -1,0 +1,7 @@
+StormFiber Internet
+Invoice / Bill
+Customer ID: SF-778899
+Billing Month: November 2026
+Due Date: 10/11/2026
+Package 30 Mbps
+Total Amount PKR 4,200.00

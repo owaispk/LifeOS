@@ -134,6 +134,45 @@ class SyncRepository<T extends SyncColumns, D extends DataClass> {
     });
   }
 
+  /// Brings a soft-deleted row back (Trash → Restore). Throws [StateError]
+  /// if the row doesn't exist or isn't deleted.
+  Future<D> restore(String id) {
+    return _db.transaction(() async {
+      final row = await getById(id, includeDeleted: true);
+      if (row == null || (row.toJson()['deletedAt'] == null)) {
+        throw StateError('$tableName row $id is not in the trash');
+      }
+      final base = row.toJson()['version'] as int;
+      final now = _ctx.clock();
+      await _writeById(id, {
+        'deleted_at': const Variable<int>(null),
+        'version': Variable<int>(base + 1),
+        'updated_at': Variable<int>(now),
+      });
+      final stored = (await getById(id))!;
+      await _queue(id, 'restore', stored, baseVersion: base, now: now);
+      return stored;
+    });
+  }
+
+  /// Removes a row for good (Trash → Delete forever / 30-day purge). The
+  /// outbox records a `purge` so other devices drop it too.
+  Future<void> purge(String id) {
+    return _db.transaction(() async {
+      final row = await getById(id, includeDeleted: true);
+      if (row == null) return;
+      final now = _ctx.clock();
+      await (_db.delete(_table)..where((t) => t.id.equals(id))).go();
+      await _queue(
+        id,
+        'purge',
+        row,
+        baseVersion: row.toJson()['version'] as int,
+        now: now,
+      );
+    });
+  }
+
   // ── Internals ───────────────────────────────────────────────────────────
 
   Expression<bool> _live(T t, bool includeDeleted) =>

@@ -1,0 +1,32 @@
+import 'tables.dart';
+
+-- Full-text search over documents (PBI-006, schema v3).
+-- External-content FTS5 index over documents.rowid, kept in sync by
+-- triggers. Soft-deleted rows stay indexed and are filtered at query time.
+
+CREATE VIRTUAL TABLE documents_fts USING fts5(
+  title,
+  issuer,
+  ocr_text,
+  tags,
+  content = 'documents',
+  content_rowid = 'rowid',
+  tokenize = 'unicode61 remove_diacritics 2'
+);
+
+CREATE TRIGGER documents_fts_ai AFTER INSERT ON documents BEGIN
+  INSERT INTO documents_fts (rowid, title, issuer, ocr_text, tags)
+  VALUES (new.rowid, new.title, new.issuer, new.ocr_text, new.tags);
+END;
+
+CREATE TRIGGER documents_fts_ad AFTER DELETE ON documents BEGIN
+  INSERT INTO documents_fts (documents_fts, rowid, title, issuer, ocr_text, tags)
+  VALUES ('delete', old.rowid, old.title, old.issuer, old.ocr_text, old.tags);
+END;
+
+CREATE TRIGGER documents_fts_au AFTER UPDATE ON documents BEGIN
+  INSERT INTO documents_fts (documents_fts, rowid, title, issuer, ocr_text, tags)
+  VALUES ('delete', old.rowid, old.title, old.issuer, old.ocr_text, old.tags);
+  INSERT INTO documents_fts (rowid, title, issuer, ocr_text, tags)
+  VALUES (new.rowid, new.title, new.issuer, new.ocr_text, new.tags);
+END;

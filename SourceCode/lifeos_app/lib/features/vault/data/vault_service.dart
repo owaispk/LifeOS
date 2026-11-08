@@ -157,6 +157,24 @@ class VaultService {
 
   Future<void> deleteDocument(String id) => _repos.documents.softDelete(id);
 
+  /// Archived documents leave folder lists but stay searchable (PBI-007).
+  Future<Document> archive(String id, {DateTime? at}) =>
+      _repos.documents.update(
+        id,
+        DocumentsCompanion(
+          archivedAt: Value((at ?? DateTime.now()).millisecondsSinceEpoch),
+        ),
+      );
+
+  Future<Document> unarchive(String id) => _repos.documents.update(
+    id,
+    const DocumentsCompanion(archivedAt: Value(null)),
+  );
+
+  /// Saves edits from the viewer's info panel (type and main fields).
+  Future<Document> updateDetails(String id, DocumentsCompanion changes) =>
+      _repos.documents.update(id, changes);
+
   // ── Helpers ─────────────────────────────────────────────────────────────
 
   static String _requireName(String name) {

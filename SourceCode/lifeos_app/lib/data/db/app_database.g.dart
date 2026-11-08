@@ -3,866 +3,285 @@
 part of 'app_database.dart';
 
 // ignore_for_file: type=lint
-class $UserSettingsTable extends UserSettings
-    with TableInfo<$UserSettingsTable, UserSettingsRow> {
+class DocumentsFts extends Table
+    with
+        TableInfo<DocumentsFts, DocumentsFt>,
+        VirtualTableInfo<DocumentsFts, DocumentsFt> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
-  $UserSettingsTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<String> id = GeneratedColumn<String>(
-    'id',
+  DocumentsFts(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+    'title',
     aliasedName,
     false,
     type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    clientDefault: fallbackIds.next,
+    requiredDuringInsert: true,
+    $customConstraints: '',
   );
-  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
-  @override
-  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
-    'user_id',
+  static const VerificationMeta _issuerMeta = const VerificationMeta('issuer');
+  late final GeneratedColumn<String> issuer = GeneratedColumn<String>(
+    'issuer',
     aliasedName,
     false,
     type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    clientDefault: () => '',
+    requiredDuringInsert: true,
+    $customConstraints: '',
   );
-  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
-    'updatedAt',
+  static const VerificationMeta _ocrTextMeta = const VerificationMeta(
+    'ocrText',
   );
-  @override
-  late final GeneratedColumn<int> updatedAt = GeneratedColumn<int>(
-    'updated_at',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    clientDefault: systemClock,
-  );
-  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
-    'deletedAt',
-  );
-  @override
-  late final GeneratedColumn<int> deletedAt = GeneratedColumn<int>(
-    'deleted_at',
-    aliasedName,
-    true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _versionMeta = const VerificationMeta(
-    'version',
-  );
-  @override
-  late final GeneratedColumn<int> version = GeneratedColumn<int>(
-    'version',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(1),
-  );
-  static const VerificationMeta _themeTemplateMeta = const VerificationMeta(
-    'themeTemplate',
-  );
-  @override
-  late final GeneratedColumn<String> themeTemplate = GeneratedColumn<String>(
-    'theme_template',
+  late final GeneratedColumn<String> ocrText = GeneratedColumn<String>(
+    'ocr_text',
     aliasedName,
     false,
     type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant('flagship'),
+    requiredDuringInsert: true,
+    $customConstraints: '',
   );
-  static const VerificationMeta _darkModeMeta = const VerificationMeta(
-    'darkMode',
-  );
-  @override
-  late final GeneratedColumn<String> darkMode = GeneratedColumn<String>(
-    'dark_mode',
+  static const VerificationMeta _tagsMeta = const VerificationMeta('tags');
+  late final GeneratedColumn<String> tags = GeneratedColumn<String>(
+    'tags',
     aliasedName,
     false,
     type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant('system'),
-  );
-  static const VerificationMeta _textScaleMeta = const VerificationMeta(
-    'textScale',
+    requiredDuringInsert: true,
+    $customConstraints: '',
   );
   @override
-  late final GeneratedColumn<double> textScale = GeneratedColumn<double>(
-    'text_scale',
-    aliasedName,
-    false,
-    type: DriftSqlType.double,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(1.0),
-  );
-  static const VerificationMeta _appLockMeta = const VerificationMeta(
-    'appLock',
-  );
-  @override
-  late final GeneratedColumn<bool> appLock = GeneratedColumn<bool>(
-    'app_lock',
-    aliasedName,
-    false,
-    type: DriftSqlType.bool,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'CHECK ("app_lock" IN (0, 1))',
-    ),
-    defaultValue: const Constant(false),
-  );
-  static const VerificationMeta _vaultLockMeta = const VerificationMeta(
-    'vaultLock',
-  );
-  @override
-  late final GeneratedColumn<bool> vaultLock = GeneratedColumn<bool>(
-    'vault_lock',
-    aliasedName,
-    false,
-    type: DriftSqlType.bool,
-    requiredDuringInsert: false,
-    defaultConstraints: GeneratedColumn.constraintIsAlways(
-      'CHECK ("vault_lock" IN (0, 1))',
-    ),
-    defaultValue: const Constant(true),
-  );
-  static const VerificationMeta _autoLockMinMeta = const VerificationMeta(
-    'autoLockMin',
-  );
-  @override
-  late final GeneratedColumn<int> autoLockMin = GeneratedColumn<int>(
-    'auto_lock_min',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(5),
-  );
-  static const VerificationMeta _quietStartMeta = const VerificationMeta(
-    'quietStart',
-  );
-  @override
-  late final GeneratedColumn<String> quietStart = GeneratedColumn<String>(
-    'quiet_start',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant('22:00'),
-  );
-  static const VerificationMeta _quietEndMeta = const VerificationMeta(
-    'quietEnd',
-  );
-  @override
-  late final GeneratedColumn<String> quietEnd = GeneratedColumn<String>(
-    'quiet_end',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant('07:00'),
-  );
-  static const VerificationMeta _digestTimeMeta = const VerificationMeta(
-    'digestTime',
-  );
-  @override
-  late final GeneratedColumn<String> digestTime = GeneratedColumn<String>(
-    'digest_time',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant('07:30'),
-  );
-  static const VerificationMeta _notifDomainsMeta = const VerificationMeta(
-    'notifDomains',
-  );
-  @override
-  late final GeneratedColumn<String> notifDomains = GeneratedColumn<String>(
-    'notif_domains',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant('{}'),
-  );
-  static const VerificationMeta _backupModeMeta = const VerificationMeta(
-    'backupMode',
-  );
-  @override
-  late final GeneratedColumn<String> backupMode = GeneratedColumn<String>(
-    'backup_mode',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant('wifi'),
-  );
-  static const VerificationMeta _dayCapacityMinMeta = const VerificationMeta(
-    'dayCapacityMin',
-  );
-  @override
-  late final GeneratedColumn<int> dayCapacityMin = GeneratedColumn<int>(
-    'day_capacity_min',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(360),
-  );
-  @override
-  List<GeneratedColumn> get $columns => [
-    id,
-    userId,
-    updatedAt,
-    deletedAt,
-    version,
-    themeTemplate,
-    darkMode,
-    textScale,
-    appLock,
-    vaultLock,
-    autoLockMin,
-    quietStart,
-    quietEnd,
-    digestTime,
-    notifDomains,
-    backupMode,
-    dayCapacityMin,
-  ];
+  List<GeneratedColumn> get $columns => [title, issuer, ocrText, tags];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
   String get actualTableName => $name;
-  static const String $name = 'user_settings';
+  static const String $name = 'documents_fts';
   @override
   VerificationContext validateIntegrity(
-    Insertable<UserSettingsRow> instance, {
+    Insertable<DocumentsFt> instance, {
     bool isInserting = false,
   }) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
-    if (data.containsKey('user_id')) {
+    if (data.containsKey('title')) {
       context.handle(
-        _userIdMeta,
-        userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta),
+        _titleMeta,
+        title.isAcceptableOrUnknown(data['title']!, _titleMeta),
       );
+    } else if (isInserting) {
+      context.missing(_titleMeta);
     }
-    if (data.containsKey('updated_at')) {
+    if (data.containsKey('issuer')) {
       context.handle(
-        _updatedAtMeta,
-        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+        _issuerMeta,
+        issuer.isAcceptableOrUnknown(data['issuer']!, _issuerMeta),
       );
+    } else if (isInserting) {
+      context.missing(_issuerMeta);
     }
-    if (data.containsKey('deleted_at')) {
+    if (data.containsKey('ocr_text')) {
       context.handle(
-        _deletedAtMeta,
-        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+        _ocrTextMeta,
+        ocrText.isAcceptableOrUnknown(data['ocr_text']!, _ocrTextMeta),
       );
+    } else if (isInserting) {
+      context.missing(_ocrTextMeta);
     }
-    if (data.containsKey('version')) {
+    if (data.containsKey('tags')) {
       context.handle(
-        _versionMeta,
-        version.isAcceptableOrUnknown(data['version']!, _versionMeta),
+        _tagsMeta,
+        tags.isAcceptableOrUnknown(data['tags']!, _tagsMeta),
       );
-    }
-    if (data.containsKey('theme_template')) {
-      context.handle(
-        _themeTemplateMeta,
-        themeTemplate.isAcceptableOrUnknown(
-          data['theme_template']!,
-          _themeTemplateMeta,
-        ),
-      );
-    }
-    if (data.containsKey('dark_mode')) {
-      context.handle(
-        _darkModeMeta,
-        darkMode.isAcceptableOrUnknown(data['dark_mode']!, _darkModeMeta),
-      );
-    }
-    if (data.containsKey('text_scale')) {
-      context.handle(
-        _textScaleMeta,
-        textScale.isAcceptableOrUnknown(data['text_scale']!, _textScaleMeta),
-      );
-    }
-    if (data.containsKey('app_lock')) {
-      context.handle(
-        _appLockMeta,
-        appLock.isAcceptableOrUnknown(data['app_lock']!, _appLockMeta),
-      );
-    }
-    if (data.containsKey('vault_lock')) {
-      context.handle(
-        _vaultLockMeta,
-        vaultLock.isAcceptableOrUnknown(data['vault_lock']!, _vaultLockMeta),
-      );
-    }
-    if (data.containsKey('auto_lock_min')) {
-      context.handle(
-        _autoLockMinMeta,
-        autoLockMin.isAcceptableOrUnknown(
-          data['auto_lock_min']!,
-          _autoLockMinMeta,
-        ),
-      );
-    }
-    if (data.containsKey('quiet_start')) {
-      context.handle(
-        _quietStartMeta,
-        quietStart.isAcceptableOrUnknown(data['quiet_start']!, _quietStartMeta),
-      );
-    }
-    if (data.containsKey('quiet_end')) {
-      context.handle(
-        _quietEndMeta,
-        quietEnd.isAcceptableOrUnknown(data['quiet_end']!, _quietEndMeta),
-      );
-    }
-    if (data.containsKey('digest_time')) {
-      context.handle(
-        _digestTimeMeta,
-        digestTime.isAcceptableOrUnknown(data['digest_time']!, _digestTimeMeta),
-      );
-    }
-    if (data.containsKey('notif_domains')) {
-      context.handle(
-        _notifDomainsMeta,
-        notifDomains.isAcceptableOrUnknown(
-          data['notif_domains']!,
-          _notifDomainsMeta,
-        ),
-      );
-    }
-    if (data.containsKey('backup_mode')) {
-      context.handle(
-        _backupModeMeta,
-        backupMode.isAcceptableOrUnknown(data['backup_mode']!, _backupModeMeta),
-      );
-    }
-    if (data.containsKey('day_capacity_min')) {
-      context.handle(
-        _dayCapacityMinMeta,
-        dayCapacityMin.isAcceptableOrUnknown(
-          data['day_capacity_min']!,
-          _dayCapacityMinMeta,
-        ),
-      );
+    } else if (isInserting) {
+      context.missing(_tagsMeta);
     }
     return context;
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {id};
+  Set<GeneratedColumn> get $primaryKey => const {};
   @override
-  List<Set<GeneratedColumn>> get uniqueKeys => [
-    {userId},
-  ];
-  @override
-  UserSettingsRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+  DocumentsFt map(Map<String, dynamic> data, {String? tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return UserSettingsRow(
-      id: attachedDatabase.typeMapping.read(
+    return DocumentsFt(
+      title: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}id'],
+        data['${effectivePrefix}title'],
       )!,
-      userId: attachedDatabase.typeMapping.read(
+      issuer: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}user_id'],
+        data['${effectivePrefix}issuer'],
       )!,
-      updatedAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}updated_at'],
-      )!,
-      deletedAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}deleted_at'],
-      ),
-      version: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}version'],
-      )!,
-      themeTemplate: attachedDatabase.typeMapping.read(
+      ocrText: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}theme_template'],
+        data['${effectivePrefix}ocr_text'],
       )!,
-      darkMode: attachedDatabase.typeMapping.read(
+      tags: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}dark_mode'],
-      )!,
-      textScale: attachedDatabase.typeMapping.read(
-        DriftSqlType.double,
-        data['${effectivePrefix}text_scale'],
-      )!,
-      appLock: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}app_lock'],
-      )!,
-      vaultLock: attachedDatabase.typeMapping.read(
-        DriftSqlType.bool,
-        data['${effectivePrefix}vault_lock'],
-      )!,
-      autoLockMin: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}auto_lock_min'],
-      )!,
-      quietStart: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}quiet_start'],
-      )!,
-      quietEnd: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}quiet_end'],
-      )!,
-      digestTime: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}digest_time'],
-      )!,
-      notifDomains: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}notif_domains'],
-      )!,
-      backupMode: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}backup_mode'],
-      )!,
-      dayCapacityMin: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}day_capacity_min'],
+        data['${effectivePrefix}tags'],
       )!,
     );
   }
 
   @override
-  $UserSettingsTable createAlias(String alias) {
-    return $UserSettingsTable(attachedDatabase, alias);
+  DocumentsFts createAlias(String alias) {
+    return DocumentsFts(attachedDatabase, alias);
   }
+
+  @override
+  bool get dontWriteConstraints => true;
+  @override
+  String get moduleAndArgs =>
+      'fts5(title, issuer, ocr_text, tags, content = \'documents\', content_rowid = \'rowid\', tokenize = \'unicode61 remove_diacritics 2\')';
 }
 
-class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
-  final String id;
-  final String userId;
-  final int updatedAt;
-  final int? deletedAt;
-  final int version;
-  final String themeTemplate;
-  final String darkMode;
-  final double textScale;
-  final bool appLock;
-  final bool vaultLock;
-  final int autoLockMin;
-  final String quietStart;
-  final String quietEnd;
-  final String digestTime;
-  final String notifDomains;
-  final String backupMode;
-
-  /// Overload Shield day capacity in minutes (schema v2, PBI-011).
-  final int dayCapacityMin;
-  const UserSettingsRow({
-    required this.id,
-    required this.userId,
-    required this.updatedAt,
-    this.deletedAt,
-    required this.version,
-    required this.themeTemplate,
-    required this.darkMode,
-    required this.textScale,
-    required this.appLock,
-    required this.vaultLock,
-    required this.autoLockMin,
-    required this.quietStart,
-    required this.quietEnd,
-    required this.digestTime,
-    required this.notifDomains,
-    required this.backupMode,
-    required this.dayCapacityMin,
+class DocumentsFt extends DataClass implements Insertable<DocumentsFt> {
+  final String title;
+  final String issuer;
+  final String ocrText;
+  final String tags;
+  const DocumentsFt({
+    required this.title,
+    required this.issuer,
+    required this.ocrText,
+    required this.tags,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['id'] = Variable<String>(id);
-    map['user_id'] = Variable<String>(userId);
-    map['updated_at'] = Variable<int>(updatedAt);
-    if (!nullToAbsent || deletedAt != null) {
-      map['deleted_at'] = Variable<int>(deletedAt);
-    }
-    map['version'] = Variable<int>(version);
-    map['theme_template'] = Variable<String>(themeTemplate);
-    map['dark_mode'] = Variable<String>(darkMode);
-    map['text_scale'] = Variable<double>(textScale);
-    map['app_lock'] = Variable<bool>(appLock);
-    map['vault_lock'] = Variable<bool>(vaultLock);
-    map['auto_lock_min'] = Variable<int>(autoLockMin);
-    map['quiet_start'] = Variable<String>(quietStart);
-    map['quiet_end'] = Variable<String>(quietEnd);
-    map['digest_time'] = Variable<String>(digestTime);
-    map['notif_domains'] = Variable<String>(notifDomains);
-    map['backup_mode'] = Variable<String>(backupMode);
-    map['day_capacity_min'] = Variable<int>(dayCapacityMin);
+    map['title'] = Variable<String>(title);
+    map['issuer'] = Variable<String>(issuer);
+    map['ocr_text'] = Variable<String>(ocrText);
+    map['tags'] = Variable<String>(tags);
     return map;
   }
 
-  UserSettingsCompanion toCompanion(bool nullToAbsent) {
-    return UserSettingsCompanion(
-      id: Value(id),
-      userId: Value(userId),
-      updatedAt: Value(updatedAt),
-      deletedAt: deletedAt == null && nullToAbsent
-          ? const Value.absent()
-          : Value(deletedAt),
-      version: Value(version),
-      themeTemplate: Value(themeTemplate),
-      darkMode: Value(darkMode),
-      textScale: Value(textScale),
-      appLock: Value(appLock),
-      vaultLock: Value(vaultLock),
-      autoLockMin: Value(autoLockMin),
-      quietStart: Value(quietStart),
-      quietEnd: Value(quietEnd),
-      digestTime: Value(digestTime),
-      notifDomains: Value(notifDomains),
-      backupMode: Value(backupMode),
-      dayCapacityMin: Value(dayCapacityMin),
+  DocumentsFtsCompanion toCompanion(bool nullToAbsent) {
+    return DocumentsFtsCompanion(
+      title: Value(title),
+      issuer: Value(issuer),
+      ocrText: Value(ocrText),
+      tags: Value(tags),
     );
   }
 
-  factory UserSettingsRow.fromJson(
+  factory DocumentsFt.fromJson(
     Map<String, dynamic> json, {
     ValueSerializer? serializer,
   }) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return UserSettingsRow(
-      id: serializer.fromJson<String>(json['id']),
-      userId: serializer.fromJson<String>(json['userId']),
-      updatedAt: serializer.fromJson<int>(json['updatedAt']),
-      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
-      version: serializer.fromJson<int>(json['version']),
-      themeTemplate: serializer.fromJson<String>(json['themeTemplate']),
-      darkMode: serializer.fromJson<String>(json['darkMode']),
-      textScale: serializer.fromJson<double>(json['textScale']),
-      appLock: serializer.fromJson<bool>(json['appLock']),
-      vaultLock: serializer.fromJson<bool>(json['vaultLock']),
-      autoLockMin: serializer.fromJson<int>(json['autoLockMin']),
-      quietStart: serializer.fromJson<String>(json['quietStart']),
-      quietEnd: serializer.fromJson<String>(json['quietEnd']),
-      digestTime: serializer.fromJson<String>(json['digestTime']),
-      notifDomains: serializer.fromJson<String>(json['notifDomains']),
-      backupMode: serializer.fromJson<String>(json['backupMode']),
-      dayCapacityMin: serializer.fromJson<int>(json['dayCapacityMin']),
+    return DocumentsFt(
+      title: serializer.fromJson<String>(json['title']),
+      issuer: serializer.fromJson<String>(json['issuer']),
+      ocrText: serializer.fromJson<String>(json['ocr_text']),
+      tags: serializer.fromJson<String>(json['tags']),
     );
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<String>(id),
-      'userId': serializer.toJson<String>(userId),
-      'updatedAt': serializer.toJson<int>(updatedAt),
-      'deletedAt': serializer.toJson<int?>(deletedAt),
-      'version': serializer.toJson<int>(version),
-      'themeTemplate': serializer.toJson<String>(themeTemplate),
-      'darkMode': serializer.toJson<String>(darkMode),
-      'textScale': serializer.toJson<double>(textScale),
-      'appLock': serializer.toJson<bool>(appLock),
-      'vaultLock': serializer.toJson<bool>(vaultLock),
-      'autoLockMin': serializer.toJson<int>(autoLockMin),
-      'quietStart': serializer.toJson<String>(quietStart),
-      'quietEnd': serializer.toJson<String>(quietEnd),
-      'digestTime': serializer.toJson<String>(digestTime),
-      'notifDomains': serializer.toJson<String>(notifDomains),
-      'backupMode': serializer.toJson<String>(backupMode),
-      'dayCapacityMin': serializer.toJson<int>(dayCapacityMin),
+      'title': serializer.toJson<String>(title),
+      'issuer': serializer.toJson<String>(issuer),
+      'ocr_text': serializer.toJson<String>(ocrText),
+      'tags': serializer.toJson<String>(tags),
     };
   }
 
-  UserSettingsRow copyWith({
-    String? id,
-    String? userId,
-    int? updatedAt,
-    Value<int?> deletedAt = const Value.absent(),
-    int? version,
-    String? themeTemplate,
-    String? darkMode,
-    double? textScale,
-    bool? appLock,
-    bool? vaultLock,
-    int? autoLockMin,
-    String? quietStart,
-    String? quietEnd,
-    String? digestTime,
-    String? notifDomains,
-    String? backupMode,
-    int? dayCapacityMin,
-  }) => UserSettingsRow(
-    id: id ?? this.id,
-    userId: userId ?? this.userId,
-    updatedAt: updatedAt ?? this.updatedAt,
-    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
-    version: version ?? this.version,
-    themeTemplate: themeTemplate ?? this.themeTemplate,
-    darkMode: darkMode ?? this.darkMode,
-    textScale: textScale ?? this.textScale,
-    appLock: appLock ?? this.appLock,
-    vaultLock: vaultLock ?? this.vaultLock,
-    autoLockMin: autoLockMin ?? this.autoLockMin,
-    quietStart: quietStart ?? this.quietStart,
-    quietEnd: quietEnd ?? this.quietEnd,
-    digestTime: digestTime ?? this.digestTime,
-    notifDomains: notifDomains ?? this.notifDomains,
-    backupMode: backupMode ?? this.backupMode,
-    dayCapacityMin: dayCapacityMin ?? this.dayCapacityMin,
+  DocumentsFt copyWith({
+    String? title,
+    String? issuer,
+    String? ocrText,
+    String? tags,
+  }) => DocumentsFt(
+    title: title ?? this.title,
+    issuer: issuer ?? this.issuer,
+    ocrText: ocrText ?? this.ocrText,
+    tags: tags ?? this.tags,
   );
-  UserSettingsRow copyWithCompanion(UserSettingsCompanion data) {
-    return UserSettingsRow(
-      id: data.id.present ? data.id.value : this.id,
-      userId: data.userId.present ? data.userId.value : this.userId,
-      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
-      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
-      version: data.version.present ? data.version.value : this.version,
-      themeTemplate: data.themeTemplate.present
-          ? data.themeTemplate.value
-          : this.themeTemplate,
-      darkMode: data.darkMode.present ? data.darkMode.value : this.darkMode,
-      textScale: data.textScale.present ? data.textScale.value : this.textScale,
-      appLock: data.appLock.present ? data.appLock.value : this.appLock,
-      vaultLock: data.vaultLock.present ? data.vaultLock.value : this.vaultLock,
-      autoLockMin: data.autoLockMin.present
-          ? data.autoLockMin.value
-          : this.autoLockMin,
-      quietStart: data.quietStart.present
-          ? data.quietStart.value
-          : this.quietStart,
-      quietEnd: data.quietEnd.present ? data.quietEnd.value : this.quietEnd,
-      digestTime: data.digestTime.present
-          ? data.digestTime.value
-          : this.digestTime,
-      notifDomains: data.notifDomains.present
-          ? data.notifDomains.value
-          : this.notifDomains,
-      backupMode: data.backupMode.present
-          ? data.backupMode.value
-          : this.backupMode,
-      dayCapacityMin: data.dayCapacityMin.present
-          ? data.dayCapacityMin.value
-          : this.dayCapacityMin,
+  DocumentsFt copyWithCompanion(DocumentsFtsCompanion data) {
+    return DocumentsFt(
+      title: data.title.present ? data.title.value : this.title,
+      issuer: data.issuer.present ? data.issuer.value : this.issuer,
+      ocrText: data.ocrText.present ? data.ocrText.value : this.ocrText,
+      tags: data.tags.present ? data.tags.value : this.tags,
     );
   }
 
   @override
   String toString() {
-    return (StringBuffer('UserSettingsRow(')
-          ..write('id: $id, ')
-          ..write('userId: $userId, ')
-          ..write('updatedAt: $updatedAt, ')
-          ..write('deletedAt: $deletedAt, ')
-          ..write('version: $version, ')
-          ..write('themeTemplate: $themeTemplate, ')
-          ..write('darkMode: $darkMode, ')
-          ..write('textScale: $textScale, ')
-          ..write('appLock: $appLock, ')
-          ..write('vaultLock: $vaultLock, ')
-          ..write('autoLockMin: $autoLockMin, ')
-          ..write('quietStart: $quietStart, ')
-          ..write('quietEnd: $quietEnd, ')
-          ..write('digestTime: $digestTime, ')
-          ..write('notifDomains: $notifDomains, ')
-          ..write('backupMode: $backupMode, ')
-          ..write('dayCapacityMin: $dayCapacityMin')
+    return (StringBuffer('DocumentsFt(')
+          ..write('title: $title, ')
+          ..write('issuer: $issuer, ')
+          ..write('ocrText: $ocrText, ')
+          ..write('tags: $tags')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(
-    id,
-    userId,
-    updatedAt,
-    deletedAt,
-    version,
-    themeTemplate,
-    darkMode,
-    textScale,
-    appLock,
-    vaultLock,
-    autoLockMin,
-    quietStart,
-    quietEnd,
-    digestTime,
-    notifDomains,
-    backupMode,
-    dayCapacityMin,
-  );
+  int get hashCode => Object.hash(title, issuer, ocrText, tags);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is UserSettingsRow &&
-          other.id == this.id &&
-          other.userId == this.userId &&
-          other.updatedAt == this.updatedAt &&
-          other.deletedAt == this.deletedAt &&
-          other.version == this.version &&
-          other.themeTemplate == this.themeTemplate &&
-          other.darkMode == this.darkMode &&
-          other.textScale == this.textScale &&
-          other.appLock == this.appLock &&
-          other.vaultLock == this.vaultLock &&
-          other.autoLockMin == this.autoLockMin &&
-          other.quietStart == this.quietStart &&
-          other.quietEnd == this.quietEnd &&
-          other.digestTime == this.digestTime &&
-          other.notifDomains == this.notifDomains &&
-          other.backupMode == this.backupMode &&
-          other.dayCapacityMin == this.dayCapacityMin);
+      (other is DocumentsFt &&
+          other.title == this.title &&
+          other.issuer == this.issuer &&
+          other.ocrText == this.ocrText &&
+          other.tags == this.tags);
 }
 
-class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
-  final Value<String> id;
-  final Value<String> userId;
-  final Value<int> updatedAt;
-  final Value<int?> deletedAt;
-  final Value<int> version;
-  final Value<String> themeTemplate;
-  final Value<String> darkMode;
-  final Value<double> textScale;
-  final Value<bool> appLock;
-  final Value<bool> vaultLock;
-  final Value<int> autoLockMin;
-  final Value<String> quietStart;
-  final Value<String> quietEnd;
-  final Value<String> digestTime;
-  final Value<String> notifDomains;
-  final Value<String> backupMode;
-  final Value<int> dayCapacityMin;
+class DocumentsFtsCompanion extends UpdateCompanion<DocumentsFt> {
+  final Value<String> title;
+  final Value<String> issuer;
+  final Value<String> ocrText;
+  final Value<String> tags;
   final Value<int> rowid;
-  const UserSettingsCompanion({
-    this.id = const Value.absent(),
-    this.userId = const Value.absent(),
-    this.updatedAt = const Value.absent(),
-    this.deletedAt = const Value.absent(),
-    this.version = const Value.absent(),
-    this.themeTemplate = const Value.absent(),
-    this.darkMode = const Value.absent(),
-    this.textScale = const Value.absent(),
-    this.appLock = const Value.absent(),
-    this.vaultLock = const Value.absent(),
-    this.autoLockMin = const Value.absent(),
-    this.quietStart = const Value.absent(),
-    this.quietEnd = const Value.absent(),
-    this.digestTime = const Value.absent(),
-    this.notifDomains = const Value.absent(),
-    this.backupMode = const Value.absent(),
-    this.dayCapacityMin = const Value.absent(),
+  const DocumentsFtsCompanion({
+    this.title = const Value.absent(),
+    this.issuer = const Value.absent(),
+    this.ocrText = const Value.absent(),
+    this.tags = const Value.absent(),
     this.rowid = const Value.absent(),
   });
-  UserSettingsCompanion.insert({
-    this.id = const Value.absent(),
-    this.userId = const Value.absent(),
-    this.updatedAt = const Value.absent(),
-    this.deletedAt = const Value.absent(),
-    this.version = const Value.absent(),
-    this.themeTemplate = const Value.absent(),
-    this.darkMode = const Value.absent(),
-    this.textScale = const Value.absent(),
-    this.appLock = const Value.absent(),
-    this.vaultLock = const Value.absent(),
-    this.autoLockMin = const Value.absent(),
-    this.quietStart = const Value.absent(),
-    this.quietEnd = const Value.absent(),
-    this.digestTime = const Value.absent(),
-    this.notifDomains = const Value.absent(),
-    this.backupMode = const Value.absent(),
-    this.dayCapacityMin = const Value.absent(),
+  DocumentsFtsCompanion.insert({
+    required String title,
+    required String issuer,
+    required String ocrText,
+    required String tags,
     this.rowid = const Value.absent(),
-  });
-  static Insertable<UserSettingsRow> custom({
-    Expression<String>? id,
-    Expression<String>? userId,
-    Expression<int>? updatedAt,
-    Expression<int>? deletedAt,
-    Expression<int>? version,
-    Expression<String>? themeTemplate,
-    Expression<String>? darkMode,
-    Expression<double>? textScale,
-    Expression<bool>? appLock,
-    Expression<bool>? vaultLock,
-    Expression<int>? autoLockMin,
-    Expression<String>? quietStart,
-    Expression<String>? quietEnd,
-    Expression<String>? digestTime,
-    Expression<String>? notifDomains,
-    Expression<String>? backupMode,
-    Expression<int>? dayCapacityMin,
+  }) : title = Value(title),
+       issuer = Value(issuer),
+       ocrText = Value(ocrText),
+       tags = Value(tags);
+  static Insertable<DocumentsFt> custom({
+    Expression<String>? title,
+    Expression<String>? issuer,
+    Expression<String>? ocrText,
+    Expression<String>? tags,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (userId != null) 'user_id': userId,
-      if (updatedAt != null) 'updated_at': updatedAt,
-      if (deletedAt != null) 'deleted_at': deletedAt,
-      if (version != null) 'version': version,
-      if (themeTemplate != null) 'theme_template': themeTemplate,
-      if (darkMode != null) 'dark_mode': darkMode,
-      if (textScale != null) 'text_scale': textScale,
-      if (appLock != null) 'app_lock': appLock,
-      if (vaultLock != null) 'vault_lock': vaultLock,
-      if (autoLockMin != null) 'auto_lock_min': autoLockMin,
-      if (quietStart != null) 'quiet_start': quietStart,
-      if (quietEnd != null) 'quiet_end': quietEnd,
-      if (digestTime != null) 'digest_time': digestTime,
-      if (notifDomains != null) 'notif_domains': notifDomains,
-      if (backupMode != null) 'backup_mode': backupMode,
-      if (dayCapacityMin != null) 'day_capacity_min': dayCapacityMin,
+      if (title != null) 'title': title,
+      if (issuer != null) 'issuer': issuer,
+      if (ocrText != null) 'ocr_text': ocrText,
+      if (tags != null) 'tags': tags,
       if (rowid != null) 'rowid': rowid,
     });
   }
 
-  UserSettingsCompanion copyWith({
-    Value<String>? id,
-    Value<String>? userId,
-    Value<int>? updatedAt,
-    Value<int?>? deletedAt,
-    Value<int>? version,
-    Value<String>? themeTemplate,
-    Value<String>? darkMode,
-    Value<double>? textScale,
-    Value<bool>? appLock,
-    Value<bool>? vaultLock,
-    Value<int>? autoLockMin,
-    Value<String>? quietStart,
-    Value<String>? quietEnd,
-    Value<String>? digestTime,
-    Value<String>? notifDomains,
-    Value<String>? backupMode,
-    Value<int>? dayCapacityMin,
+  DocumentsFtsCompanion copyWith({
+    Value<String>? title,
+    Value<String>? issuer,
+    Value<String>? ocrText,
+    Value<String>? tags,
     Value<int>? rowid,
   }) {
-    return UserSettingsCompanion(
-      id: id ?? this.id,
-      userId: userId ?? this.userId,
-      updatedAt: updatedAt ?? this.updatedAt,
-      deletedAt: deletedAt ?? this.deletedAt,
-      version: version ?? this.version,
-      themeTemplate: themeTemplate ?? this.themeTemplate,
-      darkMode: darkMode ?? this.darkMode,
-      textScale: textScale ?? this.textScale,
-      appLock: appLock ?? this.appLock,
-      vaultLock: vaultLock ?? this.vaultLock,
-      autoLockMin: autoLockMin ?? this.autoLockMin,
-      quietStart: quietStart ?? this.quietStart,
-      quietEnd: quietEnd ?? this.quietEnd,
-      digestTime: digestTime ?? this.digestTime,
-      notifDomains: notifDomains ?? this.notifDomains,
-      backupMode: backupMode ?? this.backupMode,
-      dayCapacityMin: dayCapacityMin ?? this.dayCapacityMin,
+    return DocumentsFtsCompanion(
+      title: title ?? this.title,
+      issuer: issuer ?? this.issuer,
+      ocrText: ocrText ?? this.ocrText,
+      tags: tags ?? this.tags,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -870,56 +289,17 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<String>(id.value);
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
     }
-    if (userId.present) {
-      map['user_id'] = Variable<String>(userId.value);
+    if (issuer.present) {
+      map['issuer'] = Variable<String>(issuer.value);
     }
-    if (updatedAt.present) {
-      map['updated_at'] = Variable<int>(updatedAt.value);
+    if (ocrText.present) {
+      map['ocr_text'] = Variable<String>(ocrText.value);
     }
-    if (deletedAt.present) {
-      map['deleted_at'] = Variable<int>(deletedAt.value);
-    }
-    if (version.present) {
-      map['version'] = Variable<int>(version.value);
-    }
-    if (themeTemplate.present) {
-      map['theme_template'] = Variable<String>(themeTemplate.value);
-    }
-    if (darkMode.present) {
-      map['dark_mode'] = Variable<String>(darkMode.value);
-    }
-    if (textScale.present) {
-      map['text_scale'] = Variable<double>(textScale.value);
-    }
-    if (appLock.present) {
-      map['app_lock'] = Variable<bool>(appLock.value);
-    }
-    if (vaultLock.present) {
-      map['vault_lock'] = Variable<bool>(vaultLock.value);
-    }
-    if (autoLockMin.present) {
-      map['auto_lock_min'] = Variable<int>(autoLockMin.value);
-    }
-    if (quietStart.present) {
-      map['quiet_start'] = Variable<String>(quietStart.value);
-    }
-    if (quietEnd.present) {
-      map['quiet_end'] = Variable<String>(quietEnd.value);
-    }
-    if (digestTime.present) {
-      map['digest_time'] = Variable<String>(digestTime.value);
-    }
-    if (notifDomains.present) {
-      map['notif_domains'] = Variable<String>(notifDomains.value);
-    }
-    if (backupMode.present) {
-      map['backup_mode'] = Variable<String>(backupMode.value);
-    }
-    if (dayCapacityMin.present) {
-      map['day_capacity_min'] = Variable<int>(dayCapacityMin.value);
+    if (tags.present) {
+      map['tags'] = Variable<String>(tags.value);
     }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
@@ -929,24 +309,11 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
 
   @override
   String toString() {
-    return (StringBuffer('UserSettingsCompanion(')
-          ..write('id: $id, ')
-          ..write('userId: $userId, ')
-          ..write('updatedAt: $updatedAt, ')
-          ..write('deletedAt: $deletedAt, ')
-          ..write('version: $version, ')
-          ..write('themeTemplate: $themeTemplate, ')
-          ..write('darkMode: $darkMode, ')
-          ..write('textScale: $textScale, ')
-          ..write('appLock: $appLock, ')
-          ..write('vaultLock: $vaultLock, ')
-          ..write('autoLockMin: $autoLockMin, ')
-          ..write('quietStart: $quietStart, ')
-          ..write('quietEnd: $quietEnd, ')
-          ..write('digestTime: $digestTime, ')
-          ..write('notifDomains: $notifDomains, ')
-          ..write('backupMode: $backupMode, ')
-          ..write('dayCapacityMin: $dayCapacityMin, ')
+    return (StringBuffer('DocumentsFtsCompanion(')
+          ..write('title: $title, ')
+          ..write('issuer: $issuer, ')
+          ..write('ocrText: $ocrText, ')
+          ..write('tags: $tags, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -2398,6 +1765,28 @@ class $DocumentsTable extends Documents
     requiredDuringInsert: false,
     defaultValue: const Constant('scan'),
   );
+  static const VerificationMeta _archivedAtMeta = const VerificationMeta(
+    'archivedAt',
+  );
+  @override
+  late final GeneratedColumn<int> archivedAt = GeneratedColumn<int>(
+    'archived_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _renewedByIdMeta = const VerificationMeta(
+    'renewedById',
+  );
+  @override
+  late final GeneratedColumn<String> renewedById = GeneratedColumn<String>(
+    'renewed_by_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -2423,6 +1812,8 @@ class $DocumentsTable extends Documents
     favorite,
     tags,
     source,
+    archivedAt,
+    renewedById,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -2585,6 +1976,21 @@ class $DocumentsTable extends Documents
         source.isAcceptableOrUnknown(data['source']!, _sourceMeta),
       );
     }
+    if (data.containsKey('archived_at')) {
+      context.handle(
+        _archivedAtMeta,
+        archivedAt.isAcceptableOrUnknown(data['archived_at']!, _archivedAtMeta),
+      );
+    }
+    if (data.containsKey('renewed_by_id')) {
+      context.handle(
+        _renewedByIdMeta,
+        renewedById.isAcceptableOrUnknown(
+          data['renewed_by_id']!,
+          _renewedByIdMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -2686,6 +2092,14 @@ class $DocumentsTable extends Documents
         DriftSqlType.string,
         data['${effectivePrefix}source'],
       )!,
+      archivedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}archived_at'],
+      ),
+      renewedById: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}renewed_by_id'],
+      ),
     );
   }
 
@@ -2719,6 +2133,13 @@ class Document extends DataClass implements Insertable<Document> {
   final bool favorite;
   final String tags;
   final String source;
+
+  /// Archived (kept, out of folder lists, still searchable) — schema v3,
+  /// PBI-007 / PBI-008 renewal.
+  final int? archivedAt;
+
+  /// The document that replaced this one when it was renewed (PBI-008).
+  final String? renewedById;
   const Document({
     required this.id,
     required this.userId,
@@ -2743,6 +2164,8 @@ class Document extends DataClass implements Insertable<Document> {
     required this.favorite,
     required this.tags,
     required this.source,
+    this.archivedAt,
+    this.renewedById,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -2798,6 +2221,12 @@ class Document extends DataClass implements Insertable<Document> {
     map['favorite'] = Variable<bool>(favorite);
     map['tags'] = Variable<String>(tags);
     map['source'] = Variable<String>(source);
+    if (!nullToAbsent || archivedAt != null) {
+      map['archived_at'] = Variable<int>(archivedAt);
+    }
+    if (!nullToAbsent || renewedById != null) {
+      map['renewed_by_id'] = Variable<String>(renewedById);
+    }
     return map;
   }
 
@@ -2852,6 +2281,12 @@ class Document extends DataClass implements Insertable<Document> {
       favorite: Value(favorite),
       tags: Value(tags),
       source: Value(source),
+      archivedAt: archivedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(archivedAt),
+      renewedById: renewedById == null && nullToAbsent
+          ? const Value.absent()
+          : Value(renewedById),
     );
   }
 
@@ -2886,6 +2321,8 @@ class Document extends DataClass implements Insertable<Document> {
       favorite: serializer.fromJson<bool>(json['favorite']),
       tags: serializer.fromJson<String>(json['tags']),
       source: serializer.fromJson<String>(json['source']),
+      archivedAt: serializer.fromJson<int?>(json['archivedAt']),
+      renewedById: serializer.fromJson<String?>(json['renewedById']),
     );
   }
   @override
@@ -2917,6 +2354,8 @@ class Document extends DataClass implements Insertable<Document> {
       'favorite': serializer.toJson<bool>(favorite),
       'tags': serializer.toJson<String>(tags),
       'source': serializer.toJson<String>(source),
+      'archivedAt': serializer.toJson<int?>(archivedAt),
+      'renewedById': serializer.toJson<String?>(renewedById),
     };
   }
 
@@ -2944,6 +2383,8 @@ class Document extends DataClass implements Insertable<Document> {
     bool? favorite,
     String? tags,
     String? source,
+    Value<int?> archivedAt = const Value.absent(),
+    Value<String?> renewedById = const Value.absent(),
   }) => Document(
     id: id ?? this.id,
     userId: userId ?? this.userId,
@@ -2970,6 +2411,8 @@ class Document extends DataClass implements Insertable<Document> {
     favorite: favorite ?? this.favorite,
     tags: tags ?? this.tags,
     source: source ?? this.source,
+    archivedAt: archivedAt.present ? archivedAt.value : this.archivedAt,
+    renewedById: renewedById.present ? renewedById.value : this.renewedById,
   );
   Document copyWithCompanion(DocumentsCompanion data) {
     return Document(
@@ -3006,6 +2449,12 @@ class Document extends DataClass implements Insertable<Document> {
       favorite: data.favorite.present ? data.favorite.value : this.favorite,
       tags: data.tags.present ? data.tags.value : this.tags,
       source: data.source.present ? data.source.value : this.source,
+      archivedAt: data.archivedAt.present
+          ? data.archivedAt.value
+          : this.archivedAt,
+      renewedById: data.renewedById.present
+          ? data.renewedById.value
+          : this.renewedById,
     );
   }
 
@@ -3034,7 +2483,9 @@ class Document extends DataClass implements Insertable<Document> {
           ..write('classificationConfidence: $classificationConfidence, ')
           ..write('favorite: $favorite, ')
           ..write('tags: $tags, ')
-          ..write('source: $source')
+          ..write('source: $source, ')
+          ..write('archivedAt: $archivedAt, ')
+          ..write('renewedById: $renewedById')
           ..write(')'))
         .toString();
   }
@@ -3064,6 +2515,8 @@ class Document extends DataClass implements Insertable<Document> {
     favorite,
     tags,
     source,
+    archivedAt,
+    renewedById,
   ]);
   @override
   bool operator ==(Object other) =>
@@ -3091,7 +2544,9 @@ class Document extends DataClass implements Insertable<Document> {
           other.classificationConfidence == this.classificationConfidence &&
           other.favorite == this.favorite &&
           other.tags == this.tags &&
-          other.source == this.source);
+          other.source == this.source &&
+          other.archivedAt == this.archivedAt &&
+          other.renewedById == this.renewedById);
 }
 
 class DocumentsCompanion extends UpdateCompanion<Document> {
@@ -3118,6 +2573,8 @@ class DocumentsCompanion extends UpdateCompanion<Document> {
   final Value<bool> favorite;
   final Value<String> tags;
   final Value<String> source;
+  final Value<int?> archivedAt;
+  final Value<String?> renewedById;
   final Value<int> rowid;
   const DocumentsCompanion({
     this.id = const Value.absent(),
@@ -3143,6 +2600,8 @@ class DocumentsCompanion extends UpdateCompanion<Document> {
     this.favorite = const Value.absent(),
     this.tags = const Value.absent(),
     this.source = const Value.absent(),
+    this.archivedAt = const Value.absent(),
+    this.renewedById = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   DocumentsCompanion.insert({
@@ -3169,6 +2628,8 @@ class DocumentsCompanion extends UpdateCompanion<Document> {
     this.favorite = const Value.absent(),
     this.tags = const Value.absent(),
     this.source = const Value.absent(),
+    this.archivedAt = const Value.absent(),
+    this.renewedById = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : title = Value(title);
   static Insertable<Document> custom({
@@ -3195,6 +2656,8 @@ class DocumentsCompanion extends UpdateCompanion<Document> {
     Expression<bool>? favorite,
     Expression<String>? tags,
     Expression<String>? source,
+    Expression<int>? archivedAt,
+    Expression<String>? renewedById,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -3222,6 +2685,8 @@ class DocumentsCompanion extends UpdateCompanion<Document> {
       if (favorite != null) 'favorite': favorite,
       if (tags != null) 'tags': tags,
       if (source != null) 'source': source,
+      if (archivedAt != null) 'archived_at': archivedAt,
+      if (renewedById != null) 'renewed_by_id': renewedById,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -3250,6 +2715,8 @@ class DocumentsCompanion extends UpdateCompanion<Document> {
     Value<bool>? favorite,
     Value<String>? tags,
     Value<String>? source,
+    Value<int?>? archivedAt,
+    Value<String?>? renewedById,
     Value<int>? rowid,
   }) {
     return DocumentsCompanion(
@@ -3277,6 +2744,8 @@ class DocumentsCompanion extends UpdateCompanion<Document> {
       favorite: favorite ?? this.favorite,
       tags: tags ?? this.tags,
       source: source ?? this.source,
+      archivedAt: archivedAt ?? this.archivedAt,
+      renewedById: renewedById ?? this.renewedById,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -3355,6 +2824,12 @@ class DocumentsCompanion extends UpdateCompanion<Document> {
     if (source.present) {
       map['source'] = Variable<String>(source.value);
     }
+    if (archivedAt.present) {
+      map['archived_at'] = Variable<int>(archivedAt.value);
+    }
+    if (renewedById.present) {
+      map['renewed_by_id'] = Variable<String>(renewedById.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -3387,6 +2862,958 @@ class DocumentsCompanion extends UpdateCompanion<Document> {
           ..write('favorite: $favorite, ')
           ..write('tags: $tags, ')
           ..write('source: $source, ')
+          ..write('archivedAt: $archivedAt, ')
+          ..write('renewedById: $renewedById, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $UserSettingsTable extends UserSettings
+    with TableInfo<$UserSettingsTable, UserSettingsRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $UserSettingsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: fallbackIds.next,
+  );
+  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
+  @override
+  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
+    'user_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: () => '',
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<int> updatedAt = GeneratedColumn<int>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    clientDefault: systemClock,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<int> deletedAt = GeneratedColumn<int>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _versionMeta = const VerificationMeta(
+    'version',
+  );
+  @override
+  late final GeneratedColumn<int> version = GeneratedColumn<int>(
+    'version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _themeTemplateMeta = const VerificationMeta(
+    'themeTemplate',
+  );
+  @override
+  late final GeneratedColumn<String> themeTemplate = GeneratedColumn<String>(
+    'theme_template',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('flagship'),
+  );
+  static const VerificationMeta _darkModeMeta = const VerificationMeta(
+    'darkMode',
+  );
+  @override
+  late final GeneratedColumn<String> darkMode = GeneratedColumn<String>(
+    'dark_mode',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('system'),
+  );
+  static const VerificationMeta _textScaleMeta = const VerificationMeta(
+    'textScale',
+  );
+  @override
+  late final GeneratedColumn<double> textScale = GeneratedColumn<double>(
+    'text_scale',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1.0),
+  );
+  static const VerificationMeta _appLockMeta = const VerificationMeta(
+    'appLock',
+  );
+  @override
+  late final GeneratedColumn<bool> appLock = GeneratedColumn<bool>(
+    'app_lock',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("app_lock" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _vaultLockMeta = const VerificationMeta(
+    'vaultLock',
+  );
+  @override
+  late final GeneratedColumn<bool> vaultLock = GeneratedColumn<bool>(
+    'vault_lock',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("vault_lock" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _autoLockMinMeta = const VerificationMeta(
+    'autoLockMin',
+  );
+  @override
+  late final GeneratedColumn<int> autoLockMin = GeneratedColumn<int>(
+    'auto_lock_min',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(5),
+  );
+  static const VerificationMeta _quietStartMeta = const VerificationMeta(
+    'quietStart',
+  );
+  @override
+  late final GeneratedColumn<String> quietStart = GeneratedColumn<String>(
+    'quiet_start',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('22:00'),
+  );
+  static const VerificationMeta _quietEndMeta = const VerificationMeta(
+    'quietEnd',
+  );
+  @override
+  late final GeneratedColumn<String> quietEnd = GeneratedColumn<String>(
+    'quiet_end',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('07:00'),
+  );
+  static const VerificationMeta _digestTimeMeta = const VerificationMeta(
+    'digestTime',
+  );
+  @override
+  late final GeneratedColumn<String> digestTime = GeneratedColumn<String>(
+    'digest_time',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('07:30'),
+  );
+  static const VerificationMeta _notifDomainsMeta = const VerificationMeta(
+    'notifDomains',
+  );
+  @override
+  late final GeneratedColumn<String> notifDomains = GeneratedColumn<String>(
+    'notif_domains',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('{}'),
+  );
+  static const VerificationMeta _backupModeMeta = const VerificationMeta(
+    'backupMode',
+  );
+  @override
+  late final GeneratedColumn<String> backupMode = GeneratedColumn<String>(
+    'backup_mode',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('wifi'),
+  );
+  static const VerificationMeta _dayCapacityMinMeta = const VerificationMeta(
+    'dayCapacityMin',
+  );
+  @override
+  late final GeneratedColumn<int> dayCapacityMin = GeneratedColumn<int>(
+    'day_capacity_min',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(360),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    userId,
+    updatedAt,
+    deletedAt,
+    version,
+    themeTemplate,
+    darkMode,
+    textScale,
+    appLock,
+    vaultLock,
+    autoLockMin,
+    quietStart,
+    quietEnd,
+    digestTime,
+    notifDomains,
+    backupMode,
+    dayCapacityMin,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'user_settings';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<UserSettingsRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('user_id')) {
+      context.handle(
+        _userIdMeta,
+        userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    if (data.containsKey('version')) {
+      context.handle(
+        _versionMeta,
+        version.isAcceptableOrUnknown(data['version']!, _versionMeta),
+      );
+    }
+    if (data.containsKey('theme_template')) {
+      context.handle(
+        _themeTemplateMeta,
+        themeTemplate.isAcceptableOrUnknown(
+          data['theme_template']!,
+          _themeTemplateMeta,
+        ),
+      );
+    }
+    if (data.containsKey('dark_mode')) {
+      context.handle(
+        _darkModeMeta,
+        darkMode.isAcceptableOrUnknown(data['dark_mode']!, _darkModeMeta),
+      );
+    }
+    if (data.containsKey('text_scale')) {
+      context.handle(
+        _textScaleMeta,
+        textScale.isAcceptableOrUnknown(data['text_scale']!, _textScaleMeta),
+      );
+    }
+    if (data.containsKey('app_lock')) {
+      context.handle(
+        _appLockMeta,
+        appLock.isAcceptableOrUnknown(data['app_lock']!, _appLockMeta),
+      );
+    }
+    if (data.containsKey('vault_lock')) {
+      context.handle(
+        _vaultLockMeta,
+        vaultLock.isAcceptableOrUnknown(data['vault_lock']!, _vaultLockMeta),
+      );
+    }
+    if (data.containsKey('auto_lock_min')) {
+      context.handle(
+        _autoLockMinMeta,
+        autoLockMin.isAcceptableOrUnknown(
+          data['auto_lock_min']!,
+          _autoLockMinMeta,
+        ),
+      );
+    }
+    if (data.containsKey('quiet_start')) {
+      context.handle(
+        _quietStartMeta,
+        quietStart.isAcceptableOrUnknown(data['quiet_start']!, _quietStartMeta),
+      );
+    }
+    if (data.containsKey('quiet_end')) {
+      context.handle(
+        _quietEndMeta,
+        quietEnd.isAcceptableOrUnknown(data['quiet_end']!, _quietEndMeta),
+      );
+    }
+    if (data.containsKey('digest_time')) {
+      context.handle(
+        _digestTimeMeta,
+        digestTime.isAcceptableOrUnknown(data['digest_time']!, _digestTimeMeta),
+      );
+    }
+    if (data.containsKey('notif_domains')) {
+      context.handle(
+        _notifDomainsMeta,
+        notifDomains.isAcceptableOrUnknown(
+          data['notif_domains']!,
+          _notifDomainsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('backup_mode')) {
+      context.handle(
+        _backupModeMeta,
+        backupMode.isAcceptableOrUnknown(data['backup_mode']!, _backupModeMeta),
+      );
+    }
+    if (data.containsKey('day_capacity_min')) {
+      context.handle(
+        _dayCapacityMinMeta,
+        dayCapacityMin.isAcceptableOrUnknown(
+          data['day_capacity_min']!,
+          _dayCapacityMinMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  List<Set<GeneratedColumn>> get uniqueKeys => [
+    {userId},
+  ];
+  @override
+  UserSettingsRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return UserSettingsRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      userId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}user_id'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      themeTemplate: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}theme_template'],
+      )!,
+      darkMode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}dark_mode'],
+      )!,
+      textScale: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}text_scale'],
+      )!,
+      appLock: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}app_lock'],
+      )!,
+      vaultLock: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}vault_lock'],
+      )!,
+      autoLockMin: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}auto_lock_min'],
+      )!,
+      quietStart: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}quiet_start'],
+      )!,
+      quietEnd: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}quiet_end'],
+      )!,
+      digestTime: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}digest_time'],
+      )!,
+      notifDomains: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notif_domains'],
+      )!,
+      backupMode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}backup_mode'],
+      )!,
+      dayCapacityMin: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}day_capacity_min'],
+      )!,
+    );
+  }
+
+  @override
+  $UserSettingsTable createAlias(String alias) {
+    return $UserSettingsTable(attachedDatabase, alias);
+  }
+}
+
+class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
+  final String id;
+  final String userId;
+  final int updatedAt;
+  final int? deletedAt;
+  final int version;
+  final String themeTemplate;
+  final String darkMode;
+  final double textScale;
+  final bool appLock;
+  final bool vaultLock;
+  final int autoLockMin;
+  final String quietStart;
+  final String quietEnd;
+  final String digestTime;
+  final String notifDomains;
+  final String backupMode;
+
+  /// Overload Shield day capacity in minutes (schema v2, PBI-011).
+  final int dayCapacityMin;
+  const UserSettingsRow({
+    required this.id,
+    required this.userId,
+    required this.updatedAt,
+    this.deletedAt,
+    required this.version,
+    required this.themeTemplate,
+    required this.darkMode,
+    required this.textScale,
+    required this.appLock,
+    required this.vaultLock,
+    required this.autoLockMin,
+    required this.quietStart,
+    required this.quietEnd,
+    required this.digestTime,
+    required this.notifDomains,
+    required this.backupMode,
+    required this.dayCapacityMin,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['user_id'] = Variable<String>(userId);
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    map['version'] = Variable<int>(version);
+    map['theme_template'] = Variable<String>(themeTemplate);
+    map['dark_mode'] = Variable<String>(darkMode);
+    map['text_scale'] = Variable<double>(textScale);
+    map['app_lock'] = Variable<bool>(appLock);
+    map['vault_lock'] = Variable<bool>(vaultLock);
+    map['auto_lock_min'] = Variable<int>(autoLockMin);
+    map['quiet_start'] = Variable<String>(quietStart);
+    map['quiet_end'] = Variable<String>(quietEnd);
+    map['digest_time'] = Variable<String>(digestTime);
+    map['notif_domains'] = Variable<String>(notifDomains);
+    map['backup_mode'] = Variable<String>(backupMode);
+    map['day_capacity_min'] = Variable<int>(dayCapacityMin);
+    return map;
+  }
+
+  UserSettingsCompanion toCompanion(bool nullToAbsent) {
+    return UserSettingsCompanion(
+      id: Value(id),
+      userId: Value(userId),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      version: Value(version),
+      themeTemplate: Value(themeTemplate),
+      darkMode: Value(darkMode),
+      textScale: Value(textScale),
+      appLock: Value(appLock),
+      vaultLock: Value(vaultLock),
+      autoLockMin: Value(autoLockMin),
+      quietStart: Value(quietStart),
+      quietEnd: Value(quietEnd),
+      digestTime: Value(digestTime),
+      notifDomains: Value(notifDomains),
+      backupMode: Value(backupMode),
+      dayCapacityMin: Value(dayCapacityMin),
+    );
+  }
+
+  factory UserSettingsRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return UserSettingsRow(
+      id: serializer.fromJson<String>(json['id']),
+      userId: serializer.fromJson<String>(json['userId']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+      version: serializer.fromJson<int>(json['version']),
+      themeTemplate: serializer.fromJson<String>(json['themeTemplate']),
+      darkMode: serializer.fromJson<String>(json['darkMode']),
+      textScale: serializer.fromJson<double>(json['textScale']),
+      appLock: serializer.fromJson<bool>(json['appLock']),
+      vaultLock: serializer.fromJson<bool>(json['vaultLock']),
+      autoLockMin: serializer.fromJson<int>(json['autoLockMin']),
+      quietStart: serializer.fromJson<String>(json['quietStart']),
+      quietEnd: serializer.fromJson<String>(json['quietEnd']),
+      digestTime: serializer.fromJson<String>(json['digestTime']),
+      notifDomains: serializer.fromJson<String>(json['notifDomains']),
+      backupMode: serializer.fromJson<String>(json['backupMode']),
+      dayCapacityMin: serializer.fromJson<int>(json['dayCapacityMin']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'userId': serializer.toJson<String>(userId),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+      'version': serializer.toJson<int>(version),
+      'themeTemplate': serializer.toJson<String>(themeTemplate),
+      'darkMode': serializer.toJson<String>(darkMode),
+      'textScale': serializer.toJson<double>(textScale),
+      'appLock': serializer.toJson<bool>(appLock),
+      'vaultLock': serializer.toJson<bool>(vaultLock),
+      'autoLockMin': serializer.toJson<int>(autoLockMin),
+      'quietStart': serializer.toJson<String>(quietStart),
+      'quietEnd': serializer.toJson<String>(quietEnd),
+      'digestTime': serializer.toJson<String>(digestTime),
+      'notifDomains': serializer.toJson<String>(notifDomains),
+      'backupMode': serializer.toJson<String>(backupMode),
+      'dayCapacityMin': serializer.toJson<int>(dayCapacityMin),
+    };
+  }
+
+  UserSettingsRow copyWith({
+    String? id,
+    String? userId,
+    int? updatedAt,
+    Value<int?> deletedAt = const Value.absent(),
+    int? version,
+    String? themeTemplate,
+    String? darkMode,
+    double? textScale,
+    bool? appLock,
+    bool? vaultLock,
+    int? autoLockMin,
+    String? quietStart,
+    String? quietEnd,
+    String? digestTime,
+    String? notifDomains,
+    String? backupMode,
+    int? dayCapacityMin,
+  }) => UserSettingsRow(
+    id: id ?? this.id,
+    userId: userId ?? this.userId,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    version: version ?? this.version,
+    themeTemplate: themeTemplate ?? this.themeTemplate,
+    darkMode: darkMode ?? this.darkMode,
+    textScale: textScale ?? this.textScale,
+    appLock: appLock ?? this.appLock,
+    vaultLock: vaultLock ?? this.vaultLock,
+    autoLockMin: autoLockMin ?? this.autoLockMin,
+    quietStart: quietStart ?? this.quietStart,
+    quietEnd: quietEnd ?? this.quietEnd,
+    digestTime: digestTime ?? this.digestTime,
+    notifDomains: notifDomains ?? this.notifDomains,
+    backupMode: backupMode ?? this.backupMode,
+    dayCapacityMin: dayCapacityMin ?? this.dayCapacityMin,
+  );
+  UserSettingsRow copyWithCompanion(UserSettingsCompanion data) {
+    return UserSettingsRow(
+      id: data.id.present ? data.id.value : this.id,
+      userId: data.userId.present ? data.userId.value : this.userId,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      version: data.version.present ? data.version.value : this.version,
+      themeTemplate: data.themeTemplate.present
+          ? data.themeTemplate.value
+          : this.themeTemplate,
+      darkMode: data.darkMode.present ? data.darkMode.value : this.darkMode,
+      textScale: data.textScale.present ? data.textScale.value : this.textScale,
+      appLock: data.appLock.present ? data.appLock.value : this.appLock,
+      vaultLock: data.vaultLock.present ? data.vaultLock.value : this.vaultLock,
+      autoLockMin: data.autoLockMin.present
+          ? data.autoLockMin.value
+          : this.autoLockMin,
+      quietStart: data.quietStart.present
+          ? data.quietStart.value
+          : this.quietStart,
+      quietEnd: data.quietEnd.present ? data.quietEnd.value : this.quietEnd,
+      digestTime: data.digestTime.present
+          ? data.digestTime.value
+          : this.digestTime,
+      notifDomains: data.notifDomains.present
+          ? data.notifDomains.value
+          : this.notifDomains,
+      backupMode: data.backupMode.present
+          ? data.backupMode.value
+          : this.backupMode,
+      dayCapacityMin: data.dayCapacityMin.present
+          ? data.dayCapacityMin.value
+          : this.dayCapacityMin,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('UserSettingsRow(')
+          ..write('id: $id, ')
+          ..write('userId: $userId, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('version: $version, ')
+          ..write('themeTemplate: $themeTemplate, ')
+          ..write('darkMode: $darkMode, ')
+          ..write('textScale: $textScale, ')
+          ..write('appLock: $appLock, ')
+          ..write('vaultLock: $vaultLock, ')
+          ..write('autoLockMin: $autoLockMin, ')
+          ..write('quietStart: $quietStart, ')
+          ..write('quietEnd: $quietEnd, ')
+          ..write('digestTime: $digestTime, ')
+          ..write('notifDomains: $notifDomains, ')
+          ..write('backupMode: $backupMode, ')
+          ..write('dayCapacityMin: $dayCapacityMin')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    userId,
+    updatedAt,
+    deletedAt,
+    version,
+    themeTemplate,
+    darkMode,
+    textScale,
+    appLock,
+    vaultLock,
+    autoLockMin,
+    quietStart,
+    quietEnd,
+    digestTime,
+    notifDomains,
+    backupMode,
+    dayCapacityMin,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is UserSettingsRow &&
+          other.id == this.id &&
+          other.userId == this.userId &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt &&
+          other.version == this.version &&
+          other.themeTemplate == this.themeTemplate &&
+          other.darkMode == this.darkMode &&
+          other.textScale == this.textScale &&
+          other.appLock == this.appLock &&
+          other.vaultLock == this.vaultLock &&
+          other.autoLockMin == this.autoLockMin &&
+          other.quietStart == this.quietStart &&
+          other.quietEnd == this.quietEnd &&
+          other.digestTime == this.digestTime &&
+          other.notifDomains == this.notifDomains &&
+          other.backupMode == this.backupMode &&
+          other.dayCapacityMin == this.dayCapacityMin);
+}
+
+class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
+  final Value<String> id;
+  final Value<String> userId;
+  final Value<int> updatedAt;
+  final Value<int?> deletedAt;
+  final Value<int> version;
+  final Value<String> themeTemplate;
+  final Value<String> darkMode;
+  final Value<double> textScale;
+  final Value<bool> appLock;
+  final Value<bool> vaultLock;
+  final Value<int> autoLockMin;
+  final Value<String> quietStart;
+  final Value<String> quietEnd;
+  final Value<String> digestTime;
+  final Value<String> notifDomains;
+  final Value<String> backupMode;
+  final Value<int> dayCapacityMin;
+  final Value<int> rowid;
+  const UserSettingsCompanion({
+    this.id = const Value.absent(),
+    this.userId = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.version = const Value.absent(),
+    this.themeTemplate = const Value.absent(),
+    this.darkMode = const Value.absent(),
+    this.textScale = const Value.absent(),
+    this.appLock = const Value.absent(),
+    this.vaultLock = const Value.absent(),
+    this.autoLockMin = const Value.absent(),
+    this.quietStart = const Value.absent(),
+    this.quietEnd = const Value.absent(),
+    this.digestTime = const Value.absent(),
+    this.notifDomains = const Value.absent(),
+    this.backupMode = const Value.absent(),
+    this.dayCapacityMin = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  UserSettingsCompanion.insert({
+    this.id = const Value.absent(),
+    this.userId = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.version = const Value.absent(),
+    this.themeTemplate = const Value.absent(),
+    this.darkMode = const Value.absent(),
+    this.textScale = const Value.absent(),
+    this.appLock = const Value.absent(),
+    this.vaultLock = const Value.absent(),
+    this.autoLockMin = const Value.absent(),
+    this.quietStart = const Value.absent(),
+    this.quietEnd = const Value.absent(),
+    this.digestTime = const Value.absent(),
+    this.notifDomains = const Value.absent(),
+    this.backupMode = const Value.absent(),
+    this.dayCapacityMin = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  static Insertable<UserSettingsRow> custom({
+    Expression<String>? id,
+    Expression<String>? userId,
+    Expression<int>? updatedAt,
+    Expression<int>? deletedAt,
+    Expression<int>? version,
+    Expression<String>? themeTemplate,
+    Expression<String>? darkMode,
+    Expression<double>? textScale,
+    Expression<bool>? appLock,
+    Expression<bool>? vaultLock,
+    Expression<int>? autoLockMin,
+    Expression<String>? quietStart,
+    Expression<String>? quietEnd,
+    Expression<String>? digestTime,
+    Expression<String>? notifDomains,
+    Expression<String>? backupMode,
+    Expression<int>? dayCapacityMin,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (userId != null) 'user_id': userId,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (version != null) 'version': version,
+      if (themeTemplate != null) 'theme_template': themeTemplate,
+      if (darkMode != null) 'dark_mode': darkMode,
+      if (textScale != null) 'text_scale': textScale,
+      if (appLock != null) 'app_lock': appLock,
+      if (vaultLock != null) 'vault_lock': vaultLock,
+      if (autoLockMin != null) 'auto_lock_min': autoLockMin,
+      if (quietStart != null) 'quiet_start': quietStart,
+      if (quietEnd != null) 'quiet_end': quietEnd,
+      if (digestTime != null) 'digest_time': digestTime,
+      if (notifDomains != null) 'notif_domains': notifDomains,
+      if (backupMode != null) 'backup_mode': backupMode,
+      if (dayCapacityMin != null) 'day_capacity_min': dayCapacityMin,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  UserSettingsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? userId,
+    Value<int>? updatedAt,
+    Value<int?>? deletedAt,
+    Value<int>? version,
+    Value<String>? themeTemplate,
+    Value<String>? darkMode,
+    Value<double>? textScale,
+    Value<bool>? appLock,
+    Value<bool>? vaultLock,
+    Value<int>? autoLockMin,
+    Value<String>? quietStart,
+    Value<String>? quietEnd,
+    Value<String>? digestTime,
+    Value<String>? notifDomains,
+    Value<String>? backupMode,
+    Value<int>? dayCapacityMin,
+    Value<int>? rowid,
+  }) {
+    return UserSettingsCompanion(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      version: version ?? this.version,
+      themeTemplate: themeTemplate ?? this.themeTemplate,
+      darkMode: darkMode ?? this.darkMode,
+      textScale: textScale ?? this.textScale,
+      appLock: appLock ?? this.appLock,
+      vaultLock: vaultLock ?? this.vaultLock,
+      autoLockMin: autoLockMin ?? this.autoLockMin,
+      quietStart: quietStart ?? this.quietStart,
+      quietEnd: quietEnd ?? this.quietEnd,
+      digestTime: digestTime ?? this.digestTime,
+      notifDomains: notifDomains ?? this.notifDomains,
+      backupMode: backupMode ?? this.backupMode,
+      dayCapacityMin: dayCapacityMin ?? this.dayCapacityMin,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<String>(userId.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (themeTemplate.present) {
+      map['theme_template'] = Variable<String>(themeTemplate.value);
+    }
+    if (darkMode.present) {
+      map['dark_mode'] = Variable<String>(darkMode.value);
+    }
+    if (textScale.present) {
+      map['text_scale'] = Variable<double>(textScale.value);
+    }
+    if (appLock.present) {
+      map['app_lock'] = Variable<bool>(appLock.value);
+    }
+    if (vaultLock.present) {
+      map['vault_lock'] = Variable<bool>(vaultLock.value);
+    }
+    if (autoLockMin.present) {
+      map['auto_lock_min'] = Variable<int>(autoLockMin.value);
+    }
+    if (quietStart.present) {
+      map['quiet_start'] = Variable<String>(quietStart.value);
+    }
+    if (quietEnd.present) {
+      map['quiet_end'] = Variable<String>(quietEnd.value);
+    }
+    if (digestTime.present) {
+      map['digest_time'] = Variable<String>(digestTime.value);
+    }
+    if (notifDomains.present) {
+      map['notif_domains'] = Variable<String>(notifDomains.value);
+    }
+    if (backupMode.present) {
+      map['backup_mode'] = Variable<String>(backupMode.value);
+    }
+    if (dayCapacityMin.present) {
+      map['day_capacity_min'] = Variable<int>(dayCapacityMin.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('UserSettingsCompanion(')
+          ..write('id: $id, ')
+          ..write('userId: $userId, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('version: $version, ')
+          ..write('themeTemplate: $themeTemplate, ')
+          ..write('darkMode: $darkMode, ')
+          ..write('textScale: $textScale, ')
+          ..write('appLock: $appLock, ')
+          ..write('vaultLock: $vaultLock, ')
+          ..write('autoLockMin: $autoLockMin, ')
+          ..write('quietStart: $quietStart, ')
+          ..write('quietEnd: $quietEnd, ')
+          ..write('digestTime: $digestTime, ')
+          ..write('notifDomains: $notifDomains, ')
+          ..write('backupMode: $backupMode, ')
+          ..write('dayCapacityMin: $dayCapacityMin, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -12199,10 +12626,23 @@ class AppMetaCompanion extends UpdateCompanion<AppMetaEntry> {
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
-  late final $UserSettingsTable userSettings = $UserSettingsTable(this);
+  late final DocumentsFts documentsFts = DocumentsFts(this);
   late final $PersonsTable persons = $PersonsTable(this);
   late final $FoldersTable folders = $FoldersTable(this);
   late final $DocumentsTable documents = $DocumentsTable(this);
+  late final Trigger documentsFtsAi = Trigger(
+    'CREATE TRIGGER documents_fts_ai AFTER INSERT ON documents BEGIN INSERT INTO documents_fts ("rowid", title, issuer, ocr_text, tags) VALUES (new."rowid", new.title, new.issuer, new.ocr_text, new.tags);END',
+    'documents_fts_ai',
+  );
+  late final Trigger documentsFtsAd = Trigger(
+    'CREATE TRIGGER documents_fts_ad AFTER DELETE ON documents BEGIN INSERT INTO documents_fts (documents_fts, "rowid", title, issuer, ocr_text, tags) VALUES (\'delete\', old."rowid", old.title, old.issuer, old.ocr_text, old.tags);END',
+    'documents_fts_ad',
+  );
+  late final Trigger documentsFtsAu = Trigger(
+    'CREATE TRIGGER documents_fts_au AFTER UPDATE ON documents BEGIN INSERT INTO documents_fts (documents_fts, "rowid", title, issuer, ocr_text, tags) VALUES (\'delete\', old."rowid", old.title, old.issuer, old.ocr_text, old.tags);INSERT INTO documents_fts ("rowid", title, issuer, ocr_text, tags) VALUES (new."rowid", new.title, new.issuer, new.ocr_text, new.tags);END',
+    'documents_fts_au',
+  );
+  late final $UserSettingsTable userSettings = $UserSettingsTable(this);
   late final $DocumentFilesTable documentFiles = $DocumentFilesTable(this);
   late final $ExtractedFieldsTable extractedFields = $ExtractedFieldsTable(
     this,
@@ -12224,10 +12664,14 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
-    userSettings,
+    documentsFts,
     persons,
     folders,
     documents,
+    documentsFtsAi,
+    documentsFtsAd,
+    documentsFtsAu,
+    userSettings,
     documentFiles,
     extractedFields,
     atcRules,
@@ -12243,434 +12687,195 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     blobCache,
     appMeta,
   ];
+  @override
+  StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'documents',
+        limitUpdateKind: UpdateKind.insert,
+      ),
+      result: [TableUpdate('documents_fts', kind: UpdateKind.insert)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'documents',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('documents_fts', kind: UpdateKind.insert)],
+    ),
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'documents',
+        limitUpdateKind: UpdateKind.update,
+      ),
+      result: [TableUpdate('documents_fts', kind: UpdateKind.insert)],
+    ),
+  ]);
 }
 
-typedef $$UserSettingsTableCreateCompanionBuilder =
-    UserSettingsCompanion Function({
-      Value<String> id,
-      Value<String> userId,
-      Value<int> updatedAt,
-      Value<int?> deletedAt,
-      Value<int> version,
-      Value<String> themeTemplate,
-      Value<String> darkMode,
-      Value<double> textScale,
-      Value<bool> appLock,
-      Value<bool> vaultLock,
-      Value<int> autoLockMin,
-      Value<String> quietStart,
-      Value<String> quietEnd,
-      Value<String> digestTime,
-      Value<String> notifDomains,
-      Value<String> backupMode,
-      Value<int> dayCapacityMin,
-      Value<int> rowid,
-    });
-typedef $$UserSettingsTableUpdateCompanionBuilder =
-    UserSettingsCompanion Function({
-      Value<String> id,
-      Value<String> userId,
-      Value<int> updatedAt,
-      Value<int?> deletedAt,
-      Value<int> version,
-      Value<String> themeTemplate,
-      Value<String> darkMode,
-      Value<double> textScale,
-      Value<bool> appLock,
-      Value<bool> vaultLock,
-      Value<int> autoLockMin,
-      Value<String> quietStart,
-      Value<String> quietEnd,
-      Value<String> digestTime,
-      Value<String> notifDomains,
-      Value<String> backupMode,
-      Value<int> dayCapacityMin,
-      Value<int> rowid,
-    });
+typedef $DocumentsFtsCreateCompanionBuilder = DocumentsFtsCompanion Function({
+  required String title,
+  required String issuer,
+  required String ocrText,
+  required String tags,
+  Value<int> rowid,
+});
+typedef $DocumentsFtsUpdateCompanionBuilder = DocumentsFtsCompanion Function({
+  Value<String> title,
+  Value<String> issuer,
+  Value<String> ocrText,
+  Value<String> tags,
+  Value<int> rowid,
+});
 
-class $$UserSettingsTableFilterComposer
-    extends Composer<_$AppDatabase, $UserSettingsTable> {
-  $$UserSettingsTableFilterComposer({
+class $DocumentsFtsFilterComposer
+    extends Composer<_$AppDatabase, DocumentsFts> {
+  $DocumentsFtsFilterComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnFilters<String> get id => $composableBuilder(
-    column: $table.id,
+  ColumnFilters<String> get title => $composableBuilder(
+    column: $table.title,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get userId => $composableBuilder(
-    column: $table.userId,
+  ColumnFilters<String> get issuer => $composableBuilder(
+    column: $table.issuer,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get updatedAt => $composableBuilder(
-    column: $table.updatedAt,
+  ColumnFilters<String> get ocrText => $composableBuilder(
+    column: $table.ocrText,
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<int> get deletedAt => $composableBuilder(
-    column: $table.deletedAt,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get version => $composableBuilder(
-    column: $table.version,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get themeTemplate => $composableBuilder(
-    column: $table.themeTemplate,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get darkMode => $composableBuilder(
-    column: $table.darkMode,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<double> get textScale => $composableBuilder(
-    column: $table.textScale,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<bool> get appLock => $composableBuilder(
-    column: $table.appLock,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<bool> get vaultLock => $composableBuilder(
-    column: $table.vaultLock,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get autoLockMin => $composableBuilder(
-    column: $table.autoLockMin,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get quietStart => $composableBuilder(
-    column: $table.quietStart,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get quietEnd => $composableBuilder(
-    column: $table.quietEnd,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get digestTime => $composableBuilder(
-    column: $table.digestTime,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get notifDomains => $composableBuilder(
-    column: $table.notifDomains,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get backupMode => $composableBuilder(
-    column: $table.backupMode,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get dayCapacityMin => $composableBuilder(
-    column: $table.dayCapacityMin,
+  ColumnFilters<String> get tags => $composableBuilder(
+    column: $table.tags,
     builder: (column) => ColumnFilters(column),
   );
 }
 
-class $$UserSettingsTableOrderingComposer
-    extends Composer<_$AppDatabase, $UserSettingsTable> {
-  $$UserSettingsTableOrderingComposer({
+class $DocumentsFtsOrderingComposer
+    extends Composer<_$AppDatabase, DocumentsFts> {
+  $DocumentsFtsOrderingComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  ColumnOrderings<String> get id => $composableBuilder(
-    column: $table.id,
+  ColumnOrderings<String> get title => $composableBuilder(
+    column: $table.title,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get userId => $composableBuilder(
-    column: $table.userId,
+  ColumnOrderings<String> get issuer => $composableBuilder(
+    column: $table.issuer,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get updatedAt => $composableBuilder(
-    column: $table.updatedAt,
+  ColumnOrderings<String> get ocrText => $composableBuilder(
+    column: $table.ocrText,
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get deletedAt => $composableBuilder(
-    column: $table.deletedAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get version => $composableBuilder(
-    column: $table.version,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get themeTemplate => $composableBuilder(
-    column: $table.themeTemplate,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get darkMode => $composableBuilder(
-    column: $table.darkMode,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<double> get textScale => $composableBuilder(
-    column: $table.textScale,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<bool> get appLock => $composableBuilder(
-    column: $table.appLock,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<bool> get vaultLock => $composableBuilder(
-    column: $table.vaultLock,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get autoLockMin => $composableBuilder(
-    column: $table.autoLockMin,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get quietStart => $composableBuilder(
-    column: $table.quietStart,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get quietEnd => $composableBuilder(
-    column: $table.quietEnd,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get digestTime => $composableBuilder(
-    column: $table.digestTime,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get notifDomains => $composableBuilder(
-    column: $table.notifDomains,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get backupMode => $composableBuilder(
-    column: $table.backupMode,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get dayCapacityMin => $composableBuilder(
-    column: $table.dayCapacityMin,
+  ColumnOrderings<String> get tags => $composableBuilder(
+    column: $table.tags,
     builder: (column) => ColumnOrderings(column),
   );
 }
 
-class $$UserSettingsTableAnnotationComposer
-    extends Composer<_$AppDatabase, $UserSettingsTable> {
-  $$UserSettingsTableAnnotationComposer({
+class $DocumentsFtsAnnotationComposer
+    extends Composer<_$AppDatabase, DocumentsFts> {
+  $DocumentsFtsAnnotationComposer({
     required super.$db,
     required super.$table,
     super.joinBuilder,
     super.$addJoinBuilderToRootComposer,
     super.$removeJoinBuilderFromRootComposer,
   });
-  GeneratedColumn<String> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
+  GeneratedColumn<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => column);
 
-  GeneratedColumn<String> get userId =>
-      $composableBuilder(column: $table.userId, builder: (column) => column);
+  GeneratedColumn<String> get issuer =>
+      $composableBuilder(column: $table.issuer, builder: (column) => column);
 
-  GeneratedColumn<int> get updatedAt =>
-      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+  GeneratedColumn<String> get ocrText =>
+      $composableBuilder(column: $table.ocrText, builder: (column) => column);
 
-  GeneratedColumn<int> get deletedAt =>
-      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
-
-  GeneratedColumn<int> get version =>
-      $composableBuilder(column: $table.version, builder: (column) => column);
-
-  GeneratedColumn<String> get themeTemplate => $composableBuilder(
-    column: $table.themeTemplate,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get darkMode =>
-      $composableBuilder(column: $table.darkMode, builder: (column) => column);
-
-  GeneratedColumn<double> get textScale =>
-      $composableBuilder(column: $table.textScale, builder: (column) => column);
-
-  GeneratedColumn<bool> get appLock =>
-      $composableBuilder(column: $table.appLock, builder: (column) => column);
-
-  GeneratedColumn<bool> get vaultLock =>
-      $composableBuilder(column: $table.vaultLock, builder: (column) => column);
-
-  GeneratedColumn<int> get autoLockMin => $composableBuilder(
-    column: $table.autoLockMin,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get quietStart => $composableBuilder(
-    column: $table.quietStart,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get quietEnd =>
-      $composableBuilder(column: $table.quietEnd, builder: (column) => column);
-
-  GeneratedColumn<String> get digestTime => $composableBuilder(
-    column: $table.digestTime,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get notifDomains => $composableBuilder(
-    column: $table.notifDomains,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get backupMode => $composableBuilder(
-    column: $table.backupMode,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<int> get dayCapacityMin => $composableBuilder(
-    column: $table.dayCapacityMin,
-    builder: (column) => column,
-  );
+  GeneratedColumn<String> get tags =>
+      $composableBuilder(column: $table.tags, builder: (column) => column);
 }
 
-class $$UserSettingsTableTableManager
+class $DocumentsFtsTableManager
     extends
         RootTableManager<
           _$AppDatabase,
-          $UserSettingsTable,
-          UserSettingsRow,
-          $$UserSettingsTableFilterComposer,
-          $$UserSettingsTableOrderingComposer,
-          $$UserSettingsTableAnnotationComposer,
-          $$UserSettingsTableCreateCompanionBuilder,
-          $$UserSettingsTableUpdateCompanionBuilder,
+          DocumentsFts,
+          DocumentsFt,
+          $DocumentsFtsFilterComposer,
+          $DocumentsFtsOrderingComposer,
+          $DocumentsFtsAnnotationComposer,
+          $DocumentsFtsCreateCompanionBuilder,
+          $DocumentsFtsUpdateCompanionBuilder,
           (
-            UserSettingsRow,
-            BaseReferences<_$AppDatabase, $UserSettingsTable, UserSettingsRow>,
+            DocumentsFt,
+            BaseReferences<_$AppDatabase, DocumentsFts, DocumentsFt>,
           ),
-          UserSettingsRow,
+          DocumentsFt,
           PrefetchHooks Function()
         > {
-  $$UserSettingsTableTableManager(_$AppDatabase db, $UserSettingsTable table)
+  $DocumentsFtsTableManager(_$AppDatabase db, DocumentsFts table)
     : super(
         TableManagerState(
           db: db,
           table: table,
           createFilteringComposer: () =>
-              $$UserSettingsTableFilterComposer($db: db, $table: table),
+              $DocumentsFtsFilterComposer($db: db, $table: table),
           createOrderingComposer: () =>
-              $$UserSettingsTableOrderingComposer($db: db, $table: table),
+              $DocumentsFtsOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
-              $$UserSettingsTableAnnotationComposer($db: db, $table: table),
+              $DocumentsFtsAnnotationComposer($db: db, $table: table),
           updateCompanionCallback:
               ({
-                Value<String> id = const Value.absent(),
-                Value<String> userId = const Value.absent(),
-                Value<int> updatedAt = const Value.absent(),
-                Value<int?> deletedAt = const Value.absent(),
-                Value<int> version = const Value.absent(),
-                Value<String> themeTemplate = const Value.absent(),
-                Value<String> darkMode = const Value.absent(),
-                Value<double> textScale = const Value.absent(),
-                Value<bool> appLock = const Value.absent(),
-                Value<bool> vaultLock = const Value.absent(),
-                Value<int> autoLockMin = const Value.absent(),
-                Value<String> quietStart = const Value.absent(),
-                Value<String> quietEnd = const Value.absent(),
-                Value<String> digestTime = const Value.absent(),
-                Value<String> notifDomains = const Value.absent(),
-                Value<String> backupMode = const Value.absent(),
-                Value<int> dayCapacityMin = const Value.absent(),
+                Value<String> title = const Value.absent(),
+                Value<String> issuer = const Value.absent(),
+                Value<String> ocrText = const Value.absent(),
+                Value<String> tags = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
-              }) => UserSettingsCompanion(
-                id: id,
-                userId: userId,
-                updatedAt: updatedAt,
-                deletedAt: deletedAt,
-                version: version,
-                themeTemplate: themeTemplate,
-                darkMode: darkMode,
-                textScale: textScale,
-                appLock: appLock,
-                vaultLock: vaultLock,
-                autoLockMin: autoLockMin,
-                quietStart: quietStart,
-                quietEnd: quietEnd,
-                digestTime: digestTime,
-                notifDomains: notifDomains,
-                backupMode: backupMode,
-                dayCapacityMin: dayCapacityMin,
+              }) => DocumentsFtsCompanion(
+                title: title,
+                issuer: issuer,
+                ocrText: ocrText,
+                tags: tags,
                 rowid: rowid,
               ),
           createCompanionCallback:
               ({
-                Value<String> id = const Value.absent(),
-                Value<String> userId = const Value.absent(),
-                Value<int> updatedAt = const Value.absent(),
-                Value<int?> deletedAt = const Value.absent(),
-                Value<int> version = const Value.absent(),
-                Value<String> themeTemplate = const Value.absent(),
-                Value<String> darkMode = const Value.absent(),
-                Value<double> textScale = const Value.absent(),
-                Value<bool> appLock = const Value.absent(),
-                Value<bool> vaultLock = const Value.absent(),
-                Value<int> autoLockMin = const Value.absent(),
-                Value<String> quietStart = const Value.absent(),
-                Value<String> quietEnd = const Value.absent(),
-                Value<String> digestTime = const Value.absent(),
-                Value<String> notifDomains = const Value.absent(),
-                Value<String> backupMode = const Value.absent(),
-                Value<int> dayCapacityMin = const Value.absent(),
+                required String title,
+                required String issuer,
+                required String ocrText,
+                required String tags,
                 Value<int> rowid = const Value.absent(),
-              }) => UserSettingsCompanion.insert(
-                id: id,
-                userId: userId,
-                updatedAt: updatedAt,
-                deletedAt: deletedAt,
-                version: version,
-                themeTemplate: themeTemplate,
-                darkMode: darkMode,
-                textScale: textScale,
-                appLock: appLock,
-                vaultLock: vaultLock,
-                autoLockMin: autoLockMin,
-                quietStart: quietStart,
-                quietEnd: quietEnd,
-                digestTime: digestTime,
-                notifDomains: notifDomains,
-                backupMode: backupMode,
-                dayCapacityMin: dayCapacityMin,
+              }) => DocumentsFtsCompanion.insert(
+                title: title,
+                issuer: issuer,
+                ocrText: ocrText,
+                tags: tags,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
               .map(
                 (e) => (
-                  e.readTable<$UserSettingsTable, UserSettingsRow>(table),
-                  BaseReferences<
-                    _$AppDatabase,
-                    $UserSettingsTable,
-                    UserSettingsRow
-                  >(db, table, e),
+                  e.readTable<DocumentsFts, DocumentsFt>(table),
+                  BaseReferences<_$AppDatabase, DocumentsFts, DocumentsFt>(
+                    db,
+                    table,
+                    e,
+                  ),
                 ),
               )
               .toList(),
@@ -12679,21 +12884,18 @@ class $$UserSettingsTableTableManager
       );
 }
 
-typedef $$UserSettingsTableProcessedTableManager =
+typedef $DocumentsFtsProcessedTableManager =
     ProcessedTableManager<
       _$AppDatabase,
-      $UserSettingsTable,
-      UserSettingsRow,
-      $$UserSettingsTableFilterComposer,
-      $$UserSettingsTableOrderingComposer,
-      $$UserSettingsTableAnnotationComposer,
-      $$UserSettingsTableCreateCompanionBuilder,
-      $$UserSettingsTableUpdateCompanionBuilder,
-      (
-        UserSettingsRow,
-        BaseReferences<_$AppDatabase, $UserSettingsTable, UserSettingsRow>,
-      ),
-      UserSettingsRow,
+      DocumentsFts,
+      DocumentsFt,
+      $DocumentsFtsFilterComposer,
+      $DocumentsFtsOrderingComposer,
+      $DocumentsFtsAnnotationComposer,
+      $DocumentsFtsCreateCompanionBuilder,
+      $DocumentsFtsUpdateCompanionBuilder,
+      (DocumentsFt, BaseReferences<_$AppDatabase, DocumentsFts, DocumentsFt>),
+      DocumentsFt,
       PrefetchHooks Function()
     >;
 typedef $$PersonsTableCreateCompanionBuilder = PersonsCompanion Function({
@@ -13699,6 +13901,8 @@ typedef $$DocumentsTableCreateCompanionBuilder = DocumentsCompanion Function({
   Value<bool> favorite,
   Value<String> tags,
   Value<String> source,
+  Value<int?> archivedAt,
+  Value<String?> renewedById,
   Value<int> rowid,
 });
 typedef $$DocumentsTableUpdateCompanionBuilder = DocumentsCompanion Function({
@@ -13725,6 +13929,8 @@ typedef $$DocumentsTableUpdateCompanionBuilder = DocumentsCompanion Function({
   Value<bool> favorite,
   Value<String> tags,
   Value<String> source,
+  Value<int?> archivedAt,
+  Value<String?> renewedById,
   Value<int> rowid,
 });
 
@@ -13970,6 +14176,16 @@ class $$DocumentsTableFilterComposer
 
   ColumnFilters<String> get source => $composableBuilder(
     column: $table.source,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get archivedAt => $composableBuilder(
+    column: $table.archivedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get renewedById => $composableBuilder(
+    column: $table.renewedById,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -14259,6 +14475,16 @@ class $$DocumentsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get archivedAt => $composableBuilder(
+    column: $table.archivedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get renewedById => $composableBuilder(
+    column: $table.renewedById,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$PersonsTableOrderingComposer get personId {
     final $$PersonsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -14387,6 +14613,16 @@ class $$DocumentsTableAnnotationComposer
 
   GeneratedColumn<String> get source =>
       $composableBuilder(column: $table.source, builder: (column) => column);
+
+  GeneratedColumn<int> get archivedAt => $composableBuilder(
+    column: $table.archivedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get renewedById => $composableBuilder(
+    column: $table.renewedById,
+    builder: (column) => column,
+  );
 
   $$PersonsTableAnnotationComposer get personId {
     final $$PersonsTableAnnotationComposer composer = $composerBuilder(
@@ -14619,6 +14855,8 @@ class $$DocumentsTableTableManager
                 Value<bool> favorite = const Value.absent(),
                 Value<String> tags = const Value.absent(),
                 Value<String> source = const Value.absent(),
+                Value<int?> archivedAt = const Value.absent(),
+                Value<String?> renewedById = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => DocumentsCompanion(
                 id: id,
@@ -14644,6 +14882,8 @@ class $$DocumentsTableTableManager
                 favorite: favorite,
                 tags: tags,
                 source: source,
+                archivedAt: archivedAt,
+                renewedById: renewedById,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -14671,6 +14911,8 @@ class $$DocumentsTableTableManager
                 Value<bool> favorite = const Value.absent(),
                 Value<String> tags = const Value.absent(),
                 Value<String> source = const Value.absent(),
+                Value<int?> archivedAt = const Value.absent(),
+                Value<String?> renewedById = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => DocumentsCompanion.insert(
                 id: id,
@@ -14696,6 +14938,8 @@ class $$DocumentsTableTableManager
                 favorite: favorite,
                 tags: tags,
                 source: source,
+                archivedAt: archivedAt,
+                renewedById: renewedById,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -14897,6 +15141,457 @@ typedef $$DocumentsTableProcessedTableManager =
         bool paymentsRefs,
         bool expensesRefs,
       })
+    >;
+typedef $$UserSettingsTableCreateCompanionBuilder =
+    UserSettingsCompanion Function({
+      Value<String> id,
+      Value<String> userId,
+      Value<int> updatedAt,
+      Value<int?> deletedAt,
+      Value<int> version,
+      Value<String> themeTemplate,
+      Value<String> darkMode,
+      Value<double> textScale,
+      Value<bool> appLock,
+      Value<bool> vaultLock,
+      Value<int> autoLockMin,
+      Value<String> quietStart,
+      Value<String> quietEnd,
+      Value<String> digestTime,
+      Value<String> notifDomains,
+      Value<String> backupMode,
+      Value<int> dayCapacityMin,
+      Value<int> rowid,
+    });
+typedef $$UserSettingsTableUpdateCompanionBuilder =
+    UserSettingsCompanion Function({
+      Value<String> id,
+      Value<String> userId,
+      Value<int> updatedAt,
+      Value<int?> deletedAt,
+      Value<int> version,
+      Value<String> themeTemplate,
+      Value<String> darkMode,
+      Value<double> textScale,
+      Value<bool> appLock,
+      Value<bool> vaultLock,
+      Value<int> autoLockMin,
+      Value<String> quietStart,
+      Value<String> quietEnd,
+      Value<String> digestTime,
+      Value<String> notifDomains,
+      Value<String> backupMode,
+      Value<int> dayCapacityMin,
+      Value<int> rowid,
+    });
+
+class $$UserSettingsTableFilterComposer
+    extends Composer<_$AppDatabase, $UserSettingsTable> {
+  $$UserSettingsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get themeTemplate => $composableBuilder(
+    column: $table.themeTemplate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get darkMode => $composableBuilder(
+    column: $table.darkMode,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get textScale => $composableBuilder(
+    column: $table.textScale,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get appLock => $composableBuilder(
+    column: $table.appLock,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get vaultLock => $composableBuilder(
+    column: $table.vaultLock,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get autoLockMin => $composableBuilder(
+    column: $table.autoLockMin,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get quietStart => $composableBuilder(
+    column: $table.quietStart,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get quietEnd => $composableBuilder(
+    column: $table.quietEnd,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get digestTime => $composableBuilder(
+    column: $table.digestTime,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get notifDomains => $composableBuilder(
+    column: $table.notifDomains,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get backupMode => $composableBuilder(
+    column: $table.backupMode,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get dayCapacityMin => $composableBuilder(
+    column: $table.dayCapacityMin,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$UserSettingsTableOrderingComposer
+    extends Composer<_$AppDatabase, $UserSettingsTable> {
+  $$UserSettingsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get themeTemplate => $composableBuilder(
+    column: $table.themeTemplate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get darkMode => $composableBuilder(
+    column: $table.darkMode,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get textScale => $composableBuilder(
+    column: $table.textScale,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get appLock => $composableBuilder(
+    column: $table.appLock,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get vaultLock => $composableBuilder(
+    column: $table.vaultLock,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get autoLockMin => $composableBuilder(
+    column: $table.autoLockMin,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get quietStart => $composableBuilder(
+    column: $table.quietStart,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get quietEnd => $composableBuilder(
+    column: $table.quietEnd,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get digestTime => $composableBuilder(
+    column: $table.digestTime,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get notifDomains => $composableBuilder(
+    column: $table.notifDomains,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get backupMode => $composableBuilder(
+    column: $table.backupMode,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get dayCapacityMin => $composableBuilder(
+    column: $table.dayCapacityMin,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$UserSettingsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $UserSettingsTable> {
+  $$UserSettingsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get userId =>
+      $composableBuilder(column: $table.userId, builder: (column) => column);
+
+  GeneratedColumn<int> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<int> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<int> get version =>
+      $composableBuilder(column: $table.version, builder: (column) => column);
+
+  GeneratedColumn<String> get themeTemplate => $composableBuilder(
+    column: $table.themeTemplate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get darkMode =>
+      $composableBuilder(column: $table.darkMode, builder: (column) => column);
+
+  GeneratedColumn<double> get textScale =>
+      $composableBuilder(column: $table.textScale, builder: (column) => column);
+
+  GeneratedColumn<bool> get appLock =>
+      $composableBuilder(column: $table.appLock, builder: (column) => column);
+
+  GeneratedColumn<bool> get vaultLock =>
+      $composableBuilder(column: $table.vaultLock, builder: (column) => column);
+
+  GeneratedColumn<int> get autoLockMin => $composableBuilder(
+    column: $table.autoLockMin,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get quietStart => $composableBuilder(
+    column: $table.quietStart,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get quietEnd =>
+      $composableBuilder(column: $table.quietEnd, builder: (column) => column);
+
+  GeneratedColumn<String> get digestTime => $composableBuilder(
+    column: $table.digestTime,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get notifDomains => $composableBuilder(
+    column: $table.notifDomains,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get backupMode => $composableBuilder(
+    column: $table.backupMode,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get dayCapacityMin => $composableBuilder(
+    column: $table.dayCapacityMin,
+    builder: (column) => column,
+  );
+}
+
+class $$UserSettingsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $UserSettingsTable,
+          UserSettingsRow,
+          $$UserSettingsTableFilterComposer,
+          $$UserSettingsTableOrderingComposer,
+          $$UserSettingsTableAnnotationComposer,
+          $$UserSettingsTableCreateCompanionBuilder,
+          $$UserSettingsTableUpdateCompanionBuilder,
+          (
+            UserSettingsRow,
+            BaseReferences<_$AppDatabase, $UserSettingsTable, UserSettingsRow>,
+          ),
+          UserSettingsRow,
+          PrefetchHooks Function()
+        > {
+  $$UserSettingsTableTableManager(_$AppDatabase db, $UserSettingsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$UserSettingsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$UserSettingsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$UserSettingsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> userId = const Value.absent(),
+                Value<int> updatedAt = const Value.absent(),
+                Value<int?> deletedAt = const Value.absent(),
+                Value<int> version = const Value.absent(),
+                Value<String> themeTemplate = const Value.absent(),
+                Value<String> darkMode = const Value.absent(),
+                Value<double> textScale = const Value.absent(),
+                Value<bool> appLock = const Value.absent(),
+                Value<bool> vaultLock = const Value.absent(),
+                Value<int> autoLockMin = const Value.absent(),
+                Value<String> quietStart = const Value.absent(),
+                Value<String> quietEnd = const Value.absent(),
+                Value<String> digestTime = const Value.absent(),
+                Value<String> notifDomains = const Value.absent(),
+                Value<String> backupMode = const Value.absent(),
+                Value<int> dayCapacityMin = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => UserSettingsCompanion(
+                id: id,
+                userId: userId,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                version: version,
+                themeTemplate: themeTemplate,
+                darkMode: darkMode,
+                textScale: textScale,
+                appLock: appLock,
+                vaultLock: vaultLock,
+                autoLockMin: autoLockMin,
+                quietStart: quietStart,
+                quietEnd: quietEnd,
+                digestTime: digestTime,
+                notifDomains: notifDomains,
+                backupMode: backupMode,
+                dayCapacityMin: dayCapacityMin,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> userId = const Value.absent(),
+                Value<int> updatedAt = const Value.absent(),
+                Value<int?> deletedAt = const Value.absent(),
+                Value<int> version = const Value.absent(),
+                Value<String> themeTemplate = const Value.absent(),
+                Value<String> darkMode = const Value.absent(),
+                Value<double> textScale = const Value.absent(),
+                Value<bool> appLock = const Value.absent(),
+                Value<bool> vaultLock = const Value.absent(),
+                Value<int> autoLockMin = const Value.absent(),
+                Value<String> quietStart = const Value.absent(),
+                Value<String> quietEnd = const Value.absent(),
+                Value<String> digestTime = const Value.absent(),
+                Value<String> notifDomains = const Value.absent(),
+                Value<String> backupMode = const Value.absent(),
+                Value<int> dayCapacityMin = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => UserSettingsCompanion.insert(
+                id: id,
+                userId: userId,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                version: version,
+                themeTemplate: themeTemplate,
+                darkMode: darkMode,
+                textScale: textScale,
+                appLock: appLock,
+                vaultLock: vaultLock,
+                autoLockMin: autoLockMin,
+                quietStart: quietStart,
+                quietEnd: quietEnd,
+                digestTime: digestTime,
+                notifDomains: notifDomains,
+                backupMode: backupMode,
+                dayCapacityMin: dayCapacityMin,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$UserSettingsTable, UserSettingsRow>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $UserSettingsTable,
+                    UserSettingsRow
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$UserSettingsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $UserSettingsTable,
+      UserSettingsRow,
+      $$UserSettingsTableFilterComposer,
+      $$UserSettingsTableOrderingComposer,
+      $$UserSettingsTableAnnotationComposer,
+      $$UserSettingsTableCreateCompanionBuilder,
+      $$UserSettingsTableUpdateCompanionBuilder,
+      (
+        UserSettingsRow,
+        BaseReferences<_$AppDatabase, $UserSettingsTable, UserSettingsRow>,
+      ),
+      UserSettingsRow,
+      PrefetchHooks Function()
     >;
 typedef $$DocumentFilesTableCreateCompanionBuilder =
     DocumentFilesCompanion Function({
@@ -21527,14 +22222,16 @@ typedef $$AppMetaTableProcessedTableManager =
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
-  $$UserSettingsTableTableManager get userSettings =>
-      $$UserSettingsTableTableManager(_db, _db.userSettings);
+  $DocumentsFtsTableManager get documentsFts =>
+      $DocumentsFtsTableManager(_db, _db.documentsFts);
   $$PersonsTableTableManager get persons =>
       $$PersonsTableTableManager(_db, _db.persons);
   $$FoldersTableTableManager get folders =>
       $$FoldersTableTableManager(_db, _db.folders);
   $$DocumentsTableTableManager get documents =>
       $$DocumentsTableTableManager(_db, _db.documents);
+  $$UserSettingsTableTableManager get userSettings =>
+      $$UserSettingsTableTableManager(_db, _db.userSettings);
   $$DocumentFilesTableTableManager get documentFiles =>
       $$DocumentFilesTableTableManager(_db, _db.documentFiles);
   $$ExtractedFieldsTableTableManager get extractedFields =>

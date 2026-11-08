@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/now_provider.dart';
 import '../../../core/theme/tokens.dart';
@@ -10,13 +11,15 @@ import '../../../data/db/app_database.dart';
 import '../../../shared/format.dart';
 import '../domain/vault_rules.dart';
 import '../vault_providers.dart';
-import 'document_sheet.dart';
 
 /// One document row: thumbnail · title · type chip · date · person · ★.
 class DocumentTile extends ConsumerWidget {
-  const DocumentTile({super.key, required this.document});
+  const DocumentTile({super.key, required this.document, this.snippet});
 
   final Document document;
+
+  /// Search snippet with the match wrapped in « » (PBI-006).
+  final String? snippet;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -29,17 +32,30 @@ class DocumentTile extends ConsumerWidget {
     return ListTile(
       key: ValueKey('doc-${document.id}'),
       minTileHeight: 64,
-      onTap: () => showDocumentSheet(context, document.id),
+      onTap: () => context.push('/doc/${document.id}'),
       leading: _Thumbnail(document: document, page: page),
       title: Text(document.title, maxLines: 2, overflow: TextOverflow.ellipsis),
-      subtitle: Text(
-        [
-          docTypeLabel(document.docType),
-          relativeDay(createdAt(document), now),
-          if (person != null) '${person.avatar ?? '👤'} ${person.name}',
-        ].join(' · '),
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            [
+              docTypeLabel(document.docType),
+              relativeDay(createdAt(document), now),
+              if (person != null) '${person.avatar ?? '👤'} ${person.name}',
+              if (document.archivedAt != null) 'Archived',
+            ].join(' · '),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          if (snippet != null && snippet!.contains('«'))
+            Text.rich(
+              _highlight(snippet!, theme),
+              key: ValueKey('snippet-${document.id}'),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+        ],
       ),
       trailing: document.favorite
           ? Icon(
@@ -50,6 +66,27 @@ class DocumentTile extends ConsumerWidget {
           : null,
     );
   }
+}
+
+/// Renders «match» segments in bold.
+TextSpan _highlight(String snippet, ThemeData theme) {
+  final spans = <TextSpan>[];
+  final parts = snippet.split(RegExp('[«»]'));
+  for (var i = 0; i < parts.length; i++) {
+    if (parts[i].isEmpty) continue;
+    spans.add(
+      TextSpan(
+        text: parts[i],
+        style: i.isOdd
+            ? TextStyle(
+                fontWeight: FontWeight.w700,
+                color: theme.colorScheme.primary,
+              )
+            : null,
+      ),
+    );
+  }
+  return TextSpan(style: theme.textTheme.bodySmall, children: spans);
 }
 
 class _Thumbnail extends StatelessWidget {

@@ -26,8 +26,11 @@ void main() {
       'categories', 'payments', 'expenses', 'score_snapshots',
       // local-only (data model §8.3) + app meta
       'pending_ops', 'conflict_log', 'blob_cache', 'app_meta',
+      // full-text search (PBI-006) + FTS5's internal shadow tables
+      'documents_fts', 'documents_fts_data', 'documents_fts_idx',
+      'documents_fts_docsize', 'documents_fts_config',
     });
-    expect(db.schemaVersion, 2);
+    expect(db.schemaVersion, 3);
   });
 
   test('every synced table carries sync metadata columns', () async {
@@ -38,6 +41,7 @@ void main() {
         'conflict_log',
         'blob_cache',
         'app_meta',
+        'documents_fts',
       }.contains(table.actualTableName)) {
         continue;
       }

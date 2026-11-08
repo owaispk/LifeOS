@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/now_provider.dart';
 import '../../data/data_providers.dart';
 import 'data/capture_service.dart';
+import 'ocr/document_analysis.dart';
 import 'platform/capture_platform.dart';
 
 // Device services — inert by default (web preview, tests); `main()`
@@ -15,6 +16,9 @@ final documentScannerProvider = Provider<DocumentScanner>(
 final fileImporterProvider = Provider<FileImporter>((ref) => const NoCapture());
 final storageInfoProvider = Provider<StorageInfo>((ref) => const NoCapture());
 final shareInboxProvider = Provider<ShareInbox>((ref) => const NoCapture());
+
+/// On-device OCR (PBI-004). ML Kit on phones; no text elsewhere.
+final textReaderProvider = Provider<TextReader>((ref) => const NoTextReader());
 
 /// Where Vault files are stored (`<app documents>/vault`). Set in `main()`.
 final vaultRootProvider = Provider<Directory>(

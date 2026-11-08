@@ -2,6 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/data_providers.dart';
 import '../../data/db/app_database.dart';
+import '../../core/now_provider.dart';
+import 'data/search_service.dart';
 import 'data/vault_service.dart';
 
 export '../../data/data_providers.dart' show personsProvider;
@@ -36,4 +38,11 @@ final firstPagesProvider = StreamProvider<Map<String, DocumentFile>>(
     }
     return first;
   }),
+);
+
+final searchServiceProvider = Provider<SearchService>(
+  (ref) => SearchService(
+    ref.watch(repositoriesProvider).db,
+    now: ref.watch(nowProvider),
+  ),
 );

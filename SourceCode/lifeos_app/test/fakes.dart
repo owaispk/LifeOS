@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:lifeos_app/features/capture/ocr/document_analysis.dart';
 import 'package:lifeos_app/features/capture/platform/capture_platform.dart';
 import 'package:lifeos_app/features/reminders/domain/reminder_planner.dart';
 import 'package:lifeos_app/features/reminders/platform/notification_gateway.dart';
@@ -71,6 +72,15 @@ class FakeShareInbox implements ShareInbox {
   Future<void> reset() async => resets++;
 }
 
+/// "OCR" that returns queued text (empty when nothing is queued).
+class FakeTextReader implements TextReader {
+  final texts = <String>[];
+
+  @override
+  Future<String> read(List<String> imagePaths) async =>
+      texts.isEmpty ? '' : texts.removeAt(0);
+}
+
 /// All capture fakes plus a real temp folder for Vault files.
 class CaptureFakes {
   CaptureFakes(this.vaultRoot);
@@ -79,4 +89,5 @@ class CaptureFakes {
   final importer = FakeImporter();
   final storage = FakeStorage();
   final inbox = FakeShareInbox();
+  final reader = FakeTextReader();
 }
