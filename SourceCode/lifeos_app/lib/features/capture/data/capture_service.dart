@@ -50,6 +50,7 @@ class FilingDetails {
     this.ocrText,
     this.fields = const {},
     this.corrected = const {},
+    this.renewsDocumentId,
     String? issuer,
     String? refNumber,
     String? periodMonth,
@@ -72,6 +73,9 @@ class FilingDetails {
 
   /// Field keys the user changed from what OCR extracted.
   final Set<String> corrected;
+
+  /// The document this one renews (PBI-008): it gets archived and linked.
+  final String? renewsDocumentId;
 
   /// Explicit values (tests, PBI-004 callers) that win over [fields].
   final String? issuerOverride;
@@ -161,6 +165,13 @@ class CaptureService {
     return null;
   }
 
+  /// Deletes a saved document's files from disk. Used when an outer
+  /// transaction (e.g. the payment chain, PBI-016) rolls back after save.
+  Future<void> discardFiles(String documentId) async {
+    final dir = Directory(p.join(_vaultRoot.path, documentId));
+    if (await dir.exists()) await dir.delete(recursive: true);
+  }
+
   /// Writes the files and creates the document + file rows.
   Future<Document> save(CaptureDraft draft, FilingDetails details) async {
     final title = details.title.trim().isEmpty
@@ -224,6 +235,17 @@ class CaptureService {
             expiryDate: Value(details.expiryDate),
           ),
         );
+        // Renewal (PBI-008): archive the old document, keep it searchable,
+        // and link it to its replacement.
+        if (details.renewsDocumentId != null) {
+          await _repos.documents.update(
+            details.renewsDocumentId!,
+            DocumentsCompanion(
+              archivedAt: Value(_now().millisecondsSinceEpoch),
+              renewedById: Value(doc.id),
+            ),
+          );
+        }
         // One row per extracted field; corrections feed per-issuer
         // learning (PBI-004 AC6).
         for (final e in details.fields.entries) {

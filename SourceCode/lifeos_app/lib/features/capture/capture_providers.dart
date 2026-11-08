@@ -39,22 +39,37 @@ const lowStorageMb = 100;
 /// Documents captured in this session, waiting to be filed (batch mode),
 /// plus where the session was started from (pre-selects folder/person).
 class CaptureSession {
-  const CaptureSession({this.drafts = const [], this.folderId, this.personId});
+  const CaptureSession({
+    this.drafts = const [],
+    this.folderId,
+    this.personId,
+    this.renewsDocumentId,
+  });
 
   final List<CaptureDraft> drafts;
   final String? folderId;
   final String? personId;
+
+  /// Set when the session started from "Mark renewed" (PBI-008).
+  final String? renewsDocumentId;
 }
 
 class CaptureSessionNotifier extends Notifier<CaptureSession> {
   @override
   CaptureSession build() => const CaptureSession();
 
-  void add(CaptureDraft draft, {String? folderId, String? personId}) {
+  void add(
+    CaptureDraft draft, {
+    String? folderId,
+    String? personId,
+    String? renewsDocumentId,
+  }) {
+    final first = state.drafts.isEmpty;
     state = CaptureSession(
       drafts: [...state.drafts, draft],
-      folderId: state.drafts.isEmpty ? folderId : state.folderId,
-      personId: state.drafts.isEmpty ? personId : state.personId,
+      folderId: first ? folderId : state.folderId,
+      personId: first ? personId : state.personId,
+      renewsDocumentId: first ? renewsDocumentId : state.renewsDocumentId,
     );
   }
 
@@ -67,6 +82,7 @@ class CaptureSessionNotifier extends Notifier<CaptureSession> {
             drafts: rest,
             folderId: state.folderId,
             personId: state.personId,
+            // A renewal applies to the first document only.
           );
   }
 

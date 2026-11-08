@@ -44,7 +44,7 @@ class AppDatabase extends _$AppDatabase {
   );
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -66,6 +66,13 @@ class AppDatabase extends _$AppDatabase {
         await customStatement(
           "INSERT INTO documents_fts(documents_fts) VALUES ('rebuild')",
         );
+      }
+      // v4 (Sprint 4): rule categories, salary, expiry prompt.
+      if (from < 4) {
+        await m.addColumn(atcRules, atcRules.categoryId);
+        await m.addColumn(userSettings, userSettings.salaryDay);
+        await m.addColumn(userSettings, userSettings.salaryMinor);
+        await m.addColumn(documents, documents.expiryPromptedAt);
       }
     },
     beforeOpen: (details) async {

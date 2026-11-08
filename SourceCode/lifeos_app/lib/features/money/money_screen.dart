@@ -12,6 +12,7 @@ import 'money_providers.dart';
 import 'ui/category_breakdown.dart';
 import 'ui/category_colors.dart';
 import 'ui/expense_sheet.dart';
+import 'ui/forecast_view.dart';
 
 /// 4.1 MONEY — Month Overview (UI flow §4.1).
 class MoneyScreen extends ConsumerStatefulWidget {
@@ -23,6 +24,7 @@ class MoneyScreen extends ConsumerStatefulWidget {
 
 class _MoneyScreenState extends ConsumerState<MoneyScreen> {
   DateTime? _month; // null = current month
+  bool _forecast = false; // Overview · Forecast (PBI-019)
 
   @override
   Widget build(BuildContext context) {
@@ -32,61 +34,95 @@ class _MoneyScreenState extends ConsumerState<MoneyScreen> {
     final expenses = ref.watch(allExpensesProvider);
     final categories = ref.watch(categoriesProvider).value ?? const [];
 
+    final switcher = _MonthSwitcher(
+      month: month,
+      // The forecast can look ahead a year; the overview stops at today.
+      canGoNext: _forecast
+          ? month.isBefore(addMonths(current, 12))
+          : month.isBefore(current),
+      onChanged: (m) => setState(() => _month = m),
+    );
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Money')),
-      body: expenses.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => const EmptyState(
-          emoji: '⚠️',
-          title: "Money isn't available",
-          message: 'Local data could not be opened on this device.',
-        ),
-        data: (all) {
-          final summary = summarize(all, categories, month);
-          return ListView(
-            key: const ValueKey('money-list'),
-            padding: const EdgeInsets.only(bottom: 120),
-            children: [
-              _MonthSwitcher(
-                month: month,
-                canGoNext: month.isBefore(current),
-                onChanged: (m) => setState(() => _month = m),
-              ),
-              _Hero(summary: summary),
-              if (summary.expenses.isEmpty)
-                EmptyState(
-                  inList: true,
-                  emoji: '💰',
-                  title: 'No expenses in ${formatMonth(month)}',
-                  message: 'Paid bills and quick expenses will add up here.',
-                  actionLabel: '💸 Add expense',
-                  onAction: () => showExpenseSheet(context),
-                )
-              else ...[
-                const _SectionTitle('Spending by category'),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: Tokens.spaceM,
-                  ),
-                  child: CategoryBreakdown(
-                    slices: summary.slices,
-                    totalMinor: summary.totalMinor,
-                  ),
-                ),
-                _SectionTitle('Expenses · ${summary.expenses.length}'),
-                for (final e in summary.expenses)
-                  _ExpenseRow(
-                    expense: e,
-                    category: categories
-                        .where((c) => c.id == e.categoryId)
-                        .firstOrNull,
-                    now: now,
-                  ),
+      appBar: AppBar(
+        title: const Text('Money'),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(56),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(
+              Tokens.spaceM,
+              0,
+              Tokens.spaceM,
+              Tokens.spaceS,
+            ),
+            child: SegmentedButton<bool>(
+              key: const ValueKey('money-view'),
+              showSelectedIcon: false,
+              segments: const [
+                ButtonSegment(value: false, label: Text('Overview')),
+                ButtonSegment(value: true, label: Text('Forecast')),
               ],
-            ],
-          );
-        },
+              selected: {_forecast},
+              onSelectionChanged: (s) => setState(() {
+                _forecast = s.first;
+                if (!_forecast && month.isAfter(current)) _month = null;
+              }),
+            ),
+          ),
+        ),
       ),
+      body: _forecast
+          ? ForecastView(month: month, header: switcher)
+          : expenses.when(
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (e, _) => const EmptyState(
+                emoji: '⚠️',
+                title: "Money isn't available",
+                message: 'Local data could not be opened on this device.',
+              ),
+              data: (all) {
+                final summary = summarize(all, categories, month);
+                return ListView(
+                  key: const ValueKey('money-list'),
+                  padding: const EdgeInsets.only(bottom: 120),
+                  children: [
+                    switcher,
+                    _Hero(summary: summary),
+                    if (summary.expenses.isEmpty)
+                      EmptyState(
+                        inList: true,
+                        emoji: '💰',
+                        title: 'No expenses in ${formatMonth(month)}',
+                        message:
+                            'Paid bills and quick expenses will add up here.',
+                        actionLabel: '💸 Add expense',
+                        onAction: () => showExpenseSheet(context),
+                      )
+                    else ...[
+                      const _SectionTitle('Spending by category'),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: Tokens.spaceM,
+                        ),
+                        child: CategoryBreakdown(
+                          slices: summary.slices,
+                          totalMinor: summary.totalMinor,
+                        ),
+                      ),
+                      _SectionTitle('Expenses · ${summary.expenses.length}'),
+                      for (final e in summary.expenses)
+                        _ExpenseRow(
+                          expense: e,
+                          category: categories
+                              .where((c) => c.id == e.categoryId)
+                              .firstOrNull,
+                          now: now,
+                        ),
+                    ],
+                  ],
+                );
+              },
+            ),
     );
   }
 }

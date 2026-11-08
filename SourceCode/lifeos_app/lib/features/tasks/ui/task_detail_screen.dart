@@ -434,6 +434,7 @@ class _SourceLine extends ConsumerWidget {
 void _showDocumentSummary(BuildContext context, Document doc) {
   showModalBottomSheet<void>(
     context: context,
+    useRootNavigator: true, // above the tab bar and its ➕ button
     builder: (context) => SafeArea(
       child: Padding(
         key: const ValueKey('document-summary'),

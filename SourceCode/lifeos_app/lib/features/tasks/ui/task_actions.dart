@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../data/data_providers.dart';
 import '../../../data/db/app_database.dart';
+import '../../money/ui/paid_sheet.dart';
 import '../domain/overload.dart';
 import '../domain/task_rules.dart';
 import '../tasks_providers.dart';
@@ -15,6 +16,13 @@ Future<void> completeWithUndo(
   WidgetRef ref,
   Task task,
 ) async {
+  // A payment task goes through the completion chain instead (PBI-016).
+  final unpaid = await ref.read(paymentServiceProvider).unpaidForTask(task.id);
+  if (unpaid != null) {
+    if (context.mounted) await payWithChain(context, ref, unpaid);
+    return;
+  }
+  if (!context.mounted) return;
   final messenger = ScaffoldMessenger.of(context);
   final service = ref.read(taskServiceProvider);
   await HapticFeedback.mediumImpact();
@@ -44,6 +52,7 @@ Future<bool> snoozeTask(BuildContext context, WidgetRef ref, Task task) async {
   final now = ref.read(nowProvider)();
   final choice = await showModalBottomSheet<Object>(
     context: context,
+    useRootNavigator: true, // above the tab bar and its ➕ button
     builder: (context) => SafeArea(
       child: Column(
         mainAxisSize: MainAxisSize.min,

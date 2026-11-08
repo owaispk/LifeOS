@@ -25,11 +25,13 @@ void main() {
       await tester.pumpAndSettle();
       expect(appBarTitle(tab), findsOneWidget, reason: '$tab app bar');
       // Every tab shows content or an empty state — never a blank screen.
-      // (The Vault always has its folders since PBI-005.)
+      // (The Vault has folders since PBI-005; More is a menu since PBI-017.)
       expect(
-        tab == 'Vault'
-            ? find.byKey(const ValueKey('vault-home'))
-            : find.byType(EmptyState),
+        switch (tab) {
+          'Vault' => find.byKey(const ValueKey('vault-home')),
+          'More' => find.byKey(const ValueKey('more-menu')), // PBI-017
+          _ => find.byType(EmptyState),
+        },
         findsOneWidget,
         reason: '$tab body',
       );

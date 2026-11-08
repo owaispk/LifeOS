@@ -14,6 +14,7 @@ import 'task_tile.dart';
 Future<void> showNewTaskSheet(BuildContext context) {
   return showModalBottomSheet<void>(
     context: context,
+    useRootNavigator: true, // above the tab bar and its ➕ button
     isScrollControlled: true,
     builder: (context) => const NewTaskSheet(),
   );

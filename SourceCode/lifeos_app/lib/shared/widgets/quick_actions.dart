@@ -23,6 +23,7 @@ enum QuickAction {
 Future<void> showQuickActionSheet(BuildContext context, QuickAction action) {
   return showModalBottomSheet<void>(
     context: context,
+    useRootNavigator: true, // above the tab bar and its ➕ button
     builder: (context) => SizedBox(
       height: 320,
       child: EmptyState(

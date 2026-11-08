@@ -15,6 +15,7 @@ import 'category_colors.dart';
 Future<void> showExpenseSheet(BuildContext context, {Expense? existing}) {
   return showModalBottomSheet<void>(
     context: context,
+    useRootNavigator: true, // above the tab bar and its ➕ button
     isScrollControlled: true,
     builder: (context) => ExpenseSheet(existing: existing),
   );

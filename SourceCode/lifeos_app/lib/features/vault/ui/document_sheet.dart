@@ -11,6 +11,7 @@ import '../vault_providers.dart';
 Future<void> showDocumentSheet(BuildContext context, String documentId) {
   return showModalBottomSheet<void>(
     context: context,
+    useRootNavigator: true, // above the tab bar and its ➕ button
     isScrollControlled: true,
     builder: (context) => DocumentSheet(documentId: documentId),
   );

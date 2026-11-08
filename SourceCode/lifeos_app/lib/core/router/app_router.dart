@@ -2,6 +2,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/atc/atc_rules_screen.dart';
+import '../../features/atc/rule_detail_screen.dart';
 import '../../features/capture/capture_entry.dart';
 import '../../features/capture/review_screen.dart';
 import '../../features/home/home_screen.dart';
@@ -10,6 +12,7 @@ import '../../features/more/more_screen.dart';
 import '../../features/tasks/tasks_screen.dart';
 import '../../features/tasks/ui/task_detail_screen.dart';
 import '../../features/vault/document_viewer_screen.dart';
+import '../../features/vault/expiring_screen.dart';
 import '../../features/vault/trash_screen.dart';
 import '../../features/vault/vault_list_screen.dart';
 import '../../features/vault/vault_screen.dart';
@@ -71,6 +74,10 @@ final routerProvider = Provider<GoRouter>((ref) {
                 ),
               ),
               GoRoute(
+                path: 'expiring',
+                builder: (context, state) => const ExpiringScreen(),
+              ),
+              GoRoute(
                 path: 'trash',
                 builder: (context, state) => const TrashScreen(),
               ),
@@ -82,7 +89,23 @@ final routerProvider = Provider<GoRouter>((ref) {
             ],
           ),
           _branch(Routes.money, const MoneyScreen()),
-          _branch(Routes.more, const MoreScreen()),
+          _branch(
+            Routes.more,
+            const MoreScreen(),
+            routes: [
+              GoRoute(
+                path: 'atc',
+                builder: (context, state) => const AtcRulesScreen(),
+                routes: [
+                  GoRoute(
+                    path: ':id',
+                    builder: (context, state) =>
+                        RuleDetailScreen(ruleId: state.pathParameters['id']!),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ],
       ),
     ],

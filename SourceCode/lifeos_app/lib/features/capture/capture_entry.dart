@@ -20,6 +20,7 @@ Future<void> startScan(
   BuildContext context, {
   String? folderId,
   String? personId,
+  String? renewsDocumentId,
 }) async {
   final container = ProviderScope.containerOf(context, listen: false);
 
@@ -60,7 +61,12 @@ Future<void> startScan(
 
     container
         .read(captureSessionProvider.notifier)
-        .add(CaptureDraft.scan(pages), folderId: folderId, personId: personId);
+        .add(
+          CaptureDraft.scan(pages),
+          folderId: folderId,
+          personId: personId,
+          renewsDocumentId: renewsDocumentId,
+        );
     if (context.mounted) _openReview(context);
     return;
   }

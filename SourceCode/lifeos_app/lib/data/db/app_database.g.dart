@@ -1787,6 +1787,17 @@ class $DocumentsTable extends Documents
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _expiryPromptedAtMeta = const VerificationMeta(
+    'expiryPromptedAt',
+  );
+  @override
+  late final GeneratedColumn<int> expiryPromptedAt = GeneratedColumn<int>(
+    'expiry_prompted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -1814,6 +1825,7 @@ class $DocumentsTable extends Documents
     source,
     archivedAt,
     renewedById,
+    expiryPromptedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1991,6 +2003,15 @@ class $DocumentsTable extends Documents
         ),
       );
     }
+    if (data.containsKey('expiry_prompted_at')) {
+      context.handle(
+        _expiryPromptedAtMeta,
+        expiryPromptedAt.isAcceptableOrUnknown(
+          data['expiry_prompted_at']!,
+          _expiryPromptedAtMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -2100,6 +2121,10 @@ class $DocumentsTable extends Documents
         DriftSqlType.string,
         data['${effectivePrefix}renewed_by_id'],
       ),
+      expiryPromptedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}expiry_prompted_at'],
+      ),
     );
   }
 
@@ -2140,6 +2165,9 @@ class Document extends DataClass implements Insertable<Document> {
 
   /// The document that replaced this one when it was renewed (PBI-008).
   final String? renewedById;
+
+  /// When "Does this document expire?" was answered (schema v4, PBI-008).
+  final int? expiryPromptedAt;
   const Document({
     required this.id,
     required this.userId,
@@ -2166,6 +2194,7 @@ class Document extends DataClass implements Insertable<Document> {
     required this.source,
     this.archivedAt,
     this.renewedById,
+    this.expiryPromptedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -2227,6 +2256,9 @@ class Document extends DataClass implements Insertable<Document> {
     if (!nullToAbsent || renewedById != null) {
       map['renewed_by_id'] = Variable<String>(renewedById);
     }
+    if (!nullToAbsent || expiryPromptedAt != null) {
+      map['expiry_prompted_at'] = Variable<int>(expiryPromptedAt);
+    }
     return map;
   }
 
@@ -2287,6 +2319,9 @@ class Document extends DataClass implements Insertable<Document> {
       renewedById: renewedById == null && nullToAbsent
           ? const Value.absent()
           : Value(renewedById),
+      expiryPromptedAt: expiryPromptedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(expiryPromptedAt),
     );
   }
 
@@ -2323,6 +2358,7 @@ class Document extends DataClass implements Insertable<Document> {
       source: serializer.fromJson<String>(json['source']),
       archivedAt: serializer.fromJson<int?>(json['archivedAt']),
       renewedById: serializer.fromJson<String?>(json['renewedById']),
+      expiryPromptedAt: serializer.fromJson<int?>(json['expiryPromptedAt']),
     );
   }
   @override
@@ -2356,6 +2392,7 @@ class Document extends DataClass implements Insertable<Document> {
       'source': serializer.toJson<String>(source),
       'archivedAt': serializer.toJson<int?>(archivedAt),
       'renewedById': serializer.toJson<String?>(renewedById),
+      'expiryPromptedAt': serializer.toJson<int?>(expiryPromptedAt),
     };
   }
 
@@ -2385,6 +2422,7 @@ class Document extends DataClass implements Insertable<Document> {
     String? source,
     Value<int?> archivedAt = const Value.absent(),
     Value<String?> renewedById = const Value.absent(),
+    Value<int?> expiryPromptedAt = const Value.absent(),
   }) => Document(
     id: id ?? this.id,
     userId: userId ?? this.userId,
@@ -2413,6 +2451,9 @@ class Document extends DataClass implements Insertable<Document> {
     source: source ?? this.source,
     archivedAt: archivedAt.present ? archivedAt.value : this.archivedAt,
     renewedById: renewedById.present ? renewedById.value : this.renewedById,
+    expiryPromptedAt: expiryPromptedAt.present
+        ? expiryPromptedAt.value
+        : this.expiryPromptedAt,
   );
   Document copyWithCompanion(DocumentsCompanion data) {
     return Document(
@@ -2455,6 +2496,9 @@ class Document extends DataClass implements Insertable<Document> {
       renewedById: data.renewedById.present
           ? data.renewedById.value
           : this.renewedById,
+      expiryPromptedAt: data.expiryPromptedAt.present
+          ? data.expiryPromptedAt.value
+          : this.expiryPromptedAt,
     );
   }
 
@@ -2485,7 +2529,8 @@ class Document extends DataClass implements Insertable<Document> {
           ..write('tags: $tags, ')
           ..write('source: $source, ')
           ..write('archivedAt: $archivedAt, ')
-          ..write('renewedById: $renewedById')
+          ..write('renewedById: $renewedById, ')
+          ..write('expiryPromptedAt: $expiryPromptedAt')
           ..write(')'))
         .toString();
   }
@@ -2517,6 +2562,7 @@ class Document extends DataClass implements Insertable<Document> {
     source,
     archivedAt,
     renewedById,
+    expiryPromptedAt,
   ]);
   @override
   bool operator ==(Object other) =>
@@ -2546,7 +2592,8 @@ class Document extends DataClass implements Insertable<Document> {
           other.tags == this.tags &&
           other.source == this.source &&
           other.archivedAt == this.archivedAt &&
-          other.renewedById == this.renewedById);
+          other.renewedById == this.renewedById &&
+          other.expiryPromptedAt == this.expiryPromptedAt);
 }
 
 class DocumentsCompanion extends UpdateCompanion<Document> {
@@ -2575,6 +2622,7 @@ class DocumentsCompanion extends UpdateCompanion<Document> {
   final Value<String> source;
   final Value<int?> archivedAt;
   final Value<String?> renewedById;
+  final Value<int?> expiryPromptedAt;
   final Value<int> rowid;
   const DocumentsCompanion({
     this.id = const Value.absent(),
@@ -2602,6 +2650,7 @@ class DocumentsCompanion extends UpdateCompanion<Document> {
     this.source = const Value.absent(),
     this.archivedAt = const Value.absent(),
     this.renewedById = const Value.absent(),
+    this.expiryPromptedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   DocumentsCompanion.insert({
@@ -2630,6 +2679,7 @@ class DocumentsCompanion extends UpdateCompanion<Document> {
     this.source = const Value.absent(),
     this.archivedAt = const Value.absent(),
     this.renewedById = const Value.absent(),
+    this.expiryPromptedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : title = Value(title);
   static Insertable<Document> custom({
@@ -2658,6 +2708,7 @@ class DocumentsCompanion extends UpdateCompanion<Document> {
     Expression<String>? source,
     Expression<int>? archivedAt,
     Expression<String>? renewedById,
+    Expression<int>? expiryPromptedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -2687,6 +2738,7 @@ class DocumentsCompanion extends UpdateCompanion<Document> {
       if (source != null) 'source': source,
       if (archivedAt != null) 'archived_at': archivedAt,
       if (renewedById != null) 'renewed_by_id': renewedById,
+      if (expiryPromptedAt != null) 'expiry_prompted_at': expiryPromptedAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -2717,6 +2769,7 @@ class DocumentsCompanion extends UpdateCompanion<Document> {
     Value<String>? source,
     Value<int?>? archivedAt,
     Value<String?>? renewedById,
+    Value<int?>? expiryPromptedAt,
     Value<int>? rowid,
   }) {
     return DocumentsCompanion(
@@ -2746,6 +2799,7 @@ class DocumentsCompanion extends UpdateCompanion<Document> {
       source: source ?? this.source,
       archivedAt: archivedAt ?? this.archivedAt,
       renewedById: renewedById ?? this.renewedById,
+      expiryPromptedAt: expiryPromptedAt ?? this.expiryPromptedAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -2830,6 +2884,9 @@ class DocumentsCompanion extends UpdateCompanion<Document> {
     if (renewedById.present) {
       map['renewed_by_id'] = Variable<String>(renewedById.value);
     }
+    if (expiryPromptedAt.present) {
+      map['expiry_prompted_at'] = Variable<int>(expiryPromptedAt.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -2864,6 +2921,7 @@ class DocumentsCompanion extends UpdateCompanion<Document> {
           ..write('source: $source, ')
           ..write('archivedAt: $archivedAt, ')
           ..write('renewedById: $renewedById, ')
+          ..write('expiryPromptedAt: $expiryPromptedAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -3081,6 +3139,28 @@ class $UserSettingsTable extends UserSettings
     requiredDuringInsert: false,
     defaultValue: const Constant(360),
   );
+  static const VerificationMeta _salaryDayMeta = const VerificationMeta(
+    'salaryDay',
+  );
+  @override
+  late final GeneratedColumn<int> salaryDay = GeneratedColumn<int>(
+    'salary_day',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _salaryMinorMeta = const VerificationMeta(
+    'salaryMinor',
+  );
+  @override
+  late final GeneratedColumn<int> salaryMinor = GeneratedColumn<int>(
+    'salary_minor',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -3100,6 +3180,8 @@ class $UserSettingsTable extends UserSettings
     notifDomains,
     backupMode,
     dayCapacityMin,
+    salaryDay,
+    salaryMinor,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3224,6 +3306,21 @@ class $UserSettingsTable extends UserSettings
         ),
       );
     }
+    if (data.containsKey('salary_day')) {
+      context.handle(
+        _salaryDayMeta,
+        salaryDay.isAcceptableOrUnknown(data['salary_day']!, _salaryDayMeta),
+      );
+    }
+    if (data.containsKey('salary_minor')) {
+      context.handle(
+        _salaryMinorMeta,
+        salaryMinor.isAcceptableOrUnknown(
+          data['salary_minor']!,
+          _salaryMinorMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -3305,6 +3402,14 @@ class $UserSettingsTable extends UserSettings
         DriftSqlType.int,
         data['${effectivePrefix}day_capacity_min'],
       )!,
+      salaryDay: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}salary_day'],
+      ),
+      salaryMinor: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}salary_minor'],
+      ),
     );
   }
 
@@ -3334,6 +3439,10 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
 
   /// Overload Shield day capacity in minutes (schema v2, PBI-011).
   final int dayCapacityMin;
+
+  /// Salary-aware forecast (schema v4, PBI-019): day of month + amount.
+  final int? salaryDay;
+  final int? salaryMinor;
   const UserSettingsRow({
     required this.id,
     required this.userId,
@@ -3352,6 +3461,8 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     required this.notifDomains,
     required this.backupMode,
     required this.dayCapacityMin,
+    this.salaryDay,
+    this.salaryMinor,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -3375,6 +3486,12 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     map['notif_domains'] = Variable<String>(notifDomains);
     map['backup_mode'] = Variable<String>(backupMode);
     map['day_capacity_min'] = Variable<int>(dayCapacityMin);
+    if (!nullToAbsent || salaryDay != null) {
+      map['salary_day'] = Variable<int>(salaryDay);
+    }
+    if (!nullToAbsent || salaryMinor != null) {
+      map['salary_minor'] = Variable<int>(salaryMinor);
+    }
     return map;
   }
 
@@ -3399,6 +3516,12 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
       notifDomains: Value(notifDomains),
       backupMode: Value(backupMode),
       dayCapacityMin: Value(dayCapacityMin),
+      salaryDay: salaryDay == null && nullToAbsent
+          ? const Value.absent()
+          : Value(salaryDay),
+      salaryMinor: salaryMinor == null && nullToAbsent
+          ? const Value.absent()
+          : Value(salaryMinor),
     );
   }
 
@@ -3425,6 +3548,8 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
       notifDomains: serializer.fromJson<String>(json['notifDomains']),
       backupMode: serializer.fromJson<String>(json['backupMode']),
       dayCapacityMin: serializer.fromJson<int>(json['dayCapacityMin']),
+      salaryDay: serializer.fromJson<int?>(json['salaryDay']),
+      salaryMinor: serializer.fromJson<int?>(json['salaryMinor']),
     );
   }
   @override
@@ -3448,6 +3573,8 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
       'notifDomains': serializer.toJson<String>(notifDomains),
       'backupMode': serializer.toJson<String>(backupMode),
       'dayCapacityMin': serializer.toJson<int>(dayCapacityMin),
+      'salaryDay': serializer.toJson<int?>(salaryDay),
+      'salaryMinor': serializer.toJson<int?>(salaryMinor),
     };
   }
 
@@ -3469,6 +3596,8 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     String? notifDomains,
     String? backupMode,
     int? dayCapacityMin,
+    Value<int?> salaryDay = const Value.absent(),
+    Value<int?> salaryMinor = const Value.absent(),
   }) => UserSettingsRow(
     id: id ?? this.id,
     userId: userId ?? this.userId,
@@ -3487,6 +3616,8 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     notifDomains: notifDomains ?? this.notifDomains,
     backupMode: backupMode ?? this.backupMode,
     dayCapacityMin: dayCapacityMin ?? this.dayCapacityMin,
+    salaryDay: salaryDay.present ? salaryDay.value : this.salaryDay,
+    salaryMinor: salaryMinor.present ? salaryMinor.value : this.salaryMinor,
   );
   UserSettingsRow copyWithCompanion(UserSettingsCompanion data) {
     return UserSettingsRow(
@@ -3521,6 +3652,10 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
       dayCapacityMin: data.dayCapacityMin.present
           ? data.dayCapacityMin.value
           : this.dayCapacityMin,
+      salaryDay: data.salaryDay.present ? data.salaryDay.value : this.salaryDay,
+      salaryMinor: data.salaryMinor.present
+          ? data.salaryMinor.value
+          : this.salaryMinor,
     );
   }
 
@@ -3543,7 +3678,9 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
           ..write('digestTime: $digestTime, ')
           ..write('notifDomains: $notifDomains, ')
           ..write('backupMode: $backupMode, ')
-          ..write('dayCapacityMin: $dayCapacityMin')
+          ..write('dayCapacityMin: $dayCapacityMin, ')
+          ..write('salaryDay: $salaryDay, ')
+          ..write('salaryMinor: $salaryMinor')
           ..write(')'))
         .toString();
   }
@@ -3567,6 +3704,8 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     notifDomains,
     backupMode,
     dayCapacityMin,
+    salaryDay,
+    salaryMinor,
   );
   @override
   bool operator ==(Object other) =>
@@ -3588,7 +3727,9 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
           other.digestTime == this.digestTime &&
           other.notifDomains == this.notifDomains &&
           other.backupMode == this.backupMode &&
-          other.dayCapacityMin == this.dayCapacityMin);
+          other.dayCapacityMin == this.dayCapacityMin &&
+          other.salaryDay == this.salaryDay &&
+          other.salaryMinor == this.salaryMinor);
 }
 
 class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
@@ -3609,6 +3750,8 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
   final Value<String> notifDomains;
   final Value<String> backupMode;
   final Value<int> dayCapacityMin;
+  final Value<int?> salaryDay;
+  final Value<int?> salaryMinor;
   final Value<int> rowid;
   const UserSettingsCompanion({
     this.id = const Value.absent(),
@@ -3628,6 +3771,8 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     this.notifDomains = const Value.absent(),
     this.backupMode = const Value.absent(),
     this.dayCapacityMin = const Value.absent(),
+    this.salaryDay = const Value.absent(),
+    this.salaryMinor = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   UserSettingsCompanion.insert({
@@ -3648,6 +3793,8 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     this.notifDomains = const Value.absent(),
     this.backupMode = const Value.absent(),
     this.dayCapacityMin = const Value.absent(),
+    this.salaryDay = const Value.absent(),
+    this.salaryMinor = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   static Insertable<UserSettingsRow> custom({
@@ -3668,6 +3815,8 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     Expression<String>? notifDomains,
     Expression<String>? backupMode,
     Expression<int>? dayCapacityMin,
+    Expression<int>? salaryDay,
+    Expression<int>? salaryMinor,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -3688,6 +3837,8 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
       if (notifDomains != null) 'notif_domains': notifDomains,
       if (backupMode != null) 'backup_mode': backupMode,
       if (dayCapacityMin != null) 'day_capacity_min': dayCapacityMin,
+      if (salaryDay != null) 'salary_day': salaryDay,
+      if (salaryMinor != null) 'salary_minor': salaryMinor,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -3710,6 +3861,8 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     Value<String>? notifDomains,
     Value<String>? backupMode,
     Value<int>? dayCapacityMin,
+    Value<int?>? salaryDay,
+    Value<int?>? salaryMinor,
     Value<int>? rowid,
   }) {
     return UserSettingsCompanion(
@@ -3730,6 +3883,8 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
       notifDomains: notifDomains ?? this.notifDomains,
       backupMode: backupMode ?? this.backupMode,
       dayCapacityMin: dayCapacityMin ?? this.dayCapacityMin,
+      salaryDay: salaryDay ?? this.salaryDay,
+      salaryMinor: salaryMinor ?? this.salaryMinor,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -3788,6 +3943,12 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     if (dayCapacityMin.present) {
       map['day_capacity_min'] = Variable<int>(dayCapacityMin.value);
     }
+    if (salaryDay.present) {
+      map['salary_day'] = Variable<int>(salaryDay.value);
+    }
+    if (salaryMinor.present) {
+      map['salary_minor'] = Variable<int>(salaryMinor.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -3814,6 +3975,8 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
           ..write('notifDomains: $notifDomains, ')
           ..write('backupMode: $backupMode, ')
           ..write('dayCapacityMin: $dayCapacityMin, ')
+          ..write('salaryDay: $salaryDay, ')
+          ..write('salaryMinor: $salaryMinor, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -5321,6 +5484,549 @@ class ExtractedFieldsCompanion extends UpdateCompanion<ExtractedField> {
   }
 }
 
+class $CategoriesTable extends Categories
+    with TableInfo<$CategoriesTable, Category> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CategoriesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: fallbackIds.next,
+  );
+  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
+  @override
+  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
+    'user_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: () => '',
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<int> updatedAt = GeneratedColumn<int>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    clientDefault: systemClock,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<int> deletedAt = GeneratedColumn<int>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _versionMeta = const VerificationMeta(
+    'version',
+  );
+  @override
+  late final GeneratedColumn<int> version = GeneratedColumn<int>(
+    'version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _iconMeta = const VerificationMeta('icon');
+  @override
+  late final GeneratedColumn<String> icon = GeneratedColumn<String>(
+    'icon',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _kindMeta = const VerificationMeta('kind');
+  @override
+  late final GeneratedColumn<String> kind = GeneratedColumn<String>(
+    'kind',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('expense'),
+  );
+  static const VerificationMeta _systemKeyMeta = const VerificationMeta(
+    'systemKey',
+  );
+  @override
+  late final GeneratedColumn<String> systemKey = GeneratedColumn<String>(
+    'system_key',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    userId,
+    updatedAt,
+    deletedAt,
+    version,
+    name,
+    icon,
+    kind,
+    systemKey,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'categories';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Category> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('user_id')) {
+      context.handle(
+        _userIdMeta,
+        userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    if (data.containsKey('version')) {
+      context.handle(
+        _versionMeta,
+        version.isAcceptableOrUnknown(data['version']!, _versionMeta),
+      );
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('icon')) {
+      context.handle(
+        _iconMeta,
+        icon.isAcceptableOrUnknown(data['icon']!, _iconMeta),
+      );
+    }
+    if (data.containsKey('kind')) {
+      context.handle(
+        _kindMeta,
+        kind.isAcceptableOrUnknown(data['kind']!, _kindMeta),
+      );
+    }
+    if (data.containsKey('system_key')) {
+      context.handle(
+        _systemKeyMeta,
+        systemKey.isAcceptableOrUnknown(data['system_key']!, _systemKeyMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Category map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Category(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      userId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}user_id'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      icon: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}icon'],
+      ),
+      kind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}kind'],
+      )!,
+      systemKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}system_key'],
+      ),
+    );
+  }
+
+  @override
+  $CategoriesTable createAlias(String alias) {
+    return $CategoriesTable(attachedDatabase, alias);
+  }
+}
+
+class Category extends DataClass implements Insertable<Category> {
+  final String id;
+  final String userId;
+  final int updatedAt;
+  final int? deletedAt;
+  final int version;
+  final String name;
+  final String? icon;
+  final String kind;
+  final String? systemKey;
+  const Category({
+    required this.id,
+    required this.userId,
+    required this.updatedAt,
+    this.deletedAt,
+    required this.version,
+    required this.name,
+    this.icon,
+    required this.kind,
+    this.systemKey,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['user_id'] = Variable<String>(userId);
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    map['version'] = Variable<int>(version);
+    map['name'] = Variable<String>(name);
+    if (!nullToAbsent || icon != null) {
+      map['icon'] = Variable<String>(icon);
+    }
+    map['kind'] = Variable<String>(kind);
+    if (!nullToAbsent || systemKey != null) {
+      map['system_key'] = Variable<String>(systemKey);
+    }
+    return map;
+  }
+
+  CategoriesCompanion toCompanion(bool nullToAbsent) {
+    return CategoriesCompanion(
+      id: Value(id),
+      userId: Value(userId),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      version: Value(version),
+      name: Value(name),
+      icon: icon == null && nullToAbsent ? const Value.absent() : Value(icon),
+      kind: Value(kind),
+      systemKey: systemKey == null && nullToAbsent
+          ? const Value.absent()
+          : Value(systemKey),
+    );
+  }
+
+  factory Category.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Category(
+      id: serializer.fromJson<String>(json['id']),
+      userId: serializer.fromJson<String>(json['userId']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+      version: serializer.fromJson<int>(json['version']),
+      name: serializer.fromJson<String>(json['name']),
+      icon: serializer.fromJson<String?>(json['icon']),
+      kind: serializer.fromJson<String>(json['kind']),
+      systemKey: serializer.fromJson<String?>(json['systemKey']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'userId': serializer.toJson<String>(userId),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+      'version': serializer.toJson<int>(version),
+      'name': serializer.toJson<String>(name),
+      'icon': serializer.toJson<String?>(icon),
+      'kind': serializer.toJson<String>(kind),
+      'systemKey': serializer.toJson<String?>(systemKey),
+    };
+  }
+
+  Category copyWith({
+    String? id,
+    String? userId,
+    int? updatedAt,
+    Value<int?> deletedAt = const Value.absent(),
+    int? version,
+    String? name,
+    Value<String?> icon = const Value.absent(),
+    String? kind,
+    Value<String?> systemKey = const Value.absent(),
+  }) => Category(
+    id: id ?? this.id,
+    userId: userId ?? this.userId,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    version: version ?? this.version,
+    name: name ?? this.name,
+    icon: icon.present ? icon.value : this.icon,
+    kind: kind ?? this.kind,
+    systemKey: systemKey.present ? systemKey.value : this.systemKey,
+  );
+  Category copyWithCompanion(CategoriesCompanion data) {
+    return Category(
+      id: data.id.present ? data.id.value : this.id,
+      userId: data.userId.present ? data.userId.value : this.userId,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      version: data.version.present ? data.version.value : this.version,
+      name: data.name.present ? data.name.value : this.name,
+      icon: data.icon.present ? data.icon.value : this.icon,
+      kind: data.kind.present ? data.kind.value : this.kind,
+      systemKey: data.systemKey.present ? data.systemKey.value : this.systemKey,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Category(')
+          ..write('id: $id, ')
+          ..write('userId: $userId, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('version: $version, ')
+          ..write('name: $name, ')
+          ..write('icon: $icon, ')
+          ..write('kind: $kind, ')
+          ..write('systemKey: $systemKey')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    userId,
+    updatedAt,
+    deletedAt,
+    version,
+    name,
+    icon,
+    kind,
+    systemKey,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Category &&
+          other.id == this.id &&
+          other.userId == this.userId &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt &&
+          other.version == this.version &&
+          other.name == this.name &&
+          other.icon == this.icon &&
+          other.kind == this.kind &&
+          other.systemKey == this.systemKey);
+}
+
+class CategoriesCompanion extends UpdateCompanion<Category> {
+  final Value<String> id;
+  final Value<String> userId;
+  final Value<int> updatedAt;
+  final Value<int?> deletedAt;
+  final Value<int> version;
+  final Value<String> name;
+  final Value<String?> icon;
+  final Value<String> kind;
+  final Value<String?> systemKey;
+  final Value<int> rowid;
+  const CategoriesCompanion({
+    this.id = const Value.absent(),
+    this.userId = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.version = const Value.absent(),
+    this.name = const Value.absent(),
+    this.icon = const Value.absent(),
+    this.kind = const Value.absent(),
+    this.systemKey = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  CategoriesCompanion.insert({
+    this.id = const Value.absent(),
+    this.userId = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.version = const Value.absent(),
+    required String name,
+    this.icon = const Value.absent(),
+    this.kind = const Value.absent(),
+    this.systemKey = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : name = Value(name);
+  static Insertable<Category> custom({
+    Expression<String>? id,
+    Expression<String>? userId,
+    Expression<int>? updatedAt,
+    Expression<int>? deletedAt,
+    Expression<int>? version,
+    Expression<String>? name,
+    Expression<String>? icon,
+    Expression<String>? kind,
+    Expression<String>? systemKey,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (userId != null) 'user_id': userId,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (version != null) 'version': version,
+      if (name != null) 'name': name,
+      if (icon != null) 'icon': icon,
+      if (kind != null) 'kind': kind,
+      if (systemKey != null) 'system_key': systemKey,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  CategoriesCompanion copyWith({
+    Value<String>? id,
+    Value<String>? userId,
+    Value<int>? updatedAt,
+    Value<int?>? deletedAt,
+    Value<int>? version,
+    Value<String>? name,
+    Value<String?>? icon,
+    Value<String>? kind,
+    Value<String?>? systemKey,
+    Value<int>? rowid,
+  }) {
+    return CategoriesCompanion(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      version: version ?? this.version,
+      name: name ?? this.name,
+      icon: icon ?? this.icon,
+      kind: kind ?? this.kind,
+      systemKey: systemKey ?? this.systemKey,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<String>(userId.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (icon.present) {
+      map['icon'] = Variable<String>(icon.value);
+    }
+    if (kind.present) {
+      map['kind'] = Variable<String>(kind.value);
+    }
+    if (systemKey.present) {
+      map['system_key'] = Variable<String>(systemKey.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CategoriesCompanion(')
+          ..write('id: $id, ')
+          ..write('userId: $userId, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('version: $version, ')
+          ..write('name: $name, ')
+          ..write('icon: $icon, ')
+          ..write('kind: $kind, ')
+          ..write('systemKey: $systemKey, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $AtcRulesTable extends AtcRules with TableInfo<$AtcRulesTable, AtcRule> {
   @override
   final GeneratedDatabase attachedDatabase;
@@ -5562,6 +6268,20 @@ class $AtcRulesTable extends AtcRules with TableInfo<$AtcRulesTable, AtcRule> {
     requiredDuringInsert: false,
     defaultValue: const Constant('{}'),
   );
+  static const VerificationMeta _categoryIdMeta = const VerificationMeta(
+    'categoryId',
+  );
+  @override
+  late final GeneratedColumn<String> categoryId = GeneratedColumn<String>(
+    'category_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES categories (id)',
+    ),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -5586,6 +6306,7 @@ class $AtcRulesTable extends AtcRules with TableInfo<$AtcRulesTable, AtcRule> {
     confidence,
     lastGeneratedPeriod,
     stats,
+    categoryId,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -5753,6 +6474,12 @@ class $AtcRulesTable extends AtcRules with TableInfo<$AtcRulesTable, AtcRule> {
         stats.isAcceptableOrUnknown(data['stats']!, _statsMeta),
       );
     }
+    if (data.containsKey('category_id')) {
+      context.handle(
+        _categoryIdMeta,
+        categoryId.isAcceptableOrUnknown(data['category_id']!, _categoryIdMeta),
+      );
+    }
     return context;
   }
 
@@ -5850,6 +6577,10 @@ class $AtcRulesTable extends AtcRules with TableInfo<$AtcRulesTable, AtcRule> {
         DriftSqlType.string,
         data['${effectivePrefix}stats'],
       )!,
+      categoryId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}category_id'],
+      ),
     );
   }
 
@@ -5888,6 +6619,9 @@ class AtcRule extends DataClass implements Insertable<AtcRule> {
   final double? confidence;
   final String? lastGeneratedPeriod;
   final String stats;
+
+  /// Expense category for payments this rule creates (schema v4, PBI-013).
+  final String? categoryId;
   const AtcRule({
     required this.id,
     required this.userId,
@@ -5911,6 +6645,7 @@ class AtcRule extends DataClass implements Insertable<AtcRule> {
     this.confidence,
     this.lastGeneratedPeriod,
     required this.stats,
+    this.categoryId,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -5959,6 +6694,9 @@ class AtcRule extends DataClass implements Insertable<AtcRule> {
       map['last_generated_period'] = Variable<String>(lastGeneratedPeriod);
     }
     map['stats'] = Variable<String>(stats);
+    if (!nullToAbsent || categoryId != null) {
+      map['category_id'] = Variable<String>(categoryId);
+    }
     return map;
   }
 
@@ -6008,6 +6746,9 @@ class AtcRule extends DataClass implements Insertable<AtcRule> {
           ? const Value.absent()
           : Value(lastGeneratedPeriod),
       stats: Value(stats),
+      categoryId: categoryId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(categoryId),
     );
   }
 
@@ -6041,6 +6782,7 @@ class AtcRule extends DataClass implements Insertable<AtcRule> {
         json['lastGeneratedPeriod'],
       ),
       stats: serializer.fromJson<String>(json['stats']),
+      categoryId: serializer.fromJson<String?>(json['categoryId']),
     );
   }
   @override
@@ -6069,6 +6811,7 @@ class AtcRule extends DataClass implements Insertable<AtcRule> {
       'confidence': serializer.toJson<double?>(confidence),
       'lastGeneratedPeriod': serializer.toJson<String?>(lastGeneratedPeriod),
       'stats': serializer.toJson<String>(stats),
+      'categoryId': serializer.toJson<String?>(categoryId),
     };
   }
 
@@ -6095,6 +6838,7 @@ class AtcRule extends DataClass implements Insertable<AtcRule> {
     Value<double?> confidence = const Value.absent(),
     Value<String?> lastGeneratedPeriod = const Value.absent(),
     String? stats,
+    Value<String?> categoryId = const Value.absent(),
   }) => AtcRule(
     id: id ?? this.id,
     userId: userId ?? this.userId,
@@ -6128,6 +6872,7 @@ class AtcRule extends DataClass implements Insertable<AtcRule> {
         ? lastGeneratedPeriod.value
         : this.lastGeneratedPeriod,
     stats: stats ?? this.stats,
+    categoryId: categoryId.present ? categoryId.value : this.categoryId,
   );
   AtcRule copyWithCompanion(AtcRulesCompanion data) {
     return AtcRule(
@@ -6171,6 +6916,9 @@ class AtcRule extends DataClass implements Insertable<AtcRule> {
           ? data.lastGeneratedPeriod.value
           : this.lastGeneratedPeriod,
       stats: data.stats.present ? data.stats.value : this.stats,
+      categoryId: data.categoryId.present
+          ? data.categoryId.value
+          : this.categoryId,
     );
   }
 
@@ -6198,7 +6946,8 @@ class AtcRule extends DataClass implements Insertable<AtcRule> {
           ..write('status: $status, ')
           ..write('confidence: $confidence, ')
           ..write('lastGeneratedPeriod: $lastGeneratedPeriod, ')
-          ..write('stats: $stats')
+          ..write('stats: $stats, ')
+          ..write('categoryId: $categoryId')
           ..write(')'))
         .toString();
   }
@@ -6227,6 +6976,7 @@ class AtcRule extends DataClass implements Insertable<AtcRule> {
     confidence,
     lastGeneratedPeriod,
     stats,
+    categoryId,
   ]);
   @override
   bool operator ==(Object other) =>
@@ -6253,7 +7003,8 @@ class AtcRule extends DataClass implements Insertable<AtcRule> {
           other.status == this.status &&
           other.confidence == this.confidence &&
           other.lastGeneratedPeriod == this.lastGeneratedPeriod &&
-          other.stats == this.stats);
+          other.stats == this.stats &&
+          other.categoryId == this.categoryId);
 }
 
 class AtcRulesCompanion extends UpdateCompanion<AtcRule> {
@@ -6279,6 +7030,7 @@ class AtcRulesCompanion extends UpdateCompanion<AtcRule> {
   final Value<double?> confidence;
   final Value<String?> lastGeneratedPeriod;
   final Value<String> stats;
+  final Value<String?> categoryId;
   final Value<int> rowid;
   const AtcRulesCompanion({
     this.id = const Value.absent(),
@@ -6303,6 +7055,7 @@ class AtcRulesCompanion extends UpdateCompanion<AtcRule> {
     this.confidence = const Value.absent(),
     this.lastGeneratedPeriod = const Value.absent(),
     this.stats = const Value.absent(),
+    this.categoryId = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   AtcRulesCompanion.insert({
@@ -6328,6 +7081,7 @@ class AtcRulesCompanion extends UpdateCompanion<AtcRule> {
     this.confidence = const Value.absent(),
     this.lastGeneratedPeriod = const Value.absent(),
     this.stats = const Value.absent(),
+    this.categoryId = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : kind = Value(kind),
        name = Value(name);
@@ -6354,6 +7108,7 @@ class AtcRulesCompanion extends UpdateCompanion<AtcRule> {
     Expression<double>? confidence,
     Expression<String>? lastGeneratedPeriod,
     Expression<String>? stats,
+    Expression<String>? categoryId,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -6380,6 +7135,7 @@ class AtcRulesCompanion extends UpdateCompanion<AtcRule> {
       if (lastGeneratedPeriod != null)
         'last_generated_period': lastGeneratedPeriod,
       if (stats != null) 'stats': stats,
+      if (categoryId != null) 'category_id': categoryId,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -6407,6 +7163,7 @@ class AtcRulesCompanion extends UpdateCompanion<AtcRule> {
     Value<double?>? confidence,
     Value<String?>? lastGeneratedPeriod,
     Value<String>? stats,
+    Value<String?>? categoryId,
     Value<int>? rowid,
   }) {
     return AtcRulesCompanion(
@@ -6432,6 +7189,7 @@ class AtcRulesCompanion extends UpdateCompanion<AtcRule> {
       confidence: confidence ?? this.confidence,
       lastGeneratedPeriod: lastGeneratedPeriod ?? this.lastGeneratedPeriod,
       stats: stats ?? this.stats,
+      categoryId: categoryId ?? this.categoryId,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -6507,6 +7265,9 @@ class AtcRulesCompanion extends UpdateCompanion<AtcRule> {
     if (stats.present) {
       map['stats'] = Variable<String>(stats.value);
     }
+    if (categoryId.present) {
+      map['category_id'] = Variable<String>(categoryId.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -6538,6 +7299,7 @@ class AtcRulesCompanion extends UpdateCompanion<AtcRule> {
           ..write('confidence: $confidence, ')
           ..write('lastGeneratedPeriod: $lastGeneratedPeriod, ')
           ..write('stats: $stats, ')
+          ..write('categoryId: $categoryId, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -8590,549 +9352,6 @@ class TaskRemindersCompanion extends UpdateCompanion<TaskReminder> {
           ..write('taskId: $taskId, ')
           ..write('fireAt: $fireAt, ')
           ..write('fired: $fired, ')
-          ..write('rowid: $rowid')
-          ..write(')'))
-        .toString();
-  }
-}
-
-class $CategoriesTable extends Categories
-    with TableInfo<$CategoriesTable, Category> {
-  @override
-  final GeneratedDatabase attachedDatabase;
-  final String? _alias;
-  $CategoriesTable(this.attachedDatabase, [this._alias]);
-  static const VerificationMeta _idMeta = const VerificationMeta('id');
-  @override
-  late final GeneratedColumn<String> id = GeneratedColumn<String>(
-    'id',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    clientDefault: fallbackIds.next,
-  );
-  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
-  @override
-  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
-    'user_id',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    clientDefault: () => '',
-  );
-  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
-    'updatedAt',
-  );
-  @override
-  late final GeneratedColumn<int> updatedAt = GeneratedColumn<int>(
-    'updated_at',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    clientDefault: systemClock,
-  );
-  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
-    'deletedAt',
-  );
-  @override
-  late final GeneratedColumn<int> deletedAt = GeneratedColumn<int>(
-    'deleted_at',
-    aliasedName,
-    true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _versionMeta = const VerificationMeta(
-    'version',
-  );
-  @override
-  late final GeneratedColumn<int> version = GeneratedColumn<int>(
-    'version',
-    aliasedName,
-    false,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-    defaultValue: const Constant(1),
-  );
-  static const VerificationMeta _nameMeta = const VerificationMeta('name');
-  @override
-  late final GeneratedColumn<String> name = GeneratedColumn<String>(
-    'name',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: true,
-  );
-  static const VerificationMeta _iconMeta = const VerificationMeta('icon');
-  @override
-  late final GeneratedColumn<String> icon = GeneratedColumn<String>(
-    'icon',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _kindMeta = const VerificationMeta('kind');
-  @override
-  late final GeneratedColumn<String> kind = GeneratedColumn<String>(
-    'kind',
-    aliasedName,
-    false,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-    defaultValue: const Constant('expense'),
-  );
-  static const VerificationMeta _systemKeyMeta = const VerificationMeta(
-    'systemKey',
-  );
-  @override
-  late final GeneratedColumn<String> systemKey = GeneratedColumn<String>(
-    'system_key',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  @override
-  List<GeneratedColumn> get $columns => [
-    id,
-    userId,
-    updatedAt,
-    deletedAt,
-    version,
-    name,
-    icon,
-    kind,
-    systemKey,
-  ];
-  @override
-  String get aliasedName => _alias ?? actualTableName;
-  @override
-  String get actualTableName => $name;
-  static const String $name = 'categories';
-  @override
-  VerificationContext validateIntegrity(
-    Insertable<Category> instance, {
-    bool isInserting = false,
-  }) {
-    final context = VerificationContext();
-    final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
-    }
-    if (data.containsKey('user_id')) {
-      context.handle(
-        _userIdMeta,
-        userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta),
-      );
-    }
-    if (data.containsKey('updated_at')) {
-      context.handle(
-        _updatedAtMeta,
-        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
-      );
-    }
-    if (data.containsKey('deleted_at')) {
-      context.handle(
-        _deletedAtMeta,
-        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
-      );
-    }
-    if (data.containsKey('version')) {
-      context.handle(
-        _versionMeta,
-        version.isAcceptableOrUnknown(data['version']!, _versionMeta),
-      );
-    }
-    if (data.containsKey('name')) {
-      context.handle(
-        _nameMeta,
-        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
-      );
-    } else if (isInserting) {
-      context.missing(_nameMeta);
-    }
-    if (data.containsKey('icon')) {
-      context.handle(
-        _iconMeta,
-        icon.isAcceptableOrUnknown(data['icon']!, _iconMeta),
-      );
-    }
-    if (data.containsKey('kind')) {
-      context.handle(
-        _kindMeta,
-        kind.isAcceptableOrUnknown(data['kind']!, _kindMeta),
-      );
-    }
-    if (data.containsKey('system_key')) {
-      context.handle(
-        _systemKeyMeta,
-        systemKey.isAcceptableOrUnknown(data['system_key']!, _systemKeyMeta),
-      );
-    }
-    return context;
-  }
-
-  @override
-  Set<GeneratedColumn> get $primaryKey => {id};
-  @override
-  Category map(Map<String, dynamic> data, {String? tablePrefix}) {
-    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
-    return Category(
-      id: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}id'],
-      )!,
-      userId: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}user_id'],
-      )!,
-      updatedAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}updated_at'],
-      )!,
-      deletedAt: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}deleted_at'],
-      ),
-      version: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}version'],
-      )!,
-      name: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}name'],
-      )!,
-      icon: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}icon'],
-      ),
-      kind: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}kind'],
-      )!,
-      systemKey: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}system_key'],
-      ),
-    );
-  }
-
-  @override
-  $CategoriesTable createAlias(String alias) {
-    return $CategoriesTable(attachedDatabase, alias);
-  }
-}
-
-class Category extends DataClass implements Insertable<Category> {
-  final String id;
-  final String userId;
-  final int updatedAt;
-  final int? deletedAt;
-  final int version;
-  final String name;
-  final String? icon;
-  final String kind;
-  final String? systemKey;
-  const Category({
-    required this.id,
-    required this.userId,
-    required this.updatedAt,
-    this.deletedAt,
-    required this.version,
-    required this.name,
-    this.icon,
-    required this.kind,
-    this.systemKey,
-  });
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    map['id'] = Variable<String>(id);
-    map['user_id'] = Variable<String>(userId);
-    map['updated_at'] = Variable<int>(updatedAt);
-    if (!nullToAbsent || deletedAt != null) {
-      map['deleted_at'] = Variable<int>(deletedAt);
-    }
-    map['version'] = Variable<int>(version);
-    map['name'] = Variable<String>(name);
-    if (!nullToAbsent || icon != null) {
-      map['icon'] = Variable<String>(icon);
-    }
-    map['kind'] = Variable<String>(kind);
-    if (!nullToAbsent || systemKey != null) {
-      map['system_key'] = Variable<String>(systemKey);
-    }
-    return map;
-  }
-
-  CategoriesCompanion toCompanion(bool nullToAbsent) {
-    return CategoriesCompanion(
-      id: Value(id),
-      userId: Value(userId),
-      updatedAt: Value(updatedAt),
-      deletedAt: deletedAt == null && nullToAbsent
-          ? const Value.absent()
-          : Value(deletedAt),
-      version: Value(version),
-      name: Value(name),
-      icon: icon == null && nullToAbsent ? const Value.absent() : Value(icon),
-      kind: Value(kind),
-      systemKey: systemKey == null && nullToAbsent
-          ? const Value.absent()
-          : Value(systemKey),
-    );
-  }
-
-  factory Category.fromJson(
-    Map<String, dynamic> json, {
-    ValueSerializer? serializer,
-  }) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return Category(
-      id: serializer.fromJson<String>(json['id']),
-      userId: serializer.fromJson<String>(json['userId']),
-      updatedAt: serializer.fromJson<int>(json['updatedAt']),
-      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
-      version: serializer.fromJson<int>(json['version']),
-      name: serializer.fromJson<String>(json['name']),
-      icon: serializer.fromJson<String?>(json['icon']),
-      kind: serializer.fromJson<String>(json['kind']),
-      systemKey: serializer.fromJson<String?>(json['systemKey']),
-    );
-  }
-  @override
-  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
-    serializer ??= driftRuntimeOptions.defaultSerializer;
-    return <String, dynamic>{
-      'id': serializer.toJson<String>(id),
-      'userId': serializer.toJson<String>(userId),
-      'updatedAt': serializer.toJson<int>(updatedAt),
-      'deletedAt': serializer.toJson<int?>(deletedAt),
-      'version': serializer.toJson<int>(version),
-      'name': serializer.toJson<String>(name),
-      'icon': serializer.toJson<String?>(icon),
-      'kind': serializer.toJson<String>(kind),
-      'systemKey': serializer.toJson<String?>(systemKey),
-    };
-  }
-
-  Category copyWith({
-    String? id,
-    String? userId,
-    int? updatedAt,
-    Value<int?> deletedAt = const Value.absent(),
-    int? version,
-    String? name,
-    Value<String?> icon = const Value.absent(),
-    String? kind,
-    Value<String?> systemKey = const Value.absent(),
-  }) => Category(
-    id: id ?? this.id,
-    userId: userId ?? this.userId,
-    updatedAt: updatedAt ?? this.updatedAt,
-    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
-    version: version ?? this.version,
-    name: name ?? this.name,
-    icon: icon.present ? icon.value : this.icon,
-    kind: kind ?? this.kind,
-    systemKey: systemKey.present ? systemKey.value : this.systemKey,
-  );
-  Category copyWithCompanion(CategoriesCompanion data) {
-    return Category(
-      id: data.id.present ? data.id.value : this.id,
-      userId: data.userId.present ? data.userId.value : this.userId,
-      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
-      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
-      version: data.version.present ? data.version.value : this.version,
-      name: data.name.present ? data.name.value : this.name,
-      icon: data.icon.present ? data.icon.value : this.icon,
-      kind: data.kind.present ? data.kind.value : this.kind,
-      systemKey: data.systemKey.present ? data.systemKey.value : this.systemKey,
-    );
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('Category(')
-          ..write('id: $id, ')
-          ..write('userId: $userId, ')
-          ..write('updatedAt: $updatedAt, ')
-          ..write('deletedAt: $deletedAt, ')
-          ..write('version: $version, ')
-          ..write('name: $name, ')
-          ..write('icon: $icon, ')
-          ..write('kind: $kind, ')
-          ..write('systemKey: $systemKey')
-          ..write(')'))
-        .toString();
-  }
-
-  @override
-  int get hashCode => Object.hash(
-    id,
-    userId,
-    updatedAt,
-    deletedAt,
-    version,
-    name,
-    icon,
-    kind,
-    systemKey,
-  );
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      (other is Category &&
-          other.id == this.id &&
-          other.userId == this.userId &&
-          other.updatedAt == this.updatedAt &&
-          other.deletedAt == this.deletedAt &&
-          other.version == this.version &&
-          other.name == this.name &&
-          other.icon == this.icon &&
-          other.kind == this.kind &&
-          other.systemKey == this.systemKey);
-}
-
-class CategoriesCompanion extends UpdateCompanion<Category> {
-  final Value<String> id;
-  final Value<String> userId;
-  final Value<int> updatedAt;
-  final Value<int?> deletedAt;
-  final Value<int> version;
-  final Value<String> name;
-  final Value<String?> icon;
-  final Value<String> kind;
-  final Value<String?> systemKey;
-  final Value<int> rowid;
-  const CategoriesCompanion({
-    this.id = const Value.absent(),
-    this.userId = const Value.absent(),
-    this.updatedAt = const Value.absent(),
-    this.deletedAt = const Value.absent(),
-    this.version = const Value.absent(),
-    this.name = const Value.absent(),
-    this.icon = const Value.absent(),
-    this.kind = const Value.absent(),
-    this.systemKey = const Value.absent(),
-    this.rowid = const Value.absent(),
-  });
-  CategoriesCompanion.insert({
-    this.id = const Value.absent(),
-    this.userId = const Value.absent(),
-    this.updatedAt = const Value.absent(),
-    this.deletedAt = const Value.absent(),
-    this.version = const Value.absent(),
-    required String name,
-    this.icon = const Value.absent(),
-    this.kind = const Value.absent(),
-    this.systemKey = const Value.absent(),
-    this.rowid = const Value.absent(),
-  }) : name = Value(name);
-  static Insertable<Category> custom({
-    Expression<String>? id,
-    Expression<String>? userId,
-    Expression<int>? updatedAt,
-    Expression<int>? deletedAt,
-    Expression<int>? version,
-    Expression<String>? name,
-    Expression<String>? icon,
-    Expression<String>? kind,
-    Expression<String>? systemKey,
-    Expression<int>? rowid,
-  }) {
-    return RawValuesInsertable({
-      if (id != null) 'id': id,
-      if (userId != null) 'user_id': userId,
-      if (updatedAt != null) 'updated_at': updatedAt,
-      if (deletedAt != null) 'deleted_at': deletedAt,
-      if (version != null) 'version': version,
-      if (name != null) 'name': name,
-      if (icon != null) 'icon': icon,
-      if (kind != null) 'kind': kind,
-      if (systemKey != null) 'system_key': systemKey,
-      if (rowid != null) 'rowid': rowid,
-    });
-  }
-
-  CategoriesCompanion copyWith({
-    Value<String>? id,
-    Value<String>? userId,
-    Value<int>? updatedAt,
-    Value<int?>? deletedAt,
-    Value<int>? version,
-    Value<String>? name,
-    Value<String?>? icon,
-    Value<String>? kind,
-    Value<String?>? systemKey,
-    Value<int>? rowid,
-  }) {
-    return CategoriesCompanion(
-      id: id ?? this.id,
-      userId: userId ?? this.userId,
-      updatedAt: updatedAt ?? this.updatedAt,
-      deletedAt: deletedAt ?? this.deletedAt,
-      version: version ?? this.version,
-      name: name ?? this.name,
-      icon: icon ?? this.icon,
-      kind: kind ?? this.kind,
-      systemKey: systemKey ?? this.systemKey,
-      rowid: rowid ?? this.rowid,
-    );
-  }
-
-  @override
-  Map<String, Expression> toColumns(bool nullToAbsent) {
-    final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<String>(id.value);
-    }
-    if (userId.present) {
-      map['user_id'] = Variable<String>(userId.value);
-    }
-    if (updatedAt.present) {
-      map['updated_at'] = Variable<int>(updatedAt.value);
-    }
-    if (deletedAt.present) {
-      map['deleted_at'] = Variable<int>(deletedAt.value);
-    }
-    if (version.present) {
-      map['version'] = Variable<int>(version.value);
-    }
-    if (name.present) {
-      map['name'] = Variable<String>(name.value);
-    }
-    if (icon.present) {
-      map['icon'] = Variable<String>(icon.value);
-    }
-    if (kind.present) {
-      map['kind'] = Variable<String>(kind.value);
-    }
-    if (systemKey.present) {
-      map['system_key'] = Variable<String>(systemKey.value);
-    }
-    if (rowid.present) {
-      map['rowid'] = Variable<int>(rowid.value);
-    }
-    return map;
-  }
-
-  @override
-  String toString() {
-    return (StringBuffer('CategoriesCompanion(')
-          ..write('id: $id, ')
-          ..write('userId: $userId, ')
-          ..write('updatedAt: $updatedAt, ')
-          ..write('deletedAt: $deletedAt, ')
-          ..write('version: $version, ')
-          ..write('name: $name, ')
-          ..write('icon: $icon, ')
-          ..write('kind: $kind, ')
-          ..write('systemKey: $systemKey, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -12647,11 +12866,11 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $ExtractedFieldsTable extractedFields = $ExtractedFieldsTable(
     this,
   );
+  late final $CategoriesTable categories = $CategoriesTable(this);
   late final $AtcRulesTable atcRules = $AtcRulesTable(this);
   late final $TasksTable tasks = $TasksTable(this);
   late final $SubtasksTable subtasks = $SubtasksTable(this);
   late final $TaskRemindersTable taskReminders = $TaskRemindersTable(this);
-  late final $CategoriesTable categories = $CategoriesTable(this);
   late final $PaymentsTable payments = $PaymentsTable(this);
   late final $ExpensesTable expenses = $ExpensesTable(this);
   late final $ScoreSnapshotsTable scoreSnapshots = $ScoreSnapshotsTable(this);
@@ -12674,11 +12893,11 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     userSettings,
     documentFiles,
     extractedFields,
+    categories,
     atcRules,
     tasks,
     subtasks,
     taskReminders,
-    categories,
     payments,
     expenses,
     scoreSnapshots,
@@ -13903,6 +14122,7 @@ typedef $$DocumentsTableCreateCompanionBuilder = DocumentsCompanion Function({
   Value<String> source,
   Value<int?> archivedAt,
   Value<String?> renewedById,
+  Value<int?> expiryPromptedAt,
   Value<int> rowid,
 });
 typedef $$DocumentsTableUpdateCompanionBuilder = DocumentsCompanion Function({
@@ -13931,6 +14151,7 @@ typedef $$DocumentsTableUpdateCompanionBuilder = DocumentsCompanion Function({
   Value<String> source,
   Value<int?> archivedAt,
   Value<String?> renewedById,
+  Value<int?> expiryPromptedAt,
   Value<int> rowid,
 });
 
@@ -14186,6 +14407,11 @@ class $$DocumentsTableFilterComposer
 
   ColumnFilters<String> get renewedById => $composableBuilder(
     column: $table.renewedById,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get expiryPromptedAt => $composableBuilder(
+    column: $table.expiryPromptedAt,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -14485,6 +14711,11 @@ class $$DocumentsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get expiryPromptedAt => $composableBuilder(
+    column: $table.expiryPromptedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$PersonsTableOrderingComposer get personId {
     final $$PersonsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -14621,6 +14852,11 @@ class $$DocumentsTableAnnotationComposer
 
   GeneratedColumn<String> get renewedById => $composableBuilder(
     column: $table.renewedById,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get expiryPromptedAt => $composableBuilder(
+    column: $table.expiryPromptedAt,
     builder: (column) => column,
   );
 
@@ -14857,6 +15093,7 @@ class $$DocumentsTableTableManager
                 Value<String> source = const Value.absent(),
                 Value<int?> archivedAt = const Value.absent(),
                 Value<String?> renewedById = const Value.absent(),
+                Value<int?> expiryPromptedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => DocumentsCompanion(
                 id: id,
@@ -14884,6 +15121,7 @@ class $$DocumentsTableTableManager
                 source: source,
                 archivedAt: archivedAt,
                 renewedById: renewedById,
+                expiryPromptedAt: expiryPromptedAt,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -14913,6 +15151,7 @@ class $$DocumentsTableTableManager
                 Value<String> source = const Value.absent(),
                 Value<int?> archivedAt = const Value.absent(),
                 Value<String?> renewedById = const Value.absent(),
+                Value<int?> expiryPromptedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => DocumentsCompanion.insert(
                 id: id,
@@ -14940,6 +15179,7 @@ class $$DocumentsTableTableManager
                 source: source,
                 archivedAt: archivedAt,
                 renewedById: renewedById,
+                expiryPromptedAt: expiryPromptedAt,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -15161,6 +15401,8 @@ typedef $$UserSettingsTableCreateCompanionBuilder =
       Value<String> notifDomains,
       Value<String> backupMode,
       Value<int> dayCapacityMin,
+      Value<int?> salaryDay,
+      Value<int?> salaryMinor,
       Value<int> rowid,
     });
 typedef $$UserSettingsTableUpdateCompanionBuilder =
@@ -15182,6 +15424,8 @@ typedef $$UserSettingsTableUpdateCompanionBuilder =
       Value<String> notifDomains,
       Value<String> backupMode,
       Value<int> dayCapacityMin,
+      Value<int?> salaryDay,
+      Value<int?> salaryMinor,
       Value<int> rowid,
     });
 
@@ -15276,6 +15520,16 @@ class $$UserSettingsTableFilterComposer
 
   ColumnFilters<int> get dayCapacityMin => $composableBuilder(
     column: $table.dayCapacityMin,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get salaryDay => $composableBuilder(
+    column: $table.salaryDay,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get salaryMinor => $composableBuilder(
+    column: $table.salaryMinor,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -15373,6 +15627,16 @@ class $$UserSettingsTableOrderingComposer
     column: $table.dayCapacityMin,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<int> get salaryDay => $composableBuilder(
+    column: $table.salaryDay,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get salaryMinor => $composableBuilder(
+    column: $table.salaryMinor,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$UserSettingsTableAnnotationComposer
@@ -15448,6 +15712,14 @@ class $$UserSettingsTableAnnotationComposer
     column: $table.dayCapacityMin,
     builder: (column) => column,
   );
+
+  GeneratedColumn<int> get salaryDay =>
+      $composableBuilder(column: $table.salaryDay, builder: (column) => column);
+
+  GeneratedColumn<int> get salaryMinor => $composableBuilder(
+    column: $table.salaryMinor,
+    builder: (column) => column,
+  );
 }
 
 class $$UserSettingsTableTableManager
@@ -15498,6 +15770,8 @@ class $$UserSettingsTableTableManager
                 Value<String> notifDomains = const Value.absent(),
                 Value<String> backupMode = const Value.absent(),
                 Value<int> dayCapacityMin = const Value.absent(),
+                Value<int?> salaryDay = const Value.absent(),
+                Value<int?> salaryMinor = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => UserSettingsCompanion(
                 id: id,
@@ -15517,6 +15791,8 @@ class $$UserSettingsTableTableManager
                 notifDomains: notifDomains,
                 backupMode: backupMode,
                 dayCapacityMin: dayCapacityMin,
+                salaryDay: salaryDay,
+                salaryMinor: salaryMinor,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -15538,6 +15814,8 @@ class $$UserSettingsTableTableManager
                 Value<String> notifDomains = const Value.absent(),
                 Value<String> backupMode = const Value.absent(),
                 Value<int> dayCapacityMin = const Value.absent(),
+                Value<int?> salaryDay = const Value.absent(),
+                Value<int?> salaryMinor = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => UserSettingsCompanion.insert(
                 id: id,
@@ -15557,6 +15835,8 @@ class $$UserSettingsTableTableManager
                 notifDomains: notifDomains,
                 backupMode: backupMode,
                 dayCapacityMin: dayCapacityMin,
+                salaryDay: salaryDay,
+                salaryMinor: salaryMinor,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -16544,6 +16824,578 @@ typedef $$ExtractedFieldsTableProcessedTableManager =
       ExtractedField,
       PrefetchHooks Function({bool documentId})
     >;
+typedef $$CategoriesTableCreateCompanionBuilder = CategoriesCompanion Function({
+  Value<String> id,
+  Value<String> userId,
+  Value<int> updatedAt,
+  Value<int?> deletedAt,
+  Value<int> version,
+  required String name,
+  Value<String?> icon,
+  Value<String> kind,
+  Value<String?> systemKey,
+  Value<int> rowid,
+});
+typedef $$CategoriesTableUpdateCompanionBuilder = CategoriesCompanion Function({
+  Value<String> id,
+  Value<String> userId,
+  Value<int> updatedAt,
+  Value<int?> deletedAt,
+  Value<int> version,
+  Value<String> name,
+  Value<String?> icon,
+  Value<String> kind,
+  Value<String?> systemKey,
+  Value<int> rowid,
+});
+
+final class $$CategoriesTableReferences
+    extends BaseReferences<_$AppDatabase, $CategoriesTable, Category> {
+  $$CategoriesTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$AtcRulesTable, List<AtcRule>> _atcRulesRefsTable(
+    _$AppDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.atcRules,
+    aliasName: 'categories__id__atc_rules__category_id',
+  );
+
+  $$AtcRulesTableProcessedTableManager get atcRulesRefs {
+    final manager = $$AtcRulesTableTableManager(
+      $_db,
+      $_db.atcRules,
+    ).filter((f) => f.categoryId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_atcRulesRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$PaymentsTable, List<Payment>> _paymentsRefsTable(
+    _$AppDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.payments,
+    aliasName: 'categories__id__payments__category_id',
+  );
+
+  $$PaymentsTableProcessedTableManager get paymentsRefs {
+    final manager = $$PaymentsTableTableManager(
+      $_db,
+      $_db.payments,
+    ).filter((f) => f.categoryId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_paymentsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<$ExpensesTable, List<Expense>> _expensesRefsTable(
+    _$AppDatabase db,
+  ) => MultiTypedResultKey.fromTable(
+    db.expenses,
+    aliasName: 'categories__id__expenses__category_id',
+  );
+
+  $$ExpensesTableProcessedTableManager get expensesRefs {
+    final manager = $$ExpensesTableTableManager(
+      $_db,
+      $_db.expenses,
+    ).filter((f) => f.categoryId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_expensesRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$CategoriesTableFilterComposer
+    extends Composer<_$AppDatabase, $CategoriesTable> {
+  $$CategoriesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get icon => $composableBuilder(
+    column: $table.icon,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get systemKey => $composableBuilder(
+    column: $table.systemKey,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  Expression<bool> atcRulesRefs(
+    Expression<bool> Function($$AtcRulesTableFilterComposer f) f,
+  ) {
+    final $$AtcRulesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.atcRules,
+      getReferencedColumn: (t) => t.categoryId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AtcRulesTableFilterComposer(
+            $db: $db,
+            $table: $db.atcRules,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> paymentsRefs(
+    Expression<bool> Function($$PaymentsTableFilterComposer f) f,
+  ) {
+    final $$PaymentsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.payments,
+      getReferencedColumn: (t) => t.categoryId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PaymentsTableFilterComposer(
+            $db: $db,
+            $table: $db.payments,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> expensesRefs(
+    Expression<bool> Function($$ExpensesTableFilterComposer f) f,
+  ) {
+    final $$ExpensesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.expenses,
+      getReferencedColumn: (t) => t.categoryId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ExpensesTableFilterComposer(
+            $db: $db,
+            $table: $db.expenses,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$CategoriesTableOrderingComposer
+    extends Composer<_$AppDatabase, $CategoriesTable> {
+  $$CategoriesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get icon => $composableBuilder(
+    column: $table.icon,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get systemKey => $composableBuilder(
+    column: $table.systemKey,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$CategoriesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CategoriesTable> {
+  $$CategoriesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get userId =>
+      $composableBuilder(column: $table.userId, builder: (column) => column);
+
+  GeneratedColumn<int> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<int> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<int> get version =>
+      $composableBuilder(column: $table.version, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get icon =>
+      $composableBuilder(column: $table.icon, builder: (column) => column);
+
+  GeneratedColumn<String> get kind =>
+      $composableBuilder(column: $table.kind, builder: (column) => column);
+
+  GeneratedColumn<String> get systemKey =>
+      $composableBuilder(column: $table.systemKey, builder: (column) => column);
+
+  Expression<T> atcRulesRefs<T extends Object>(
+    Expression<T> Function($$AtcRulesTableAnnotationComposer a) f,
+  ) {
+    final $$AtcRulesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.atcRules,
+      getReferencedColumn: (t) => t.categoryId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$AtcRulesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.atcRules,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> paymentsRefs<T extends Object>(
+    Expression<T> Function($$PaymentsTableAnnotationComposer a) f,
+  ) {
+    final $$PaymentsTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.payments,
+      getReferencedColumn: (t) => t.categoryId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PaymentsTableAnnotationComposer(
+            $db: $db,
+            $table: $db.payments,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<T> expensesRefs<T extends Object>(
+    Expression<T> Function($$ExpensesTableAnnotationComposer a) f,
+  ) {
+    final $$ExpensesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.expenses,
+      getReferencedColumn: (t) => t.categoryId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$ExpensesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.expenses,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$CategoriesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $CategoriesTable,
+          Category,
+          $$CategoriesTableFilterComposer,
+          $$CategoriesTableOrderingComposer,
+          $$CategoriesTableAnnotationComposer,
+          $$CategoriesTableCreateCompanionBuilder,
+          $$CategoriesTableUpdateCompanionBuilder,
+          (Category, $$CategoriesTableReferences),
+          Category,
+          PrefetchHooks Function({
+            bool atcRulesRefs,
+            bool paymentsRefs,
+            bool expensesRefs,
+          })
+        > {
+  $$CategoriesTableTableManager(_$AppDatabase db, $CategoriesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CategoriesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CategoriesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$CategoriesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> userId = const Value.absent(),
+                Value<int> updatedAt = const Value.absent(),
+                Value<int?> deletedAt = const Value.absent(),
+                Value<int> version = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String?> icon = const Value.absent(),
+                Value<String> kind = const Value.absent(),
+                Value<String?> systemKey = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CategoriesCompanion(
+                id: id,
+                userId: userId,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                version: version,
+                name: name,
+                icon: icon,
+                kind: kind,
+                systemKey: systemKey,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> userId = const Value.absent(),
+                Value<int> updatedAt = const Value.absent(),
+                Value<int?> deletedAt = const Value.absent(),
+                Value<int> version = const Value.absent(),
+                required String name,
+                Value<String?> icon = const Value.absent(),
+                Value<String> kind = const Value.absent(),
+                Value<String?> systemKey = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CategoriesCompanion.insert(
+                id: id,
+                userId: userId,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                version: version,
+                name: name,
+                icon: icon,
+                kind: kind,
+                systemKey: systemKey,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$CategoriesTable, Category>(table),
+                  $$CategoriesTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({
+                atcRulesRefs = false,
+                paymentsRefs = false,
+                expensesRefs = false,
+              }) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (atcRulesRefs) db.atcRules,
+                    if (paymentsRefs) db.payments,
+                    if (expensesRefs) db.expenses,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (atcRulesRefs)
+                        await $_getPrefetchedDataByColumns<
+                          Category,
+                          $CategoriesTable,
+                          AtcRule,
+                          $AtcRulesTable
+                        >(
+                          currentTable: table,
+                          referencedTable: $$CategoriesTableReferences
+                              ._atcRulesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$CategoriesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).atcRulesRefs,
+                          currentColumn: 'id',
+                          referencedColumn: 'category_id',
+                          typedResults: items,
+                        ),
+                      if (paymentsRefs)
+                        await $_getPrefetchedDataByColumns<
+                          Category,
+                          $CategoriesTable,
+                          Payment,
+                          $PaymentsTable
+                        >(
+                          currentTable: table,
+                          referencedTable: $$CategoriesTableReferences
+                              ._paymentsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$CategoriesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).paymentsRefs,
+                          currentColumn: 'id',
+                          referencedColumn: 'category_id',
+                          typedResults: items,
+                        ),
+                      if (expensesRefs)
+                        await $_getPrefetchedDataByColumns<
+                          Category,
+                          $CategoriesTable,
+                          Expense,
+                          $ExpensesTable
+                        >(
+                          currentTable: table,
+                          referencedTable: $$CategoriesTableReferences
+                              ._expensesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$CategoriesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).expensesRefs,
+                          currentColumn: 'id',
+                          referencedColumn: 'category_id',
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$CategoriesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $CategoriesTable,
+      Category,
+      $$CategoriesTableFilterComposer,
+      $$CategoriesTableOrderingComposer,
+      $$CategoriesTableAnnotationComposer,
+      $$CategoriesTableCreateCompanionBuilder,
+      $$CategoriesTableUpdateCompanionBuilder,
+      (Category, $$CategoriesTableReferences),
+      Category,
+      PrefetchHooks Function({
+        bool atcRulesRefs,
+        bool paymentsRefs,
+        bool expensesRefs,
+      })
+    >;
 typedef $$AtcRulesTableCreateCompanionBuilder = AtcRulesCompanion Function({
   Value<String> id,
   Value<String> userId,
@@ -16567,6 +17419,7 @@ typedef $$AtcRulesTableCreateCompanionBuilder = AtcRulesCompanion Function({
   Value<double?> confidence,
   Value<String?> lastGeneratedPeriod,
   Value<String> stats,
+  Value<String?> categoryId,
   Value<int> rowid,
 });
 typedef $$AtcRulesTableUpdateCompanionBuilder = AtcRulesCompanion Function({
@@ -16592,6 +17445,7 @@ typedef $$AtcRulesTableUpdateCompanionBuilder = AtcRulesCompanion Function({
   Value<double?> confidence,
   Value<String?> lastGeneratedPeriod,
   Value<String> stats,
+  Value<String?> categoryId,
   Value<int> rowid,
 });
 
@@ -16610,6 +17464,23 @@ final class $$AtcRulesTableReferences
       $_db.persons,
     ).filter((f) => f.id.sqlEquals($_column));
     final item = $_typedResult.readTableOrNull(_personIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $CategoriesTable _categoryIdTable(_$AppDatabase db) =>
+      db.categories.createAlias('atc_rules__category_id__categories__id');
+
+  $$CategoriesTableProcessedTableManager? get categoryId {
+    final $_column = $_itemColumn<String>('category_id');
+    if ($_column == null) return null;
+    final manager = $$CategoriesTableTableManager(
+      $_db,
+      $_db.categories,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_categoryIdTable($_db));
     if (item == null) return manager;
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: [item]),
@@ -16783,6 +17654,29 @@ class $$AtcRulesTableFilterComposer
           }) => $$PersonsTableFilterComposer(
             $db: $db,
             $table: $db.persons,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$CategoriesTableFilterComposer get categoryId {
+    final $$CategoriesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.categoryId,
+      referencedTable: $db.categories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CategoriesTableFilterComposer(
+            $db: $db,
+            $table: $db.categories,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -16979,6 +17873,29 @@ class $$AtcRulesTableOrderingComposer
     );
     return composer;
   }
+
+  $$CategoriesTableOrderingComposer get categoryId {
+    final $$CategoriesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.categoryId,
+      referencedTable: $db.categories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CategoriesTableOrderingComposer(
+            $db: $db,
+            $table: $db.categories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
 }
 
 class $$AtcRulesTableAnnotationComposer
@@ -17094,6 +18011,29 @@ class $$AtcRulesTableAnnotationComposer
     return composer;
   }
 
+  $$CategoriesTableAnnotationComposer get categoryId {
+    final $$CategoriesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.categoryId,
+      referencedTable: $db.categories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CategoriesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.categories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
   Expression<T> tasksRefs<T extends Object>(
     Expression<T> Function($$TasksTableAnnotationComposer a) f,
   ) {
@@ -17160,6 +18100,7 @@ class $$AtcRulesTableTableManager
           AtcRule,
           PrefetchHooks Function({
             bool personId,
+            bool categoryId,
             bool tasksRefs,
             bool paymentsRefs,
           })
@@ -17199,6 +18140,7 @@ class $$AtcRulesTableTableManager
                 Value<double?> confidence = const Value.absent(),
                 Value<String?> lastGeneratedPeriod = const Value.absent(),
                 Value<String> stats = const Value.absent(),
+                Value<String?> categoryId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => AtcRulesCompanion(
                 id: id,
@@ -17223,6 +18165,7 @@ class $$AtcRulesTableTableManager
                 confidence: confidence,
                 lastGeneratedPeriod: lastGeneratedPeriod,
                 stats: stats,
+                categoryId: categoryId,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -17249,6 +18192,7 @@ class $$AtcRulesTableTableManager
                 Value<double?> confidence = const Value.absent(),
                 Value<String?> lastGeneratedPeriod = const Value.absent(),
                 Value<String> stats = const Value.absent(),
+                Value<String?> categoryId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => AtcRulesCompanion.insert(
                 id: id,
@@ -17273,6 +18217,7 @@ class $$AtcRulesTableTableManager
                 confidence: confidence,
                 lastGeneratedPeriod: lastGeneratedPeriod,
                 stats: stats,
+                categoryId: categoryId,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -17284,7 +18229,12 @@ class $$AtcRulesTableTableManager
               )
               .toList(),
           prefetchHooksCallback:
-              ({personId = false, tasksRefs = false, paymentsRefs = false}) {
+              ({
+                personId = false,
+                categoryId = false,
+                tasksRefs = false,
+                paymentsRefs = false,
+              }) {
                 return PrefetchHooks(
                   db: db,
                   explicitlyWatchedTables: [
@@ -17315,6 +18265,17 @@ class $$AtcRulesTableTableManager
                                 ._personIdTable(db),
                             referencedColumn: $$AtcRulesTableReferences
                                 ._personIdTable(db)
+                                .id,
+                          ) as T;
+                        }
+                        if (categoryId) {
+                          state = state.withJoin(
+                            currentTable: table,
+                            currentColumn: table.categoryId,
+                            referencedTable: $$AtcRulesTableReferences
+                                ._categoryIdTable(db),
+                            referencedColumn: $$AtcRulesTableReferences
+                                ._categoryIdTable(db)
                                 .id,
                           ) as T;
                         }
@@ -17383,7 +18344,12 @@ typedef $$AtcRulesTableProcessedTableManager =
       $$AtcRulesTableUpdateCompanionBuilder,
       (AtcRule, $$AtcRulesTableReferences),
       AtcRule,
-      PrefetchHooks Function({bool personId, bool tasksRefs, bool paymentsRefs})
+      PrefetchHooks Function({
+        bool personId,
+        bool categoryId,
+        bool tasksRefs,
+        bool paymentsRefs,
+      })
     >;
 typedef $$TasksTableCreateCompanionBuilder = TasksCompanion Function({
   Value<String> id,
@@ -19176,476 +20142,6 @@ typedef $$TaskRemindersTableProcessedTableManager =
       (TaskReminder, $$TaskRemindersTableReferences),
       TaskReminder,
       PrefetchHooks Function({bool taskId})
-    >;
-typedef $$CategoriesTableCreateCompanionBuilder = CategoriesCompanion Function({
-  Value<String> id,
-  Value<String> userId,
-  Value<int> updatedAt,
-  Value<int?> deletedAt,
-  Value<int> version,
-  required String name,
-  Value<String?> icon,
-  Value<String> kind,
-  Value<String?> systemKey,
-  Value<int> rowid,
-});
-typedef $$CategoriesTableUpdateCompanionBuilder = CategoriesCompanion Function({
-  Value<String> id,
-  Value<String> userId,
-  Value<int> updatedAt,
-  Value<int?> deletedAt,
-  Value<int> version,
-  Value<String> name,
-  Value<String?> icon,
-  Value<String> kind,
-  Value<String?> systemKey,
-  Value<int> rowid,
-});
-
-final class $$CategoriesTableReferences
-    extends BaseReferences<_$AppDatabase, $CategoriesTable, Category> {
-  $$CategoriesTableReferences(super.$_db, super.$_table, super.$_typedResult);
-
-  static MultiTypedResultKey<$PaymentsTable, List<Payment>> _paymentsRefsTable(
-    _$AppDatabase db,
-  ) => MultiTypedResultKey.fromTable(
-    db.payments,
-    aliasName: 'categories__id__payments__category_id',
-  );
-
-  $$PaymentsTableProcessedTableManager get paymentsRefs {
-    final manager = $$PaymentsTableTableManager(
-      $_db,
-      $_db.payments,
-    ).filter((f) => f.categoryId.id.sqlEquals($_itemColumn<String>('id')!));
-
-    final cache = $_typedResult.readTableOrNull(_paymentsRefsTable($_db));
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: cache),
-    );
-  }
-
-  static MultiTypedResultKey<$ExpensesTable, List<Expense>> _expensesRefsTable(
-    _$AppDatabase db,
-  ) => MultiTypedResultKey.fromTable(
-    db.expenses,
-    aliasName: 'categories__id__expenses__category_id',
-  );
-
-  $$ExpensesTableProcessedTableManager get expensesRefs {
-    final manager = $$ExpensesTableTableManager(
-      $_db,
-      $_db.expenses,
-    ).filter((f) => f.categoryId.id.sqlEquals($_itemColumn<String>('id')!));
-
-    final cache = $_typedResult.readTableOrNull(_expensesRefsTable($_db));
-    return ProcessedTableManager(
-      manager.$state.copyWith(prefetchedData: cache),
-    );
-  }
-}
-
-class $$CategoriesTableFilterComposer
-    extends Composer<_$AppDatabase, $CategoriesTable> {
-  $$CategoriesTableFilterComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnFilters<String> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get userId => $composableBuilder(
-    column: $table.userId,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get updatedAt => $composableBuilder(
-    column: $table.updatedAt,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get deletedAt => $composableBuilder(
-    column: $table.deletedAt,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<int> get version => $composableBuilder(
-    column: $table.version,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get name => $composableBuilder(
-    column: $table.name,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get icon => $composableBuilder(
-    column: $table.icon,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get kind => $composableBuilder(
-    column: $table.kind,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get systemKey => $composableBuilder(
-    column: $table.systemKey,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  Expression<bool> paymentsRefs(
-    Expression<bool> Function($$PaymentsTableFilterComposer f) f,
-  ) {
-    final $$PaymentsTableFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.payments,
-      getReferencedColumn: (t) => t.categoryId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$PaymentsTableFilterComposer(
-            $db: $db,
-            $table: $db.payments,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-
-  Expression<bool> expensesRefs(
-    Expression<bool> Function($$ExpensesTableFilterComposer f) f,
-  ) {
-    final $$ExpensesTableFilterComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.expenses,
-      getReferencedColumn: (t) => t.categoryId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$ExpensesTableFilterComposer(
-            $db: $db,
-            $table: $db.expenses,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-}
-
-class $$CategoriesTableOrderingComposer
-    extends Composer<_$AppDatabase, $CategoriesTable> {
-  $$CategoriesTableOrderingComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  ColumnOrderings<String> get id => $composableBuilder(
-    column: $table.id,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get userId => $composableBuilder(
-    column: $table.userId,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get updatedAt => $composableBuilder(
-    column: $table.updatedAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get deletedAt => $composableBuilder(
-    column: $table.deletedAt,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get version => $composableBuilder(
-    column: $table.version,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get name => $composableBuilder(
-    column: $table.name,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get icon => $composableBuilder(
-    column: $table.icon,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get kind => $composableBuilder(
-    column: $table.kind,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get systemKey => $composableBuilder(
-    column: $table.systemKey,
-    builder: (column) => ColumnOrderings(column),
-  );
-}
-
-class $$CategoriesTableAnnotationComposer
-    extends Composer<_$AppDatabase, $CategoriesTable> {
-  $$CategoriesTableAnnotationComposer({
-    required super.$db,
-    required super.$table,
-    super.joinBuilder,
-    super.$addJoinBuilderToRootComposer,
-    super.$removeJoinBuilderFromRootComposer,
-  });
-  GeneratedColumn<String> get id =>
-      $composableBuilder(column: $table.id, builder: (column) => column);
-
-  GeneratedColumn<String> get userId =>
-      $composableBuilder(column: $table.userId, builder: (column) => column);
-
-  GeneratedColumn<int> get updatedAt =>
-      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
-
-  GeneratedColumn<int> get deletedAt =>
-      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
-
-  GeneratedColumn<int> get version =>
-      $composableBuilder(column: $table.version, builder: (column) => column);
-
-  GeneratedColumn<String> get name =>
-      $composableBuilder(column: $table.name, builder: (column) => column);
-
-  GeneratedColumn<String> get icon =>
-      $composableBuilder(column: $table.icon, builder: (column) => column);
-
-  GeneratedColumn<String> get kind =>
-      $composableBuilder(column: $table.kind, builder: (column) => column);
-
-  GeneratedColumn<String> get systemKey =>
-      $composableBuilder(column: $table.systemKey, builder: (column) => column);
-
-  Expression<T> paymentsRefs<T extends Object>(
-    Expression<T> Function($$PaymentsTableAnnotationComposer a) f,
-  ) {
-    final $$PaymentsTableAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.payments,
-      getReferencedColumn: (t) => t.categoryId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$PaymentsTableAnnotationComposer(
-            $db: $db,
-            $table: $db.payments,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-
-  Expression<T> expensesRefs<T extends Object>(
-    Expression<T> Function($$ExpensesTableAnnotationComposer a) f,
-  ) {
-    final $$ExpensesTableAnnotationComposer composer = $composerBuilder(
-      composer: this,
-      getCurrentColumn: (t) => t.id,
-      referencedTable: $db.expenses,
-      getReferencedColumn: (t) => t.categoryId,
-      builder:
-          (
-            joinBuilder, {
-            $addJoinBuilderToRootComposer,
-            $removeJoinBuilderFromRootComposer,
-          }) => $$ExpensesTableAnnotationComposer(
-            $db: $db,
-            $table: $db.expenses,
-            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
-            joinBuilder: joinBuilder,
-            $removeJoinBuilderFromRootComposer:
-                $removeJoinBuilderFromRootComposer,
-          ),
-    );
-    return f(composer);
-  }
-}
-
-class $$CategoriesTableTableManager
-    extends
-        RootTableManager<
-          _$AppDatabase,
-          $CategoriesTable,
-          Category,
-          $$CategoriesTableFilterComposer,
-          $$CategoriesTableOrderingComposer,
-          $$CategoriesTableAnnotationComposer,
-          $$CategoriesTableCreateCompanionBuilder,
-          $$CategoriesTableUpdateCompanionBuilder,
-          (Category, $$CategoriesTableReferences),
-          Category,
-          PrefetchHooks Function({bool paymentsRefs, bool expensesRefs})
-        > {
-  $$CategoriesTableTableManager(_$AppDatabase db, $CategoriesTable table)
-    : super(
-        TableManagerState(
-          db: db,
-          table: table,
-          createFilteringComposer: () =>
-              $$CategoriesTableFilterComposer($db: db, $table: table),
-          createOrderingComposer: () =>
-              $$CategoriesTableOrderingComposer($db: db, $table: table),
-          createComputedFieldComposer: () =>
-              $$CategoriesTableAnnotationComposer($db: db, $table: table),
-          updateCompanionCallback:
-              ({
-                Value<String> id = const Value.absent(),
-                Value<String> userId = const Value.absent(),
-                Value<int> updatedAt = const Value.absent(),
-                Value<int?> deletedAt = const Value.absent(),
-                Value<int> version = const Value.absent(),
-                Value<String> name = const Value.absent(),
-                Value<String?> icon = const Value.absent(),
-                Value<String> kind = const Value.absent(),
-                Value<String?> systemKey = const Value.absent(),
-                Value<int> rowid = const Value.absent(),
-              }) => CategoriesCompanion(
-                id: id,
-                userId: userId,
-                updatedAt: updatedAt,
-                deletedAt: deletedAt,
-                version: version,
-                name: name,
-                icon: icon,
-                kind: kind,
-                systemKey: systemKey,
-                rowid: rowid,
-              ),
-          createCompanionCallback:
-              ({
-                Value<String> id = const Value.absent(),
-                Value<String> userId = const Value.absent(),
-                Value<int> updatedAt = const Value.absent(),
-                Value<int?> deletedAt = const Value.absent(),
-                Value<int> version = const Value.absent(),
-                required String name,
-                Value<String?> icon = const Value.absent(),
-                Value<String> kind = const Value.absent(),
-                Value<String?> systemKey = const Value.absent(),
-                Value<int> rowid = const Value.absent(),
-              }) => CategoriesCompanion.insert(
-                id: id,
-                userId: userId,
-                updatedAt: updatedAt,
-                deletedAt: deletedAt,
-                version: version,
-                name: name,
-                icon: icon,
-                kind: kind,
-                systemKey: systemKey,
-                rowid: rowid,
-              ),
-          withReferenceMapper: (p0) => p0
-              .map(
-                (e) => (
-                  e.readTable<$CategoriesTable, Category>(table),
-                  $$CategoriesTableReferences(db, table, e),
-                ),
-              )
-              .toList(),
-          prefetchHooksCallback:
-              ({paymentsRefs = false, expensesRefs = false}) {
-                return PrefetchHooks(
-                  db: db,
-                  explicitlyWatchedTables: [
-                    if (paymentsRefs) db.payments,
-                    if (expensesRefs) db.expenses,
-                  ],
-                  addJoins: null,
-                  getPrefetchedDataCallback: (items) async {
-                    return [
-                      if (paymentsRefs)
-                        await $_getPrefetchedDataByColumns<
-                          Category,
-                          $CategoriesTable,
-                          Payment,
-                          $PaymentsTable
-                        >(
-                          currentTable: table,
-                          referencedTable: $$CategoriesTableReferences
-                              ._paymentsRefsTable(db),
-                          managerFromTypedResult: (p0) =>
-                              $$CategoriesTableReferences(
-                                db,
-                                table,
-                                p0,
-                              ).paymentsRefs,
-                          currentColumn: 'id',
-                          referencedColumn: 'category_id',
-                          typedResults: items,
-                        ),
-                      if (expensesRefs)
-                        await $_getPrefetchedDataByColumns<
-                          Category,
-                          $CategoriesTable,
-                          Expense,
-                          $ExpensesTable
-                        >(
-                          currentTable: table,
-                          referencedTable: $$CategoriesTableReferences
-                              ._expensesRefsTable(db),
-                          managerFromTypedResult: (p0) =>
-                              $$CategoriesTableReferences(
-                                db,
-                                table,
-                                p0,
-                              ).expensesRefs,
-                          currentColumn: 'id',
-                          referencedColumn: 'category_id',
-                          typedResults: items,
-                        ),
-                    ];
-                  },
-                );
-              },
-        ),
-      );
-}
-
-typedef $$CategoriesTableProcessedTableManager =
-    ProcessedTableManager<
-      _$AppDatabase,
-      $CategoriesTable,
-      Category,
-      $$CategoriesTableFilterComposer,
-      $$CategoriesTableOrderingComposer,
-      $$CategoriesTableAnnotationComposer,
-      $$CategoriesTableCreateCompanionBuilder,
-      $$CategoriesTableUpdateCompanionBuilder,
-      (Category, $$CategoriesTableReferences),
-      Category,
-      PrefetchHooks Function({bool paymentsRefs, bool expensesRefs})
     >;
 typedef $$PaymentsTableCreateCompanionBuilder = PaymentsCompanion Function({
   Value<String> id,
@@ -22236,6 +22732,8 @@ class $AppDatabaseManager {
       $$DocumentFilesTableTableManager(_db, _db.documentFiles);
   $$ExtractedFieldsTableTableManager get extractedFields =>
       $$ExtractedFieldsTableTableManager(_db, _db.extractedFields);
+  $$CategoriesTableTableManager get categories =>
+      $$CategoriesTableTableManager(_db, _db.categories);
   $$AtcRulesTableTableManager get atcRules =>
       $$AtcRulesTableTableManager(_db, _db.atcRules);
   $$TasksTableTableManager get tasks =>
@@ -22244,8 +22742,6 @@ class $AppDatabaseManager {
       $$SubtasksTableTableManager(_db, _db.subtasks);
   $$TaskRemindersTableTableManager get taskReminders =>
       $$TaskRemindersTableTableManager(_db, _db.taskReminders);
-  $$CategoriesTableTableManager get categories =>
-      $$CategoriesTableTableManager(_db, _db.categories);
   $$PaymentsTableTableManager get payments =>
       $$PaymentsTableTableManager(_db, _db.payments);
   $$ExpensesTableTableManager get expenses =>

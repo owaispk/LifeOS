@@ -166,7 +166,14 @@ class _VaultHome extends ConsumerWidget {
           ),
         ),
         if (expiring.isNotEmpty) ...[
-          VaultSectionTitle('⏰ Expiring soon (${expiring.length})'),
+          VaultSectionTitle(
+            '⏰ Expiring soon (${expiring.length})',
+            trailing: TextButton(
+              key: const ValueKey('expiring-see-all'),
+              onPressed: () => context.go('/vault/expiring'),
+              child: const Text('See all'),
+            ),
+          ),
           SizedBox(
             height: 92,
             child: ListView(

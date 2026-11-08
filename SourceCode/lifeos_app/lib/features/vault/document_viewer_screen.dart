@@ -12,6 +12,9 @@ import '../../shared/widgets/empty_state.dart';
 import '../capture/ocr/doc_classifier.dart' show docTypes;
 import '../capture/ocr/field_extractor.dart' show typeName;
 import '../money/domain/money_rules.dart' show isoDate;
+import '../../shared/format.dart';
+import '../capture/capture_entry.dart';
+import 'domain/expiry_ladder.dart';
 import 'domain/vault_rules.dart';
 import 'ui/document_pages.dart';
 import 'ui/document_sheet.dart';
@@ -239,6 +242,61 @@ class _InfoPanel extends ConsumerWidget {
               style: theme.textTheme.titleMedium,
             ),
             const SizedBox(height: Tokens.spaceM),
+            // One-time "Does this document expire?" (PBI-008).
+            if (expiringTypes.contains(doc.docType) &&
+                doc.expiryDate == null &&
+                doc.expiryPromptedAt == null &&
+                doc.archivedAt == null)
+              Card(
+                key: const ValueKey('expiry-prompt'),
+                child: Padding(
+                  padding: const EdgeInsets.all(Tokens.spaceM),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Does this document expire?'),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            key: const ValueKey('expiry-prompt-no'),
+                            onPressed: () => save(
+                              DocumentsCompanion(
+                                expiryPromptedAt: Value(
+                                  DateTime.now().millisecondsSinceEpoch,
+                                ),
+                              ),
+                            ),
+                            child: const Text('No'),
+                          ),
+                          FilledButton.tonal(
+                            key: const ValueKey('expiry-prompt-yes'),
+                            onPressed: () async {
+                              final picked = await showDatePicker(
+                                context: context,
+                                initialDate: ref.read(nowProvider)(),
+                                firstDate: DateTime(1950),
+                                lastDate: DateTime(2100),
+                              );
+                              await save(
+                                DocumentsCompanion(
+                                  expiryPromptedAt: Value(
+                                    DateTime.now().millisecondsSinceEpoch,
+                                  ),
+                                  expiryDate: Value(
+                                    picked == null ? null : isoDate(picked),
+                                  ),
+                                ),
+                              );
+                            },
+                            child: const Text('Set date'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             DropdownButtonFormField<String>(
               key: const ValueKey('info-type'),
               initialValue: doc.docType,
@@ -297,6 +355,24 @@ class _InfoPanel extends ConsumerWidget {
               value: doc.expiryDate,
               onSave: (v) => save(DocumentsCompanion(expiryDate: Value(v))),
             ),
+            if (doc.expiryDate != null) ...[
+              _ExpiryLadder(document: doc),
+              if (doc.archivedAt == null)
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: OutlinedButton.icon(
+                    key: const ValueKey('viewer-renew'),
+                    icon: const Icon(Icons.autorenew),
+                    label: const Text('Mark renewed → scan the new one'),
+                    onPressed: () => startScan(
+                      context,
+                      folderId: doc.folderId,
+                      personId: doc.personId,
+                      renewsDocumentId: doc.id,
+                    ),
+                  ),
+                ),
+            ],
             const SizedBox(height: Tokens.spaceM),
             ListTile(
               contentPadding: EdgeInsets.zero,
@@ -439,6 +515,40 @@ class _DateDetail extends ConsumerWidget {
               icon: const Icon(Icons.close),
               onPressed: () => onSave(null),
             ),
+    );
+  }
+}
+
+/// The document's alert ladder and the upcoming alert dates (PBI-008).
+class _ExpiryLadder extends ConsumerWidget {
+  const _ExpiryLadder({required this.document});
+  final Document document;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final now = ref.watch(nowProvider)();
+    final ladder = ladderFor(document.docType, document.expiryAlerts);
+    final expiry = DateTime.parse(document.expiryDate!);
+    final upcoming = futureAlerts(expiry, ladder, now);
+    final days = [
+      for (final d in ladder)
+        d < 0
+            ? '${-d} day after'
+            : d == 0
+            ? 'on the day'
+            : '$d days before',
+    ];
+    return Padding(
+      padding: const EdgeInsets.only(left: 40, bottom: Tokens.spaceS),
+      child: Text(
+        upcoming.isEmpty
+            ? 'Expired — a weekly reminder until renewed'
+            : 'Alerts: ${days.join(', ')}\n'
+                  'Next: ${relativeDay(upcoming.first, now)}',
+        key: const ValueKey('expiry-ladder'),
+        style: theme.textTheme.bodySmall,
+      ),
     );
   }
 }

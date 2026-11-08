@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 
 import '../../../data/db/app_database.dart';
 import '../../../data/repositories/repositories.dart';
+import '../../money/data/payment_service.dart';
 import '../../tasks/data/task_service.dart';
 import '../domain/reminder_planner.dart';
 
@@ -70,22 +71,21 @@ class ReminderService {
       case ReminderActions.done:
         if (task.status == 'open') await tasks.complete(task.id);
       case ReminderActions.paid:
-        await _repos.db.transaction(() async {
+        // The completion chain (PBI-016), without a receipt: payment paid,
+        // expense logged, task done.
+        final payments = PaymentService(_repos, now: _now);
+        final unpaid = await payments.unpaidForTask(task.id);
+        if (unpaid == null) {
           if (task.status == 'open') await tasks.complete(task.id);
-          final payments = await _repos.payments.getWhere(
-            (p) => p.taskId.equals(task.id),
-          );
-          for (final p in payments.where((p) => p.status != 'paid')) {
-            await _repos.payments.update(
-              p.id,
-              PaymentsCompanion(
-                status: const Value('paid'),
-                paidAt: Value(_now().toUtc().millisecondsSinceEpoch),
-              ),
-            );
+        } else {
+          try {
+            await payments.markPaid(unpaid.id);
+          } on MissingAmountException {
+            // Unknown amount: can't log an expense from the notification;
+            // the task stays open so the app asks for it.
+            return false;
           }
-          // PBI-016 hooks the receipt → Vault → expense chain in here.
-        });
+        }
       case ReminderActions.snooze:
         await snooze(reminder.id);
       case ReminderActions.renew:

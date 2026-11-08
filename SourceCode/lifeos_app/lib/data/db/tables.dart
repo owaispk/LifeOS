@@ -53,6 +53,10 @@ class UserSettings extends Table with SyncColumns {
   /// Overload Shield day capacity in minutes (schema v2, PBI-011).
   IntColumn get dayCapacityMin => integer().withDefault(const Constant(360))();
 
+  /// Salary-aware forecast (schema v4, PBI-019): day of month + amount.
+  IntColumn get salaryDay => integer().nullable()();
+  IntColumn get salaryMinor => integer().nullable()();
+
   @override
   List<Set<Column<Object>>> get uniqueKeys => [
     {userId},
@@ -111,6 +115,9 @@ class Documents extends Table with SyncColumns {
 
   /// The document that replaced this one when it was renewed (PBI-008).
   TextColumn get renewedById => text().nullable()();
+
+  /// When "Does this document expire?" was answered (schema v4, PBI-008).
+  IntColumn get expiryPromptedAt => integer().nullable()();
 }
 
 @DataClassName('DocumentFile')
@@ -168,6 +175,9 @@ class AtcRules extends Table with SyncColumns {
   RealColumn get confidence => real().nullable()();
   TextColumn get lastGeneratedPeriod => text().nullable()();
   TextColumn get stats => text().withDefault(const Constant('{}'))();
+
+  /// Expense category for payments this rule creates (schema v4, PBI-013).
+  TextColumn get categoryId => text().nullable().references(Categories, #id)();
 }
 
 @DataClassName('Task')

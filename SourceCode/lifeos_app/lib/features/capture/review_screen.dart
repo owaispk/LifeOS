@@ -47,6 +47,7 @@ class CaptureReviewScreen extends ConsumerWidget {
               context,
               folderId: session.folderId,
               personId: session.personId,
+              renewsDocumentId: session.renewsDocumentId,
             ),
           ),
           IconButton(
@@ -69,6 +70,7 @@ class CaptureReviewScreen extends ConsumerWidget {
               draft: drafts.first,
               folderId: session.folderId,
               personId: session.personId,
+              renewsDocumentId: session.renewsDocumentId,
             ),
     );
   }
@@ -80,11 +82,13 @@ class _DraftForm extends ConsumerStatefulWidget {
     required this.draft,
     required this.folderId,
     required this.personId,
+    this.renewsDocumentId,
   });
 
   final CaptureDraft draft;
   final String? folderId;
   final String? personId;
+  final String? renewsDocumentId;
 
   @override
   ConsumerState<_DraftForm> createState() => _DraftFormState();
@@ -204,6 +208,7 @@ class _DraftFormState extends ConsumerState<_DraftForm> {
       folderId: _folderId,
       personId: _personId,
       format: _format,
+      renewsDocumentId: widget.renewsDocumentId,
       docType: _type!,
       confidence: analysis.unreadable
           ? null

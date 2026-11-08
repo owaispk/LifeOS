@@ -15,7 +15,7 @@ void main() {
 
   // The current database can only migrate to the current version; every
   // older starting point is checked against it.
-  for (final (from, to) in [(1, 3), (2, 3)]) {
+  for (final (from, to) in [(1, 4), (2, 4), (3, 4)]) {
     test('v$from → v$to produces exactly the v$to schema', () async {
       final connection = await verifier.startAt(from);
       final db = AppDatabase(connection);
@@ -46,7 +46,11 @@ void main() {
     final file = await db.select(db.documentFiles).getSingle();
     expect((file.byteSize, file.sha256, file.phash), (2048, 'abc', null));
     final doc = await db.select(db.documents).getSingle();
-    expect((doc.archivedAt, doc.renewedById), (null, null));
+    expect(
+      (doc.archivedAt, doc.renewedById, doc.expiryPromptedAt),
+      (null, null, null),
+    );
+    expect((settings.salaryDay, settings.salaryMinor), (null, null));
 
     // v3: documents written before the index existed are searchable.
     final hits = await db

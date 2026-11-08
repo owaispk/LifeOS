@@ -18,6 +18,7 @@ const _relations = {
 Future<void> showPersonSheet(BuildContext context, {Person? person}) {
   return showModalBottomSheet<void>(
     context: context,
+    useRootNavigator: true, // above the tab bar and its ➕ button
     isScrollControlled: true,
     builder: (context) => _PersonSheet(person: person),
   );
@@ -112,6 +113,7 @@ class _PersonSheetState extends ConsumerState<_PersonSheet> {
 Future<void> showFolderSheet(BuildContext context, {Folder? folder}) {
   return showModalBottomSheet<void>(
     context: context,
+    useRootNavigator: true, // above the tab bar and its ➕ button
     isScrollControlled: true,
     builder: (context) => _FolderSheet(folder: folder),
   );
