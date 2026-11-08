@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LifeOS — Flagship Prototype</title>
+<style>
+  /* ================= THEME TEMPLATES ================= */
+  .phone{
+    /* FLAGSHIP (default) — OLED glass, pro-grade */
+    --bg:#07070e;
+    --bg-grad:radial-gradient(900px 500px at 85% -10%, rgba(99,102,241,.22), transparent 60%),
+              radial-gradient(700px 500px at -10% 110%, rgba(34,211,238,.13), transparent 60%);
+    --card:rgba(255,255,255,.055); --card-border:rgba(255,255,255,.09);
+    --blur:22px;
+    --ink:#f3f4fa; --muted:#8d93ad; --faint:rgba(255,255,255,.07);
+    --g1:#818cf8; --g2:#22d3ee;
+    --grad:linear-gradient(135deg,#6366f1 0%,#8b5cf6 50%,#22d3ee 120%);
+    --primary:#818cf8; --primary-soft:rgba(129,140,248,.16);
+    --green:#34d399; --green-soft:rgba(52,211,153,.15);
+    --amber:#fbbf24; --amber-soft:rgba(251,191,36,.14);
+    --red:#f87171; --red-soft:rgba(248,113,113,.15);
+    --nav:rgba(13,13,24,.72); --nav-border:rgba(255,255,255,.08);
+    --radius:22px; --fs:1;
+    --shadow:0 10px 32px rgba(0,0,0,.45);
+    --glow:0 10px 36px rgba(99,102,241,.45);
+    --seg:rgba(255,255,255,.07); --seg-on:rgba(255,255,255,.14);
+    --stage:#0b0b16;
+  }
+  .phone[data-theme="funky"]{
+    --bg:#fff6ef;
+    --bg-grad:radial-gradient(700px 420px at 90% -5%, rgba(255,99,196,.25), transparent 60%),
+              radial-gradient(600px 400px at -5% 105%, rgba(255,176,32,.25), transparent 60%);
+    --card:rgba(255,255,255,.92); --card-border:rgba(255,120,190,.18);
+    --blur:14px;
+    --ink:#241430; --muted:#8d7595; --faint:rgba(36,20,48,.07);
+    --g1:#ff4fa3; --g2:#ff9e2c;
+    --grad:linear-gradient(135deg,#ff4fa3,#ff6b4a 55%,#ffb02c);
+    --primary:#e8408f; --primary-soft:rgba(255,79,163,.14);
+    --green:#0fae72; --green-soft:rgba(15,174,114,.13);
+    --amber:#e0820a; --amber-soft:rgba(224,130,10,.14);
+    --red:#e23b3b; --red-soft:rgba(226,59,59,.12);
+    --nav:rgba(255,255,255,.85); --nav-border:rgba(255,79,163,.15);
+    --radius:28px; --fs:1;
+    --shadow:0 10px 28px rgba(255,79,163,.16);
+    --glow:0 12px 32px rgba(255,79,163,.4);
+    --seg:rgba(36,20,48,.07); --seg-on:#ffffff;
+    --stage:#2a1030;
+  }
+  .phone[data-theme="classic"]{
+    --bg:#f6f6f2;
+    --bg-grad:none;
+    --card:#ffffff; --card-border:#dfdfd8;
+    --blur:0px;
+    --ink:#14140f; --muted:#5c5c52; --faint:rgba(20,20,15,.1);
+    --g1:#1a56db; --g2:#1a56db;
+    --grad:linear-gradient(135deg,#1a56db,#1e63f0);
+    --primary:#1a56db; --primary-soft:rgba(26,86,219,.1);
+    --green:#047857; --green-soft:rgba(4,120,87,.1);
+    --amber:#b45309; --amber-soft:rgba(180,83,9,.12);
+    --red:#b91c1c; --red-soft:rgba(185,28,28,.1);
+    --nav:#ffffff; --nav-border:#dfdfd8;
+    --radius:14px; --fs:1.14;
+    --shadow:0 2px 8px rgba(0,0,0,.09);
+    --glow:0 4px 14px rgba(26,86,219,.3);
+    --seg:#e8e8e0; --seg-on:#ffffff;
+    --stage:#20201a;
+  }
+
+  /* ===== FLAGSHIP DENSITY — compact, data-first ===== */
+  .phone[data-theme="flagship"]{--fs:.94;--radius:18px}
+  .phone[data-theme="flagship"] .screen{zoom:.86;padding:62px 17px 185px}
+  .phone[data-theme="flagship"] .card{padding:12px 14px;margin-bottom:10px}
+  .phone[data-theme="flagship"] .card[style*="padding:4px"]{padding:2px 14px!important}
+  .phone[data-theme="flagship"] .row{padding:8.5px 2px}
+  .phone[data-theme="flagship"] .section-label{margin:12px 4px 7px}
+  .phone[data-theme="flagship"] .topbar{margin:2px 0 12px}
+  .phone[data-theme="flagship"] .topbar h2{font-size:20px}
+  .phone[data-theme="flagship"] .folder{padding:9.5px 2px}
+  .phone[data-theme="flagship"] .folder .fi{width:36px;height:36px;font-size:17px;border-radius:12px}
+  .phone[data-theme="flagship"] .seg{margin-bottom:11px}
+  .phone[data-theme="flagship"] .sec-h{margin:11px 4px 6px}
+  .phone[data-theme="flagship"] .ring{width:108px;height:108px}
+  .phone[data-theme="flagship"] .ring svg{transform:rotate(-90deg) scale(.845);transform-origin:center}
+  .phone[data-theme="flagship"] .ring .val b{font-size:30px}
+  .phone[data-theme="flagship"] .check{width:22px;height:22px;border-radius:8px}
+  .phone[data-theme="flagship"] .data-banner{padding:10px 4px;margin-bottom:10px}
+  .phone[data-theme="flagship"] .search{padding:11px 14px}
+  .phone[data-theme="flagship"] .person .av{width:48px;height:48px;font-size:20px;border-radius:16px}
+  .phone[data-theme="flagship"] .exp-card{min-width:138px;padding:11px}
+  .phone[data-theme="flagship"] .hero-strip{padding:12px 15px}
+  .phone[data-theme="flagship"] .bigbtn{padding:13px}
+
+  /* ================= BASE ================= */
+  *{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI Variable Display','Segoe UI',system-ui,-apple-system,sans-serif;-webkit-tap-highlight-color:transparent}
+  body{background:#0c0c16;background-image:radial-gradient(1000px 600px at 70% 0%,rgba(99,102,241,.12),transparent);display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px;gap:34px;flex-wrap:wrap}
+  .side-note{color:#8d93ad;max-width:240px;font-size:13px;line-height:1.75}
+  .side-note h1{color:#fff;font-size:21px;margin-bottom:10px;font-weight:700}
+  .side-note b{color:#c7cbf2}
+  .tchips{display:flex;gap:8px;margin:14px 0 18px;flex-wrap:wrap}
+  .tchip{padding:9px 15px;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:#c7cbf2;font-size:12.5px;font-weight:700;cursor:pointer;transition:.2s}
+  .tchip.on{background:linear-gradient(135deg,#6366f1,#22d3ee);color:#fff;border-color:transparent;box-shadow:0 6px 20px rgba(99,102,241,.4)}
+
+  .phone{width:396px;height:820px;background:var(--bg);background-image:var(--bg-grad);border-radius:48px;border:9px solid #05050a;outline:2px solid #2a2a3c;overflow:hidden;position:relative;box-shadow:0 40px 100px rgba(0,0,0,.65);transition:background .4s;color:var(--ink)}
+  .island{position:absolute;top:12px;left:50%;transform:translateX(-50%);width:112px;height:28px;background:#05050a;border-radius:20px;z-index:50}
+  .statusbar{position:absolute;top:14px;left:0;right:0;display:flex;justify-content:space-between;padding:0 30px;font-size:12.5px;font-weight:700;color:var(--ink);z-index:49}
+
+  .screen{position:absolute;inset:0;padding:56px 18px 175px;overflow-y:auto;display:none;animation:fadein .25s ease;scrollbar-width:none;color:var(--ink)}
+  .screen::-webkit-scrollbar{display:none}
+  .screen.active{display:block}
+  @keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  .topbar{display:flex;justify-content:space-between;align-items:center;margin:8px 0 16px}
+  .topbar h2{font-size:calc(22px*var(--fs));font-weight:800;letter-spacing:-.4px}
+  .topbar .sub{font-size:calc(12.5px*var(--fs));color:var(--muted);font-weight:600}
+  .iconbtn{width:40px;height:40px;border-radius:14px;background:var(--card);border:1px solid var(--card-border);backdrop-filter:blur(var(--blur));display:flex;align-items:center;justify-content:center;font-size:17px;cursor:pointer;color:var(--ink)}
+  .back{background:none;border:none;font-size:21px;width:34px}
+
+  .card{background:var(--card);border:1px solid var(--card-border);backdrop-filter:blur(var(--blur));-webkit-backdrop-filter:blur(var(--blur));border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:13px}
+  .section-label{font-size:calc(11px*var(--fs));font-weight:800;letter-spacing:1.1px;color:var(--muted);margin:18px 4px 9px;display:flex;justify-content:space-between;align-items:center}
+  .section-label a{color:var(--primary);font-size:calc(12px*var(--fs));text-decoration:none;cursor:pointer;font-weight:700;letter-spacing:0}
+
+  /* score ring */
+  .score-wrap{display:flex;align-items:center;gap:18px;cursor:pointer}
+  .ring{position:relative;width:128px;height:128px;flex-shrink:0}
+  .ring svg{transform:rotate(-90deg)}
+  .ring .track{stroke:var(--faint)}
+  .ring .bar{stroke:url(#ringGrad);stroke-linecap:round;transition:stroke-dashoffset 1.2s cubic-bezier(.3,.8,.3,1);filter:drop-shadow(0 0 8px rgba(99,102,241,.6))}
+  .ring .val{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .ring .val b{font-size:36px;letter-spacing:-1px}
+  .ring .val span{font-size:10.5px;color:var(--green);font-weight:800}
+  .score-side .sm{font-size:calc(13px*var(--fs));color:var(--muted);line-height:1.6;font-weight:600}
+  .score-side .sm b{color:var(--ink)}
+  .mini-stats{display:flex;gap:7px;margin-top:10px}
+  .mini-stats span{font-size:10.5px;font-weight:800;padding:5px 9px;border-radius:9px;background:var(--faint);color:var(--muted)}
+
+  .row{display:flex;align-items:center;gap:12px;padding:12px 2px;border-bottom:1px solid var(--faint);cursor:pointer}
+  .row:last-child{border-bottom:none}
+  .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;box-shadow:0 0 10px currentColor}
+  .row .grow{flex:1;min-width:0}
+  .row .t{font-size:calc(14.5px*var(--fs));font-weight:700;letter-spacing:-.2px}
+  .row .s{font-size:calc(12px*var(--fs));color:var(--muted);margin-top:2px;font-weight:600}
+  .amt{font-size:calc(14px*var(--fs));font-weight:800;letter-spacing:-.3px}
+  .chip{font-size:calc(10px*var(--fs));font-weight:800;padding:4px 9px;border-radius:999px;white-space:nowrap;letter-spacing:.4px}
+  .chip.bolt{background:var(--primary-soft);color:var(--primary)}
+  .chip.red{background:var(--red-soft);color:var(--red)}
+  .chip.amber{background:var(--amber-soft);color:var(--amber)}
+  .chip.green{background:var(--green-soft);color:var(--green)}
+  .chip.grey{background:var(--faint);color:var(--muted)}
+
+  .check{width:25px;height:25px;border:2px solid var(--muted);opacity:.9;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;cursor:pointer;transition:.18s}
+  .check.done{background:var(--green);border-color:var(--green);opacity:1}
+  .task-done .t{text-decoration:line-through;color:var(--muted)}
+
+  .hero-strip{display:flex;align-items:center;gap:10px;background:var(--grad);color:#fff;border-radius:var(--radius);padding:15px 17px;font-size:calc(14px*var(--fs));font-weight:700;cursor:pointer;box-shadow:var(--glow)}
+
+  /* nav */
+  .nav{position:absolute;bottom:14px;left:14px;right:14px;height:70px;background:var(--nav);border:1px solid var(--nav-border);backdrop-filter:blur(26px);-webkit-backdrop-filter:blur(26px);border-radius:26px;display:flex;z-index:40;box-shadow:0 14px 40px rgba(0,0,0,.35)}
+  .nav button{flex:1;border:none;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:calc(10px*var(--fs));color:var(--muted);cursor:pointer;font-weight:700;border-radius:22px}
+  .nav button .ni{font-size:20px;filter:grayscale(1);opacity:.5}
+  .nav button.on{color:var(--primary)}
+  .nav button.on .ni{filter:none;opacity:1}
+
+  .fab{position:absolute;bottom:100px;right:20px;width:60px;height:60px;border-radius:21px;background:var(--grad);color:#fff;font-size:26px;border:none;box-shadow:var(--glow);cursor:pointer;z-index:45;transition:.22s}
+  .fab.open{transform:rotate(45deg) scale(1.05)}
+  .fab-menu{position:absolute;bottom:170px;right:20px;display:none;flex-direction:column;gap:10px;z-index:45}
+  .fab-menu.open{display:flex}
+  .fab-menu button{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--card-border);backdrop-filter:blur(var(--blur));color:var(--ink);border-radius:16px;padding:12px 17px;font-size:calc(14px*var(--fs));font-weight:700;box-shadow:var(--shadow);cursor:pointer;animation:pop .18s ease backwards}
+  .fab-menu button:nth-child(2){animation-delay:.04s}.fab-menu button:nth-child(3){animation-delay:.08s}
+  @keyframes pop{from{opacity:0;transform:translateY(10px)}}
+
+  .seg{display:flex;background:var(--seg);border-radius:14px;padding:3px;margin-bottom:15px}
+  .seg button{flex:1;border:none;background:none;padding:9px;border-radius:11px;font-size:calc(12.5px*var(--fs));font-weight:700;color:var(--muted);cursor:pointer}
+  .seg button.on{background:var(--seg-on);color:var(--ink);box-shadow:0 2px 8px rgba(0,0,0,.18)}
+  .sec-h{font-size:calc(10.5px*var(--fs));font-weight:800;letter-spacing:1px;margin:15px 4px 7px}
+  .sec-h.red{color:var(--red)} .sec-h.norm{color:var(--muted)}
+
+  /* vault */
+  .data-banner{display:flex;gap:0;background:var(--card);border:1px solid var(--card-border);backdrop-filter:blur(var(--blur));border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 6px;margin-bottom:13px}
+  .data-banner div{flex:1;text-align:center}
+  .data-banner b{font-size:calc(17px*var(--fs));letter-spacing:-.4px;display:block}
+  .data-banner span{font-size:calc(10px*var(--fs));color:var(--muted);font-weight:700;letter-spacing:.5px}
+  .data-banner div+div{border-left:1px solid var(--faint)}
+  .people{display:flex;gap:11px;overflow-x:auto;padding:4px 2px 6px;scrollbar-width:none}
+  .people::-webkit-scrollbar{display:none}
+  .person{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:calc(11px*var(--fs));font-weight:700;color:var(--muted);cursor:pointer;flex-shrink:0}
+  .person .av{width:54px;height:54px;border-radius:19px;display:flex;align-items:center;justify-content:center;font-size:23px;background:var(--card);border:1.5px solid var(--card-border);backdrop-filter:blur(var(--blur))}
+  .person.sel .av{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}
+  .person.sel{color:var(--primary)}
+  .exp-scroll{display:flex;gap:11px;overflow-x:auto;padding:2px;scrollbar-width:none}
+  .exp-scroll::-webkit-scrollbar{display:none}
+  .exp-card{min-width:152px;border-radius:19px;padding:13px;cursor:pointer;border:1px solid var(--card-border);backdrop-filter:blur(var(--blur))}
+  .exp-card .d{font-size:10.5px;font-weight:800;letter-spacing:.5px}
+  .exp-card .n{font-size:calc(14.5px*var(--fs));font-weight:800;margin-top:4px}
+  .exp-card .p{font-size:calc(11px*var(--fs));color:var(--muted);font-weight:600;margin-top:1px}
+  .folder{display:flex;align-items:center;gap:13px;padding:13px 2px;border-bottom:1px solid var(--faint);cursor:pointer}
+  .folder:last-child{border:none}
+  .folder .fi{width:42px;height:42px;border-radius:14px;background:var(--faint);display:flex;align-items:center;justify-content:center;font-size:19px}
+  .folder .fn{flex:1;font-size:calc(14.5px*var(--fs));font-weight:700}
+  .folder .fc{font-size:calc(11.5px*var(--fs));color:var(--muted);font-weight:700}
+  .search{display:flex;align-items:center;gap:9px;background:var(--card);border:1px solid var(--card-border);backdrop-filter:blur(var(--blur));border-radius:16px;padding:13px 15px;color:var(--muted);font-size:calc(13.5px*var(--fs));margin-bottom:6px;font-weight:600}
+
+  .bigbtn{width:100%;padding:16px;border:none;border-radius:18px;background:var(--grad);color:#fff;font-size:calc(15px*var(--fs));font-weight:800;cursor:pointer;box-shadow:var(--glow);letter-spacing:-.2px}
+  .bigbtn.ghost{background:var(--card);border:1px solid var(--card-border);color:var(--ink);box-shadow:var(--shadow);backdrop-filter:blur(var(--blur))}
+  .bigbtn:active{transform:scale(.98)}
+
+  /* scan */
+  .scan-stage{background:var(--stage);border-radius:26px;height:410px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+  .bill{width:238px;background:#fff;border-radius:8px;padding:16px 14px;font-size:10px;color:#333;position:relative;transition:.5s}
+  .bill h4{font-size:13px;color:#0f4c81;margin-bottom:6px}
+  .bill table{width:100%;font-size:9.5px;border-collapse:collapse;margin-top:6px;color:#333}
+  .bill td{padding:3px 0;border-bottom:1px dashed #ddd}
+  .bill .big{font-size:15px;font-weight:800;color:#111}
+  .ghost-frame{position:absolute;inset:26px;border:2.5px dashed rgba(52,211,153,.9);border-radius:16px;pointer-events:none;animation:pulse 1.6s infinite}
+  @keyframes pulse{50%{opacity:.4}}
+  .corner{position:absolute;width:20px;height:20px;border:3.5px solid var(--g2);background:#fff;border-radius:50%}
+  .scan-hint{color:var(--muted);text-align:center;font-size:calc(13px*var(--fs));margin-bottom:14px;font-weight:600}
+  .shutter{width:72px;height:72px;border-radius:50%;background:#fff;border:5px solid rgba(255,255,255,.35);margin:0 auto;cursor:pointer;display:block}
+  .field{display:flex;justify-content:space-between;align-items:center;padding:13px 15px;background:var(--card);border:1px solid var(--card-border);backdrop-filter:blur(var(--blur));border-radius:16px;box-shadow:var(--shadow);margin-bottom:9px;opacity:0;transform:translateX(24px);transition:.4s ease}
+  .field.in{opacity:1;transform:none}
+  .field .fl{font-size:calc(10.5px*var(--fs));color:var(--muted);font-weight:800;letter-spacing:.6px}
+  .field .fv{font-size:calc(14.5px*var(--fs));font-weight:700;margin-top:1px}
+  .toggle-row{display:flex;align-items:center;gap:10px;background:var(--primary-soft);border-radius:16px;padding:14px;margin:4px 0 14px;font-size:calc(13px*var(--fs));font-weight:700;color:var(--primary)}
+  .switch{margin-left:auto;width:46px;height:26px;border-radius:999px;background:var(--primary);position:relative;cursor:pointer;flex-shrink:0;transition:.2s}
+  .switch::after{content:'';position:absolute;top:3px;left:23px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.2s}
+  .switch.off{background:var(--faint)}.switch.off::after{left:3px}
+
+  /* money */
+  .big-amount{font-size:calc(34px*var(--fs));font-weight:800;letter-spacing:-1.5px}
+  .donut{width:148px;height:148px;border-radius:50%;margin:10px auto;background:conic-gradient(var(--g1) 0 38%,var(--green) 38% 58%,var(--amber) 58% 76%,var(--muted) 76% 90%,var(--faint) 90% 100%)}
+  .donut .hole{width:94px;height:94px;border-radius:50%;background:var(--bg);margin:27px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .donut .hole b{font-size:15px}.donut .hole span{font-size:10px;color:var(--muted);font-weight:700}
+  .legend{display:flex;flex-wrap:wrap;gap:8px 14px;justify-content:center;font-size:calc(11px*var(--fs));color:var(--muted);margin-bottom:4px;font-weight:700}
+  .legend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:4px}
+  .cal-strip{display:flex;gap:7px;overflow-x:auto;padding:2px;scrollbar-width:none;margin-bottom:12px}
+  .cal-strip::-webkit-scrollbar{display:none}
+  .cal-d{min-width:48px;background:var(--card);border:1px solid var(--card-border);backdrop-filter:blur(var(--blur));border-radius:15px;padding:9px 4px;text-align:center}
+  .cal-d .dn{font-size:9.5px;color:var(--muted);font-weight:800}
+  .cal-d .dd{font-size:15px;font-weight:800;margin:2px 0}
+  .cal-d .pd{width:6px;height:6px;border-radius:50%;margin:0 auto;background:transparent}
+  .cal-d.has .pd{background:var(--primary)}
+  .cal-d.today{background:var(--grad);color:#fff;border-color:transparent}
+  .cal-d.today .dn{color:rgba(255,255,255,.75)}
+
+  /* sheets & dialogs */
+  .scrim{position:absolute;inset:0;background:rgba(5,5,12,.6);backdrop-filter:blur(4px);z-index:60;display:none;animation:fadein .2s}
+  .scrim.open{display:block}
+  .sheet{position:absolute;left:10px;right:10px;bottom:10px;background:var(--card);border:1px solid var(--card-border);backdrop-filter:blur(34px);-webkit-backdrop-filter:blur(34px);border-radius:30px;padding:20px 20px 24px;z-index:70;display:none;animation:up .3s cubic-bezier(.3,.9,.3,1);color:var(--ink)}
+  .sheet.open{display:block}
+  @keyframes up{from{transform:translateY(60%)}}
+  .sheet .grab{width:40px;height:4.5px;border-radius:4px;background:var(--faint);margin:0 auto 16px}
+  .dialog{position:absolute;left:26px;right:26px;top:36%;background:var(--card);border:1px solid var(--card-border);backdrop-filter:blur(34px);-webkit-backdrop-filter:blur(34px);border-radius:26px;padding:23px;z-index:70;display:none;box-shadow:0 24px 70px rgba(0,0,0,.5);animation:fadein .2s;color:var(--ink)}
+  .dialog.open{display:block}
+  .dialog h3{font-size:calc(16.5px*var(--fs));margin-bottom:7px;letter-spacing:-.3px}
+  .dialog p{font-size:calc(13.5px*var(--fs));color:var(--muted);line-height:1.55;margin-bottom:17px;font-weight:600}
+  .btnrow{display:flex;gap:10px}
+  .btnrow button{flex:1;padding:13px;border-radius:14px;border:none;font-size:calc(13.5px*var(--fs));font-weight:800;cursor:pointer}
+  .btnrow .pri{background:var(--grad);color:#fff;box-shadow:var(--glow)}
+  .btnrow .sec{background:var(--faint);color:var(--muted)}
+  .chain-step{display:flex;align-items:center;gap:10px;padding:11px 13px;border-radius:14px;background:var(--green-soft);color:var(--green);font-size:calc(13px*var(--fs));font-weight:800;margin-bottom:8px;opacity:0;transform:translateY(10px);transition:.35s}
+  .chain-step.in{opacity:1;transform:none}
+
+  .toast{position:absolute;bottom:106px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(15,15,28,.92);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(20px);color:#fff;padding:13px 20px;border-radius:16px;font-size:13px;font-weight:700;z-index:90;opacity:0;transition:.3s;white-space:nowrap;box-shadow:0 14px 40px rgba(0,0,0,.5)}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  .bar-bg{height:7px;border-radius:99px;background:var(--faint);overflow:hidden;margin-top:6px}
+  .bar-fg{height:100%;border-radius:99px;background:var(--grad)}
+  .comp-row{display:flex;align-items:center;gap:10px;padding:9px 0;font-size:calc(12.5px*var(--fs))}
+  .comp-row .cl{width:92px;font-weight:800}
+  .comp-row .bar-bg{flex:1;margin:0}
+  .comp-row .cp{width:36px;text-align:right;color:var(--muted);font-size:11.5px;font-weight:800}
+
+  .rule-row{padding:13px 2px;border-bottom:1px solid var(--faint)}
+  .rule-row:last-child{border:none}
+  .rule-top{display:flex;justify-content:space-between;align-items:center}
+  .rule-top .t{font-size:calc(14px*var(--fs));font-weight:800}
+  .rule-row .s{font-size:calc(11.5px*var(--fs));color:var(--muted);margin-top:3px;font-weight:600}
+
+  .theme-pick{display:flex;gap:10px}
+  .theme-pick .tp{flex:1;border-radius:18px;padding:13px 6px;text-align:center;cursor:pointer;border:1.5px solid var(--card-border);background:var(--faint);font-size:11px;font-weight:800;color:var(--muted)}
+  .theme-pick .tp.on{border-color:var(--primary);color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}
+  .theme-pick .tp .sw{height:34px;border-radius:11px;margin-bottom:7px}
+</style>
+</head>
+<body>
+
+<div class="side-note">
+  <h1>📱 LifeOS<br><span style="background:linear-gradient(90deg,#818cf8,#22d3ee);-webkit-background-clip:text;background-clip:text;color:transparent">Flagship Prototype</span></h1>
+  <p><b>Look templates</b> — switch live:</p>
+  <div class="tchips">
+    <div class="tchip on" onclick="setTheme('flagship',this)">🖤 Flagship Pro</div>
+    <div class="tchip" onclick="setTheme('funky',this)">🔥 Funky</div>
+    <div class="tchip" onclick="setTheme('classic',this)">📖 Classic</div>
+  </div>
+  <p><b>Try:</b><br>
+  1️⃣ Tap the <b>Life Score ring</b><br>
+  2️⃣ <b>➕ → 📸 Scan</b> → live OCR flow<br>
+  3️⃣ <b>Tasks</b> → check ⚡ School fee → completion chain<br>
+  4️⃣ <b>Vault</b> → 247-doc dataset, filters, people<br>
+  5️⃣ <b>More</b> → in-app theme picker<br><br>
+  Same app, three audiences — one codebase.</p>
+</div>
+
+<div class="phone" id="phone" data-theme="flagship">
+  <div class="island"></div>
+  <div class="statusbar"><span>9:41</span><span>5G ▮▮▮▯ 🔋</span></div>
+
+  <svg width="0" height="0" style="position:absolute">
+    <defs>
+      <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" style="stop-color:var(--g1)"/>
+        <stop offset="100%" style="stop-color:var(--g2)"/>
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <!-- ============ HOME ============ -->
+  <div class="screen active" id="scr-home">
+    <div class="topbar">
+      <div><h2>Salam, Owais</h2><div class="sub">Sunday, 8 November · all synced ✓</div></div>
+      <button class="iconbtn">🔔</button>
+    </div>
+
+    <div class="card score-wrap" onclick="go('scr-score')">
+      <div class="ring">
+        <svg width="128" height="128">
+          <circle class="track" cx="64" cy="64" r="55" fill="none" stroke-width="11"/>
+          <circle class="bar" id="ringbar" cx="64" cy="64" r="55" fill="none" stroke-width="11"
+                  stroke-dasharray="346" stroke-dashoffset="346"/>
+        </svg>
+        <div class="val"><b id="scoreval">0</b><span>▲ 3 today</span></div>
+      </div>
+      <div class="score-side">
+        <div class="sm"><b>Life Score</b><br><span id="scoremsg">2 items need attention</span></div>
+        <div class="mini-stats"><span>✅ 5 tasks</span><span>💸 1 due</span><span>📄 1 expiring</span></div>
+      </div>
+    </div>
+
+    <div class="section-label">NEEDS ATTENTION <a onclick="go('scr-vault')">All</a></div>
+    <div class="card" style="padding:4px 16px">
+      <div class="row" onclick="go('scr-money')">
+        <div class="dot" style="background:var(--red);color:var(--red)"></div>
+        <div class="grow"><div class="t">Electricity bill</div><div class="s">Due tomorrow · K-Electric</div></div>
+        <div class="amt">Rs 4,850</div>
+      </div>
+      <div class="row" onclick="go('scr-doc')">
+        <div class="dot" style="background:var(--amber);color:var(--amber)"></div>
+        <div class="grow"><div class="t">Passport — Ali</div><div class="s">Expires in 28 days</div></div>
+        <span class="chip amber">RENEW</span>
+      </div>
+    </div>
+
+    <div class="section-label">TODAY · 5 TASKS <a onclick="go('scr-tasks')">Open</a></div>
+    <div class="card" style="padding:4px 16px">
+      <div class="row"><div class="check" onclick="toggleCheck(this,event)"></div>
+        <div class="grow"><div class="t">Pay school fee — Ali</div><div class="s">Due 5 Nov · overdue</div></div>
+        <span class="chip bolt">⚡ ATC</span></div>
+      <div class="row"><div class="check" onclick="toggleCheck(this,event)"></div>
+        <div class="grow"><div class="t">Call electrician</div><div class="s">4:00 PM</div></div></div>
+      <div class="row"><div class="check" onclick="toggleCheck(this,event)"></div>
+        <div class="grow"><div class="t">Review CV for job application</div><div class="s">Anytime · Work</div></div></div>
+      <div class="row"><div class="check" onclick="toggleCheck(this,event)"></div>
+        <div class="grow"><div class="t">Team sync call</div><div class="s">6:30 PM · Work</div></div></div>
+      <div class="row"><div class="check" onclick="toggleCheck(this,event)"></div>
+        <div class="grow"><div class="t">Buy Ammi's medicines</div><div class="s">Health · 📎 prescription</div></div></div>
+    </div>
+
+    <div class="hero-strip" onclick="go('scr-money')">💰 <span>Rs 14,500 in payments this week</span><span style="margin-left:auto">→</span></div>
+
+    <div class="section-label">THIS WEEK</div>
+    <div class="card" style="padding:2px 14px">
+      <div class="row"><div class="dot" style="background:var(--green);color:var(--green)"></div>
+        <div class="grow"><div class="t">Dr. Ahmed follow-up — Ammi</div><div class="s">Sat 15 Nov · 5:00 PM · reports attached</div></div>
+        <span class="chip bolt">⚡</span></div>
+      <div class="row"><div class="dot" style="background:var(--muted);color:var(--muted)"></div>
+        <div class="grow"><div class="t">Internet bill expected</div><div class="s">~20 Nov · Rs 2,500 · learned pattern</div></div>
+        <span class="chip grey">ATC</span></div>
+    </div>
+  </div>
+
+  <!-- ============ SCORE DETAIL ============ -->
+  <div class="screen" id="scr-score">
+    <div class="topbar"><button class="iconbtn back" onclick="go('scr-home')">←</button><h2>Life Score</h2><div style="width:34px"></div></div>
+    <div class="card" style="text-align:center">
+      <div class="big-amount" id="scoreval2">78</div>
+      <div style="font-size:12.5px;color:var(--green);font-weight:800">▲ 3 vs yesterday · 7-day avg 74</div>
+      <div style="display:flex;align-items:flex-end;gap:7px;justify-content:center;height:48px;margin-top:16px">
+        <div style="width:20px;height:60%;background:var(--faint);border-radius:7px"></div>
+        <div style="width:20px;height:68%;background:var(--faint);border-radius:7px"></div>
+        <div style="width:20px;height:55%;background:var(--faint);border-radius:7px"></div>
+        <div style="width:20px;height:72%;background:var(--faint);border-radius:7px"></div>
+        <div style="width:20px;height:65%;background:var(--faint);border-radius:7px"></div>
+        <div style="width:20px;height:75%;background:var(--primary-soft);border-radius:7px"></div>
+        <div style="width:20px;height:78%;background:var(--grad);border-radius:7px"></div>
+      </div>
+    </div>
+    <div class="section-label">BREAKDOWN</div>
+    <div class="card">
+      <div class="comp-row"><div class="cl">Tasks</div><div class="bar-bg"><div class="bar-fg" style="width:80%"></div></div><div class="cp">80%</div></div>
+      <div class="comp-row"><div class="cl">Payments</div><div class="bar-bg"><div class="bar-fg" style="width:70%;background:var(--amber)"></div></div><div class="cp">70%</div></div>
+      <div class="comp-row"><div class="cl">Documents</div><div class="bar-bg"><div class="bar-fg" style="width:60%;background:var(--amber)"></div></div><div class="cp">60%</div></div>
+      <div class="comp-row"><div class="cl">Health</div><div class="bar-bg"><div class="bar-fg" style="width:92%;background:var(--green)"></div></div><div class="cp">92%</div></div>
+      <div class="comp-row"><div class="cl">People</div><div class="bar-bg"><div class="bar-fg" style="width:85%;background:var(--green)"></div></div><div class="cp">85%</div></div>
+    </div>
+    <div class="section-label">DRAGGING IT DOWN</div>
+    <div class="card" style="padding:4px 16px">
+      <div class="row"><div class="dot" style="background:var(--red);color:var(--red)"></div>
+        <div class="grow"><div class="t">School fee overdue (3 days)</div><div class="s">−6 points</div></div>
+        <span class="chip bolt">Fix →</span></div>
+      <div class="row"><div class="dot" style="background:var(--amber);color:var(--amber)"></div>
+        <div class="grow"><div class="t">Passport expiring — no renewal task</div><div class="s">−4 points</div></div>
+        <span class="chip bolt">Fix →</span></div>
+    </div>
+  </div>
+
+  <!-- ============ TASKS ============ -->
+  <div class="screen" id="scr-tasks">
+    <div class="topbar"><h2>Tasks</h2><button class="iconbtn">🎤</button></div>
+    <div class="seg"><button class="on">Today</button><button>Upcoming</button><button>Domains</button></div>
+
+    <div class="sec-h red">OVERDUE</div>
+    <div class="card" style="padding:4px 16px">
+      <div class="row" id="feeTask"><div class="check" onclick="feeDone(this,event)"></div>
+        <div class="grow"><div class="t">Pay school fee — Ali · Rs 12,000</div><div class="s">⚡ From fee voucher · due 5 Nov</div></div>
+        <span class="chip red">3d late</span></div>
+    </div>
+
+    <div class="sec-h norm">TIMED</div>
+    <div class="card" style="padding:4px 16px">
+      <div class="row"><div class="check" onclick="toggleCheck(this,event)"></div>
+        <div class="grow"><div class="t">Call electrician</div><div class="s">Home repairs</div></div>
+        <span class="chip grey">4:00 PM</span></div>
+      <div class="row"><div class="check" onclick="toggleCheck(this,event)"></div>
+        <div class="grow"><div class="t">Team sync call</div><div class="s">Work</div></div>
+        <span class="chip grey">6:30 PM</span></div>
+    </div>
+
+    <div class="sec-h norm">PAYMENTS ⚡</div>
+    <div class="card" style="padding:4px 16px">
+      <div class="row"><div class="check" onclick="toggleCheck(this,event)"></div>
+        <div class="grow"><div class="t">Electricity bill · Rs 4,850</div><div class="s">⚡ From scanned bill · due tomorrow</div></div>
+        <span class="chip amber">9 Nov</span></div>
+      <div class="row"><div class="check" onclick="toggleCheck(this,event)"></div>
+        <div class="grow"><div class="t">Internet — StormFiber · Rs 2,500</div><div class="s">⚡ Monthly rule</div></div>
+        <span class="chip grey">20 Nov</span></div>
+    </div>
+
+    <div class="sec-h norm">ANYTIME</div>
+    <div class="card" style="padding:4px 16px">
+      <div class="row"><div class="check" onclick="toggleCheck(this,event)"></div>
+        <div class="grow"><div class="t">Review CV for job application</div><div class="s">Work · high priority</div></div></div>
+      <div class="row"><div class="check" onclick="toggleCheck(this,event)"></div>
+        <div class="grow"><div class="t">Buy Ammi's medicines</div><div class="s">Health · 📎 prescription attached</div></div></div>
+    </div>
+  </div>
+
+  <!-- ============ VAULT ============ -->
+  <div class="screen" id="scr-vault">
+    <div class="topbar"><h2>Vault 🔒</h2><button class="iconbtn" onclick="startScan()">📸</button></div>
+
+    <div class="data-banner">
+      <div><b>247</b><span>DOCUMENTS</span></div>
+      <div><b>1.2 GB</b><span>ENCRYPTED</span></div>
+      <div><b>2</b><span>EXPIRING</span></div>
+      <div><b>✓</b><span>SYNCED</span></div>
+    </div>
+
+    <div class="search">🔍 Search 247 documents… <span style="margin-left:auto">⚙️</span></div>
+    <div class="people" style="margin-bottom:2px">
+      <span class="chip bolt" style="padding:7px 12px">All</span>
+      <span class="chip grey" style="padding:7px 12px">Bills</span>
+      <span class="chip grey" style="padding:7px 12px">This month</span>
+      <span class="chip grey" style="padding:7px 12px">Has expiry</span>
+      <span class="chip grey" style="padding:7px 12px">Shared</span>
+    </div>
+
+    <div class="section-label">PEOPLE</div>
+    <div class="people">
+      <div class="person sel"><div class="av">🧔</div>Me · 94</div>
+      <div class="person"><div class="av">👩</div>Ayesha · 61</div>
+      <div class="person"><div class="av">👦</div>Ali · 48</div>
+      <div class="person"><div class="av">👵</div>Ammi · 44</div>
+      <div class="person"><div class="av">➕</div>Add</div>
+    </div>
+
+    <div class="section-label">⏰ EXPIRING SOON <a>All</a></div>
+    <div class="exp-scroll">
+      <div class="exp-card" style="background:var(--red-soft)" onclick="go('scr-doc')">
+        <div class="d" style="color:var(--red)">● 28 DAYS</div><div class="n">Passport</div><div class="p">Ali · Identity</div>
+      </div>
+      <div class="exp-card" style="background:var(--amber-soft)">
+        <div class="d" style="color:var(--amber)">● 74 DAYS</div><div class="n">Car Insurance</div><div class="p">Me · Vehicles</div>
+      </div>
+      <div class="exp-card" style="background:var(--card)">
+        <div class="d" style="color:var(--muted)">● 140 DAYS</div><div class="n">UK Visa</div><div class="p">Me · Identity</div>
+      </div>
+    </div>
+
+    <div class="section-label">FOLDERS</div>
+    <div class="card" style="padding:4px 16px">
+      <div class="folder"><div class="fi">🪪</div><div class="fn">Identity</div><div class="fc">12</div></div>
+      <div class="folder"><div class="fi">🎓</div><div class="fn">Education</div><div class="fc">8</div></div>
+      <div class="folder"><div class="fi">🏥</div><div class="fn">Medical</div><div class="fc">15</div></div>
+      <div class="folder"><div class="fi">🧾</div><div class="fn">Bills & Receipts</div><div class="fc">144</div></div>
+      <div class="folder"><div class="fi">🏠</div><div class="fn">Property</div><div class="fc">3</div></div>
+      <div class="folder"><div class="fi">🚗</div><div class="fn">Vehicles</div><div class="fc">5</div></div>
+      <div class="folder"><div class="fi">🛡️</div><div class="fn">Insurance</div><div class="fc">6</div></div>
+    </div>
+  </div>
+
+  <!-- ============ DOC VIEWER ============ -->
+  <div class="screen" id="scr-doc">
+    <div class="topbar"><button class="iconbtn back" onclick="go('scr-vault')">←</button><h2>Passport — Ali</h2><button class="iconbtn">↗</button></div>
+    <div class="card" style="text-align:center;background:#fff;color:#222">
+      <div style="font-size:42px">🛂</div>
+      <div style="font-weight:800;margin-top:6px;letter-spacing:2px;font-size:12.5px;color:#0f4c81">ISLAMIC REPUBLIC OF PAKISTAN</div>
+      <div style="font-size:11px;color:#777;margin-top:2px">PASSPORT · پاسپورٹ</div>
+      <div style="display:flex;gap:12px;margin-top:14px;text-align:left;justify-content:center">
+        <div style="width:70px;height:86px;background:#dde3ef;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:30px">👦</div>
+        <div style="font-size:11px;line-height:1.9;color:#333">
+          <b>ALI OWAIS</b><br>No: <b>AB1234567</b><br>DOB: 14 MAR 2014<br>Expiry: <b style="color:#b91c1c">06 DEC 2026</b>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="font-size:13.5px;font-weight:700">⏰ Expires in <b style="color:var(--red)">28 days</b></div>
+        <span class="chip red">ALERTS ON</span>
+      </div>
+      <div style="font-size:11.5px;color:var(--muted);margin-top:6px;font-weight:600">Alert ladder: 6 months ✓ · 3 months ✓ · 1 month → <b>today</b></div>
+    </div>
+    <div class="card" style="padding:4px 16px">
+      <div class="row"><div class="grow"><div class="t">🔗 Linked task</div><div class="s">⚡ "Renew Ali's passport" — created by Expiry Guard</div></div></div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="bigbtn ghost" style="flex:1" onclick="toast('🔒 Safe link created · expires in 24h')">🔗 Safe link</button>
+      <button class="bigbtn" style="flex:1" onclick="toast('Renewal flow — scan the new passport when ready')">Mark renewed</button>
+    </div>
+  </div>
+
+  <!-- ============ SCAN 1 ============ -->
+  <div class="screen" id="scr-scan1">
+    <div class="topbar"><button class="iconbtn back" onclick="go('scr-vault')">✕</button><h2>Scan</h2><button class="iconbtn">⚡︎</button></div>
+    <div class="scan-stage">
+      <div class="bill">
+        <h4>⚡ K-ELECTRIC</h4>
+        <div>Bill Month: <b>NOV 2026</b> &nbsp; Ref: 0400017553021</div>
+        <table>
+          <tr><td>Units consumed</td><td style="text-align:right">312 kWh</td></tr>
+          <tr><td>Cost of electricity</td><td style="text-align:right">3,980.00</td></tr>
+          <tr><td>Taxes & surcharges</td><td style="text-align:right">870.00</td></tr>
+        </table>
+        <div style="display:flex;justify-content:space-between;margin-top:8px"><span>PAYABLE BY <b>14 NOV</b></span><span class="big">Rs 4,850</span></div>
+      </div>
+      <div class="ghost-frame"></div>
+    </div>
+    <div class="scan-hint">Document detected — hold steady, or tap to capture</div>
+    <button class="shutter" onclick="go('scr-scan2')"></button>
+  </div>
+
+  <!-- ============ SCAN 2 ============ -->
+  <div class="screen" id="scr-scan2">
+    <div class="topbar"><button class="iconbtn back" onclick="go('scr-scan1')">←</button><h2>Adjust</h2><div style="width:34px"></div></div>
+    <div class="scan-stage">
+      <div class="bill" style="transform:scale(1.04)">
+        <h4>⚡ K-ELECTRIC</h4>
+        <div>Bill Month: <b>NOV 2026</b> &nbsp; Ref: 0400017553021</div>
+        <table>
+          <tr><td>Units consumed</td><td style="text-align:right">312 kWh</td></tr>
+          <tr><td>Cost of electricity</td><td style="text-align:right">3,980.00</td></tr>
+          <tr><td>Taxes & surcharges</td><td style="text-align:right">870.00</td></tr>
+        </table>
+        <div style="display:flex;justify-content:space-between;margin-top:8px"><span>PAYABLE BY <b>14 NOV</b></span><span class="big">Rs 4,850</span></div>
+        <div class="corner" style="top:-10px;left:-10px"></div>
+        <div class="corner" style="top:-10px;right:-10px"></div>
+        <div class="corner" style="bottom:-10px;left:-10px"></div>
+        <div class="corner" style="bottom:-10px;right:-10px"></div>
+      </div>
+    </div>
+    <div class="seg"><button>Original</button><button class="on">Document</button><button>Grayscale</button></div>
+    <button class="bigbtn" onclick="go('scr-scan3');runOcr()">Looks good →</button>
+  </div>
+
+  <!-- ============ SCAN 3 ============ -->
+  <div class="screen" id="scr-scan3">
+    <div class="topbar"><button class="iconbtn back" onclick="go('scr-scan2')">←</button><h2 id="ocrTitle">Reading…</h2><div style="width:34px"></div></div>
+    <div class="card" style="text-align:center;padding:10px">
+      <div style="transform:scale(.6);transform-origin:top center;height:140px">
+        <div class="bill" style="margin:0 auto">
+          <h4>⚡ K-ELECTRIC</h4>
+          <div>Bill Month: <b>NOV 2026</b></div>
+          <div style="display:flex;justify-content:space-between;margin-top:8px"><span>PAYABLE BY <b>14 NOV</b></span><span class="big">Rs 4,850</span></div>
+        </div>
+      </div>
+      <span class="chip bolt" id="typechip" style="font-size:11.5px;opacity:0;transition:.4s">🤖 Detected: Electricity Bill · on-device</span>
+    </div>
+    <div class="section-label">EXTRACTED — TAP TO EDIT</div>
+    <div class="field" id="f1"><div><div class="fl">TITLE</div><div class="fv">K-Electric Bill — Nov 2026</div></div><span>✏️</span></div>
+    <div class="field" id="f2"><div><div class="fl">AMOUNT</div><div class="fv">Rs 4,850</div></div><span>✏️</span></div>
+    <div class="field" id="f3"><div><div class="fl">DUE DATE</div><div class="fv">14 Nov 2026</div></div><span>✏️</span></div>
+    <div class="field" id="f4"><div><div class="fl">PERSON · FOLDER</div><div class="fv">Me · 🧾 Bills & Receipts</div></div><span>✏️</span></div>
+    <button class="bigbtn" id="nextOcr" style="opacity:.4;pointer-events:none" onclick="go('scr-scan4')">Continue →</button>
+  </div>
+
+  <!-- ============ SCAN 4 ============ -->
+  <div class="screen" id="scr-scan4">
+    <div class="topbar"><button class="iconbtn back" onclick="go('scr-scan3')">←</button><h2>Save</h2><div style="width:34px"></div></div>
+    <div class="card" style="display:flex;gap:13px;align-items:center">
+      <div style="width:52px;height:64px;background:var(--faint);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:24px">🧾</div>
+      <div><div style="font-weight:800;font-size:15px">K-Electric Bill — Nov 2026</div>
+      <div style="font-size:12px;color:var(--muted);font-weight:600;margin-top:2px">Rs 4,850 · due 14 Nov · Me · Bills & Receipts</div></div>
+    </div>
+    <div class="toggle-row">⚡ Create payment task for <b>14 Nov</b><div class="switch" onclick="this.classList.toggle('off')"></div></div>
+    <button class="bigbtn" onclick="saveScan()">Save to Vault</button>
+    <div style="text-align:center;font-size:11.5px;color:var(--muted);margin-top:13px;font-weight:600">🔒 AES-256 encrypted on your device before anything uploads</div>
+  </div>
+
+  <!-- ============ MONEY ============ -->
+  <div class="screen" id="scr-money">
+    <div class="topbar"><h2>Money</h2><button class="iconbtn">📊</button></div>
+    <div class="seg"><button class="on">November</button><button>Forecast</button><button>History</button></div>
+    <div class="card" style="text-align:center">
+      <div style="font-size:11px;color:var(--muted);font-weight:800;letter-spacing:1px">SPENT THIS MONTH</div>
+      <div class="big-amount">Rs 38,250</div>
+      <div style="font-size:12px;color:var(--green);font-weight:800">▼ 8% vs October</div>
+      <div class="donut"><div class="hole"><b>61.5k</b><span>fixed/mo</span></div></div>
+      <div class="legend">
+        <span><i style="background:var(--g1)"></i>Rent</span><span><i style="background:var(--green)"></i>Fees</span>
+        <span><i style="background:var(--amber)"></i>Utilities</span><span><i style="background:var(--muted)"></i>Internet</span>
+      </div>
+    </div>
+
+    <div class="section-label">NOVEMBER FORECAST · RS 61,500</div>
+    <div class="cal-strip">
+      <div class="cal-d has"><div class="dn">SUN</div><div class="dd">1</div><div class="pd"></div></div>
+      <div class="cal-d has"><div class="dn">THU</div><div class="dd">5</div><div class="pd"></div></div>
+      <div class="cal-d today"><div class="dn">SUN</div><div class="dd">8</div><div class="pd"></div></div>
+      <div class="cal-d has"><div class="dn">SAT</div><div class="dd">14</div><div class="pd"></div></div>
+      <div class="cal-d has"><div class="dn">FRI</div><div class="dd">20</div><div class="pd"></div></div>
+      <div class="cal-d has"><div class="dn">WED</div><div class="dd">25</div><div class="pd"></div></div>
+    </div>
+    <div class="card" style="padding:4px 16px">
+      <div class="row"><div class="grow"><div class="t">Rent</div><div class="s">1 Nov</div></div><div class="amt">35,000</div><span class="chip green">PAID ✓</span></div>
+      <div class="row"><div class="grow"><div class="t">School fee — Ali</div><div class="s">5 Nov</div></div><div class="amt">12,000</div><span class="chip red">OVERDUE</span></div>
+      <div class="row"><div class="grow"><div class="t">Electricity</div><div class="s">14 Nov · ⚡ from scan</div></div><div class="amt">4,850</div><span class="chip amber">SOON</span></div>
+      <div class="row"><div class="grow"><div class="t">Internet</div><div class="s">20 Nov</div></div><div class="amt">2,500</div><span class="chip grey">UPCOMING</span></div>
+      <div class="row"><div class="grow"><div class="t">Committee (7/24)</div><div class="s">25 Nov</div></div><div class="amt">10,000</div><span class="chip grey">UPCOMING</span></div>
+    </div>
+    <div class="card" style="background:var(--primary-soft);border-color:transparent;box-shadow:none">
+      <div style="font-size:12.5px;color:var(--primary);font-weight:800">💡 Salary-aware: 41% of income goes to fixed payments this month</div>
+    </div>
+  </div>
+
+  <!-- ============ MORE ============ -->
+  <div class="screen" id="scr-more">
+    <div class="topbar"><h2>More</h2><button class="iconbtn">⚙️</button></div>
+
+    <div class="section-label">🎨 LOOK TEMPLATE</div>
+    <div class="card">
+      <div class="theme-pick">
+        <div class="tp on" id="tp-flagship" onclick="setTheme('flagship')"><div class="sw" style="background:linear-gradient(135deg,#07070e 40%,#6366f1)"></div>Flagship Pro</div>
+        <div class="tp" id="tp-funky" onclick="setTheme('funky')"><div class="sw" style="background:linear-gradient(135deg,#ff4fa3,#ffb02c)"></div>Funky</div>
+        <div class="tp" id="tp-classic" onclick="setTheme('classic')"><div class="sw" style="background:linear-gradient(135deg,#f6f6f2 40%,#1a56db)"></div>Classic</div>
+      </div>
+      <div style="font-size:11.5px;color:var(--muted);font-weight:600;margin-top:10px">Classic uses larger text & high contrast — made for parents and elders.</div>
+    </div>
+
+    <div class="card" style="background:var(--grad);border:none;color:#fff">
+      <div style="font-weight:800;font-size:15px">⚡ Auto Task Creator</div>
+      <div style="font-size:12px;opacity:.92;margin-top:3px;font-weight:600">Created 14 tasks this month · 6 rules active</div>
+    </div>
+
+    <div class="section-label">ACTIVE RULES</div>
+    <div class="card">
+      <div class="rule-row"><div class="rule-top"><div class="t">🧾 Electricity — K-Electric</div><div class="switch" onclick="this.classList.toggle('off')" style="transform:scale(.85)"></div></div><div class="s">Learned pattern · arrives ~10th–14th · avg Rs 4.2k</div></div>
+      <div class="rule-row"><div class="rule-top"><div class="t">🎓 School fee — Ali</div><div class="switch" onclick="this.classList.toggle('off')" style="transform:scale(.85)"></div></div><div class="s">Monthly · due 5th · Rs 12,000</div></div>
+      <div class="rule-row"><div class="rule-top"><div class="t">🏠 Rent</div><div class="switch" onclick="this.classList.toggle('off')" style="transform:scale(.85)"></div></div><div class="s">Monthly · due 1st · Rs 35,000</div></div>
+      <div class="rule-row"><div class="rule-top"><div class="t">📅 Dr. Ahmed follow-up</div><div class="switch" onclick="this.classList.toggle('off')" style="transform:scale(.85)"></div></div><div class="s">From appointment slip · next: 15 Nov 5:00 PM</div></div>
+    </div>
+
+    <div class="section-label">DOMAINS</div>
+    <div class="card" style="padding:4px 16px">
+      <div class="folder"><div class="fi">❤️</div><div class="fn">Health</div><div class="fc">2 reminders</div></div>
+      <div class="folder"><div class="fi">👥</div><div class="fn">People</div><div class="fc">1 nudge</div></div>
+      <div class="folder"><div class="fi">💼</div><div class="fn">Work / Study</div><div class="fc"></div></div>
+      <div class="folder"><div class="fi">🕌</div><div class="fn">Soul</div><div class="fc">prayer times on</div></div>
+    </div>
+  </div>
+
+  <!-- ============ FAB & NAV ============ -->
+  <div class="fab-menu" id="fabmenu">
+    <button onclick="closeFab();toast('🎤 Voice — say: pay internet Friday 5pm')">🎤 Voice</button>
+    <button onclick="closeFab();startScan()">📸 Scan</button>
+    <button onclick="closeFab();toast('➕ New task — natural language input')">➕ Task</button>
+  </div>
+  <button class="fab" id="fab" onclick="toggleFab()">＋</button>
+
+  <div class="nav">
+    <button class="on" data-s="scr-home" onclick="nav(this)"><span class="ni">🏠</span>Home</button>
+    <button data-s="scr-tasks" onclick="nav(this)"><span class="ni">✅</span>Tasks</button>
+    <button data-s="scr-vault" onclick="nav(this)"><span class="ni">📂</span>Vault</button>
+    <button data-s="scr-money" onclick="nav(this)"><span class="ni">💰</span>Money</button>
+    <button data-s="scr-more" onclick="nav(this)"><span class="ni">⋯</span>More</button>
+  </div>
+
+  <!-- ============ MODALS ============ -->
+  <div class="scrim" id="scrim" onclick="closeAll()"></div>
+
+  <div class="dialog" id="dlg-atc">
+    <h3>⚡ New pattern detected</h3>
+    <p>Your <b>gas bill</b> usually arrives the <b>16th–19th</b> (last 2 months, avg Rs 1,900). Create a monthly reminder?</p>
+    <div class="btnrow">
+      <button class="sec" onclick="closeAll()">No thanks</button>
+      <button class="pri" onclick="closeAll();toast('⚡ Rule created — Gas bill, monthly')">Yes, remind me</button>
+    </div>
+  </div>
+
+  <div class="sheet" id="sheet-chain">
+    <div class="grab"></div>
+    <h3 style="font-size:17px;font-weight:800">✓ School fee — Rs 12,000 paid</h3>
+    <p style="font-size:12.5px;color:var(--muted);margin:6px 0 16px;font-weight:600">Attach the receipt to complete the chain?</p>
+    <div class="btnrow" id="chainBtns">
+      <button class="sec" onclick="runChain(false)">Skip</button>
+      <button class="pri" onclick="runChain(true)">📸 Scan receipt</button>
+    </div>
+    <div id="chainSteps" style="display:none;margin-top:6px">
+      <div class="chain-step" id="c1">📂 Receipt filed in Vault → Education / Ali</div>
+      <div class="chain-step" id="c2">💰 Rs 12,000 logged in Money → Fees</div>
+      <div class="chain-step" id="c3">📊 Life Score +2 → 80</div>
+      <button class="bigbtn" id="chainDone" style="margin-top:10px;opacity:0;transition:.4s" onclick="closeAll()">Done ✨</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+  let score = 78;
+
+  function setTheme(t, chip){
+    document.getElementById('phone').dataset.theme = t;
+    document.querySelectorAll('.tchip').forEach(c=>c.classList.remove('on'));
+    if(chip) chip.classList.add('on');
+    else{
+      const map={flagship:0,funky:1,classic:2};
+      document.querySelectorAll('.tchip')[map[t]].classList.add('on');
+    }
+    document.querySelectorAll('.theme-pick .tp').forEach(tp=>tp.classList.remove('on'));
+    const inApp=document.getElementById('tp-'+t); if(inApp) inApp.classList.add('on');
+    toast(t==='flagship'?'🖤 Flagship Pro — OLED glass':t==='funky'?'🔥 Funky — bold & playful':'📖 Classic — large text, high contrast');
+  }
+
+  function go(id){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    const navMap={ 'scr-home':0,'scr-score':0,'scr-tasks':1,'scr-vault':2,'scr-doc':2,
+      'scr-scan1':2,'scr-scan2':2,'scr-scan3':2,'scr-scan4':2,'scr-money':3,'scr-more':4 };
+    document.querySelectorAll('.nav button').forEach((b,i)=>b.classList.toggle('on', i===navMap[id]));
+    document.getElementById(id).scrollTop=0;
+    closeFab();
+    if(id==='scr-home') animateRing();
+  }
+  function nav(btn){ go(btn.dataset.s); }
+
+  function animateRing(){
+    const target=score, circ=346;
+    const bar=document.getElementById('ringbar');
+    bar.style.strokeDashoffset=circ;
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      bar.style.strokeDashoffset = circ*(1-target/100);
+    }));
+    let v=0; const el=document.getElementById('scoreval');
+    const iv=setInterval(()=>{ v+=2; if(v>=target){v=target;clearInterval(iv);} el.textContent=v; },22);
+    document.getElementById('scoreval2').textContent=target;
+  }
+
+  function toggleFab(){
+    document.getElementById('fab').classList.toggle('open');
+    document.getElementById('fabmenu').classList.toggle('open');
+  }
+  function closeFab(){
+    document.getElementById('fab').classList.remove('open');
+    document.getElementById('fabmenu').classList.remove('open');
+  }
+
+  function toggleCheck(el,e){
+    e.stopPropagation();
+    el.classList.toggle('done');
+    el.textContent = el.classList.contains('done')?'✓':'';
+    el.closest('.row').classList.toggle('task-done');
+  }
+
+  function feeDone(el,e){
+    e.stopPropagation();
+    el.classList.add('done'); el.textContent='✓';
+    el.closest('.row').classList.add('task-done');
+    document.getElementById('scrim').classList.add('open');
+    document.getElementById('sheet-chain').classList.add('open');
+  }
+  function runChain(withReceipt){
+    document.getElementById('chainBtns').style.display='none';
+    document.getElementById('chainSteps').style.display='block';
+    ['c1','c2','c3'].forEach((id,i)=>setTimeout(()=>document.getElementById(id).classList.add('in'), 250+i*450));
+    setTimeout(()=>{
+      score=80;
+      document.getElementById('chainDone').style.opacity=1;
+      document.getElementById('scoremsg').textContent='1 item needs attention';
+    }, 250+3*450);
+    if(!withReceipt) document.getElementById('c1').textContent='📂 No receipt — attach later from the task';
+  }
+
+  function startScan(){ go('scr-scan1'); }
+  function runOcr(){
+    const chip=document.getElementById('typechip');
+    chip.style.opacity=0;
+    ['f1','f2','f3','f4'].forEach(id=>document.getElementById(id).classList.remove('in'));
+    const btn=document.getElementById('nextOcr');
+    btn.style.opacity=.4; btn.style.pointerEvents='none';
+    document.getElementById('ocrTitle').textContent='Reading…';
+    setTimeout(()=>chip.style.opacity=1, 500);
+    ['f1','f2','f3','f4'].forEach((id,i)=>setTimeout(()=>document.getElementById(id).classList.add('in'), 900+i*380));
+    setTimeout(()=>{ btn.style.opacity=1; btn.style.pointerEvents='auto';
+      document.getElementById('ocrTitle').textContent='Done ✓'; }, 900+4*380);
+  }
+  function saveScan(){
+    go('scr-vault');
+    toast('✓ Saved to Vault · ⚡ Payment task created for 14 Nov');
+  }
+
+  function closeAll(){
+    document.getElementById('scrim').classList.remove('open');
+    document.querySelectorAll('.sheet,.dialog').forEach(x=>x.classList.remove('open'));
+    setTimeout(()=>{
+      document.getElementById('chainBtns').style.display='flex';
+      document.getElementById('chainSteps').style.display='none';
+      ['c1','c2','c3'].forEach(id=>document.getElementById(id).classList.remove('in'));
+      document.getElementById('chainDone').style.opacity=0;
+    },300);
+  }
+
+  let toastTimer;
+  function toast(msg){
+    const t=document.getElementById('toast');
+    t.textContent=msg; t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer=setTimeout(()=>t.classList.remove('show'), 2600);
+  }
+
+  window.addEventListener('load',()=>{
+    animateRing();
+    setTimeout(()=>{
+      if(document.getElementById('scr-home').classList.contains('active')){
+        document.getElementById('scrim').classList.add('open');
+        document.getElementById('dlg-atc').classList.add('open');
+      }
+    }, 9000);
+  });
+</script>
+</body>
+</html>
