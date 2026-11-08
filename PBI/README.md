@@ -12,7 +12,7 @@
 | # | PBI | Epic | SP | Depends on | Status |
 |---|---|---|---|---|---|
 | 1 | [PBI-001 Project Foundation & App Shell](PBI-001-project-foundation.md) | E0 Foundation | 5 | — | In Review |
-| 2 | [PBI-002 Offline-First Local Database](PBI-002-local-database.md) | E0 Foundation | 8 | 001 | Ready |
+| 2 | [PBI-002 Offline-First Local Database](PBI-002-local-database.md) | E0 Foundation | 8 | 001 | Done |
 | 3 | [PBI-003 Document Capture](PBI-003-document-capture.md) | E1 Vault | 8 | 002 | Ready |
 | 4 | [PBI-004 OCR, Classification & Extraction](PBI-004-ocr-classification.md) | E1 Vault | 13 | 003 | Ready |
 | 5 | [PBI-005 Vault Folders, People, Tags](PBI-005-vault-organization.md) | E1 Vault | 5 | 002 | Ready |
