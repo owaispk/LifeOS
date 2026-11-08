@@ -50,6 +50,9 @@ class UserSettings extends Table with SyncColumns {
   TextColumn get backupMode =>
       text().withDefault(const Constant('wifi'))(); // off|wifi|always
 
+  /// Overload Shield day capacity in minutes (schema v2, PBI-011).
+  IntColumn get dayCapacityMin => integer().withDefault(const Constant(360))();
+
   @override
   List<Set<Column<Object>>> get uniqueKeys => [
     {userId},
@@ -116,6 +119,10 @@ class DocumentFiles extends Table with SyncColumns {
   TextColumn get encIv => text().nullable()(); // set by PBI-024
   TextColumn get encKeyWrapped => text().nullable()(); // set by PBI-024
   TextColumn get thumbR2Key => text().nullable()();
+
+  /// 64-bit perceptual difference hash of the page, hex (schema v2,
+  /// PBI-003 duplicate detection). Null for non-image files.
+  TextColumn get phash => text().nullable()();
 }
 
 @DataClassName('ExtractedField')

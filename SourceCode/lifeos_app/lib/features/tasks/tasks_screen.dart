@@ -5,9 +5,11 @@ import '../../core/theme/tokens.dart';
 import '../../data/db/app_database.dart';
 import '../../shared/format.dart';
 import '../../shared/widgets/empty_state.dart';
+import 'domain/overload.dart';
 import 'domain/task_rules.dart';
 import 'tasks_providers.dart';
 import 'ui/new_task_sheet.dart';
+import 'ui/overload_dialog.dart';
 import 'ui/task_tile.dart';
 
 enum TasksView { today, upcoming, domains }
@@ -27,6 +29,8 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
   Widget build(BuildContext context) {
     final tasks = ref.watch(allTasksProvider);
     final now = ref.watch(nowProvider)();
+    final capacity =
+        ref.watch(dayCapacityProvider).value ?? defaultDayCapacityMin;
 
     return Scaffold(
       appBar: AppBar(
@@ -68,6 +72,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
           TasksView.upcoming => _UpcomingList(
             days: upcomingByDay(list, now),
             now: now,
+            heat: loadsFrom(list, now, 7, capacity),
           ),
           TasksView.domains => _DomainList(groups: tasksByDomain(list)),
         },
@@ -119,9 +124,16 @@ class _TodayList extends StatelessWidget {
 // ── Upcoming ────────────────────────────────────────────────────────────────
 
 class _UpcomingList extends StatelessWidget {
-  const _UpcomingList({required this.days, required this.now});
+  const _UpcomingList({
+    required this.days,
+    required this.now,
+    required this.heat,
+  });
   final Map<DateTime, List<Task>> days;
   final DateTime now;
+
+  /// Today … +6 load for the Overload Shield heatmap (PBI-011).
+  final List<DayLoad> heat;
 
   @override
   Widget build(BuildContext context) {
@@ -136,6 +148,7 @@ class _UpcomingList extends StatelessWidget {
       key: const ValueKey('upcoming-list'),
       padding: const EdgeInsets.only(bottom: 120),
       children: [
+        LoadHeatmap(days: heat),
         for (final entry in days.entries) ...[
           _SectionHeader(
             title: relativeDay(entry.key, now) == 'Tomorrow'

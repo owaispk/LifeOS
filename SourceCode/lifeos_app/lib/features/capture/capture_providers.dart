@@ -1,0 +1,75 @@
+import 'dart:io';
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../core/now_provider.dart';
+import '../../data/data_providers.dart';
+import 'data/capture_service.dart';
+import 'platform/capture_platform.dart';
+
+// Device services — inert by default (web preview, tests); `main()`
+// overrides them with the real plugins on phones.
+final documentScannerProvider = Provider<DocumentScanner>(
+  (ref) => const NoCapture(),
+);
+final fileImporterProvider = Provider<FileImporter>((ref) => const NoCapture());
+final storageInfoProvider = Provider<StorageInfo>((ref) => const NoCapture());
+final shareInboxProvider = Provider<ShareInbox>((ref) => const NoCapture());
+
+/// Where Vault files are stored (`<app documents>/vault`). Set in `main()`.
+final vaultRootProvider = Provider<Directory>(
+  (ref) => throw UnimplementedError('vaultRootProvider must be overridden'),
+);
+
+final captureServiceProvider = Provider<CaptureService>(
+  (ref) => CaptureService(
+    ref.watch(repositoriesProvider),
+    ref.watch(vaultRootProvider),
+    now: ref.watch(nowProvider),
+  ),
+);
+
+/// Warn before scanning below this much free space (PBI-003 AC6).
+const lowStorageMb = 100;
+
+/// Documents captured in this session, waiting to be filed (batch mode),
+/// plus where the session was started from (pre-selects folder/person).
+class CaptureSession {
+  const CaptureSession({this.drafts = const [], this.folderId, this.personId});
+
+  final List<CaptureDraft> drafts;
+  final String? folderId;
+  final String? personId;
+}
+
+class CaptureSessionNotifier extends Notifier<CaptureSession> {
+  @override
+  CaptureSession build() => const CaptureSession();
+
+  void add(CaptureDraft draft, {String? folderId, String? personId}) {
+    state = CaptureSession(
+      drafts: [...state.drafts, draft],
+      folderId: state.drafts.isEmpty ? folderId : state.folderId,
+      personId: state.drafts.isEmpty ? personId : state.personId,
+    );
+  }
+
+  /// Drops the draft at the front (saved or discarded).
+  void next() {
+    final rest = state.drafts.skip(1).toList();
+    state = rest.isEmpty
+        ? const CaptureSession()
+        : CaptureSession(
+            drafts: rest,
+            folderId: state.folderId,
+            personId: state.personId,
+          );
+  }
+
+  void clear() => state = const CaptureSession();
+}
+
+final captureSessionProvider =
+    NotifierProvider<CaptureSessionNotifier, CaptureSession>(
+      CaptureSessionNotifier.new,
+    );

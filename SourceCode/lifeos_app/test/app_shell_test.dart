@@ -24,7 +24,15 @@ void main() {
       await tester.tap(navItem(tab));
       await tester.pumpAndSettle();
       expect(appBarTitle(tab), findsOneWidget, reason: '$tab app bar');
-      expect(find.byType(EmptyState), findsOneWidget, reason: '$tab body');
+      // Every tab shows content or an empty state — never a blank screen.
+      // (The Vault always has its folders since PBI-005.)
+      expect(
+        tab == 'Vault'
+            ? find.byKey(const ValueKey('vault-home'))
+            : find.byType(EmptyState),
+        findsOneWidget,
+        reason: '$tab body',
+      );
     }
   });
 
@@ -59,18 +67,18 @@ void main() {
 
       await tester.tap(find.byKey(ValueKey('quick-action-$action')));
       await tester.pumpAndSettle();
-      // Task and Expense open their real sheets (PBI-009, PBI-018); the rest are
-      // placeholders until their PBIs land.
-      expect(
-        find.byKey(
-          ValueKey(switch (action) {
-            'task' => 'new-task-title',
-            'expense' => 'expense-amount',
-            _ => 'quick-action-sheet-$action',
-          }),
-        ),
-        findsOneWidget,
-      );
+      // Task and Expense open their real sheets (PBI-009, PBI-018); Scan
+      // opens the device scanner (PBI-003 — none in tests, so nothing
+      // opens); Voice is still a placeholder (PBI-010).
+      final opened = switch (action) {
+        'task' => 'new-task-title',
+        'expense' => 'expense-amount',
+        'voice' => 'quick-action-sheet-voice',
+        _ => null,
+      };
+      if (opened != null) {
+        expect(find.byKey(ValueKey(opened)), findsOneWidget);
+      }
       expect(
         find.byKey(const ValueKey('quick-action-task')),
         findsNothing,

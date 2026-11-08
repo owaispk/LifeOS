@@ -202,6 +202,18 @@ class $UserSettingsTable extends UserSettings
     requiredDuringInsert: false,
     defaultValue: const Constant('wifi'),
   );
+  static const VerificationMeta _dayCapacityMinMeta = const VerificationMeta(
+    'dayCapacityMin',
+  );
+  @override
+  late final GeneratedColumn<int> dayCapacityMin = GeneratedColumn<int>(
+    'day_capacity_min',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(360),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -220,6 +232,7 @@ class $UserSettingsTable extends UserSettings
     digestTime,
     notifDomains,
     backupMode,
+    dayCapacityMin,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -335,6 +348,15 @@ class $UserSettingsTable extends UserSettings
         backupMode.isAcceptableOrUnknown(data['backup_mode']!, _backupModeMeta),
       );
     }
+    if (data.containsKey('day_capacity_min')) {
+      context.handle(
+        _dayCapacityMinMeta,
+        dayCapacityMin.isAcceptableOrUnknown(
+          data['day_capacity_min']!,
+          _dayCapacityMinMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -412,6 +434,10 @@ class $UserSettingsTable extends UserSettings
         DriftSqlType.string,
         data['${effectivePrefix}backup_mode'],
       )!,
+      dayCapacityMin: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}day_capacity_min'],
+      )!,
     );
   }
 
@@ -438,6 +464,9 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
   final String digestTime;
   final String notifDomains;
   final String backupMode;
+
+  /// Overload Shield day capacity in minutes (schema v2, PBI-011).
+  final int dayCapacityMin;
   const UserSettingsRow({
     required this.id,
     required this.userId,
@@ -455,6 +484,7 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     required this.digestTime,
     required this.notifDomains,
     required this.backupMode,
+    required this.dayCapacityMin,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -477,6 +507,7 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     map['digest_time'] = Variable<String>(digestTime);
     map['notif_domains'] = Variable<String>(notifDomains);
     map['backup_mode'] = Variable<String>(backupMode);
+    map['day_capacity_min'] = Variable<int>(dayCapacityMin);
     return map;
   }
 
@@ -500,6 +531,7 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
       digestTime: Value(digestTime),
       notifDomains: Value(notifDomains),
       backupMode: Value(backupMode),
+      dayCapacityMin: Value(dayCapacityMin),
     );
   }
 
@@ -525,6 +557,7 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
       digestTime: serializer.fromJson<String>(json['digestTime']),
       notifDomains: serializer.fromJson<String>(json['notifDomains']),
       backupMode: serializer.fromJson<String>(json['backupMode']),
+      dayCapacityMin: serializer.fromJson<int>(json['dayCapacityMin']),
     );
   }
   @override
@@ -547,6 +580,7 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
       'digestTime': serializer.toJson<String>(digestTime),
       'notifDomains': serializer.toJson<String>(notifDomains),
       'backupMode': serializer.toJson<String>(backupMode),
+      'dayCapacityMin': serializer.toJson<int>(dayCapacityMin),
     };
   }
 
@@ -567,6 +601,7 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     String? digestTime,
     String? notifDomains,
     String? backupMode,
+    int? dayCapacityMin,
   }) => UserSettingsRow(
     id: id ?? this.id,
     userId: userId ?? this.userId,
@@ -584,6 +619,7 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     digestTime: digestTime ?? this.digestTime,
     notifDomains: notifDomains ?? this.notifDomains,
     backupMode: backupMode ?? this.backupMode,
+    dayCapacityMin: dayCapacityMin ?? this.dayCapacityMin,
   );
   UserSettingsRow copyWithCompanion(UserSettingsCompanion data) {
     return UserSettingsRow(
@@ -615,6 +651,9 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
       backupMode: data.backupMode.present
           ? data.backupMode.value
           : this.backupMode,
+      dayCapacityMin: data.dayCapacityMin.present
+          ? data.dayCapacityMin.value
+          : this.dayCapacityMin,
     );
   }
 
@@ -636,7 +675,8 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
           ..write('quietEnd: $quietEnd, ')
           ..write('digestTime: $digestTime, ')
           ..write('notifDomains: $notifDomains, ')
-          ..write('backupMode: $backupMode')
+          ..write('backupMode: $backupMode, ')
+          ..write('dayCapacityMin: $dayCapacityMin')
           ..write(')'))
         .toString();
   }
@@ -659,6 +699,7 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     digestTime,
     notifDomains,
     backupMode,
+    dayCapacityMin,
   );
   @override
   bool operator ==(Object other) =>
@@ -679,7 +720,8 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
           other.quietEnd == this.quietEnd &&
           other.digestTime == this.digestTime &&
           other.notifDomains == this.notifDomains &&
-          other.backupMode == this.backupMode);
+          other.backupMode == this.backupMode &&
+          other.dayCapacityMin == this.dayCapacityMin);
 }
 
 class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
@@ -699,6 +741,7 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
   final Value<String> digestTime;
   final Value<String> notifDomains;
   final Value<String> backupMode;
+  final Value<int> dayCapacityMin;
   final Value<int> rowid;
   const UserSettingsCompanion({
     this.id = const Value.absent(),
@@ -717,6 +760,7 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     this.digestTime = const Value.absent(),
     this.notifDomains = const Value.absent(),
     this.backupMode = const Value.absent(),
+    this.dayCapacityMin = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   UserSettingsCompanion.insert({
@@ -736,6 +780,7 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     this.digestTime = const Value.absent(),
     this.notifDomains = const Value.absent(),
     this.backupMode = const Value.absent(),
+    this.dayCapacityMin = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   static Insertable<UserSettingsRow> custom({
@@ -755,6 +800,7 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     Expression<String>? digestTime,
     Expression<String>? notifDomains,
     Expression<String>? backupMode,
+    Expression<int>? dayCapacityMin,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -774,6 +820,7 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
       if (digestTime != null) 'digest_time': digestTime,
       if (notifDomains != null) 'notif_domains': notifDomains,
       if (backupMode != null) 'backup_mode': backupMode,
+      if (dayCapacityMin != null) 'day_capacity_min': dayCapacityMin,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -795,6 +842,7 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     Value<String>? digestTime,
     Value<String>? notifDomains,
     Value<String>? backupMode,
+    Value<int>? dayCapacityMin,
     Value<int>? rowid,
   }) {
     return UserSettingsCompanion(
@@ -814,6 +862,7 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
       digestTime: digestTime ?? this.digestTime,
       notifDomains: notifDomains ?? this.notifDomains,
       backupMode: backupMode ?? this.backupMode,
+      dayCapacityMin: dayCapacityMin ?? this.dayCapacityMin,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -869,6 +918,9 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     if (backupMode.present) {
       map['backup_mode'] = Variable<String>(backupMode.value);
     }
+    if (dayCapacityMin.present) {
+      map['day_capacity_min'] = Variable<int>(dayCapacityMin.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -894,6 +946,7 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
           ..write('digestTime: $digestTime, ')
           ..write('notifDomains: $notifDomains, ')
           ..write('backupMode: $backupMode, ')
+          ..write('dayCapacityMin: $dayCapacityMin, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -3506,6 +3559,15 @@ class $DocumentFilesTable extends DocumentFiles
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _phashMeta = const VerificationMeta('phash');
+  @override
+  late final GeneratedColumn<String> phash = GeneratedColumn<String>(
+    'phash',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -3523,6 +3585,7 @@ class $DocumentFilesTable extends DocumentFiles
     encIv,
     encKeyWrapped,
     thumbR2Key,
+    phash,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3635,6 +3698,12 @@ class $DocumentFilesTable extends DocumentFiles
         ),
       );
     }
+    if (data.containsKey('phash')) {
+      context.handle(
+        _phashMeta,
+        phash.isAcceptableOrUnknown(data['phash']!, _phashMeta),
+      );
+    }
     return context;
   }
 
@@ -3704,6 +3773,10 @@ class $DocumentFilesTable extends DocumentFiles
         DriftSqlType.string,
         data['${effectivePrefix}thumb_r2_key'],
       ),
+      phash: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}phash'],
+      ),
     );
   }
 
@@ -3729,6 +3802,10 @@ class DocumentFile extends DataClass implements Insertable<DocumentFile> {
   final String? encIv;
   final String? encKeyWrapped;
   final String? thumbR2Key;
+
+  /// 64-bit perceptual difference hash of the page, hex (schema v2,
+  /// PBI-003 duplicate detection). Null for non-image files.
+  final String? phash;
   const DocumentFile({
     required this.id,
     required this.userId,
@@ -3745,6 +3822,7 @@ class DocumentFile extends DataClass implements Insertable<DocumentFile> {
     this.encIv,
     this.encKeyWrapped,
     this.thumbR2Key,
+    this.phash,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -3775,6 +3853,9 @@ class DocumentFile extends DataClass implements Insertable<DocumentFile> {
     }
     if (!nullToAbsent || thumbR2Key != null) {
       map['thumb_r2_key'] = Variable<String>(thumbR2Key);
+    }
+    if (!nullToAbsent || phash != null) {
+      map['phash'] = Variable<String>(phash);
     }
     return map;
   }
@@ -3808,6 +3889,9 @@ class DocumentFile extends DataClass implements Insertable<DocumentFile> {
       thumbR2Key: thumbR2Key == null && nullToAbsent
           ? const Value.absent()
           : Value(thumbR2Key),
+      phash: phash == null && nullToAbsent
+          ? const Value.absent()
+          : Value(phash),
     );
   }
 
@@ -3832,6 +3916,7 @@ class DocumentFile extends DataClass implements Insertable<DocumentFile> {
       encIv: serializer.fromJson<String?>(json['encIv']),
       encKeyWrapped: serializer.fromJson<String?>(json['encKeyWrapped']),
       thumbR2Key: serializer.fromJson<String?>(json['thumbR2Key']),
+      phash: serializer.fromJson<String?>(json['phash']),
     );
   }
   @override
@@ -3853,6 +3938,7 @@ class DocumentFile extends DataClass implements Insertable<DocumentFile> {
       'encIv': serializer.toJson<String?>(encIv),
       'encKeyWrapped': serializer.toJson<String?>(encKeyWrapped),
       'thumbR2Key': serializer.toJson<String?>(thumbR2Key),
+      'phash': serializer.toJson<String?>(phash),
     };
   }
 
@@ -3872,6 +3958,7 @@ class DocumentFile extends DataClass implements Insertable<DocumentFile> {
     Value<String?> encIv = const Value.absent(),
     Value<String?> encKeyWrapped = const Value.absent(),
     Value<String?> thumbR2Key = const Value.absent(),
+    Value<String?> phash = const Value.absent(),
   }) => DocumentFile(
     id: id ?? this.id,
     userId: userId ?? this.userId,
@@ -3890,6 +3977,7 @@ class DocumentFile extends DataClass implements Insertable<DocumentFile> {
         ? encKeyWrapped.value
         : this.encKeyWrapped,
     thumbR2Key: thumbR2Key.present ? thumbR2Key.value : this.thumbR2Key,
+    phash: phash.present ? phash.value : this.phash,
   );
   DocumentFile copyWithCompanion(DocumentFilesCompanion data) {
     return DocumentFile(
@@ -3914,6 +4002,7 @@ class DocumentFile extends DataClass implements Insertable<DocumentFile> {
       thumbR2Key: data.thumbR2Key.present
           ? data.thumbR2Key.value
           : this.thumbR2Key,
+      phash: data.phash.present ? data.phash.value : this.phash,
     );
   }
 
@@ -3934,7 +4023,8 @@ class DocumentFile extends DataClass implements Insertable<DocumentFile> {
           ..write('sha256: $sha256, ')
           ..write('encIv: $encIv, ')
           ..write('encKeyWrapped: $encKeyWrapped, ')
-          ..write('thumbR2Key: $thumbR2Key')
+          ..write('thumbR2Key: $thumbR2Key, ')
+          ..write('phash: $phash')
           ..write(')'))
         .toString();
   }
@@ -3956,6 +4046,7 @@ class DocumentFile extends DataClass implements Insertable<DocumentFile> {
     encIv,
     encKeyWrapped,
     thumbR2Key,
+    phash,
   );
   @override
   bool operator ==(Object other) =>
@@ -3975,7 +4066,8 @@ class DocumentFile extends DataClass implements Insertable<DocumentFile> {
           other.sha256 == this.sha256 &&
           other.encIv == this.encIv &&
           other.encKeyWrapped == this.encKeyWrapped &&
-          other.thumbR2Key == this.thumbR2Key);
+          other.thumbR2Key == this.thumbR2Key &&
+          other.phash == this.phash);
 }
 
 class DocumentFilesCompanion extends UpdateCompanion<DocumentFile> {
@@ -3994,6 +4086,7 @@ class DocumentFilesCompanion extends UpdateCompanion<DocumentFile> {
   final Value<String?> encIv;
   final Value<String?> encKeyWrapped;
   final Value<String?> thumbR2Key;
+  final Value<String?> phash;
   final Value<int> rowid;
   const DocumentFilesCompanion({
     this.id = const Value.absent(),
@@ -4011,6 +4104,7 @@ class DocumentFilesCompanion extends UpdateCompanion<DocumentFile> {
     this.encIv = const Value.absent(),
     this.encKeyWrapped = const Value.absent(),
     this.thumbR2Key = const Value.absent(),
+    this.phash = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   DocumentFilesCompanion.insert({
@@ -4029,6 +4123,7 @@ class DocumentFilesCompanion extends UpdateCompanion<DocumentFile> {
     this.encIv = const Value.absent(),
     this.encKeyWrapped = const Value.absent(),
     this.thumbR2Key = const Value.absent(),
+    this.phash = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : documentId = Value(documentId),
        byteSize = Value(byteSize),
@@ -4049,6 +4144,7 @@ class DocumentFilesCompanion extends UpdateCompanion<DocumentFile> {
     Expression<String>? encIv,
     Expression<String>? encKeyWrapped,
     Expression<String>? thumbR2Key,
+    Expression<String>? phash,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -4067,6 +4163,7 @@ class DocumentFilesCompanion extends UpdateCompanion<DocumentFile> {
       if (encIv != null) 'enc_iv': encIv,
       if (encKeyWrapped != null) 'enc_key_wrapped': encKeyWrapped,
       if (thumbR2Key != null) 'thumb_r2_key': thumbR2Key,
+      if (phash != null) 'phash': phash,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -4087,6 +4184,7 @@ class DocumentFilesCompanion extends UpdateCompanion<DocumentFile> {
     Value<String?>? encIv,
     Value<String?>? encKeyWrapped,
     Value<String?>? thumbR2Key,
+    Value<String?>? phash,
     Value<int>? rowid,
   }) {
     return DocumentFilesCompanion(
@@ -4105,6 +4203,7 @@ class DocumentFilesCompanion extends UpdateCompanion<DocumentFile> {
       encIv: encIv ?? this.encIv,
       encKeyWrapped: encKeyWrapped ?? this.encKeyWrapped,
       thumbR2Key: thumbR2Key ?? this.thumbR2Key,
+      phash: phash ?? this.phash,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -4157,6 +4256,9 @@ class DocumentFilesCompanion extends UpdateCompanion<DocumentFile> {
     if (thumbR2Key.present) {
       map['thumb_r2_key'] = Variable<String>(thumbR2Key.value);
     }
+    if (phash.present) {
+      map['phash'] = Variable<String>(phash.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -4181,6 +4283,7 @@ class DocumentFilesCompanion extends UpdateCompanion<DocumentFile> {
           ..write('encIv: $encIv, ')
           ..write('encKeyWrapped: $encKeyWrapped, ')
           ..write('thumbR2Key: $thumbR2Key, ')
+          ..write('phash: $phash, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -12160,6 +12263,7 @@ typedef $$UserSettingsTableCreateCompanionBuilder =
       Value<String> digestTime,
       Value<String> notifDomains,
       Value<String> backupMode,
+      Value<int> dayCapacityMin,
       Value<int> rowid,
     });
 typedef $$UserSettingsTableUpdateCompanionBuilder =
@@ -12180,6 +12284,7 @@ typedef $$UserSettingsTableUpdateCompanionBuilder =
       Value<String> digestTime,
       Value<String> notifDomains,
       Value<String> backupMode,
+      Value<int> dayCapacityMin,
       Value<int> rowid,
     });
 
@@ -12269,6 +12374,11 @@ class $$UserSettingsTableFilterComposer
 
   ColumnFilters<String> get backupMode => $composableBuilder(
     column: $table.backupMode,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get dayCapacityMin => $composableBuilder(
+    column: $table.dayCapacityMin,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -12361,6 +12471,11 @@ class $$UserSettingsTableOrderingComposer
     column: $table.backupMode,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<int> get dayCapacityMin => $composableBuilder(
+    column: $table.dayCapacityMin,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$UserSettingsTableAnnotationComposer
@@ -12431,6 +12546,11 @@ class $$UserSettingsTableAnnotationComposer
     column: $table.backupMode,
     builder: (column) => column,
   );
+
+  GeneratedColumn<int> get dayCapacityMin => $composableBuilder(
+    column: $table.dayCapacityMin,
+    builder: (column) => column,
+  );
 }
 
 class $$UserSettingsTableTableManager
@@ -12480,6 +12600,7 @@ class $$UserSettingsTableTableManager
                 Value<String> digestTime = const Value.absent(),
                 Value<String> notifDomains = const Value.absent(),
                 Value<String> backupMode = const Value.absent(),
+                Value<int> dayCapacityMin = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => UserSettingsCompanion(
                 id: id,
@@ -12498,6 +12619,7 @@ class $$UserSettingsTableTableManager
                 digestTime: digestTime,
                 notifDomains: notifDomains,
                 backupMode: backupMode,
+                dayCapacityMin: dayCapacityMin,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -12518,6 +12640,7 @@ class $$UserSettingsTableTableManager
                 Value<String> digestTime = const Value.absent(),
                 Value<String> notifDomains = const Value.absent(),
                 Value<String> backupMode = const Value.absent(),
+                Value<int> dayCapacityMin = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => UserSettingsCompanion.insert(
                 id: id,
@@ -12536,6 +12659,7 @@ class $$UserSettingsTableTableManager
                 digestTime: digestTime,
                 notifDomains: notifDomains,
                 backupMode: backupMode,
+                dayCapacityMin: dayCapacityMin,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -14791,6 +14915,7 @@ typedef $$DocumentFilesTableCreateCompanionBuilder =
       Value<String?> encIv,
       Value<String?> encKeyWrapped,
       Value<String?> thumbR2Key,
+      Value<String?> phash,
       Value<int> rowid,
     });
 typedef $$DocumentFilesTableUpdateCompanionBuilder =
@@ -14810,6 +14935,7 @@ typedef $$DocumentFilesTableUpdateCompanionBuilder =
       Value<String?> encIv,
       Value<String?> encKeyWrapped,
       Value<String?> thumbR2Key,
+      Value<String?> phash,
       Value<int> rowid,
     });
 
@@ -14918,6 +15044,11 @@ class $$DocumentFilesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get phash => $composableBuilder(
+    column: $table.phash,
+    builder: (column) => ColumnFilters(column),
+  );
+
   $$DocumentsTableFilterComposer get documentId {
     final $$DocumentsTableFilterComposer composer = $composerBuilder(
       composer: this,
@@ -15021,6 +15152,11 @@ class $$DocumentFilesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get phash => $composableBuilder(
+    column: $table.phash,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$DocumentsTableOrderingComposer get documentId {
     final $$DocumentsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -15100,6 +15236,9 @@ class $$DocumentFilesTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<String> get phash =>
+      $composableBuilder(column: $table.phash, builder: (column) => column);
+
   $$DocumentsTableAnnotationComposer get documentId {
     final $$DocumentsTableAnnotationComposer composer = $composerBuilder(
       composer: this,
@@ -15167,6 +15306,7 @@ class $$DocumentFilesTableTableManager
                 Value<String?> encIv = const Value.absent(),
                 Value<String?> encKeyWrapped = const Value.absent(),
                 Value<String?> thumbR2Key = const Value.absent(),
+                Value<String?> phash = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => DocumentFilesCompanion(
                 id: id,
@@ -15184,6 +15324,7 @@ class $$DocumentFilesTableTableManager
                 encIv: encIv,
                 encKeyWrapped: encKeyWrapped,
                 thumbR2Key: thumbR2Key,
+                phash: phash,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -15203,6 +15344,7 @@ class $$DocumentFilesTableTableManager
                 Value<String?> encIv = const Value.absent(),
                 Value<String?> encKeyWrapped = const Value.absent(),
                 Value<String?> thumbR2Key = const Value.absent(),
+                Value<String?> phash = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => DocumentFilesCompanion.insert(
                 id: id,
@@ -15220,6 +15362,7 @@ class $$DocumentFilesTableTableManager
                 encIv: encIv,
                 encKeyWrapped: encKeyWrapped,
                 thumbR2Key: thumbR2Key,
+                phash: phash,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

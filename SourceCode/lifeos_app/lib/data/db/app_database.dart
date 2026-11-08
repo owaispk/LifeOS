@@ -33,14 +33,28 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
 
   /// The on-device database file used by the app.
-  factory AppDatabase.open() => AppDatabase(driftDatabase(name: 'lifeos'));
+  factory AppDatabase.open() => AppDatabase(
+    driftDatabase(
+      name: 'lifeos',
+      // Notification actions run in a background isolate (PBI-012); both
+      // isolates must share one connection to the same file.
+      native: const DriftNativeOptions(shareAcrossIsolates: true),
+    ),
+  );
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (m) => m.createAll(),
+    onUpgrade: (m, from, to) async {
+      // v2 (Sprint 2): Overload Shield capacity + duplicate-detection hash.
+      if (from < 2) {
+        await m.addColumn(userSettings, userSettings.dayCapacityMin);
+        await m.addColumn(documentFiles, documentFiles.phash);
+      }
+    },
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
     },

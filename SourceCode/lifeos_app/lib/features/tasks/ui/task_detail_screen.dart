@@ -8,7 +8,10 @@ import '../../../data/db/app_database.dart';
 import '../../../shared/format.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../domain/task_rules.dart';
+import '../../reminders/domain/reminder_planner.dart';
+import '../../reminders/reminder_providers.dart';
 import '../tasks_providers.dart';
+import 'task_actions.dart';
 import 'task_tile.dart';
 
 /// 2.3 Task Detail (UI flow §2.3).
@@ -139,21 +142,28 @@ class _TaskDetailBodyState extends ConsumerState<_TaskDetailBody> {
                     due.hour,
                     due.minute,
                   );
-            await _update(
-              TasksCompanion(dueAt: Value(value.millisecondsSinceEpoch)),
+            if (!context.mounted) return;
+            // Overload Shield (PBI-011) on rescheduling.
+            final resolved = await confirmCapacity(
+              context,
+              ref,
+              due: value,
+              durationMin: task.durationMin,
+              isAtc: task.atcRuleId != null,
+              excludeTaskId: task.id,
             );
+            final moved = resolved?.due;
+            if (moved == null) return;
+            await ref.read(taskServiceProvider).reschedule(task.id, moved);
           },
           trailing: due == null
               ? null
               : IconButton(
                   tooltip: 'Remove due date',
                   icon: const Icon(Icons.close),
-                  onPressed: () => _update(
-                    const TasksCompanion(
-                      dueAt: Value(null),
-                      allDay: Value(true),
-                    ),
-                  ),
+                  onPressed: () => ref
+                      .read(taskServiceProvider)
+                      .reschedule(task.id, null, allDay: true),
                 ),
         ),
         if (due != null)
@@ -177,25 +187,20 @@ class _TaskDetailBodyState extends ConsumerState<_TaskDetailBody> {
                 picked.hour,
                 picked.minute,
               );
-              await _update(
-                TasksCompanion(
-                  dueAt: Value(at.millisecondsSinceEpoch),
-                  allDay: const Value(false),
-                ),
-              );
+              await ref
+                  .read(taskServiceProvider)
+                  .reschedule(task.id, at, allDay: false);
             },
             trailing: task.allDay
                 ? null
                 : TextButton(
-                    onPressed: () => _update(
-                      TasksCompanion(
-                        dueAt: Value(startOfDay(due).millisecondsSinceEpoch),
-                        allDay: const Value(true),
-                      ),
-                    ),
+                    onPressed: () => ref
+                        .read(taskServiceProvider)
+                        .reschedule(task.id, startOfDay(due), allDay: true),
                     child: const Text('All day'),
                   ),
           ),
+        _RemindersSection(task: task),
         const SizedBox(height: Tokens.spaceS),
 
         const _Label('Priority'),
@@ -458,4 +463,98 @@ class _Label extends StatelessWidget {
     padding: const EdgeInsets.only(top: Tokens.spaceL, bottom: Tokens.spaceS),
     child: Text(text, style: Theme.of(context).textTheme.labelLarge),
   );
+}
+
+/// Reminders on a task (PBI-012): list, add (preset offsets or custom),
+/// remove. All-day tasks use 09:00 on the due day as the base time.
+class _RemindersSection extends ConsumerWidget {
+  const _RemindersSection({required this.task});
+  final Task task;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final now = ref.watch(nowProvider)();
+    final reminders =
+        ref.watch(taskRemindersProvider(task.id)).value ??
+        const <TaskReminder>[];
+    final due = task.dueAt == null ? null : localDue(task);
+    final base = due == null
+        ? null
+        : task.allDay
+        ? DateTime(due.year, due.month, due.day, 9)
+        : due;
+
+    Future<void> add(DateTime at) async {
+      await ref.read(reminderServiceProvider).add(task.id, at);
+      // Ask in context, the first time a reminder is set (PBI-012).
+      await ref.read(notificationGatewayProvider).requestPermission();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (final r in reminders)
+          ListTile(
+            key: ValueKey('reminder-${r.id}'),
+            contentPadding: EdgeInsets.zero,
+            leading: Icon(
+              r.fireAt < now.millisecondsSinceEpoch
+                  ? Icons.notifications_none
+                  : Icons.notifications_active_outlined,
+            ),
+            title: Text(
+              dueLabel(
+                DateTime.fromMillisecondsSinceEpoch(r.fireAt),
+                allDay: false,
+                now: now,
+              ),
+            ),
+            trailing: IconButton(
+              tooltip: 'Remove reminder',
+              icon: const Icon(Icons.close),
+              onPressed: () => ref.read(reminderServiceProvider).remove(r.id),
+            ),
+          ),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: PopupMenuButton<Object>(
+            key: const ValueKey('add-reminder'),
+            tooltip: 'Add reminder',
+            onSelected: (choice) async {
+              if (choice is ReminderOffset && base != null) {
+                await add(applyOffset(base, choice));
+              } else {
+                final picked = await pickDateTime(
+                  context,
+                  initial: base ?? now.add(const Duration(hours: 1)),
+                );
+                if (picked != null) await add(picked);
+              }
+            },
+            itemBuilder: (context) => [
+              if (base != null)
+                for (final o in ReminderOffset.values)
+                  PopupMenuItem(
+                    key: ValueKey('reminder-offset-${o.name}'),
+                    value: o,
+                    child: Text(offsetLabel(o)),
+                  ),
+              const PopupMenuItem(value: 'custom', child: Text('Pick a time…')),
+            ],
+            child: const Padding(
+              padding: EdgeInsets.symmetric(vertical: Tokens.spaceS),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.add_alert_outlined),
+                  SizedBox(width: Tokens.spaceS),
+                  Text('Add reminder'),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 }

@@ -5,9 +5,13 @@ import 'package:lifeos_app/app.dart';
 import 'package:lifeos_app/data/data_providers.dart';
 import 'package:lifeos_app/data/db/app_database.dart';
 import 'package:lifeos_app/data/repositories/repositories.dart';
+import 'package:lifeos_app/features/capture/capture_providers.dart';
+import 'package:lifeos_app/features/reminders/platform/notification_gateway.dart';
+import 'package:lifeos_app/features/reminders/reminder_providers.dart';
 import 'package:lifeos_app/features/tasks/tasks_providers.dart';
 
 import 'data/db_test_utils.dart';
+import 'fakes.dart';
 
 /// Sunday 8 Nov 2026, 10:00 local — the fixed "now" for widget tests.
 final testNow = DateTime(2026, 11, 8, 10);
@@ -18,7 +22,11 @@ class TestApp {
   final AppDatabase db;
   final Repositories repos;
 
-  static Future<TestApp> pump(WidgetTester tester) async {
+  static Future<TestApp> pump(
+    WidgetTester tester, {
+    NotificationGateway? gateway,
+    CaptureFakes? capture,
+  }) async {
     final db = memoryDb();
     final repos = await tester.runAsync(() => openLocalData(db));
     await tester.pumpWidget(
@@ -26,6 +34,15 @@ class TestApp {
         overrides: [
           repositoriesProvider.overrideWithValue(repos!),
           nowProvider.overrideWithValue(() => testNow),
+          if (gateway != null)
+            notificationGatewayProvider.overrideWithValue(gateway),
+          if (capture != null) ...[
+            vaultRootProvider.overrideWithValue(capture.vaultRoot),
+            documentScannerProvider.overrideWithValue(capture.scanner),
+            fileImporterProvider.overrideWithValue(capture.importer),
+            storageInfoProvider.overrideWithValue(capture.storage),
+            shareInboxProvider.overrideWithValue(capture.inbox),
+          ],
         ],
         child: const LifeOsApp(),
       ),
@@ -56,10 +73,16 @@ class TestApp {
 /// A widget test with a fresh seeded app; always cleans up, even on failure.
 void appTest(
   String description,
-  Future<void> Function(WidgetTester tester, TestApp app) body,
-) {
+  Future<void> Function(WidgetTester tester, TestApp app) body, {
+  NotificationGateway? gateway,
+  CaptureFakes? Function()? capture,
+}) {
   testWidgets(description, (tester) async {
-    final app = await TestApp.pump(tester);
+    final app = await TestApp.pump(
+      tester,
+      gateway: gateway,
+      capture: capture?.call(),
+    );
     try {
       await body(tester, app);
     } finally {
@@ -97,4 +120,37 @@ Future<void> useTallScreen(WidgetTester tester) async {
   tester.view.devicePixelRatio = 1.0;
   addTearDown(tester.view.reset);
   await tester.pumpAndSettle();
+}
+
+/// Pumps until [finder] matches, giving real async work (file IO,
+/// background isolates) time to finish. Fails after [maxTries].
+Future<void> pumpUntilFound(
+  WidgetTester tester,
+  Finder finder, {
+  int maxTries = 60,
+}) async {
+  for (var i = 0; i < maxTries; i++) {
+    if (finder.evaluate().isNotEmpty) return;
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 100)),
+    );
+    await tester.pump(const Duration(milliseconds: 50));
+  }
+  throw TestFailure('Timed out waiting for $finder');
+}
+
+/// Pumps until [finder] matches nothing (see [pumpUntilFound]).
+Future<void> pumpUntilGone(
+  WidgetTester tester,
+  Finder finder, {
+  int maxTries = 60,
+}) async {
+  for (var i = 0; i < maxTries; i++) {
+    if (finder.evaluate().isEmpty) return;
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 100)),
+    );
+    await tester.pump(const Duration(milliseconds: 50));
+  }
+  throw TestFailure('Timed out waiting for $finder to disappear');
 }

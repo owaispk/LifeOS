@@ -13,16 +13,16 @@
 |---|---|---|---|---|---|
 | 1 | [PBI-001 Project Foundation & App Shell](PBI-001-project-foundation.md) | E0 Foundation | 5 | — | In Review |
 | 2 | [PBI-002 Offline-First Local Database](PBI-002-local-database.md) | E0 Foundation | 8 | 001 | Done |
-| 3 | [PBI-003 Document Capture](PBI-003-document-capture.md) | E1 Vault | 8 | 002 | Ready |
+| 3 | [PBI-003 Document Capture](PBI-003-document-capture.md) | E1 Vault | 8 | 002 | Dev Complete — device QA pending |
 | 4 | [PBI-004 OCR, Classification & Extraction](PBI-004-ocr-classification.md) | E1 Vault | 13 | 003 | Ready |
-| 5 | [PBI-005 Vault Folders, People, Tags](PBI-005-vault-organization.md) | E1 Vault | 5 | 002 | Ready |
+| 5 | [PBI-005 Vault Folders, People, Tags](PBI-005-vault-organization.md) | E1 Vault | 5 | 002 | Done |
 | 6 | [PBI-006 Vault Full-Text Search](PBI-006-vault-search.md) | E1 Vault | 5 | 002, 004 | Ready |
 | 7 | [PBI-007 Document Viewer & Trash](PBI-007-document-viewer.md) | E1 Vault | 5 | 005 | Ready |
 | 8 | [PBI-008 Expiry Guard](PBI-008-expiry-guard.md) | E1 Vault | 5 | 002, 012 | Ready |
 | 9 | [PBI-009 Tasks: Today & Upcoming](PBI-009-tasks-today-upcoming.md) | E2 Mind | 8 | 002 | Done |
 | 10 | [PBI-010 Natural-Language & Voice Add](PBI-010-natural-language-voice-add.md) | E2 Mind | 8 | 009 | Ready |
-| 11 | [PBI-011 Overload Shield](PBI-011-overload-shield.md) | E2 Mind | 5 | 009 | Ready |
-| 12 | [PBI-012 Local Reminders & Actionable Notifications](PBI-012-local-notifications.md) | E5 Platform | 8 | 009 | Ready |
+| 11 | [PBI-011 Overload Shield](PBI-011-overload-shield.md) | E2 Mind | 5 | 009 | Done |
+| 12 | [PBI-012 Local Reminders & Actionable Notifications](PBI-012-local-notifications.md) | E5 Platform | 8 | 009 | Dev Complete — device QA pending |
 | 13 | [PBI-013 ATC Monthly Payments Engine](PBI-013-atc-payments-engine.md) | E3 ATC | 8 | 009, 012 | Ready |
 | 14 | [PBI-014 ATC Bill Pattern Learning](PBI-014-atc-bill-pattern-learning.md) | E3 ATC | 8 | 004, 013 | Ready |
 | 15 | [PBI-015 ATC Fees & Tuition](PBI-015-atc-fees-tuition.md) | E3 ATC | 5 | 013, 004 | Ready |
@@ -48,6 +48,17 @@
 | S4 | 008, 013, 016, 017, 019 | 26 |
 | S5 | 014, 015, 020, 021 | 26 |
 | S6 | 010, 022, 023, 024, 025 | 31 |
+
+## Sprint status
+| Sprint | Done | Dev complete, device QA pending | In review |
+|---|---|---|---|
+| S1 | 002, 009, 018 | — | 001 (Android launch) |
+| S2 | 005, 011 | 003, 012 | — |
+
+Device QA needs Android Studio + an emulator (see the PBI-001 notes). It covers:
+- PBI-001 AC1 (launch on Android)
+- PBI-003 AC1 (scan speed) and the native camera flow
+- PBI-012 AC1 (reminder fires offline) and AC4 (survives reboot)
 
 ## Not yet groomed (post-MVP, will become PBIs before development)
 - PBI-026 Supabase backend + offline sync (push/pull, conflict rules) + E2E encrypted cloud backup (premium)

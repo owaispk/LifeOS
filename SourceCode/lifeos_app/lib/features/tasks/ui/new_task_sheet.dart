@@ -4,7 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../shared/format.dart';
 import '../domain/task_rules.dart';
+import '../../reminders/reminder_providers.dart';
 import '../tasks_providers.dart';
+import 'task_actions.dart';
 import 'task_tile.dart';
 
 /// 2.4 New Task — a bottom sheet with one field; the full form lives under
@@ -50,11 +52,23 @@ class _NewTaskSheetState extends ConsumerState<NewTaskSheet> {
     setState(() => _saving = true);
     final date = _dueDate;
     final time = _time;
-    final due = date == null
+    final picked = date == null
         ? null
         : time == null
         ? date
         : DateTime(date.year, date.month, date.day, time.hour, time.minute);
+    // Overload Shield (PBI-011): may move the day, or send us back to edit.
+    final resolved = await confirmCapacity(
+      context,
+      ref,
+      due: picked,
+      durationMin: _duration,
+    );
+    if (resolved == null) {
+      if (mounted) setState(() => _saving = false);
+      return;
+    }
+    final due = resolved.due;
     await ref
         .read(taskServiceProvider)
         .create(
@@ -67,6 +81,10 @@ class _NewTaskSheetState extends ConsumerState<NewTaskSheet> {
           durationMin: _duration,
           repeat: _repeat,
         );
+    // A timed task gets a default reminder → ask for permission in context.
+    if (time != null) {
+      await ref.read(notificationGatewayProvider).requestPermission();
+    }
     if (mounted) Navigator.pop(context);
   }
 

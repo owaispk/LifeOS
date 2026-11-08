@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../shared/widgets/empty_state.dart';
-import '../../shared/widgets/quick_actions.dart';
+import '../capture/capture_entry.dart';
 import '../../shared/widgets/tab_scaffold.dart';
 
 /// 1. HOME — dashboard. Real content arrives in PBI-021.
@@ -17,7 +17,7 @@ class HomeScreen extends StatelessWidget {
         title: 'Run your whole life from one app',
         message: 'Scan your first document to get started.',
         actionLabel: '📸 Scan a document',
-        onAction: () => showQuickActionSheet(context, QuickAction.scan),
+        onAction: () => startScan(context),
       ),
     );
   }

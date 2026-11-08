@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/theme/tokens.dart';
+import '../../features/capture/capture_entry.dart';
 import '../../features/money/ui/expense_sheet.dart';
 import '../../features/tasks/ui/new_task_sheet.dart';
 import 'quick_actions.dart';
@@ -90,7 +91,9 @@ class AppShell extends ConsumerWidget {
                           showNewTaskSheet(context);
                         case QuickAction.expense:
                           showExpenseSheet(context);
-                        case QuickAction.scan || QuickAction.voice:
+                        case QuickAction.scan:
+                          startScan(context);
+                        case QuickAction.voice:
                           showQuickActionSheet(context, action);
                       }
                     },

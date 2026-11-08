@@ -10,7 +10,7 @@ void main() {
   setUp(() => db = memoryDb());
   tearDown(() => db.close());
 
-  test('schema v1 creates all synced and local-only tables', () async {
+  test('the current schema creates all synced and local-only tables', () async {
     final rows = await db
         .customSelect(
           "SELECT name FROM sqlite_master WHERE type = 'table' "
@@ -27,7 +27,7 @@ void main() {
       // local-only (data model §8.3) + app meta
       'pending_ops', 'conflict_log', 'blob_cache', 'app_meta',
     });
-    expect(db.schemaVersion, 1);
+    expect(db.schemaVersion, 2);
   });
 
   test('every synced table carries sync metadata columns', () async {

@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../data/data_providers.dart';
 import '../../../data/db/app_database.dart';
+import '../domain/overload.dart';
 import '../domain/task_rules.dart';
 import '../tasks_providers.dart';
+import 'overload_dialog.dart';
 
 /// Completes a task with haptic feedback and a 5-second Undo snackbar.
 Future<void> completeWithUndo(
@@ -81,6 +84,46 @@ Future<bool> snoozeTask(BuildContext context, WidgetRef ref, Task task) async {
   if (target == null) return false;
   await ref.read(taskServiceProvider).snooze(task.id, target);
   return true;
+}
+
+/// Overload Shield (PBI-011): checks the day [due] falls on and, if it's
+/// over capacity, asks the user. Returns the due date to save (moved days
+/// keep their time of day), or null if the user backed out to keep editing.
+/// Undated and ATC tasks pass straight through.
+Future<({DateTime? due})?> confirmCapacity(
+  BuildContext context,
+  WidgetRef ref, {
+  required DateTime? due,
+  required int durationMin,
+  bool isAtc = false,
+  String? excludeTaskId,
+}) async {
+  if (due == null || isAtc) return (due: due);
+  final repos = ref.read(repositoriesProvider);
+  final tasks = await repos.tasks.getAll();
+  final settings = await repos.userSettings.getAll();
+  final capacity = settings.isEmpty
+      ? defaultDayCapacityMin
+      : settings.first.dayCapacityMin;
+  final check = checkOverload(
+    tasks: tasks,
+    day: due,
+    durationMin: durationMin,
+    capacityMin: capacity,
+    now: ref.read(nowProvider)(),
+    excludeTaskId: excludeTaskId,
+  );
+  if (check == null) return (due: due);
+  if (!context.mounted) return null;
+
+  final choice = await showOverloadDialog(context, check);
+  return switch (choice) {
+    null => null,
+    AddAnyway() => (due: due),
+    MoveTo(:final day) => (
+      due: DateTime(day.year, day.month, day.day, due.hour, due.minute),
+    ),
+  };
 }
 
 /// Date picker followed by a time picker. Null if either is cancelled.

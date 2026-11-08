@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
+import 'features/capture/share_in_listener.dart';
 
 class LifeOsApp extends ConsumerWidget {
   const LifeOsApp({super.key});
@@ -16,6 +17,8 @@ class LifeOsApp extends ConsumerWidget {
       darkTheme: AppTheme.dark(),
       themeMode: ThemeMode.system,
       routerConfig: ref.watch(routerProvider),
+      // "Share to LifeOS" can arrive at any time (PBI-003).
+      builder: (context, child) => ShareInListener(child: child!),
     );
   }
 }

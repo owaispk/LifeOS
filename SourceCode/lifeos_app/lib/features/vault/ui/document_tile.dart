@@ -1,0 +1,126 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../core/now_provider.dart';
+import '../../../core/theme/tokens.dart';
+import '../../../data/db/app_database.dart';
+import '../../../shared/format.dart';
+import '../domain/vault_rules.dart';
+import '../vault_providers.dart';
+import 'document_sheet.dart';
+
+/// One document row: thumbnail · title · type chip · date · person · ★.
+class DocumentTile extends ConsumerWidget {
+  const DocumentTile({super.key, required this.document});
+
+  final Document document;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final now = ref.watch(nowProvider)();
+    final page = ref.watch(firstPagesProvider).value?[document.id];
+    final persons = ref.watch(personsProvider).value ?? const <Person>[];
+    final person = persons.where((p) => p.id == document.personId).firstOrNull;
+
+    return ListTile(
+      key: ValueKey('doc-${document.id}'),
+      minTileHeight: 64,
+      onTap: () => showDocumentSheet(context, document.id),
+      leading: _Thumbnail(document: document, page: page),
+      title: Text(document.title, maxLines: 2, overflow: TextOverflow.ellipsis),
+      subtitle: Text(
+        [
+          docTypeLabel(document.docType),
+          relativeDay(createdAt(document), now),
+          if (person != null) '${person.avatar ?? '👤'} ${person.name}',
+        ].join(' · '),
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+      trailing: document.favorite
+          ? Icon(
+              Icons.star,
+              color: theme.colorScheme.primary,
+              semanticLabel: 'Favourite',
+            )
+          : null,
+    );
+  }
+}
+
+class _Thumbnail extends StatelessWidget {
+  const _Thumbnail({required this.document, required this.page});
+
+  final Document document;
+  final DocumentFile? page;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final path = page?.localPath;
+    final isImage = page?.mime.startsWith('image/') ?? false;
+    final Widget child;
+    if (!kIsWeb && isImage && path != null && File(path).existsSync()) {
+      child = Image.file(File(path), fit: BoxFit.cover, cacheWidth: 96);
+    } else {
+      child = Center(
+        child: Text(
+          docTypeIcon(document.docType),
+          style: const TextStyle(fontSize: 24),
+        ),
+      );
+    }
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        width: 44,
+        height: 56,
+        color: scheme.surfaceContainerHighest,
+        child: child,
+      ),
+    );
+  }
+}
+
+/// Section title used across Vault screens.
+class VaultSectionTitle extends StatelessWidget {
+  const VaultSectionTitle(this.title, {super.key, this.trailing});
+
+  final String title;
+  final Widget? trailing;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Semantics(
+      header: true,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(
+          Tokens.spaceM,
+          Tokens.spaceL,
+          Tokens.spaceS,
+          Tokens.spaceXs,
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                title.toUpperCase(),
+                style: theme.textTheme.labelLarge?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  letterSpacing: 0.8,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+            ?trailing,
+          ],
+        ),
+      ),
+    );
+  }
+}

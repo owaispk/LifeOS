@@ -18,3 +18,8 @@ final repositoriesProvider = Provider<Repositories>(
     'repositoriesProvider must be overridden after openLocalData()',
   ),
 );
+
+/// Me / family profiles, live (shared by Tasks and Vault).
+final personsProvider = StreamProvider<List<Person>>(
+  (ref) => ref.watch(repositoriesProvider).persons.watchAll(),
+);

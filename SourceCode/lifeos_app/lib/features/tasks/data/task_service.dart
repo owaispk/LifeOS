@@ -43,19 +43,68 @@ class TaskService {
     final rule = repeat == null
         ? null
         : RepeatRule.from(repeat, dueAt ?? startOfDay(_now()));
-    return _repos.tasks.insert(
-      TasksCompanion.insert(
-        title: trimmed,
-        notes: Value(notes),
-        dueAt: Value(dueAt?.millisecondsSinceEpoch),
-        allDay: Value(allDay),
-        priority: Value(priority),
-        domain: Value(domain),
-        personId: Value(personId),
-        durationMin: Value(durationMin),
-        repeatRule: Value(rule?.format()),
-      ),
-    );
+    return _db.transaction(() async {
+      final task = await _repos.tasks.insert(
+        TasksCompanion.insert(
+          title: trimmed,
+          notes: Value(notes),
+          dueAt: Value(dueAt?.millisecondsSinceEpoch),
+          allDay: Value(allDay),
+          priority: Value(priority),
+          domain: Value(domain),
+          personId: Value(personId),
+          durationMin: Value(durationMin),
+          repeatRule: Value(rule?.format()),
+        ),
+      );
+      // A task with a due *time* gets a default reminder then (PBI-012).
+      if (dueAt != null && !allDay) {
+        await _repos.taskReminders.insert(
+          TaskRemindersCompanion.insert(
+            taskId: task.id,
+            fireAt: dueAt.millisecondsSinceEpoch,
+          ),
+        );
+      }
+      return task;
+    });
+  }
+
+  /// Moves a task's due date/time. Its reminders move by the same amount,
+  /// so "1 hour before" stays one hour before (PBI-012).
+  Future<Task> reschedule(String id, DateTime? due, {bool? allDay}) {
+    return _db.transaction(() async {
+      final task = await _require(id);
+      final newAllDay = allDay ?? task.allDay;
+      final newDue = due == null ? null : (newAllDay ? startOfDay(due) : due);
+      final updated = await _repos.tasks.update(
+        id,
+        TasksCompanion(
+          dueAt: Value(newDue?.millisecondsSinceEpoch),
+          allDay: Value(newAllDay),
+        ),
+      );
+      final reminders = await _repos.taskReminders.getWhere(
+        (r) => r.taskId.equals(id),
+      );
+      if (newDue == null) {
+        for (final r in reminders) {
+          await _repos.taskReminders.softDelete(r.id);
+        }
+      } else if (task.dueAt != null) {
+        final delta = newDue.millisecondsSinceEpoch - task.dueAt!;
+        for (final r in reminders.where((r) => delta != 0)) {
+          await _repos.taskReminders.update(
+            r.id,
+            TaskRemindersCompanion(
+              fireAt: Value(r.fireAt + delta),
+              fired: const Value(false),
+            ),
+          );
+        }
+      }
+      return updated;
+    });
   }
 
   Future<Task> update(String id, TasksCompanion changes) =>
@@ -95,6 +144,21 @@ class TaskService {
           sourceDocumentId: Value(task.sourceDocumentId),
         ),
       );
+      // Reminders keep their offset from the due time (PBI-012).
+      if (task.dueAt != null) {
+        final reminders = await _repos.taskReminders.getWhere(
+          (r) => r.taskId.equals(id),
+        );
+        for (final r in reminders) {
+          final offset = task.dueAt! - r.fireAt;
+          await _repos.taskReminders.insert(
+            TaskRemindersCompanion.insert(
+              taskId: next.id,
+              fireAt: nextDue.millisecondsSinceEpoch - offset,
+            ),
+          );
+        }
+      }
       for (final s in await subtasksOf(id)) {
         await _repos.subtasks.insert(
           SubtasksCompanion.insert(
@@ -120,19 +184,19 @@ class TaskService {
         for (final s in await subtasksOf(nextId)) {
           await _repos.subtasks.softDelete(s.id);
         }
+        for (final r in await _repos.taskReminders.getWhere(
+          (r) => r.taskId.equals(nextId),
+        )) {
+          await _repos.taskReminders.softDelete(r.id);
+        }
         await _repos.tasks.softDelete(nextId);
       }
     });
   }
 
   /// Moves a task to [to]; snoozed tasks become timed.
-  Future<Task> snooze(String id, DateTime to) => _repos.tasks.update(
-    id,
-    TasksCompanion(
-      dueAt: Value(to.millisecondsSinceEpoch),
-      allDay: const Value(false),
-    ),
-  );
+  Future<Task> snooze(String id, DateTime to) =>
+      reschedule(id, to, allDay: false);
 
   /// "Skip this cycle" for ATC tasks.
   Future<Task> skip(String id) =>
