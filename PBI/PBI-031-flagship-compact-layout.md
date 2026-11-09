@@ -7,7 +7,7 @@
 | Story Points | 5 |
 | Spec refs | UI flow §5 (design tokens), Features §10 "max 1 screen of content before scroll"; PBI-025 look templates |
 | Depends on | PBI-001 (tokens, theme), PBI-025 (Flagship / Funky / Classic) |
-| Status | Done — awaiting product-owner approval of the screenshots (AC7) |
+| Status | Done |
 
 ## User Story
 As a **user on the Flagship look**, I want to see more of my information on one screen, without scrolling, while everything stays neatly aligned and looks professional.
@@ -119,7 +119,7 @@ Note: Tasks Today already shows 11 rows, more than AC1's absolute minimum of 9, 
 | 4 | ✅ | No overflow on any main screen, across 8 combinations (text 1.0× / 1.3× · light / dark · English / Urdu). |
 | 5 | ✅ | A scan of `lib/features` finds no literal numbers in `EdgeInsets`, `SizedBox` or `minTileHeight`. |
 | 6 | ✅ | Classic's scale is exactly the old values (16 sp body, 64 dp rows, 72 dp bar). Switching looks applies roomy vs compact; Funky is compact. Every step is on the 4 dp grid. |
-| 7 | ⏳ PO | `PBI/assets/PBI-031/before_after_light_en.png` (Home, Tasks, Vault, Money, Settings, before and after) and `after_dark_and_urdu.png`. The Urdu render shows boxes because the test renderer has no Urdu font; on the device Urdu renders normally (PBI-025 device check). |
+| 7 | ✅ Approved by the product owner (2026-11-09) | `PBI/assets/PBI-031/before_after_light_en.png` (Home, Tasks, Vault, Money, Settings, before and after) and `after_dark_and_urdu.png`. The Urdu render shows boxes because the test renderer has no Urdu font; on the device Urdu renders normally (PBI-025 device check). |
 
 **Found in dev** (several of these were bugs from earlier sprints that the new checks exposed):
 1. The density setting first shrank buttons with a 48 dp minimum to 40 dp; vertical density is kept at 0.

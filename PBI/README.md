@@ -43,7 +43,7 @@
 | # | PBI | Epic | SP | Depends on | Status |
 |---|---|---|---|---|---|
 | 30 | [PBI-030 Diagnostics Log & Share](PBI-030-diagnostics-log.md) | E5 Platform | 3 | 025, 007 | Done |
-| 31 | [PBI-031 Flagship: Compact, Professional Layout](PBI-031-flagship-compact-layout.md) | E5 Platform / Design | 5 | 001, 025 | Done (PO screenshot approval pending) |
+| 31 | [PBI-031 Flagship: Compact, Professional Layout](PBI-031-flagship-compact-layout.md) | E5 Platform / Design | 5 | 001, 025 | Done |
 
 ## Suggested sprint plan (2 devs, 2-week sprints, ~27 SP/sprint → 6 sprints ≈ 3 months)
 
