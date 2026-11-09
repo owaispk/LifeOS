@@ -28,6 +28,7 @@ import 'features/security/lock_gate.dart';
 import 'features/security/security_providers.dart';
 import 'features/score/domain/life_score.dart';
 import 'features/score/score_providers.dart';
+import 'features/tasks/ui/quick_parse.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -119,6 +120,9 @@ Future<void> main() async {
           storageInfoProvider.overrideWithValue(const DeviceStorageInfo()),
           shareInboxProvider.overrideWithValue(const IntentShareInbox()),
           textReaderProvider.overrideWithValue(const MlKitTextReader()),
+          // Voice capture (PBI-010): without this the overlay gets
+          // NoSpeechInput and always says "Voice isn't available".
+          speechInputProvider.overrideWithValue(DeviceSpeechInput()),
         ],
       ],
       child: const LifeOsApp(),

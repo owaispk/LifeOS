@@ -66,5 +66,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>LifeOS uses the microphone when you tap the mic to add a task by voice.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>LifeOS turns what you say into a task. Speech is recognised on your phone.</string>
 </dict>
 </plist>
