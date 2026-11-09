@@ -6,9 +6,13 @@ import '../../core/money.dart';
 import '../../core/theme/tokens.dart';
 import '../../data/db/app_database.dart';
 import '../../shared/widgets/empty_state.dart';
+import '../tasks/tasks_providers.dart' show allTasksProvider, nowProvider;
 import 'atc_providers.dart';
 import 'data/atc_service.dart';
 import 'domain/atc_schedule.dart';
+import 'domain/bill_patterns.dart';
+import '../capture/capture_entry.dart';
+import '../money/domain/money_rules.dart' show parseIsoDate;
 import 'ui/rule_form.dart';
 
 /// Rule detail (PBI-017): edit, history, pause/resume, delete.
@@ -38,6 +42,36 @@ class RuleDetailScreen extends ConsumerWidget {
       body: _RuleForm(key: ValueKey('${rule.id}-${rule.version}'), rule: rule),
     );
   }
+}
+
+/// The predicted bill still hasn't been scanned 3+ days after its arrival
+/// window (PBI-014 missed month): the earliest unpaid payment's task is
+/// still a prediction (no source document).
+bool lateBill(
+  AtcRule rule,
+  List<Payment> payments,
+  List<Task> tasks,
+  DateTime today,
+) {
+  if (rule.kind != 'bill_pattern' || rule.status != 'active') return false;
+  final window = windowOf(rule);
+  if (window == null) return false;
+  final unpaid =
+      payments
+          .where((p) => p.status != 'paid' && p.status != 'skipped')
+          .toList()
+        ..sort((a, b) => a.dueDate.compareTo(b.dueDate));
+  for (final p in unpaid) {
+    final task = tasks.where((t) => t.id == p.taskId).firstOrNull;
+    if (task == null || task.status != 'open') continue;
+    if (task.sourceDocumentId != null) return false; // real bill arrived
+    return isBillLate(
+      predictedArrival: parseIsoDate(p.dueDate),
+      windowTo: window.to,
+      today: today,
+    );
+  }
+  return false;
 }
 
 class _RuleForm extends ConsumerStatefulWidget {
@@ -75,10 +109,52 @@ class _RuleFormState extends ConsumerState<_RuleForm> {
         .where((p) => p.atcRuleId == rule.id)
         .toList();
     final history = ruleHistory(payments);
+    final late = lateBill(
+      rule,
+      payments,
+      ref.watch(allTasksProvider).value ?? const <Task>[],
+      ref.watch(nowProvider)(),
+    );
 
     return ListView(
       padding: const EdgeInsets.all(Tokens.spaceM),
       children: [
+        if (late) ...[
+          Card(
+            key: const ValueKey('missed-bill'),
+            color: theme.colorScheme.secondaryContainer,
+            child: Padding(
+              padding: const EdgeInsets.all(Tokens.spaceM),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'No ${billStatsOf(rule).label ?? 'utility'} bill this '
+                    'month — did you miss it, or should I pause this '
+                    'reminder?',
+                  ),
+                  const SizedBox(height: Tokens.spaceS),
+                  Wrap(
+                    spacing: Tokens.spaceS,
+                    children: [
+                      FilledButton.tonal(
+                        key: const ValueKey('missed-bill-scan'),
+                        onPressed: () => startScan(context),
+                        child: const Text("I'll scan it"),
+                      ),
+                      TextButton(
+                        key: const ValueKey('missed-bill-pause'),
+                        onPressed: () => service.pause(rule.id),
+                        child: const Text('Pause'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: Tokens.spaceS),
+        ],
         Card(
           child: Padding(
             padding: const EdgeInsets.all(Tokens.spaceM),

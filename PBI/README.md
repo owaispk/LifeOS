@@ -24,14 +24,14 @@
 | 11 | [PBI-011 Overload Shield](PBI-011-overload-shield.md) | E2 Mind | 5 | 009 | Done |
 | 12 | [PBI-012 Local Reminders & Actionable Notifications](PBI-012-local-notifications.md) | E5 Platform | 8 | 009 | Dev Complete — device QA pending |
 | 13 | [PBI-013 ATC Monthly Payments Engine](PBI-013-atc-payments-engine.md) | E3 ATC | 8 | 009, 012 | Done |
-| 14 | [PBI-014 ATC Bill Pattern Learning](PBI-014-atc-bill-pattern-learning.md) | E3 ATC | 8 | 004, 013 | Ready |
-| 15 | [PBI-015 ATC Fees & Tuition](PBI-015-atc-fees-tuition.md) | E3 ATC | 5 | 013, 004 | Ready |
+| 14 | [PBI-014 ATC Bill Pattern Learning](PBI-014-atc-bill-pattern-learning.md) | E3 ATC | 8 | 004, 013 | Done |
+| 15 | [PBI-015 ATC Fees & Tuition](PBI-015-atc-fees-tuition.md) | E3 ATC | 5 | 013, 004 | Done |
 | 16 | [PBI-016 Payment Completion Chain](PBI-016-payment-completion-chain.md) | E3 ATC | 5 | 013, 018, 003 | Done |
 | 17 | [PBI-017 ATC Rules Manager](PBI-017-atc-rules-manager.md) | E3 ATC | 3 | 013 | Done |
 | 18 | [PBI-018 Money Expense Log](PBI-018-money-expense-log.md) | E4 Money | 5 | 002 | Done |
 | 19 | [PBI-019 Monthly Forecast](PBI-019-monthly-forecast.md) | E4 Money | 5 | 013 | Done |
-| 20 | [PBI-020 Life Score v1](PBI-020-life-score.md) | E6 Engagement | 8 | 009, 013, 008 | Ready |
-| 21 | [PBI-021 Home Dashboard](PBI-021-home-dashboard.md) | E6 Engagement | 5 | 020, 009, 008, 019 | Ready |
+| 20 | [PBI-020 Life Score v1](PBI-020-life-score.md) | E6 Engagement | 8 | 009, 013, 008 | Done |
+| 21 | [PBI-021 Home Dashboard](PBI-021-home-dashboard.md) | E6 Engagement | 5 | 020, 009, 008, 019 | Done |
 | 22 | [PBI-022 Onboarding](PBI-022-onboarding.md) | E6 Engagement | 5 | 003, 013, 019 | Ready |
 | 23 | [PBI-023 Notification Diet](PBI-023-notification-diet.md) | E5 Platform | 5 | 012, 020 | Ready |
 | 24 | [PBI-024 App Lock & Encryption](PBI-024-app-lock-encryption.md) | E5 Security | 8 | 003 | Ready |
@@ -56,6 +56,7 @@
 | S2 | 005, 011 | 003, 012 | — |
 | S3 | 006 | 004, 007 | — |
 | S4 | 008, 013, 016, 017, 019 | — | — |
+| S5 | 014, 015, 020, 021 | — | — |
 
 Device QA needs Android Studio + an emulator (see the PBI-001 notes). It covers:
 - PBI-001 AC1 (launch on Android)

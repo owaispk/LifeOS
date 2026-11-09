@@ -6,9 +6,11 @@ import '../../features/atc/atc_rules_screen.dart';
 import '../../features/atc/rule_detail_screen.dart';
 import '../../features/capture/capture_entry.dart';
 import '../../features/capture/review_screen.dart';
+import '../../features/home/attention_screen.dart';
 import '../../features/home/home_screen.dart';
 import '../../features/money/money_screen.dart';
 import '../../features/more/more_screen.dart';
+import '../../features/score/score_screen.dart';
 import '../../features/tasks/tasks_screen.dart';
 import '../../features/tasks/ui/task_detail_screen.dart';
 import '../../features/vault/document_viewer_screen.dart';
@@ -45,7 +47,20 @@ final routerProvider = Provider<GoRouter>((ref) {
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => AppShell(navigationShell: shell),
         branches: [
-          _branch(Routes.home, const HomeScreen()),
+          _branch(
+            Routes.home,
+            const HomeScreen(),
+            routes: [
+              GoRoute(
+                path: 'score',
+                builder: (context, state) => const ScoreScreen(),
+              ),
+              GoRoute(
+                path: 'attention',
+                builder: (context, state) => const AttentionScreen(),
+              ),
+            ],
+          ),
           _branch(
             Routes.tasks,
             const TasksScreen(),

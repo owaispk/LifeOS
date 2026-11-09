@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/now_provider.dart';
 import '../../data/data_providers.dart';
 import '../../data/db/app_database.dart';
+import 'data/atc_learning.dart';
 import 'data/atc_service.dart';
 
 /// Premium entitlement — always false until subscriptions (PBI-029).
@@ -24,4 +25,12 @@ final atcRulesProvider = StreamProvider<List<AtcRule>>(
 /// Every live payment (forecast, rule history).
 final allPaymentsProvider = StreamProvider<List<Payment>>(
   (ref) => ref.watch(repositoriesProvider).payments.watchAll(),
+);
+
+/// Learns from scanned bills and fee vouchers (PBI-014/015).
+final atcLearningProvider = Provider<AtcLearningService>(
+  (ref) => AtcLearningService(
+    ref.watch(repositoriesProvider),
+    now: ref.watch(nowProvider),
+  ),
 );

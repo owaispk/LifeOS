@@ -95,10 +95,11 @@ void main() {
       final doc = (await repos.documents.getAll()).single;
       expect(doc.title, 'Receipt — School fee');
       expect(doc.docType, 'receipt');
-      final bills = (await repos.folders.getAll()).firstWhere(
-        (f) => f.kind == 'bills',
+      // A school-fee receipt files under Education since PBI-015.
+      final education = (await repos.folders.getAll()).firstWhere(
+        (f) => f.kind == 'education',
       );
-      expect(doc.folderId, bills.id);
+      expect(doc.folderId, education.id);
       expect((await repos.payments.getById(pay.id))!.receiptDocumentId, doc.id);
       expect((await repos.expenses.getAll()).single.receiptDocumentId, doc.id);
       expect(r.receiptDocumentId, doc.id);

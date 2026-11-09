@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 
 import '../../../core/ids.dart';
+import '../../../core/money.dart';
 import '../../../data/db/app_database.dart';
 import '../../../data/repositories/repositories.dart';
 import '../../money/domain/money_rules.dart' show isoDate;
@@ -29,6 +30,7 @@ class RuleInput {
     this.remindDaysBefore = 5,
     this.personId,
     this.kind = 'fixed',
+    this.scheduleDates = const [],
   });
 
   final String name;
@@ -44,7 +46,13 @@ class RuleInput {
   final int remindDaysBefore;
   final String? personId;
   final String kind;
+
+  /// Explicit due dates for date-based cycles such as semesters (PBI-015).
+  final List<DateTime> scheduleDates;
 }
+
+/// Key in `app_meta` for the day the last M1 proposal was shown.
+const proposalShownKey = 'atc_proposal_shown_day';
 
 /// Auto Task Creator use-cases (PBI-013, PBI-017).
 class AtcService {
@@ -70,12 +78,24 @@ class AtcService {
       final category = categories
           .where((c) => c.systemKey == input.categoryKey)
           .firstOrNull;
+      final dates = input.scheduleDates.toList()..sort();
+      // School fees from the form follow the fee flow (PBI-015).
+      final kind = input.kind == 'fixed' && input.categoryKey == 'fees'
+          ? 'fee'
+          : input.kind;
       final rule = await _repos.atcRules.insert(
         AtcRulesCompanion.insert(
-          kind: input.kind,
+          kind: kind,
           name: input.name.trim(),
           amountMinor: Value(input.amountMinor),
-          dueDay: Value(input.dueDay.clamp(1, 31)),
+          dueDay: Value(
+            (dates.isEmpty ? input.dueDay : dates.first.day).clamp(1, 31),
+          ),
+          scheduleDates: Value(
+            dates.isEmpty
+                ? null
+                : '[${dates.map((d) => '"${isoDate(d)}"').join(',')}]',
+          ),
           cycle: Value(input.cycle),
           skipMonths: Value(
             '[${(input.skipMonths.toList()..sort()).join(',')}]',
@@ -130,10 +150,19 @@ class AtcService {
         generatedCount: payments.length,
       );
       if (plan == null) return null;
+      final person = fresh.personId == null
+          ? null
+          : await _repos.persons.getById(fresh.personId!);
+      final title = occurrenceTitle(
+        fresh,
+        installment: plan.installmentNumber,
+        personName: person?.name,
+        due: plan.due,
+      );
 
       final task = await _repos.tasks.insert(
         TasksCompanion.insert(
-          title: plan.title,
+          title: title,
           domain: const Value('money'),
           dueAt: Value(plan.due.millisecondsSinceEpoch),
           personId: Value(fresh.personId),
@@ -170,6 +199,69 @@ class AtcService {
       );
       return payment;
     });
+  }
+
+  // ───────────────────── Proposals (M1, PBI-014/015) ─────────────────────
+
+  /// The oldest proposed rule, unless one was already shown today (max one
+  /// proposal per day; the rest queue). Marks the day as used.
+  Future<AtcRule?> takeProposalForToday() async {
+    final today = isoDate(_now());
+    final meta = await (_db.select(
+      _db.appMeta,
+    )..where((m) => m.key.equals(proposalShownKey))).getSingleOrNull();
+    if (meta?.value == today) return null;
+    final proposed = await _repos.atcRules.getWhere(
+      (r) => r.status.equals('proposed'),
+    );
+    if (proposed.isEmpty) return null;
+    proposed.sort((a, b) => a.id.compareTo(b.id));
+    await _db
+        .into(_db.appMeta)
+        .insertOnConflictUpdate(
+          AppMetaCompanion.insert(key: proposalShownKey, value: today),
+        );
+    return proposed.first;
+  }
+
+  /// "Yes, remind me": the rule goes live and gets its first task.
+  Future<AtcRule> acceptProposal(String id) async {
+    if (!isPremium && (await activeRules()).length >= freeTierRuleLimit) {
+      throw const FreeTierLimitException();
+    }
+    final r = await _repos.atcRules.update(
+      id,
+      const AtcRulesCompanion(status: Value('active')),
+    );
+    await generateFor(r);
+    return (await _repos.atcRules.getById(id))!;
+  }
+
+  /// "No thanks": never proposed again for this issuer + ref (AC3).
+  Future<AtcRule> dismissProposal(String id) => _repos.atcRules.update(
+    id,
+    const AtcRulesCompanion(status: Value('dismissed')),
+  );
+
+  /// The M1 question for a proposed rule.
+  Future<String> proposalText(AtcRule r) async {
+    if (r.kind == 'fee') {
+      final person = r.personId == null
+          ? null
+          : await _repos.persons.getById(r.personId!);
+      final who = person == null ? '' : ' for ${person.name}';
+      final amount = r.amountMinor == null
+          ? ''
+          : ' — ${Money.format(r.amountMinor!)}';
+      final day = r.dueDay == null ? '' : ', due ${ordinal(r.dueDay!)}';
+      return 'Create a fee reminder$who$amount$day?';
+    }
+    final label = billStatsOf(r).label ?? 'utility';
+    final window = windowOf(r);
+    final when = window == null
+        ? ''
+        : ' usually arrives the ${ordinal(window.from)}–${ordinal(window.to)}';
+    return 'Your $label bill$when. Create a monthly reminder?';
   }
 
   Future<AtcRule> pause(String id) => _repos.atcRules.update(

@@ -10,6 +10,8 @@ import '../../core/now_provider.dart';
 import '../../core/theme/tokens.dart';
 import '../../data/data_providers.dart';
 import '../../data/db/app_database.dart';
+import '../atc/atc_providers.dart';
+import '../atc/ui/proposal_dialog.dart';
 import '../money/domain/money_rules.dart' show isoDate;
 import '../vault/domain/vault_rules.dart' show docTypeIcon;
 import '../vault/vault_providers.dart';
@@ -235,14 +237,28 @@ class _DraftFormState extends ConsumerState<_DraftForm> {
           return;
         }
       }
-      await service.save(widget.draft, details);
-      _advance(saved: true);
+      final doc = await service.save(widget.draft, details);
+      // Bills and fee vouchers teach the Auto Task Creator (PBI-014/015).
+      final outcome = await ref.read(atcLearningProvider).onDocumentSaved(doc);
+      final change = outcome.feeChange;
+      if (change != null && mounted) {
+        final update = await showFeeChangeDialog(context, change);
+        if (update) await ref.read(atcLearningProvider).applyFeeChange(change);
+      }
+      _advance(
+        saved: true,
+        note: outcome.spike
+            ? 'Unusually high bill ⚠'
+            : outcome.upgradedTaskId != null
+            ? '⚡ Bill task updated'
+            : null,
+      );
     } finally {
       if (mounted) setState(() => _saving = false);
     }
   }
 
-  void _advance({required bool saved}) {
+  void _advance({required bool saved, String? note}) {
     final messenger = ScaffoldMessenger.of(context);
     final session = ref.read(captureSessionProvider.notifier);
     final last = ref.read(captureSessionProvider).drafts.length <= 1;
@@ -250,7 +266,11 @@ class _DraftFormState extends ConsumerState<_DraftForm> {
     // The newest outcome replaces any message still showing.
     messenger.hideCurrentSnackBar();
     messenger.showSnackBar(
-      SnackBar(content: Text(saved ? 'Saved to Vault' : 'Duplicate discarded')),
+      SnackBar(
+        content: Text(
+          saved ? ['Saved to Vault', ?note].join(' · ') : 'Duplicate discarded',
+        ),
+      ),
     );
     if (last && mounted) context.pop();
   }

@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/money.dart';
+import '../../../core/now_provider.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../data/data_providers.dart';
 import '../../../data/db/app_database.dart';
+import '../../../shared/format.dart';
 import '../atc_providers.dart';
 import '../data/atc_service.dart';
 
@@ -98,6 +100,7 @@ class _AddRuleSheetState extends ConsumerState<AddRuleSheet> {
   String _cycle = 'monthly';
   int _remind = 5;
   final _skip = <int>{};
+  final _dates = <DateTime>[]; // semester dates (PBI-015 AC4)
   String? _personId;
   bool _saving = false;
 
@@ -139,6 +142,7 @@ class _AddRuleSheetState extends ConsumerState<AddRuleSheet> {
               installmentTotal: p.installment ? int.parse(_total.text) : null,
               remindDaysBefore: _remind,
               personId: _personId,
+              scheduleDates: _cycle == 'semester' ? _dates : const [],
             ),
           );
       if (mounted) Navigator.pop(context);
@@ -149,6 +153,22 @@ class _AddRuleSheetState extends ConsumerState<AddRuleSheet> {
     } finally {
       if (mounted) setState(() => _saving = false);
     }
+  }
+
+  Future<void> _pickDate() async {
+    final now = ref.read(nowProvider)();
+    final d = await showDatePicker(
+      context: context,
+      initialDate: now,
+      firstDate: DateTime(now.year, now.month, now.day),
+      lastDate: DateTime(now.year + 3),
+    );
+    if (d == null || _dates.contains(d)) return;
+    setState(
+      () => _dates
+        ..add(d)
+        ..sort(),
+    );
   }
 
   @override
@@ -275,6 +295,29 @@ class _AddRuleSheetState extends ConsumerState<AddRuleSheet> {
                     ),
                 ],
               ),
+              if (_cycle == 'semester') ...[
+                const SizedBox(height: Tokens.spaceS),
+                Text(
+                  'Due dates (optional — otherwise every 6 months)',
+                  style: theme.textTheme.labelLarge,
+                ),
+                Wrap(
+                  spacing: Tokens.spaceS,
+                  children: [
+                    for (final d in _dates)
+                      InputChip(
+                        label: Text(formatDay(d)),
+                        onDeleted: () => setState(() => _dates.remove(d)),
+                      ),
+                    ActionChip(
+                      key: const ValueKey('rule-add-date'),
+                      avatar: const Icon(Icons.event, size: 18),
+                      label: const Text('Pick dates'),
+                      onPressed: _pickDate,
+                    ),
+                  ],
+                ),
+              ],
               const SizedBox(height: Tokens.spaceS),
               SkipMonthsPicker(
                 selected: _skip,

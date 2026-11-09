@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "weights": {
+    "tasks": 30,
+    "payments": 25,
+    "documents": 15,
+    "health": 15,
+    "people": 10,
+    "balance": 5
+  }
+}

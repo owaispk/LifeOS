@@ -90,14 +90,17 @@ class PaymentService {
         final now = _now();
 
         if (receipt != null) {
-          final bills = (await _repos.folders.getAll())
-              .where((f) => f.kind == 'bills')
+          // Fee receipts go to the child's Education folder (PBI-015);
+          // everything else to Bills & Receipts.
+          final folderKind = rule?.kind == 'fee' ? 'education' : 'bills';
+          final folder = (await _repos.folders.getAll())
+              .where((f) => f.kind == folderKind)
               .firstOrNull;
           final doc = await capture!.save(
             receipt,
             FilingDetails(
               title: 'Receipt — ${p.title}',
-              folderId: bills?.id,
+              folderId: folder?.id,
               personId: rule?.personId,
               docType: 'receipt',
               fields: {'amount': '$amount', 'issue_date': isoDate(now)},

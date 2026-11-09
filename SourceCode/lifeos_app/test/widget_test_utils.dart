@@ -65,12 +65,41 @@ class TestApp {
     await tester.runAsync(db.close);
   }
 
-  /// Runs real database work outside the fake-async zone, then lets the
-  /// UI catch up with the stream updates.
+  /// Runs database work the way a tap does: in the test zone, giving the
+  /// real event loop and the UI turns until it finishes, then lets the UI
+  /// catch up with the stream updates.
+  ///
+  /// Not `runAsync(body)`: since Home (PBI-021) watches most tables from
+  /// the first frame, a multi-statement body run outside the test zone
+  /// deadlocks — its first write makes Home re-query in the test zone,
+  /// that query holds the database lock, and nothing pumps until the body
+  /// is done.
   Future<T> write<T>(WidgetTester tester, Future<T> Function() body) async {
-    final result = await tester.runAsync(body);
+    late T result;
+    Object? error;
+    StackTrace? trace;
+    var done = false;
+    body().then(
+      (v) {
+        result = v;
+        done = true;
+      },
+      onError: (Object e, StackTrace s) {
+        error = e;
+        trace = s;
+        done = true;
+      },
+    );
+    for (var i = 0; !done; i++) {
+      if (i > 2000) throw StateError('write did not finish');
+      await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 2)),
+      );
+      await tester.pump();
+    }
+    if (error != null) Error.throwWithStackTrace(error!, trace!);
     await tester.pumpAndSettle();
-    return result as T;
+    return result;
   }
 }
 

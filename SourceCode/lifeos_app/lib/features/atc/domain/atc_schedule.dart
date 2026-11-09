@@ -39,16 +39,38 @@ DateTime anchorMonth(AtcRule r) {
   return DateTime(created.year, created.month);
 }
 
+/// Explicit due dates of a date-based rule (PBI-015), sorted; empty when
+/// the rule follows its due day.
+List<DateTime> scheduleDatesOf(AtcRule r) {
+  final raw = r.scheduleDates;
+  if (raw == null) return const [];
+  try {
+    return [
+      for (final s in (jsonDecode(raw) as List).cast<String>()) parseIsoDate(s),
+    ]..sort();
+  } on Object {
+    return const [];
+  }
+}
+
 /// Due dates of [rule] in calendar order, starting with the first one on or
-/// after [from]. Skip months are jumped over (AC3). Rules without a due day
-/// never produce occurrences.
+/// after [from]. Skip months are jumped over (AC3). Rules with explicit
+/// schedule dates yield exactly those (PBI-015 AC4). Rules without a due
+/// day never produce occurrences.
 Iterable<DateTime> occurrencesFrom(AtcRule rule, DateTime from) sync* {
+  final skip = skipMonthsOf(rule);
+  final start = DateTime(from.year, from.month, from.day);
+  final dates = scheduleDatesOf(rule);
+  if (dates.isNotEmpty) {
+    for (final d in dates) {
+      if (!d.isBefore(start) && !skip.contains(d.month)) yield d;
+    }
+    return;
+  }
   final day = rule.dueDay;
   if (day == null) return;
   final step = monthsPerCycle(rule.cycle);
   final anchor = anchorMonth(rule);
-  final skip = skipMonthsOf(rule);
-  final start = DateTime(from.year, from.month, from.day);
 
   // First cycle month at or before `from`'s month.
   var k =
@@ -78,17 +100,66 @@ class PlannedOccurrence {
   final int? installmentNumber;
 }
 
-String occurrenceTitle(AtcRule rule, {int? installment}) {
+/// The task title for one occurrence of [rule]:
+/// - fee rules for a person (PBI-015 AC1): "Ali — school fee Rs 12,000,
+///   due 5th";
+/// - learned bill patterns (PBI-014): "Expect electricity bill
+///   (~Rs 4,000–6,000)";
+/// - everything else: "Rent — Rs 45,000", "Committee — Rs 10,000 (7 of 24)".
+String occurrenceTitle(
+  AtcRule rule, {
+  int? installment,
+  String? personName,
+  DateTime? due,
+}) {
+  if (rule.kind == 'bill_pattern') {
+    final predicted = predictedBillTitle(rule);
+    if (predicted != null) return predicted;
+  }
   final amount = rule.amountMinor ?? rule.amountAvgMinor;
   final money = amount == null
       ? null
       : '${rule.amountMinor == null ? '~' : ''}${Money.format(amount)}';
+  if (rule.kind == 'fee' && personName != null) {
+    final day = due?.day ?? rule.dueDay;
+    final parts = [
+      '$personName — ${rule.name.toLowerCase()}',
+      ?money,
+    ].join(' ');
+    return day == null ? parts : '$parts, due ${ordinal(day)}';
+  }
   final parts = [rule.name, ?money];
   final base = parts.join(' — ');
   final total = rule.installmentTotal;
   return installment != null && total != null
       ? '$base ($installment of $total)'
       : base;
+}
+
+/// Learned-bill extras kept in `atc_rules.stats` (PBI-014).
+({String? label, int? min, int? max}) billStatsOf(AtcRule r) {
+  try {
+    final m = jsonDecode(r.stats) as Map<String, dynamic>;
+    return (
+      label: m['label'] as String?,
+      min: m['min'] as int?,
+      max: m['max'] as int?,
+    );
+  } on Object {
+    return (label: null, min: null, max: null);
+  }
+}
+
+/// "Expect electricity bill (~Rs 4,000–6,000)", or null without stats.
+String? predictedBillTitle(AtcRule r) {
+  final s = billStatsOf(r);
+  if (s.label == null) return null;
+  final range = s.min == null || s.max == null
+      ? ''
+      : s.min == s.max
+      ? ' (~${Money.format(s.min!)})'
+      : ' (~${Money.format(s.min!)}–${Money.format(s.max!).replaceFirst('Rs ', '')})';
+  return 'Expect ${s.label} bill$range';
 }
 
 /// Keeps exactly one next occurrence per active rule (PBI-013 grooming):
@@ -128,14 +199,11 @@ PlannedOccurrence? planNext(
 /// Cadence label for the rules list: "Monthly · 1st", "Quarterly · 5th",
 /// "~10th–14th monthly" for learned bill patterns.
 String cadenceLabel(AtcRule r) {
-  if (r.kind == 'bill_pattern' && r.expectedWindow != null) {
-    try {
-      final w = jsonDecode(r.expectedWindow!) as Map<String, dynamic>;
-      return '~${_ordinal(w['from'] as int)}–${_ordinal(w['to'] as int)} '
-          'monthly';
-    } on Object {
-      // fall through
-    }
+  final w = r.kind == 'bill_pattern' ? windowOf(r) : null;
+  if (w != null) return '~${ordinal(w.from)}–${ordinal(w.to)} monthly';
+  if (scheduleDatesOf(r).isNotEmpty) {
+    return 'On set dates · '
+        '${scheduleDatesOf(r).map((d) => '${d.day} ${_mon[d.month - 1]}').join(', ')}';
   }
   final cycle = switch (r.cycle) {
     'quarterly' => 'Quarterly',
@@ -144,10 +212,26 @@ String cadenceLabel(AtcRule r) {
     'once' => 'Once',
     _ => 'Monthly',
   };
-  return r.dueDay == null ? cycle : '$cycle · ${_ordinal(r.dueDay!)}';
+  return r.dueDay == null ? cycle : '$cycle · ${ordinal(r.dueDay!)}';
 }
 
-String _ordinal(int n) {
+const _mon = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
+
+/// 1st, 2nd, 3rd, 4th … 11th, 12th, 13th, 21st.
+String ordinal(int n) {
   if (n % 100 >= 11 && n % 100 <= 13) return '${n}th';
   return switch (n % 10) {
     1 => '${n}st',
@@ -155,6 +239,17 @@ String _ordinal(int n) {
     3 => '${n}rd',
     _ => '${n}th',
   };
+}
+
+/// A learned bill's arrival window, e.g. 10th–14th.
+({int from, int to})? windowOf(AtcRule r) {
+  if (r.expectedWindow == null) return null;
+  try {
+    final w = jsonDecode(r.expectedWindow!) as Map<String, dynamic>;
+    return (from: w['from'] as int, to: w['to'] as int);
+  } on Object {
+    return null;
+  }
 }
 
 /// "Created N tasks · M paid on time" for a rule's payments.

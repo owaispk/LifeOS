@@ -221,6 +221,7 @@ void main() {
         AtcRulesCompanion.insert(
           kind: 'bill_pattern',
           name: 'Electricity — K-Electric',
+          status: const Value('active'), // not a pending M1 proposal
         ),
       ),
     );

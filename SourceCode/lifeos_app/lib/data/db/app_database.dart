@@ -44,7 +44,7 @@ class AppDatabase extends _$AppDatabase {
   );
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -73,6 +73,11 @@ class AppDatabase extends _$AppDatabase {
         await m.addColumn(userSettings, userSettings.salaryDay);
         await m.addColumn(userSettings, userSettings.salaryMinor);
         await m.addColumn(documents, documents.expiryPromptedAt);
+      }
+      // v5 (Sprint 5): meter references and date-based fee schedules.
+      if (from < 5) {
+        await m.addColumn(atcRules, atcRules.refNumber);
+        await m.addColumn(atcRules, atcRules.scheduleDates);
       }
     },
     beforeOpen: (details) async {

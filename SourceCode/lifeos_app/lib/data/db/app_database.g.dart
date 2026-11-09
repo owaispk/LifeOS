@@ -6282,6 +6282,28 @@ class $AtcRulesTable extends AtcRules with TableInfo<$AtcRulesTable, AtcRule> {
       'REFERENCES categories (id)',
     ),
   );
+  static const VerificationMeta _refNumberMeta = const VerificationMeta(
+    'refNumber',
+  );
+  @override
+  late final GeneratedColumn<String> refNumber = GeneratedColumn<String>(
+    'ref_number',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _scheduleDatesMeta = const VerificationMeta(
+    'scheduleDates',
+  );
+  @override
+  late final GeneratedColumn<String> scheduleDates = GeneratedColumn<String>(
+    'schedule_dates',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -6307,6 +6329,8 @@ class $AtcRulesTable extends AtcRules with TableInfo<$AtcRulesTable, AtcRule> {
     lastGeneratedPeriod,
     stats,
     categoryId,
+    refNumber,
+    scheduleDates,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -6480,6 +6504,21 @@ class $AtcRulesTable extends AtcRules with TableInfo<$AtcRulesTable, AtcRule> {
         categoryId.isAcceptableOrUnknown(data['category_id']!, _categoryIdMeta),
       );
     }
+    if (data.containsKey('ref_number')) {
+      context.handle(
+        _refNumberMeta,
+        refNumber.isAcceptableOrUnknown(data['ref_number']!, _refNumberMeta),
+      );
+    }
+    if (data.containsKey('schedule_dates')) {
+      context.handle(
+        _scheduleDatesMeta,
+        scheduleDates.isAcceptableOrUnknown(
+          data['schedule_dates']!,
+          _scheduleDatesMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -6581,6 +6620,14 @@ class $AtcRulesTable extends AtcRules with TableInfo<$AtcRulesTable, AtcRule> {
         DriftSqlType.string,
         data['${effectivePrefix}category_id'],
       ),
+      refNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}ref_number'],
+      ),
+      scheduleDates: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}schedule_dates'],
+      ),
     );
   }
 
@@ -6614,7 +6661,7 @@ class AtcRule extends DataClass implements Insertable<AtcRule> {
   final int? installmentDone;
   final int remindDaysBefore;
 
-  /// proposed | active | paused | ended
+  /// proposed | active | paused | ended | dismissed (declined proposal)
   final String status;
   final double? confidence;
   final String? lastGeneratedPeriod;
@@ -6622,6 +6669,14 @@ class AtcRule extends DataClass implements Insertable<AtcRule> {
 
   /// Expense category for payments this rule creates (schema v4, PBI-013).
   final String? categoryId;
+
+  /// Bill reference / meter number: two meters from one issuer are two
+  /// rules (schema v5, PBI-014).
+  final String? refNumber;
+
+  /// Explicit due dates (JSON list of YYYY-MM-DD) for date-based cycles
+  /// such as semesters (schema v5, PBI-015). When set, they replace due_day.
+  final String? scheduleDates;
   const AtcRule({
     required this.id,
     required this.userId,
@@ -6646,6 +6701,8 @@ class AtcRule extends DataClass implements Insertable<AtcRule> {
     this.lastGeneratedPeriod,
     required this.stats,
     this.categoryId,
+    this.refNumber,
+    this.scheduleDates,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -6696,6 +6753,12 @@ class AtcRule extends DataClass implements Insertable<AtcRule> {
     map['stats'] = Variable<String>(stats);
     if (!nullToAbsent || categoryId != null) {
       map['category_id'] = Variable<String>(categoryId);
+    }
+    if (!nullToAbsent || refNumber != null) {
+      map['ref_number'] = Variable<String>(refNumber);
+    }
+    if (!nullToAbsent || scheduleDates != null) {
+      map['schedule_dates'] = Variable<String>(scheduleDates);
     }
     return map;
   }
@@ -6749,6 +6812,12 @@ class AtcRule extends DataClass implements Insertable<AtcRule> {
       categoryId: categoryId == null && nullToAbsent
           ? const Value.absent()
           : Value(categoryId),
+      refNumber: refNumber == null && nullToAbsent
+          ? const Value.absent()
+          : Value(refNumber),
+      scheduleDates: scheduleDates == null && nullToAbsent
+          ? const Value.absent()
+          : Value(scheduleDates),
     );
   }
 
@@ -6783,6 +6852,8 @@ class AtcRule extends DataClass implements Insertable<AtcRule> {
       ),
       stats: serializer.fromJson<String>(json['stats']),
       categoryId: serializer.fromJson<String?>(json['categoryId']),
+      refNumber: serializer.fromJson<String?>(json['refNumber']),
+      scheduleDates: serializer.fromJson<String?>(json['scheduleDates']),
     );
   }
   @override
@@ -6812,6 +6883,8 @@ class AtcRule extends DataClass implements Insertable<AtcRule> {
       'lastGeneratedPeriod': serializer.toJson<String?>(lastGeneratedPeriod),
       'stats': serializer.toJson<String>(stats),
       'categoryId': serializer.toJson<String?>(categoryId),
+      'refNumber': serializer.toJson<String?>(refNumber),
+      'scheduleDates': serializer.toJson<String?>(scheduleDates),
     };
   }
 
@@ -6839,6 +6912,8 @@ class AtcRule extends DataClass implements Insertable<AtcRule> {
     Value<String?> lastGeneratedPeriod = const Value.absent(),
     String? stats,
     Value<String?> categoryId = const Value.absent(),
+    Value<String?> refNumber = const Value.absent(),
+    Value<String?> scheduleDates = const Value.absent(),
   }) => AtcRule(
     id: id ?? this.id,
     userId: userId ?? this.userId,
@@ -6873,6 +6948,10 @@ class AtcRule extends DataClass implements Insertable<AtcRule> {
         : this.lastGeneratedPeriod,
     stats: stats ?? this.stats,
     categoryId: categoryId.present ? categoryId.value : this.categoryId,
+    refNumber: refNumber.present ? refNumber.value : this.refNumber,
+    scheduleDates: scheduleDates.present
+        ? scheduleDates.value
+        : this.scheduleDates,
   );
   AtcRule copyWithCompanion(AtcRulesCompanion data) {
     return AtcRule(
@@ -6919,6 +6998,10 @@ class AtcRule extends DataClass implements Insertable<AtcRule> {
       categoryId: data.categoryId.present
           ? data.categoryId.value
           : this.categoryId,
+      refNumber: data.refNumber.present ? data.refNumber.value : this.refNumber,
+      scheduleDates: data.scheduleDates.present
+          ? data.scheduleDates.value
+          : this.scheduleDates,
     );
   }
 
@@ -6947,7 +7030,9 @@ class AtcRule extends DataClass implements Insertable<AtcRule> {
           ..write('confidence: $confidence, ')
           ..write('lastGeneratedPeriod: $lastGeneratedPeriod, ')
           ..write('stats: $stats, ')
-          ..write('categoryId: $categoryId')
+          ..write('categoryId: $categoryId, ')
+          ..write('refNumber: $refNumber, ')
+          ..write('scheduleDates: $scheduleDates')
           ..write(')'))
         .toString();
   }
@@ -6977,6 +7062,8 @@ class AtcRule extends DataClass implements Insertable<AtcRule> {
     lastGeneratedPeriod,
     stats,
     categoryId,
+    refNumber,
+    scheduleDates,
   ]);
   @override
   bool operator ==(Object other) =>
@@ -7004,7 +7091,9 @@ class AtcRule extends DataClass implements Insertable<AtcRule> {
           other.confidence == this.confidence &&
           other.lastGeneratedPeriod == this.lastGeneratedPeriod &&
           other.stats == this.stats &&
-          other.categoryId == this.categoryId);
+          other.categoryId == this.categoryId &&
+          other.refNumber == this.refNumber &&
+          other.scheduleDates == this.scheduleDates);
 }
 
 class AtcRulesCompanion extends UpdateCompanion<AtcRule> {
@@ -7031,6 +7120,8 @@ class AtcRulesCompanion extends UpdateCompanion<AtcRule> {
   final Value<String?> lastGeneratedPeriod;
   final Value<String> stats;
   final Value<String?> categoryId;
+  final Value<String?> refNumber;
+  final Value<String?> scheduleDates;
   final Value<int> rowid;
   const AtcRulesCompanion({
     this.id = const Value.absent(),
@@ -7056,6 +7147,8 @@ class AtcRulesCompanion extends UpdateCompanion<AtcRule> {
     this.lastGeneratedPeriod = const Value.absent(),
     this.stats = const Value.absent(),
     this.categoryId = const Value.absent(),
+    this.refNumber = const Value.absent(),
+    this.scheduleDates = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   AtcRulesCompanion.insert({
@@ -7082,6 +7175,8 @@ class AtcRulesCompanion extends UpdateCompanion<AtcRule> {
     this.lastGeneratedPeriod = const Value.absent(),
     this.stats = const Value.absent(),
     this.categoryId = const Value.absent(),
+    this.refNumber = const Value.absent(),
+    this.scheduleDates = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : kind = Value(kind),
        name = Value(name);
@@ -7109,6 +7204,8 @@ class AtcRulesCompanion extends UpdateCompanion<AtcRule> {
     Expression<String>? lastGeneratedPeriod,
     Expression<String>? stats,
     Expression<String>? categoryId,
+    Expression<String>? refNumber,
+    Expression<String>? scheduleDates,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -7136,6 +7233,8 @@ class AtcRulesCompanion extends UpdateCompanion<AtcRule> {
         'last_generated_period': lastGeneratedPeriod,
       if (stats != null) 'stats': stats,
       if (categoryId != null) 'category_id': categoryId,
+      if (refNumber != null) 'ref_number': refNumber,
+      if (scheduleDates != null) 'schedule_dates': scheduleDates,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -7164,6 +7263,8 @@ class AtcRulesCompanion extends UpdateCompanion<AtcRule> {
     Value<String?>? lastGeneratedPeriod,
     Value<String>? stats,
     Value<String?>? categoryId,
+    Value<String?>? refNumber,
+    Value<String?>? scheduleDates,
     Value<int>? rowid,
   }) {
     return AtcRulesCompanion(
@@ -7190,6 +7291,8 @@ class AtcRulesCompanion extends UpdateCompanion<AtcRule> {
       lastGeneratedPeriod: lastGeneratedPeriod ?? this.lastGeneratedPeriod,
       stats: stats ?? this.stats,
       categoryId: categoryId ?? this.categoryId,
+      refNumber: refNumber ?? this.refNumber,
+      scheduleDates: scheduleDates ?? this.scheduleDates,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -7268,6 +7371,12 @@ class AtcRulesCompanion extends UpdateCompanion<AtcRule> {
     if (categoryId.present) {
       map['category_id'] = Variable<String>(categoryId.value);
     }
+    if (refNumber.present) {
+      map['ref_number'] = Variable<String>(refNumber.value);
+    }
+    if (scheduleDates.present) {
+      map['schedule_dates'] = Variable<String>(scheduleDates.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -7300,6 +7409,8 @@ class AtcRulesCompanion extends UpdateCompanion<AtcRule> {
           ..write('lastGeneratedPeriod: $lastGeneratedPeriod, ')
           ..write('stats: $stats, ')
           ..write('categoryId: $categoryId, ')
+          ..write('refNumber: $refNumber, ')
+          ..write('scheduleDates: $scheduleDates, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -17420,6 +17531,8 @@ typedef $$AtcRulesTableCreateCompanionBuilder = AtcRulesCompanion Function({
   Value<String?> lastGeneratedPeriod,
   Value<String> stats,
   Value<String?> categoryId,
+  Value<String?> refNumber,
+  Value<String?> scheduleDates,
   Value<int> rowid,
 });
 typedef $$AtcRulesTableUpdateCompanionBuilder = AtcRulesCompanion Function({
@@ -17446,6 +17559,8 @@ typedef $$AtcRulesTableUpdateCompanionBuilder = AtcRulesCompanion Function({
   Value<String?> lastGeneratedPeriod,
   Value<String> stats,
   Value<String?> categoryId,
+  Value<String?> refNumber,
+  Value<String?> scheduleDates,
   Value<int> rowid,
 });
 
@@ -17637,6 +17752,16 @@ class $$AtcRulesTableFilterComposer
 
   ColumnFilters<String> get stats => $composableBuilder(
     column: $table.stats,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get refNumber => $composableBuilder(
+    column: $table.refNumber,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get scheduleDates => $composableBuilder(
+    column: $table.scheduleDates,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -17851,6 +17976,16 @@ class $$AtcRulesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get refNumber => $composableBuilder(
+    column: $table.refNumber,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get scheduleDates => $composableBuilder(
+    column: $table.scheduleDates,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$PersonsTableOrderingComposer get personId {
     final $$PersonsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -17987,6 +18122,14 @@ class $$AtcRulesTableAnnotationComposer
 
   GeneratedColumn<String> get stats =>
       $composableBuilder(column: $table.stats, builder: (column) => column);
+
+  GeneratedColumn<String> get refNumber =>
+      $composableBuilder(column: $table.refNumber, builder: (column) => column);
+
+  GeneratedColumn<String> get scheduleDates => $composableBuilder(
+    column: $table.scheduleDates,
+    builder: (column) => column,
+  );
 
   $$PersonsTableAnnotationComposer get personId {
     final $$PersonsTableAnnotationComposer composer = $composerBuilder(
@@ -18141,6 +18284,8 @@ class $$AtcRulesTableTableManager
                 Value<String?> lastGeneratedPeriod = const Value.absent(),
                 Value<String> stats = const Value.absent(),
                 Value<String?> categoryId = const Value.absent(),
+                Value<String?> refNumber = const Value.absent(),
+                Value<String?> scheduleDates = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => AtcRulesCompanion(
                 id: id,
@@ -18166,6 +18311,8 @@ class $$AtcRulesTableTableManager
                 lastGeneratedPeriod: lastGeneratedPeriod,
                 stats: stats,
                 categoryId: categoryId,
+                refNumber: refNumber,
+                scheduleDates: scheduleDates,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -18193,6 +18340,8 @@ class $$AtcRulesTableTableManager
                 Value<String?> lastGeneratedPeriod = const Value.absent(),
                 Value<String> stats = const Value.absent(),
                 Value<String?> categoryId = const Value.absent(),
+                Value<String?> refNumber = const Value.absent(),
+                Value<String?> scheduleDates = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => AtcRulesCompanion.insert(
                 id: id,
@@ -18218,6 +18367,8 @@ class $$AtcRulesTableTableManager
                 lastGeneratedPeriod: lastGeneratedPeriod,
                 stats: stats,
                 categoryId: categoryId,
+                refNumber: refNumber,
+                scheduleDates: scheduleDates,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

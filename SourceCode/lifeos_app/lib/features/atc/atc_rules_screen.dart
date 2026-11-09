@@ -40,7 +40,9 @@ class AtcRulesScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final rules = ref.watch(atcRulesProvider).value ?? const <AtcRule>[];
+    final rules = (ref.watch(atcRulesProvider).value ?? const <AtcRule>[])
+        .where((r) => r.status != 'dismissed')
+        .toList();
     final categories = {
       for (final c in ref.watch(categoriesProvider).value ?? const <Category>[])
         c.id: c,

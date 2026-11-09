@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/theme/tokens.dart';
+import '../../features/atc/ui/proposal_dialog.dart';
 import '../../features/capture/capture_entry.dart';
 import '../../features/money/ui/expense_sheet.dart';
 import '../../features/tasks/ui/new_task_sheet.dart';
@@ -64,7 +65,7 @@ class AppShell extends ConsumerWidget {
       child: Scaffold(
         body: Stack(
           children: [
-            navigationShell,
+            ProposalListener(child: navigationShell),
             if (expanded) ...[
               Positioned.fill(
                 child: Semantics(

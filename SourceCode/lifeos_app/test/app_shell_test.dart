@@ -12,8 +12,12 @@ Finder appBarTitle(String title) =>
 void main() {
   const tabs = ['Home', 'Tasks', 'Vault', 'Money', 'More'];
 
+  // Home's app bar is the greeting since PBI-021.
+  String titleOf(String tab) => tab == 'Home' ? 'Salam 👋' : tab;
+
   appTest('AC1: opens on the Home tab', (tester, app) async {
-    expect(appBarTitle('Home'), findsOneWidget);
+    expect(appBarTitle(titleOf('Home')), findsOneWidget);
+    expect(find.byKey(const ValueKey('home-score')), findsOneWidget);
   });
 
   appTest('AC2/AC7: every tab opens its screen with an empty state', (
@@ -23,11 +27,13 @@ void main() {
     for (final tab in tabs) {
       await tester.tap(navItem(tab));
       await tester.pumpAndSettle();
-      expect(appBarTitle(tab), findsOneWidget, reason: '$tab app bar');
+      expect(appBarTitle(titleOf(tab)), findsOneWidget, reason: '$tab app bar');
       // Every tab shows content or an empty state — never a blank screen.
-      // (The Vault has folders since PBI-005; More is a menu since PBI-017.)
+      // (The Vault has folders since PBI-005; More is a menu since PBI-017;
+      // Home shows new-user prompts since PBI-021.)
       expect(
         switch (tab) {
+          'Home' => find.byKey(const ValueKey('home-prompts')), // PBI-021
           'Vault' => find.byKey(const ValueKey('vault-home')),
           'More' => find.byKey(const ValueKey('more-menu')), // PBI-017
           _ => find.byType(EmptyState),

@@ -170,7 +170,7 @@ class AtcRules extends Table with SyncColumns {
   IntColumn get installmentDone => integer().nullable()();
   IntColumn get remindDaysBefore => integer().withDefault(const Constant(5))();
 
-  /// proposed | active | paused | ended
+  /// proposed | active | paused | ended | dismissed (declined proposal)
   TextColumn get status => text().withDefault(const Constant('proposed'))();
   RealColumn get confidence => real().nullable()();
   TextColumn get lastGeneratedPeriod => text().nullable()();
@@ -178,6 +178,14 @@ class AtcRules extends Table with SyncColumns {
 
   /// Expense category for payments this rule creates (schema v4, PBI-013).
   TextColumn get categoryId => text().nullable().references(Categories, #id)();
+
+  /// Bill reference / meter number: two meters from one issuer are two
+  /// rules (schema v5, PBI-014).
+  TextColumn get refNumber => text().nullable()();
+
+  /// Explicit due dates (JSON list of YYYY-MM-DD) for date-based cycles
+  /// such as semesters (schema v5, PBI-015). When set, they replace due_day.
+  TextColumn get scheduleDates => text().nullable()();
 }
 
 @DataClassName('Task')
