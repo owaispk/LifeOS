@@ -146,7 +146,7 @@ class _PaidSheetState extends State<_PaidSheet> {
                 decimal: true,
               ),
               decoration: InputDecoration(
-                prefixText: l.mnRsPrefix,
+                prefixText: Money.prefix,
                 labelText: l.mnAmountPaid,
                 border: const OutlineInputBorder(),
               ),

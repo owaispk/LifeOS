@@ -1,5 +1,7 @@
-// Small date labels, in the app's language (PBI-025).
+// Small date labels, in the app's language (PBI-025) and the user's
+// day/month order (PBI-035).
 import '../core/l10n.dart';
+import '../core/region.dart';
 
 String _weekday(int wd) => switch (wd) {
   1 => l10nNow.wd1,
@@ -50,9 +52,14 @@ String formatTime(DateTime t) {
   return '$h:$m ${t.hour < 12 ? 'AM' : 'PM'}';
 }
 
-/// "Mon, 9 Nov" (year added when it differs from [now]'s).
+/// "9 Nov", or "Nov 9" where month comes first (PBI-035).
+String dayMonth(DateTime d) => AppRegion.current.dayFirst
+    ? '${d.day} ${_mon(d.month)}'
+    : '${_mon(d.month)} ${d.day}';
+
+/// "Mon, 9 Nov" / "Mon, Nov 9" (year added when it differs from [now]'s).
 String formatDay(DateTime d, {DateTime? now}) {
-  final base = '${_weekday(d.weekday)}, ${d.day} ${_mon(d.month)}';
+  final base = '${_weekday(d.weekday)}, ${dayMonth(d)}';
   return (now != null && d.year != now.year) ? '$base ${d.year}' : base;
 }
 

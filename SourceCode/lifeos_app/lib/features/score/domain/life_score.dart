@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import '../../../core/l10n.dart';
 import '../../../data/db/app_database.dart';
-import '../../../shared/format.dart' show shortMonth;
+import '../../../shared/format.dart' show dayMonth;
 import '../../money/domain/money_rules.dart' show parseIsoDate;
 
 /// Score components (features spec §9.1).
@@ -250,7 +250,7 @@ LifeScore computeLifeScore({
           id: p.id,
           title: p.title,
           points: -_r1(per),
-          detail: l10nNow.scWasDue('${d.day} ${shortMonth(d)}'),
+          detail: l10nNow.scWasDue(dayMonth(d)),
         ),
       );
     }

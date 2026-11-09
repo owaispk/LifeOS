@@ -132,7 +132,7 @@ Future<void> _editSalary(
   final amount = TextEditingController(
     text: settings.salaryMinor == null
         ? ''
-        : Money.format(settings.salaryMinor!).replaceFirst('Rs ', ''),
+        : Money.formatPlain(settings.salaryMinor!),
   );
   var day = settings.salaryDay ?? 1;
   final saved = await showDialog<bool>(
@@ -151,7 +151,7 @@ Future<void> _editSalary(
               ),
               decoration: InputDecoration(
                 labelText: context.l10n.mnMonthlySalary,
-                prefixText: context.l10n.mnRsPrefix,
+                prefixText: Money.prefix,
               ),
             ),
             DropdownButtonFormField<int>(

@@ -71,6 +71,16 @@ class UserSettings extends Table with SyncColumns {
   /// The user's own greeting word when [greetStyle] is 'custom'.
   TextColumn get greetCustom => text().withDefault(const Constant(''))();
 
+  /// Region formats (schema v8, PBI-035). Null = follow the phone's region.
+  /// Display-only currency symbol, e.g. 'Rs', '₹', 'AED'.
+  TextColumn get currencySymbol => text().nullable()();
+
+  /// First day of the week: 6 Saturday, 7 Sunday, 1 Monday (DateTime).
+  IntColumn get weekStart => integer().nullable()();
+
+  /// Day/month order: 'dm' ("9 Nov") or 'md' ("Nov 9").
+  TextColumn get dateOrder => text().nullable()();
+
   @override
   List<Set<Column<Object>>> get uniqueKeys => [
     {userId},

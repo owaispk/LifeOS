@@ -35,7 +35,7 @@ class _ExpenseSheetState extends ConsumerState<ExpenseSheet> {
   late final _amount = TextEditingController(
     text: widget.existing == null
         ? ''
-        : Money.format(widget.existing!.amountMinor).replaceFirst('Rs ', ''),
+        : Money.formatPlain(widget.existing!.amountMinor),
   );
   late final _note = TextEditingController(text: widget.existing?.note ?? '');
   late String? _categoryId = widget.existing?.categoryId;
@@ -127,7 +127,7 @@ class _ExpenseSheetState extends ConsumerState<ExpenseSheet> {
               ),
               style: theme.textTheme.headlineSmall,
               decoration: InputDecoration(
-                prefixText: l.mnRsPrefix,
+                prefixText: Money.prefix,
                 hintText: '0',
                 border: const OutlineInputBorder(),
                 errorText: _amount.text.isNotEmpty && _amountMinor == null

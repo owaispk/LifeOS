@@ -307,7 +307,7 @@ List<PlannedNotification> planNotifications({
       if (appLock) return (l.tkNotifPaymentTitle, hidden);
       final amount = payment?.amountMinor == null
           ? null
-          : Money.format(payment!.amountMinor!, currency: payment.currency);
+          : Money.format(payment!.amountMinor!);
       return (
         task.title,
         [?amount, if (due != null) l.tkNotifDueLower(due)].join(' · '),

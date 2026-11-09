@@ -22,7 +22,6 @@ S = {
     "mnLoggedFromPayment": ("Logged from a payment", "ادائیگی سے درج"),
     "mnLinkedNote": ("⚡ Logged from a payment", "⚡ ادائیگی سے درج"),
     "mnReceiptAttached": ("Receipt attached", "رسید منسلک ہے"),
-    "mnRsPrefix": ("Rs ", "Rs "),
     # System expense categories (seed.dart systemKey → label)
     "mnCatRent": ("Rent", "کرایہ"),
     "mnCatFees": ("Fees & Tuition", "فیس اور ٹیوشن"),
@@ -180,6 +179,14 @@ S = {
     "mrProfileSub": ("Your name, greeting and language", "آپ کا نام، سلام کا انداز اور زبان"),
     "profileAboutYou": ("About you", "آپ کے بارے میں"),
     "profileNameLabel": ("What should we call you?", "ہم آپ کو کس نام سے پکاریں؟"),
+    # Region & formats (PBI-035) — the symbol itself is never a string.
+    "profileRegion": ("Region & formats", "علاقہ اور فارمیٹ"),
+    "profileCurrency": ("Currency symbol", "کرنسی کی علامت"),
+    "profileCurrencyOther": ("Another symbol", "کوئی اور علامت"),
+    "profileWeekStart": ("Week starts on", "ہفتے کا پہلا دن"),
+    "profileDateOrder": ("Dates", "تاریخیں"),
+    "profileAuto": ("Auto", "خودکار"),
+    "profileAutoValue": ("Auto ({value})", "خودکار ({value})"),
     "mrAutoTasks": ("Auto Tasks", "خودکار کام"),
     "mrAutoTasksSub": ("Rules that create payment tasks for you", "اصول جو آپ کے لیے ادائیگی کے کام بناتے ہیں"),
     "mrTrashSub": ("Deleted documents, kept for 30 days", "حذف شدہ دستاویزات، 30 دن تک محفوظ"),

@@ -128,7 +128,7 @@ class CaptureService {
   final VaultCrypto? crypto;
 
   String defaultTitle() =>
-      l10nNow.cpScanTitle(formatDay(_now()).split(', ').last, '${_now().year}');
+      l10nNow.cpScanTitle(dayMonth(_now()), '${_now().year}');
 
   /// Sharpness + perceptual hash of one image page.
   static Future<PageCheck> checkPage(String path) async {

@@ -2,6 +2,8 @@
 //
 // "pay electricity bill Friday 5pm" → title "Pay electricity bill",
 // next Friday 17:00, domain money. English plus common Roman-Urdu words.
+// "Next week" and "weekend" follow the user's region (PBI-035).
+import '../../../core/region.dart';
 
 /// What a parse found. Unset parts are null.
 class ParsedTask {
@@ -135,16 +137,35 @@ DateTime _nextDayOfMonth(DateTime today, int dom) {
 }
 
 /// Parses [input] relative to [now]. Never throws (AC3): anything that
-/// goes wrong yields the whole text as the title.
-ParsedTask parseTask(String input, DateTime now) {
+/// goes wrong yields the whole text as the title. Week rules come from
+/// [region] (the user's, by default).
+ParsedTask parseTask(String input, DateTime now, {RegionFormats? region}) {
   try {
-    return _parse(input, now);
+    return _parse(input, now, region ?? AppRegion.current);
   } on Object {
     return ParsedTask(title: input.trim());
   }
 }
 
-ParsedTask _parse(String input, DateTime now) {
+/// The first day of [today]'s weekend: today's run if it is a weekend day,
+/// else the next one. "Next weekend" is the one after that.
+DateTime _weekendStart(DateTime today, Set<int> weekend, {bool next = false}) {
+  var d = today;
+  if (weekend.contains(d.weekday)) {
+    // Walk back to the first day of this weekend run (at most 6 steps).
+    for (var i = 0; i < 6 && weekend.contains(_addDays(d, -1).weekday); i++) {
+      d = _addDays(d, -1);
+    }
+  } else {
+    // Bounded: an empty weekend set must never hang the parser.
+    for (var i = 0; i < 7 && !weekend.contains(d.weekday); i++) {
+      d = _addDays(d, 1);
+    }
+  }
+  return next ? _addDays(d, 7) : d;
+}
+
+ParsedTask _parse(String input, DateTime now, RegionFormats region) {
   final today = _day(now);
   var text = ' ${input.trim()} ';
   final matched = <ParsedPart, String>{};
@@ -230,17 +251,21 @@ ParsedTask _parse(String input, DateTime now) {
     final n = int.parse(m!.group(1)!);
     date = _addDays(today, m.group(2)!.startsWith('week') ? n * 7 : n);
     matched[ParsedPart.date] = cut(m);
+  } else if ((m = find(r'\b(next\s+)?(weekend|week-end)\b')) != null) {
+    // The user's weekend (Sat–Sun, Fri–Sat, …): its first day.
+    date = _weekendStart(today, region.weekend, next: m!.group(1) != null);
+    matched[ParsedPart.date] = cut(m);
   } else if ((m = find('\\b(next\\s+)?(${_weekdays.keys.join('|')})\\b')) !=
       null) {
     final wd = _weekdays[m!.group(2)!.toLowerCase()]!;
     var diff = (wd - today.weekday) % 7;
-    // "next Friday" = Friday of next week (Mon–Sun weeks): from Sunday,
-    // "next Monday" is tomorrow; from Wednesday, "next Friday" is 9 days
-    // away. A bare weekday that is today means today only if a later time
-    // fits; otherwise next week.
+    // "next Friday" = Friday of next week, in the user's weeks (Mon–Sun by
+    // default): from Sunday, "next Monday" is tomorrow; from Wednesday,
+    // "next Friday" is 9 days away. A bare weekday that is today means
+    // today only if a later time fits; otherwise next week.
     if (m.group(1) != null) {
       if (diff == 0) diff = 7;
-      final daysLeftThisWeek = 7 - today.weekday;
+      final daysLeftThisWeek = 6 - region.positionInWeek(today);
       if (diff <= daysLeftThisWeek) diff += 7;
     } else if (diff == 0 &&
         (hour == null ||

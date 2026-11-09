@@ -2,8 +2,10 @@
 // and the greeting style — neutral by default, cultural only by choice.
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lifeos_app/shared/format.dart';
 
 import '../../widget_test_utils.dart';
+import '../home/home_test.dart' show addPayment;
 
 Finder homeTitle(String text) => find.descendant(
   of: find.byType(AppBar),
@@ -130,6 +132,68 @@ void main() {
     await tapVisible(tester, 'set-greet-auto');
     await openTab(tester, 'Home');
     expect(homeTitle('Good morning ☀️'), findsOneWidget);
+  });
+
+  appTest('AC4/AC5: symbol and week start change Home\'s week, live', (
+    tester,
+    app,
+  ) async {
+    await useTallScreen(tester);
+    // The test clock is Sunday 8 Nov.
+    await addPayment(app, tester, 'Rent', '2026-11-03', amount: 1000000);
+    await addPayment(app, tester, 'Internet', '2026-11-07', amount: 450000);
+    await addPayment(app, tester, 'Fee', '2026-11-12', amount: 900000);
+    await settle(tester);
+    // Phone defaults (en-PK): Rs, Monday weeks → 2–8 Nov.
+    expect(find.text('Rs 14,500 in payments this week'), findsOneWidget);
+
+    await openProfileFromHome(tester);
+    await tapVisible(tester, 'profile-currency-₹');
+    await tester.ensureVisible(find.byKey(const ValueKey('profile-week-start')));
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const ValueKey('profile-week-start')),
+        matching: find.text('Sun'),
+      ),
+    );
+    await settle(tester);
+
+    // Sunday weeks → 8–14 Nov: only the fee, in the new symbol.
+    await openTab(tester, 'Home');
+    expect(find.text('₹ 9,000 in payments this week'), findsOneWidget);
+
+    // Back to Auto restores the phone's defaults.
+    await openTab(tester, 'More');
+    await tapVisible(tester, 'profile-currency-auto');
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const ValueKey('profile-week-start')),
+        matching: find.text('Auto'),
+      ),
+    );
+    await settle(tester);
+    await openTab(tester, 'Home');
+    expect(find.text('Rs 14,500 in payments this week'), findsOneWidget);
+  });
+
+  appTest('AC5: the date-order choice reaches the date helpers', (
+    tester,
+    app,
+  ) async {
+    await useTallScreen(tester);
+    await openProfileFromHome(tester);
+    await tester.ensureVisible(find.byKey(const ValueKey('profile-date-order')));
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const ValueKey('profile-date-order')),
+        matching: find.text('Nov 9'),
+      ),
+    );
+    await settle(tester);
+    expect(dayMonth(DateTime(2026, 11, 9)), 'Nov 9');
+    expect(formatDay(DateTime(2026, 11, 20)), 'Fri, Nov 20');
   });
 
   appTest('language can be changed from My Profile too', (tester, app) async {

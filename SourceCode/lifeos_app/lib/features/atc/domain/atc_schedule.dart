@@ -160,7 +160,7 @@ String? predictedBillTitle(AtcRule r) {
       ? ''
       : s.min == s.max
       ? ' (~${Money.format(s.min!)})'
-      : ' (~${Money.format(s.min!)}–${Money.format(s.max!).replaceFirst('Rs ', '')})';
+      : ' (~${Money.format(s.min!)}–${Money.formatPlain(s.max!)})';
   return 'Expect ${s.label} bill$range';
 }
 
@@ -206,7 +206,7 @@ String cadenceLabel(AtcRule r) {
   if (w != null) return l.atcCadenceWindow(ordinal(w.from), ordinal(w.to));
   if (scheduleDatesOf(r).isNotEmpty) {
     return l.atcOnSetDates(
-      scheduleDatesOf(r).map((d) => '${d.day} ${shortMonth(d)}').join(', '),
+      scheduleDatesOf(r).map(dayMonth).join(', '),
     );
   }
   final cycle = switch (r.cycle) {

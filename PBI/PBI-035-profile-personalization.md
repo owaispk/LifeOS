@@ -7,7 +7,7 @@
 | Story Points | 5 |
 | Spec refs | Features §8 (Soul is opt-in — "respects other faiths, configurable or off"), §10 (dashboard greeting), §13 (onboarding), §14 (settings) |
 | Depends on | PBI-021 (Home dashboard), PBI-025 (Settings, EN/UR) |
-| Status | In progress (steps 1–3 of 5 done: neutral greeting, greeting style, My Profile) |
+| Status | In progress (steps 1–4 of 5 done: neutral greeting, greeting style, My Profile, region formats) |
 
 ## User Story
 As a **user anywhere in the world, of any religion**, I want LifeOS to greet me and format my dates, week and money the way *I* choose — with defaults that assume nothing about my culture or faith.
@@ -82,6 +82,20 @@ Add to the backlog README's DoD: *"No culturally specific words, symbols, calend
 - Tests: new `test/features/profile/profile_test.dart` (5): More order + Home entry + placeholder prompt; name → one self record + Home greeting + blank-guard; avatar on Home; greeting style flow (moved from the settings test); Urdu from My Profile.
 - `flutter analyze` clean · full suite 493/493 passed.
 - Remaining: steps 4–5 (region formats/currency sweep, README DoD rule).
+
+## Dev Notes (step 4 — region formats, 2026-11-09)
+- **`lib/core/region.dart`:** `RegionFormats` (symbol, weekStart, weekend, dayFirst) and `AppRegion.current`, kept in step by the app like `AppLocale`. `resolveRegion(deviceLocale, {symbol, weekStart, dateOrder})` = the user's choices over the phone's defaults.
+- **Defaults come from the phone's *country*, via small tables** (currency, Sunday/Saturday-first weeks, Fri–Sat weekends, month-first dates). Probed first: `intl` keys its data by *language*, so alone it gives "$" for `en_PK` and "E£" for `ar_SA`/`ar_AE` — wrong for our core markets. `intl` is only the fallback when the locale has no country. Deviation from CLDR, documented in code: Pakistan starts weeks on Monday (Mon–Fri working week; what LifeOS has always shown).
+- **Schema v8:** `currency_symbol`, `week_start`, `date_order` (null = follow the phone). **Upgrades keep what users saw** (Rs / Monday / "9 Nov" written by the migration), so an existing user on an en-US phone isn't switched to $ and Sunday weeks; fresh installs follow the phone.
+- **Money:** `Money.format` uses the user's symbol (display only — amounts never converted; `currency` columns untouched, multi-currency stays V3); new `Money.formatPlain` and `Money.prefix`. Swept: 9 fragile `.replaceFirst('Rs ', '')` call sites → `formatPlain`; 7 input prefixes → `Money.prefix`; the reminder's per-record `currency: 'PKR'` dropped; ARB keys `atcRsPrefix`/`cpRsPrefix`/`mnRsPrefix` retired.
+- **Dates:** `dayMonth()` ("9 Nov" / "Nov 9") in `shared/format.dart`; `formatDay` and 4 hand-built day+month sites (fee schedule, Life Score detail, scan title, OCR fallback title) use it.
+- **Week start:** Home's weekly payments, the Overload Shield week, quick-add's "next <day>" rule, and the expiry weekly nudge (now the evening before the user's week starts — Sunday for Monday weeks, unchanged for existing users). **"weekend"/"next weekend"** added to quick-add, resolving to the user's weekend (Sat–Sun, Fri–Sat, Sun-only…); bounded so an empty set can't hang the parser.
+- **Applied everywhere text is made:** the app build, `main()` before Auto Tasks/Expiry Guard/score run (generated titles carry amounts), and the reminder isolate. On a region change every live element is marked for one rebuild (state kept) — nothing inherits the region the way widgets inherit the language, so Home/Money in the tab stack would otherwise show stale symbols.
+- **My Profile → Region & formats:** currency chips (Auto (phone's symbol), Rs, ₹, $, €, £, AED, SAR, ৳, ¥, ₦, RM) + "Another symbol" field; week starts Auto/Sat/Sun/Mon; dates Auto/"9 Nov"/"Nov 9".
+- **Tests:** `test/flutter_test_config.dart` pins the test phone to en-PK and resets the region before every test. New `test/core/region_test.dart` (country defaults incl. the intl traps, overrides and invalid fallbacks, date order, three week starts across Home/Overload/nudge, weekend + "next <day>" parsing, and the AC5 source scan for hard-coded "Rs"); money tests for symbol/prefix/plain/round-trip; migration v1–v7→v8 incl. upgrade preservation and fresh-install nulls; profile widget tests: ₹ + Sunday weeks change Home's week total live, Auto restores; date-order choice.
+- Not done (noted for later): a weekend-days override in the UI (weekend follows the phone's country only); existing Auto Task titles keep the symbol they were generated with (new occurrences use the new one); a timezone-based country guess for phones set to en-US abroad.
+- `flutter analyze` clean · full suite 516/516 passed, identical on two runs.
+- Remaining: step 5 (README DoD rule + AC evidence → Done).
 
 ## Grooming Notes
 - **Greeting:** `greeting(Person? self)` in `lib/features/home/domain/attention.dart` gains a `GreetingStyle` + `DateTime now` input (keep it pure; the widget injects the clock — same pattern the score/digest code uses). ARB keys: retire `hmSalam`/`hmSalamName`, add `hmMorning(Name)`, `hmAfternoon(Name)`, `hmEvening(Name)`, `hmNight(Name)` + no-name variants, `hmCustom` is pass-through.

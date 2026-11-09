@@ -264,9 +264,6 @@ class AppLocalizationsUr extends AppLocalizations {
   String get atcReminderOn => '⚡ خودکار یاد دہانی آن ہے';
 
   @override
-  String get atcRsPrefix => 'Rs ';
-
-  @override
   String get atcRuleGone => 'یہ اصول موجود نہیں';
 
   @override
@@ -458,9 +455,6 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get cpRetakeTitle => 'دوبارہ لیں؟';
-
-  @override
-  String get cpRsPrefix => 'Rs ';
 
   @override
   String get cpSaveAs => 'اس طرح محفوظ کریں';
@@ -1131,9 +1125,6 @@ class AppLocalizationsUr extends AppLocalizations {
   }
 
   @override
-  String get mnRsPrefix => 'Rs ';
-
-  @override
   String mnSalaryShare(String percent) {
     return 'آمدنی کا $percent% مقررہ ادائیگیوں میں جاتا ہے';
   }
@@ -1282,7 +1273,30 @@ class AppLocalizationsUr extends AppLocalizations {
   String get profileAboutYou => 'آپ کے بارے میں';
 
   @override
+  String get profileAuto => 'خودکار';
+
+  @override
+  String profileAutoValue(String value) {
+    return 'خودکار ($value)';
+  }
+
+  @override
+  String get profileCurrency => 'کرنسی کی علامت';
+
+  @override
+  String get profileCurrencyOther => 'کوئی اور علامت';
+
+  @override
+  String get profileDateOrder => 'تاریخیں';
+
+  @override
   String get profileNameLabel => 'ہم آپ کو کس نام سے پکاریں؟';
+
+  @override
+  String get profileRegion => 'علاقہ اور فارمیٹ';
+
+  @override
+  String get profileWeekStart => 'ہفتے کا پہلا دن';
 
   @override
   String get mrTrashSub => 'حذف شدہ دستاویزات، 30 دن تک محفوظ';

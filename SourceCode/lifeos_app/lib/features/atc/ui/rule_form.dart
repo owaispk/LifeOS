@@ -238,7 +238,7 @@ class _AddRuleSheetState extends ConsumerState<AddRuleSheet> {
                         labelText: p.amountOptional
                             ? l.atcAmountOptional
                             : l.amount,
-                        prefixText: l.atcRsPrefix,
+                        prefixText: Money.prefix,
                         border: const OutlineInputBorder(),
                       ),
                       onChanged: (_) => setState(() {}),

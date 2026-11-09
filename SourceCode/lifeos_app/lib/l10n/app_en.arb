@@ -224,7 +224,6 @@
   "atcQuarterly": "Quarterly",
   "atcRemindBefore": "Remind me before",
   "atcReminderOn": "⚡ Auto-reminder is on",
-  "atcRsPrefix": "Rs ",
   "atcRuleGone": "This rule is gone",
   "atcRuleGoneBody": "It was deleted. Tasks it created are still in Tasks.",
   "atcSaveChanges": "Save changes",
@@ -312,7 +311,6 @@
   "cpReading": "Reading document…",
   "cpRetake": "Retake",
   "cpRetakeTitle": "Retake?",
-  "cpRsPrefix": "Rs ",
   "cpSaveAs": "Save as",
   "cpSaveToVault": "Save to Vault",
   "cpSaveToVaultOf": "Save to Vault · 1 of {total}",
@@ -794,7 +792,6 @@
       }
     }
   },
-  "mnRsPrefix": "Rs ",
   "mnSalaryShare": "{percent}% of income goes to fixed payments",
   "@mnSalaryShare": {
     "placeholders": {
@@ -863,7 +860,21 @@
   "mrProfileSub": "Your name, greeting and language",
   "mrTitle": "More",
   "profileAboutYou": "About you",
+  "profileAuto": "Auto",
+  "profileAutoValue": "Auto ({value})",
+  "@profileAutoValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "profileCurrency": "Currency symbol",
+  "profileCurrencyOther": "Another symbol",
+  "profileDateOrder": "Dates",
   "profileNameLabel": "What should we call you?",
+  "profileRegion": "Region & formats",
+  "profileWeekStart": "Week starts on",
   "mrTrashSub": "Deleted documents, kept for 30 days",
   "name": "Name",
   "next": "Next",

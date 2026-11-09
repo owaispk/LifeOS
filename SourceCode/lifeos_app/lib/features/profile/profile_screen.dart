@@ -3,9 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/l10n.dart';
 import '../../core/now_provider.dart';
+import '../../core/region.dart';
 import '../../core/theme/tokens.dart';
 import '../../data/data_providers.dart' show personsProvider;
 import '../../data/db/app_database.dart';
+import '../../shared/format.dart' show shortMonth;
 import '../../shared/widgets/section_header.dart';
 import '../home/domain/attention.dart';
 import '../settings/settings_providers.dart';
@@ -149,8 +151,115 @@ class ProfileScreen extends ConsumerWidget {
                     settings.setGreeting(GreetStyle.custom, custom: v),
               ),
             ),
+          SectionHeader(l.profileRegion),
+          _RegionSection(s: s, settings: settings),
         ],
       ),
+    );
+  }
+}
+
+/// Currency symbol, first day of the week and date order (PBI-035).
+/// "Auto" follows the phone's region; anything else is the user's choice.
+class _RegionSection extends StatelessWidget {
+  const _RegionSection({required this.s, required this.settings});
+
+  final UserSettingsRow? s;
+  final SettingsService settings;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    final phone = resolveRegion(AppRegion.deviceLocale);
+    final chosen = s?.currencySymbol;
+    final isOther = chosen != null && !commonCurrencySymbols.contains(chosen);
+    final example = DateTime(2026, 11, 9);
+    final pad = EdgeInsets.symmetric(horizontal: Tokens.gutter);
+    Widget label(String text) => Padding(
+      padding: EdgeInsets.fromLTRB(
+        Tokens.gutter,
+        Tokens.spaceS,
+        Tokens.gutter,
+        Tokens.spaceXs,
+      ),
+      child: Text(text),
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        label(l.profileCurrency),
+        Padding(
+          padding: pad,
+          child: Wrap(
+            spacing: Tokens.spaceXs,
+            children: [
+              ChoiceChip(
+                key: const ValueKey('profile-currency-auto'),
+                label: Text(l.profileAutoValue(phone.symbol)),
+                selected: chosen == null,
+                onSelected: (_) => settings.setCurrencySymbol(null),
+              ),
+              for (final sym in commonCurrencySymbols)
+                ChoiceChip(
+                  key: ValueKey('profile-currency-$sym'),
+                  label: Text(sym),
+                  selected: chosen == sym,
+                  onSelected: (_) => settings.setCurrencySymbol(sym),
+                ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: pad,
+          child: TextFormField(
+            key: const ValueKey('profile-currency-other'),
+            initialValue: isOther ? chosen : '',
+            maxLength: 5,
+            decoration: InputDecoration(hintText: l.profileCurrencyOther),
+            onChanged: (v) {
+              if (v.trim().isNotEmpty) settings.setCurrencySymbol(v);
+            },
+          ),
+        ),
+        label(l.profileWeekStart),
+        Padding(
+          padding: pad,
+          child: SegmentedButton<int>(
+            key: const ValueKey('profile-week-start'),
+            segments: [
+              ButtonSegment(value: 0, label: Text(l.profileAuto)),
+              ButtonSegment(value: DateTime.saturday, label: Text(l.wd6)),
+              ButtonSegment(value: DateTime.sunday, label: Text(l.wd7)),
+              ButtonSegment(value: DateTime.monday, label: Text(l.wd1)),
+            ],
+            selected: {s?.weekStart ?? 0},
+            onSelectionChanged: (v) =>
+                settings.setWeekStart(v.first == 0 ? null : v.first),
+          ),
+        ),
+        label(l.profileDateOrder),
+        Padding(
+          padding: pad,
+          child: SegmentedButton<String>(
+            key: const ValueKey('profile-date-order'),
+            segments: [
+              ButtonSegment(value: 'auto', label: Text(l.profileAuto)),
+              ButtonSegment(
+                value: 'dm',
+                label: Text('${example.day} ${shortMonth(example)}'),
+              ),
+              ButtonSegment(
+                value: 'md',
+                label: Text('${shortMonth(example)} ${example.day}'),
+              ),
+            ],
+            selected: {s?.dateOrder ?? 'auto'},
+            onSelectionChanged: (v) =>
+                settings.setDateOrder(v.first == 'auto' ? null : v.first),
+          ),
+        ),
+      ],
     );
   }
 }

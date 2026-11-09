@@ -3212,6 +3212,39 @@ class $UserSettingsTable extends UserSettings
     requiredDuringInsert: false,
     defaultValue: const Constant(''),
   );
+  static const VerificationMeta _currencySymbolMeta = const VerificationMeta(
+    'currencySymbol',
+  );
+  @override
+  late final GeneratedColumn<String> currencySymbol = GeneratedColumn<String>(
+    'currency_symbol',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _weekStartMeta = const VerificationMeta(
+    'weekStart',
+  );
+  @override
+  late final GeneratedColumn<int> weekStart = GeneratedColumn<int>(
+    'week_start',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _dateOrderMeta = const VerificationMeta(
+    'dateOrder',
+  );
+  @override
+  late final GeneratedColumn<String> dateOrder = GeneratedColumn<String>(
+    'date_order',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -3237,6 +3270,9 @@ class $UserSettingsTable extends UserSettings
     screenshotBlock,
     greetStyle,
     greetCustom,
+    currencySymbol,
+    weekStart,
+    dateOrder,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3406,6 +3442,27 @@ class $UserSettingsTable extends UserSettings
         ),
       );
     }
+    if (data.containsKey('currency_symbol')) {
+      context.handle(
+        _currencySymbolMeta,
+        currencySymbol.isAcceptableOrUnknown(
+          data['currency_symbol']!,
+          _currencySymbolMeta,
+        ),
+      );
+    }
+    if (data.containsKey('week_start')) {
+      context.handle(
+        _weekStartMeta,
+        weekStart.isAcceptableOrUnknown(data['week_start']!, _weekStartMeta),
+      );
+    }
+    if (data.containsKey('date_order')) {
+      context.handle(
+        _dateOrderMeta,
+        dateOrder.isAcceptableOrUnknown(data['date_order']!, _dateOrderMeta),
+      );
+    }
     return context;
   }
 
@@ -3511,6 +3568,18 @@ class $UserSettingsTable extends UserSettings
         DriftSqlType.string,
         data['${effectivePrefix}greet_custom'],
       )!,
+      currencySymbol: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}currency_symbol'],
+      ),
+      weekStart: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}week_start'],
+      ),
+      dateOrder: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}date_order'],
+      ),
     );
   }
 
@@ -3557,6 +3626,16 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
 
   /// The user's own greeting word when [greetStyle] is 'custom'.
   final String greetCustom;
+
+  /// Region formats (schema v8, PBI-035). Null = follow the phone's region.
+  /// Display-only currency symbol, e.g. 'Rs', '₹', 'AED'.
+  final String? currencySymbol;
+
+  /// First day of the week: 6 Saturday, 7 Sunday, 1 Monday (DateTime).
+  final int? weekStart;
+
+  /// Day/month order: 'dm' ("9 Nov") or 'md' ("Nov 9").
+  final String? dateOrder;
   const UserSettingsRow({
     required this.id,
     required this.userId,
@@ -3581,6 +3660,9 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     required this.screenshotBlock,
     required this.greetStyle,
     required this.greetCustom,
+    this.currencySymbol,
+    this.weekStart,
+    this.dateOrder,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -3614,6 +3696,15 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     map['screenshot_block'] = Variable<bool>(screenshotBlock);
     map['greet_style'] = Variable<String>(greetStyle);
     map['greet_custom'] = Variable<String>(greetCustom);
+    if (!nullToAbsent || currencySymbol != null) {
+      map['currency_symbol'] = Variable<String>(currencySymbol);
+    }
+    if (!nullToAbsent || weekStart != null) {
+      map['week_start'] = Variable<int>(weekStart);
+    }
+    if (!nullToAbsent || dateOrder != null) {
+      map['date_order'] = Variable<String>(dateOrder);
+    }
     return map;
   }
 
@@ -3648,6 +3739,15 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
       screenshotBlock: Value(screenshotBlock),
       greetStyle: Value(greetStyle),
       greetCustom: Value(greetCustom),
+      currencySymbol: currencySymbol == null && nullToAbsent
+          ? const Value.absent()
+          : Value(currencySymbol),
+      weekStart: weekStart == null && nullToAbsent
+          ? const Value.absent()
+          : Value(weekStart),
+      dateOrder: dateOrder == null && nullToAbsent
+          ? const Value.absent()
+          : Value(dateOrder),
     );
   }
 
@@ -3680,6 +3780,9 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
       screenshotBlock: serializer.fromJson<bool>(json['screenshotBlock']),
       greetStyle: serializer.fromJson<String>(json['greetStyle']),
       greetCustom: serializer.fromJson<String>(json['greetCustom']),
+      currencySymbol: serializer.fromJson<String?>(json['currencySymbol']),
+      weekStart: serializer.fromJson<int?>(json['weekStart']),
+      dateOrder: serializer.fromJson<String?>(json['dateOrder']),
     );
   }
   @override
@@ -3709,6 +3812,9 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
       'screenshotBlock': serializer.toJson<bool>(screenshotBlock),
       'greetStyle': serializer.toJson<String>(greetStyle),
       'greetCustom': serializer.toJson<String>(greetCustom),
+      'currencySymbol': serializer.toJson<String?>(currencySymbol),
+      'weekStart': serializer.toJson<int?>(weekStart),
+      'dateOrder': serializer.toJson<String?>(dateOrder),
     };
   }
 
@@ -3736,6 +3842,9 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     bool? screenshotBlock,
     String? greetStyle,
     String? greetCustom,
+    Value<String?> currencySymbol = const Value.absent(),
+    Value<int?> weekStart = const Value.absent(),
+    Value<String?> dateOrder = const Value.absent(),
   }) => UserSettingsRow(
     id: id ?? this.id,
     userId: userId ?? this.userId,
@@ -3760,6 +3869,11 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     screenshotBlock: screenshotBlock ?? this.screenshotBlock,
     greetStyle: greetStyle ?? this.greetStyle,
     greetCustom: greetCustom ?? this.greetCustom,
+    currencySymbol: currencySymbol.present
+        ? currencySymbol.value
+        : this.currencySymbol,
+    weekStart: weekStart.present ? weekStart.value : this.weekStart,
+    dateOrder: dateOrder.present ? dateOrder.value : this.dateOrder,
   );
   UserSettingsRow copyWithCompanion(UserSettingsCompanion data) {
     return UserSettingsRow(
@@ -3808,6 +3922,11 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
       greetCustom: data.greetCustom.present
           ? data.greetCustom.value
           : this.greetCustom,
+      currencySymbol: data.currencySymbol.present
+          ? data.currencySymbol.value
+          : this.currencySymbol,
+      weekStart: data.weekStart.present ? data.weekStart.value : this.weekStart,
+      dateOrder: data.dateOrder.present ? data.dateOrder.value : this.dateOrder,
     );
   }
 
@@ -3836,7 +3955,10 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
           ..write('language: $language, ')
           ..write('screenshotBlock: $screenshotBlock, ')
           ..write('greetStyle: $greetStyle, ')
-          ..write('greetCustom: $greetCustom')
+          ..write('greetCustom: $greetCustom, ')
+          ..write('currencySymbol: $currencySymbol, ')
+          ..write('weekStart: $weekStart, ')
+          ..write('dateOrder: $dateOrder')
           ..write(')'))
         .toString();
   }
@@ -3866,6 +3988,9 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     screenshotBlock,
     greetStyle,
     greetCustom,
+    currencySymbol,
+    weekStart,
+    dateOrder,
   ]);
   @override
   bool operator ==(Object other) =>
@@ -3893,7 +4018,10 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
           other.language == this.language &&
           other.screenshotBlock == this.screenshotBlock &&
           other.greetStyle == this.greetStyle &&
-          other.greetCustom == this.greetCustom);
+          other.greetCustom == this.greetCustom &&
+          other.currencySymbol == this.currencySymbol &&
+          other.weekStart == this.weekStart &&
+          other.dateOrder == this.dateOrder);
 }
 
 class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
@@ -3920,6 +4048,9 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
   final Value<bool> screenshotBlock;
   final Value<String> greetStyle;
   final Value<String> greetCustom;
+  final Value<String?> currencySymbol;
+  final Value<int?> weekStart;
+  final Value<String?> dateOrder;
   final Value<int> rowid;
   const UserSettingsCompanion({
     this.id = const Value.absent(),
@@ -3945,6 +4076,9 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     this.screenshotBlock = const Value.absent(),
     this.greetStyle = const Value.absent(),
     this.greetCustom = const Value.absent(),
+    this.currencySymbol = const Value.absent(),
+    this.weekStart = const Value.absent(),
+    this.dateOrder = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   UserSettingsCompanion.insert({
@@ -3971,6 +4105,9 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     this.screenshotBlock = const Value.absent(),
     this.greetStyle = const Value.absent(),
     this.greetCustom = const Value.absent(),
+    this.currencySymbol = const Value.absent(),
+    this.weekStart = const Value.absent(),
+    this.dateOrder = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   static Insertable<UserSettingsRow> custom({
@@ -3997,6 +4134,9 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     Expression<bool>? screenshotBlock,
     Expression<String>? greetStyle,
     Expression<String>? greetCustom,
+    Expression<String>? currencySymbol,
+    Expression<int>? weekStart,
+    Expression<String>? dateOrder,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -4023,6 +4163,9 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
       if (screenshotBlock != null) 'screenshot_block': screenshotBlock,
       if (greetStyle != null) 'greet_style': greetStyle,
       if (greetCustom != null) 'greet_custom': greetCustom,
+      if (currencySymbol != null) 'currency_symbol': currencySymbol,
+      if (weekStart != null) 'week_start': weekStart,
+      if (dateOrder != null) 'date_order': dateOrder,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -4051,6 +4194,9 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     Value<bool>? screenshotBlock,
     Value<String>? greetStyle,
     Value<String>? greetCustom,
+    Value<String?>? currencySymbol,
+    Value<int?>? weekStart,
+    Value<String?>? dateOrder,
     Value<int>? rowid,
   }) {
     return UserSettingsCompanion(
@@ -4077,6 +4223,9 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
       screenshotBlock: screenshotBlock ?? this.screenshotBlock,
       greetStyle: greetStyle ?? this.greetStyle,
       greetCustom: greetCustom ?? this.greetCustom,
+      currencySymbol: currencySymbol ?? this.currencySymbol,
+      weekStart: weekStart ?? this.weekStart,
+      dateOrder: dateOrder ?? this.dateOrder,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -4153,6 +4302,15 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     if (greetCustom.present) {
       map['greet_custom'] = Variable<String>(greetCustom.value);
     }
+    if (currencySymbol.present) {
+      map['currency_symbol'] = Variable<String>(currencySymbol.value);
+    }
+    if (weekStart.present) {
+      map['week_start'] = Variable<int>(weekStart.value);
+    }
+    if (dateOrder.present) {
+      map['date_order'] = Variable<String>(dateOrder.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -4185,6 +4343,9 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
           ..write('screenshotBlock: $screenshotBlock, ')
           ..write('greetStyle: $greetStyle, ')
           ..write('greetCustom: $greetCustom, ')
+          ..write('currencySymbol: $currencySymbol, ')
+          ..write('weekStart: $weekStart, ')
+          ..write('dateOrder: $dateOrder, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -15726,6 +15887,9 @@ typedef $$UserSettingsTableCreateCompanionBuilder =
       Value<bool> screenshotBlock,
       Value<String> greetStyle,
       Value<String> greetCustom,
+      Value<String?> currencySymbol,
+      Value<int?> weekStart,
+      Value<String?> dateOrder,
       Value<int> rowid,
     });
 typedef $$UserSettingsTableUpdateCompanionBuilder =
@@ -15753,6 +15917,9 @@ typedef $$UserSettingsTableUpdateCompanionBuilder =
       Value<bool> screenshotBlock,
       Value<String> greetStyle,
       Value<String> greetCustom,
+      Value<String?> currencySymbol,
+      Value<int?> weekStart,
+      Value<String?> dateOrder,
       Value<int> rowid,
     });
 
@@ -15877,6 +16044,21 @@ class $$UserSettingsTableFilterComposer
 
   ColumnFilters<String> get greetCustom => $composableBuilder(
     column: $table.greetCustom,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get currencySymbol => $composableBuilder(
+    column: $table.currencySymbol,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get weekStart => $composableBuilder(
+    column: $table.weekStart,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get dateOrder => $composableBuilder(
+    column: $table.dateOrder,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -16004,6 +16186,21 @@ class $$UserSettingsTableOrderingComposer
     column: $table.greetCustom,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get currencySymbol => $composableBuilder(
+    column: $table.currencySymbol,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get weekStart => $composableBuilder(
+    column: $table.weekStart,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get dateOrder => $composableBuilder(
+    column: $table.dateOrder,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$UserSettingsTableAnnotationComposer
@@ -16105,6 +16302,17 @@ class $$UserSettingsTableAnnotationComposer
     column: $table.greetCustom,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get currencySymbol => $composableBuilder(
+    column: $table.currencySymbol,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get weekStart =>
+      $composableBuilder(column: $table.weekStart, builder: (column) => column);
+
+  GeneratedColumn<String> get dateOrder =>
+      $composableBuilder(column: $table.dateOrder, builder: (column) => column);
 }
 
 class $$UserSettingsTableTableManager
@@ -16161,6 +16369,9 @@ class $$UserSettingsTableTableManager
                 Value<bool> screenshotBlock = const Value.absent(),
                 Value<String> greetStyle = const Value.absent(),
                 Value<String> greetCustom = const Value.absent(),
+                Value<String?> currencySymbol = const Value.absent(),
+                Value<int?> weekStart = const Value.absent(),
+                Value<String?> dateOrder = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => UserSettingsCompanion(
                 id: id,
@@ -16186,6 +16397,9 @@ class $$UserSettingsTableTableManager
                 screenshotBlock: screenshotBlock,
                 greetStyle: greetStyle,
                 greetCustom: greetCustom,
+                currencySymbol: currencySymbol,
+                weekStart: weekStart,
+                dateOrder: dateOrder,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -16213,6 +16427,9 @@ class $$UserSettingsTableTableManager
                 Value<bool> screenshotBlock = const Value.absent(),
                 Value<String> greetStyle = const Value.absent(),
                 Value<String> greetCustom = const Value.absent(),
+                Value<String?> currencySymbol = const Value.absent(),
+                Value<int?> weekStart = const Value.absent(),
+                Value<String?> dateOrder = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => UserSettingsCompanion.insert(
                 id: id,
@@ -16238,6 +16455,9 @@ class $$UserSettingsTableTableManager
                 screenshotBlock: screenshotBlock,
                 greetStyle: greetStyle,
                 greetCustom: greetCustom,
+                currencySymbol: currencySymbol,
+                weekStart: weekStart,
+                dateOrder: dateOrder,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

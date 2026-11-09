@@ -3,12 +3,23 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/l10n.dart';
+import 'core/region.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/tokens.dart';
 import 'features/capture/share_in_listener.dart';
 import 'features/security/lock_gate.dart';
 import 'features/settings/settings_providers.dart';
+
+/// Marks every element for one rebuild (keeps all state).
+void _redrawAll() {
+  void mark(Element e) {
+    e.markNeedsBuild();
+    e.visitChildren(mark);
+  }
+
+  WidgetsBinding.instance.rootElement?.visitChildren(mark);
+}
 
 class LifeOsApp extends ConsumerWidget {
   const LifeOsApp({super.key});
@@ -18,6 +29,15 @@ class LifeOsApp extends ConsumerWidget {
     final settings = ref.watch(settingsProvider).value;
     // Pure helpers (dates, labels) read the language from here.
     AppLocale.current = localeOf(settings);
+    // …and the currency symbol, week and date order (PBI-035). Nothing
+    // inherits the region the way it inherits the language, so on a change
+    // every live screen is redrawn once — state (open tabs, a field being
+    // typed in) is kept.
+    final region = regionOf(settings);
+    if (region != AppRegion.current) {
+      AppRegion.current = region;
+      WidgetsBinding.instance.addPostFrameCallback((_) => _redrawAll());
+    }
     final look = templateOf(settings);
     // Spacing and density follow the look (PBI-031).
     AppSpacing.current = AppTheme.spacingFor(look);

@@ -88,7 +88,7 @@ class _RuleFormState extends ConsumerState<_RuleForm> {
   late final _amount = TextEditingController(
     text: widget.rule.amountMinor == null
         ? ''
-        : Money.format(widget.rule.amountMinor!).replaceFirst('Rs ', ''),
+        : Money.formatPlain(widget.rule.amountMinor!),
   );
   late int _dueDay = widget.rule.dueDay ?? 1;
   late int _remind = widget.rule.remindDaysBefore;
@@ -227,7 +227,7 @@ class _RuleFormState extends ConsumerState<_RuleForm> {
                 ),
                 decoration: InputDecoration(
                   labelText: l.amount,
-                  prefixText: l.atcRsPrefix,
+                  prefixText: Money.prefix,
                   border: const OutlineInputBorder(),
                 ),
               ),

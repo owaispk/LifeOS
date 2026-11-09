@@ -339,8 +339,8 @@ class _InfoPanel extends ConsumerWidget {
               label: context.l10n.vtAmount,
               value: doc.amountMinor == null
                   ? null
-                  : Money.format(doc.amountMinor!).replaceFirst('Rs ', ''),
-              prefix: 'Rs ',
+                  : Money.formatPlain(doc.amountMinor!),
+              prefix: Money.prefix,
               onSave: (v) => save(
                 DocumentsCompanion(
                   amountMinor: Value(v == null ? null : Money.parseMinor(v)),

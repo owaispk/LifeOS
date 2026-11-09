@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lifeos_app/data/db/app_database.dart';
 
 import '../generated_migrations/schema.dart';
+import 'db_test_utils.dart';
 
 void main() {
   driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
@@ -15,7 +16,9 @@ void main() {
 
   // The current database can only migrate to the current version; every
   // older starting point is checked against it.
-  for (final (from, to) in [(1, 7), (2, 7), (3, 7), (4, 7), (5, 7), (6, 7)]) {
+  for (final (from, to) in [
+    (1, 8), (2, 8), (3, 8), (4, 8), (5, 8), (6, 8), (7, 8), //
+  ]) {
     test('v$from → v$to produces exactly the v$to schema', () async {
       final connection = await verifier.startAt(from);
       final db = AppDatabase(connection);
@@ -45,6 +48,11 @@ void main() {
     expect((settings.id, settings.dayCapacityMin), ('s1', 360));
     // v7: greeting defaults to neutral auto (PBI-035).
     expect((settings.greetStyle, settings.greetCustom), ('auto', ''));
+    // v8: an upgrade keeps what the user has always seen (PBI-035).
+    expect(
+      (settings.currencySymbol, settings.weekStart, settings.dateOrder),
+      ('Rs', DateTime.monday, 'dm'),
+    );
     final file = await db.select(db.documentFiles).getSingle();
     expect((file.byteSize, file.sha256, file.phash), (2048, 'abc', null));
     final doc = await db.select(db.documents).getSingle();
@@ -61,6 +69,14 @@ void main() {
         )
         .get();
     expect(hits, hasLength(1));
+    await db.close();
+  });
+
+  test('a fresh install leaves region formats to the phone (PBI-035)', () async {
+    final db = memoryDb();
+    await db.into(db.userSettings).insert(UserSettingsCompanion.insert());
+    final s = await db.select(db.userSettings).getSingle();
+    expect((s.currencySymbol, s.weekStart, s.dateOrder), (null, null, null));
     await db.close();
   });
 }

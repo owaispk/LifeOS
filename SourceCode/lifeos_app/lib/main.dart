@@ -26,6 +26,7 @@ import 'features/security/crypto/vault_crypto.dart';
 import 'features/security/crypto/vault_files.dart';
 import 'features/security/lock_gate.dart';
 import 'features/security/security_providers.dart';
+import 'features/settings/settings_providers.dart' show applyRegion;
 import 'features/score/domain/life_score.dart';
 import 'features/score/score_providers.dart';
 import 'features/tasks/ui/quick_parse.dart';
@@ -48,6 +49,11 @@ Future<void> main() async {
   // The web build is a UI preview only for now: Drift on web needs the
   // sqlite3.wasm/worker assets, which are not part of the MVP.
   final repos = kIsWeb ? null : await openLocalData();
+  // Region formats before anything below writes amounts or dates into
+  // generated text (Auto Task titles, reminders) — PBI-035.
+  if (repos != null) {
+    applyRegion((await repos.userSettings.getAll()).firstOrNull);
+  }
 
   // Life Score weights ship as a version-pinned file (PBI-020).
   final weights = ScoreWeights.fromJson(

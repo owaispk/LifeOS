@@ -1,9 +1,9 @@
+import 'region.dart';
 import 'text.dart';
 
 /// Money is always integer minor units (paisa/cents) — never floats
 /// (data model §3, "Money rule").
 abstract final class Money {
-  static const _currencySymbols = {'PKR': 'Rs', 'USD': r'$', 'EUR': '€'};
 
   /// Parses user/OCR text such as "Rs 4,850", "Rs. 1,250.50", "4850",
   /// or Urdu/Eastern-Arabic digits ("۴۸۵۰") into minor units.
@@ -26,10 +26,23 @@ abstract final class Money {
     return negative ? -minor : minor;
   }
 
-  /// Formats minor units for display: 485000 → "Rs 4,850",
-  /// 125050 → "Rs 1,250.50". Whole amounts drop the ".00".
-  static String format(int minor, {String currency = 'PKR'}) {
-    final symbol = _currencySymbols[currency] ?? currency;
+  /// Formats minor units for display with the user's currency symbol
+  /// (PBI-035): 485000 → "Rs 4,850", 125050 → "Rs 1,250.50". Whole amounts
+  /// drop the ".00". The symbol is display-only; amounts are never converted.
+  static String format(int minor) {
+    final plain = formatPlain(minor);
+    final symbol = AppRegion.current.symbol;
+    return plain.startsWith('-')
+        ? '-$symbol ${plain.substring(1)}'
+        : '$symbol $plain';
+  }
+
+  /// Input-field prefix with the user's symbol: "Rs ", "₹ ", "AED ".
+  static String get prefix => '${AppRegion.current.symbol} ';
+
+  /// The amount without a symbol, for input fields that show the symbol as
+  /// a prefix: 485000 → "4,850".
+  static String formatPlain(int minor) {
     final negative = minor < 0;
     final abs = minor.abs();
     final major = abs ~/ 100;
@@ -44,6 +57,6 @@ abstract final class Money {
     final decimals = fraction == 0
         ? ''
         : '.${fraction.toString().padLeft(2, '0')}';
-    return '${negative ? '-' : ''}$symbol $grouped$decimals';
+    return '${negative ? '-' : ''}$grouped$decimals';
   }
 }

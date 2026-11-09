@@ -2,6 +2,7 @@ import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/region.dart';
 import '../../data/data_providers.dart';
 import '../../data/db/app_database.dart';
 import '../../data/repositories/repositories.dart';
@@ -35,6 +36,21 @@ class SettingsService {
   Future<void> setLanguage(String code) =>
       update(UserSettingsCompanion(language: Value(code)));
 
+  /// Region formats (PBI-035); null = follow the phone's region.
+  Future<void> setCurrencySymbol(String? symbol) => update(
+    UserSettingsCompanion(
+      currencySymbol: Value(
+        symbol == null || symbol.trim().isEmpty ? null : symbol.trim(),
+      ),
+    ),
+  );
+
+  Future<void> setWeekStart(int? weekday) =>
+      update(UserSettingsCompanion(weekStart: Value(weekday)));
+
+  Future<void> setDateOrder(String? order) =>
+      update(UserSettingsCompanion(dateOrder: Value(order)));
+
   /// Greeting style (PBI-035). [custom] is kept even when switching styles,
   /// so coming back to Custom restores the user's word.
   Future<void> setGreeting(GreetStyle style, {String? custom}) =>
@@ -47,6 +63,19 @@ class SettingsService {
 /// Greeting style from the setting (PBI-035): neutral auto by default.
 GreetStyle greetStyleOf(UserSettingsRow? s) =>
     GreetStyle.values.asNameMap()[s?.greetStyle] ?? GreetStyle.auto;
+
+/// Region formats (PBI-035): the user's choices over the phone's defaults.
+RegionFormats regionOf(UserSettingsRow? s) => resolveRegion(
+  AppRegion.deviceLocale,
+  symbol: s?.currencySymbol,
+  weekStart: s?.weekStart,
+  dateOrder: s?.dateOrder,
+);
+
+/// Points the pure helpers (money, dates, parser) at the settings. Called
+/// by the app on every settings change, at start-up before anything writes
+/// text, and in the notification isolate.
+void applyRegion(UserSettingsRow? s) => AppRegion.current = regionOf(s);
 
 /// App locale from the setting: English or Urdu (RTL).
 Locale localeOf(UserSettingsRow? s) =>

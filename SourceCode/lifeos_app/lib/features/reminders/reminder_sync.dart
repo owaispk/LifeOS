@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart' show Locale;
 import '../../data/db/app_database.dart';
 import '../../core/l10n.dart';
 import '../home/domain/attention.dart' show GreetStyle, greetingText;
+import '../settings/settings_providers.dart' show applyRegion;
 import '../score/domain/life_score.dart';
 
 import '../../data/repositories/repositories.dart';
@@ -38,6 +39,7 @@ class ReminderSync {
     // Notification text follows the saved language — also in the
     // background isolate that handles notification actions.
     AppLocale.current = Locale(settings?.language == 'ur' ? 'ur' : 'en');
+    applyRegion(settings); // amounts and dates in notifications (PBI-035)
     final tasks = await _repos.tasks.getAll();
     final payments = await _repos.payments.getAll();
     final now = _now();

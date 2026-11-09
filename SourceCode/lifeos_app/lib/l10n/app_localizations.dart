@@ -506,12 +506,6 @@ abstract class AppLocalizations {
   /// **'⚡ Auto-reminder is on'**
   String get atcReminderOn;
 
-  /// No description provided for @atcRsPrefix.
-  ///
-  /// In en, this message translates to:
-  /// **'Rs '**
-  String get atcRsPrefix;
-
   /// No description provided for @atcRuleGone.
   ///
   /// In en, this message translates to:
@@ -865,12 +859,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Retake?'**
   String get cpRetakeTitle;
-
-  /// No description provided for @cpRsPrefix.
-  ///
-  /// In en, this message translates to:
-  /// **'Rs '**
-  String get cpRsPrefix;
 
   /// No description provided for @cpSaveAs.
   ///
@@ -1922,12 +1910,6 @@ abstract class AppLocalizations {
   /// **'Receipt — {title}'**
   String mnReceiptTitle(String title);
 
-  /// No description provided for @mnRsPrefix.
-  ///
-  /// In en, this message translates to:
-  /// **'Rs '**
-  String get mnRsPrefix;
-
   /// No description provided for @mnSalaryShare.
   ///
   /// In en, this message translates to:
@@ -2216,11 +2198,53 @@ abstract class AppLocalizations {
   /// **'About you'**
   String get profileAboutYou;
 
+  /// No description provided for @profileAuto.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto'**
+  String get profileAuto;
+
+  /// No description provided for @profileAutoValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto ({value})'**
+  String profileAutoValue(String value);
+
+  /// No description provided for @profileCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency symbol'**
+  String get profileCurrency;
+
+  /// No description provided for @profileCurrencyOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Another symbol'**
+  String get profileCurrencyOther;
+
+  /// No description provided for @profileDateOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Dates'**
+  String get profileDateOrder;
+
   /// No description provided for @profileNameLabel.
   ///
   /// In en, this message translates to:
   /// **'What should we call you?'**
   String get profileNameLabel;
+
+  /// No description provided for @profileRegion.
+  ///
+  /// In en, this message translates to:
+  /// **'Region & formats'**
+  String get profileRegion;
+
+  /// No description provided for @profileWeekStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Week starts on'**
+  String get profileWeekStart;
 
   /// No description provided for @mrTrashSub.
   ///

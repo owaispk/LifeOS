@@ -1,6 +1,10 @@
 // PBI-002 AC6: amounts convert to/from minor units with no rounding errors.
+// PBI-035: the display symbol is the user's.
+import 'dart:ui' show Locale;
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lifeos_app/core/money.dart';
+import 'package:lifeos_app/core/region.dart';
 
 void main() {
   group('parseMinor', () {
@@ -49,9 +53,39 @@ void main() {
       });
     });
 
-    test('other currencies use their symbol', () {
-      expect(Money.format(1999, currency: 'USD'), r'$ 19.99');
+    // PBI-035: the symbol is the user's (display only, never converted).
+    test("uses the user's currency symbol", () {
+      for (final (symbol, expected) in [
+        (r'$', r'$ 19.99'),
+        ('₹', '₹ 19.99'),
+        ('AED', 'AED 19.99'),
+      ]) {
+        AppRegion.current = resolveRegion(
+          const Locale('en', 'PK'),
+          symbol: symbol,
+        );
+        expect(Money.format(1999), expected);
+        expect(Money.prefix, '$symbol ');
+      }
+      expect(Money.format(-25000), '-AED 250');
     });
+
+    test('formatPlain has no symbol (input fields show it as a prefix)', () {
+      expect(Money.formatPlain(485000), '4,850');
+      expect(Money.formatPlain(125050), '1,250.50');
+      expect(Money.formatPlain(-25000), '-250');
+    });
+  });
+
+  test('any symbol round-trips through parse', () {
+    for (final symbol in ['Rs', r'$', '₹', 'AED', '€', 'KSh']) {
+      AppRegion.current = resolveRegion(
+        const Locale('en', 'PK'),
+        symbol: symbol,
+      );
+      expect(Money.parseMinor(Money.format(485050)), 485050, reason: symbol);
+      expect(Money.parseMinor(Money.format(-25000)), -25000, reason: symbol);
+    }
   });
 
   test('format → parse round-trips exactly', () {

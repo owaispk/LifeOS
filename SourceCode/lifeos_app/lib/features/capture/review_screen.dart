@@ -151,7 +151,7 @@ class _DraftFormState extends ConsumerState<_DraftForm> {
     for (final key in Fields.forType[type] ?? const <String>[]) {
       final raw = fields[key]?.value ?? '';
       final shown = key == Fields.amount && raw.isNotEmpty
-          ? Money.format(int.parse(raw)).replaceFirst('Rs ', '')
+          ? Money.formatPlain(int.parse(raw))
           : raw;
       _extracted[key] = shown;
       _fieldCtrls[key] = TextEditingController(text: shown)
@@ -352,7 +352,7 @@ class _DraftFormState extends ConsumerState<_DraftForm> {
                 : TextInputType.text,
             decoration: InputDecoration(
               labelText: Fields.labels[e.key],
-              prefixText: e.key == Fields.amount ? l.cpRsPrefix : null,
+              prefixText: e.key == Fields.amount ? Money.prefix : null,
               suffixIcon: Fields.isDate(e.key) ? const Icon(Icons.event) : null,
               border: const OutlineInputBorder(),
             ),

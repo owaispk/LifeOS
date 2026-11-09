@@ -370,7 +370,7 @@ class _PayStepState extends ConsumerState<_PayStep> {
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 labelText: l.amount,
-                prefixText: l.mnRsPrefix,
+                prefixText: Money.prefix,
               ),
               onChanged: (_) => setState(() {}),
             ),

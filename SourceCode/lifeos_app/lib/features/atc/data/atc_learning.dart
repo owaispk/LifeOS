@@ -30,8 +30,8 @@ class FeeChange {
   bool get isIncrease => newMinor > oldMinor;
 
   String get message {
-    final from = Money.format(oldMinor).replaceFirst('Rs ', '');
-    final to = Money.format(newMinor).replaceFirst('Rs ', '');
+    final from = Money.formatPlain(oldMinor);
+    final to = Money.formatPlain(newMinor);
     return isIncrease
         ? l10nNow.atcFeeIncreasedMsg(from, to)
         : l10nNow.atcFeeDecreasedMsg(from, to);

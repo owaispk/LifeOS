@@ -264,9 +264,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get atcReminderOn => '⚡ Auto-reminder is on';
 
   @override
-  String get atcRsPrefix => 'Rs ';
-
-  @override
   String get atcRuleGone => 'This rule is gone';
 
   @override
@@ -458,9 +455,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cpRetakeTitle => 'Retake?';
-
-  @override
-  String get cpRsPrefix => 'Rs ';
 
   @override
   String get cpSaveAs => 'Save as';
@@ -1132,9 +1126,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get mnRsPrefix => 'Rs ';
-
-  @override
   String mnSalaryShare(String percent) {
     return '$percent% of income goes to fixed payments';
   }
@@ -1284,7 +1275,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileAboutYou => 'About you';
 
   @override
+  String get profileAuto => 'Auto';
+
+  @override
+  String profileAutoValue(String value) {
+    return 'Auto ($value)';
+  }
+
+  @override
+  String get profileCurrency => 'Currency symbol';
+
+  @override
+  String get profileCurrencyOther => 'Another symbol';
+
+  @override
+  String get profileDateOrder => 'Dates';
+
+  @override
   String get profileNameLabel => 'What should we call you?';
+
+  @override
+  String get profileRegion => 'Region & formats';
+
+  @override
+  String get profileWeekStart => 'Week starts on';
 
   @override
   String get mrTrashSub => 'Deleted documents, kept for 30 days';

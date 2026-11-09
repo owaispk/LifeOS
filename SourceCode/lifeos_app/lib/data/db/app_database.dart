@@ -45,7 +45,7 @@ class AppDatabase extends _$AppDatabase {
   );
 
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 8;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -90,6 +90,18 @@ class AppDatabase extends _$AppDatabase {
       if (from < 7) {
         await m.addColumn(userSettings, userSettings.greetStyle);
         await m.addColumn(userSettings, userSettings.greetCustom);
+      }
+      // v8 (PBI-035): region formats. New installs follow the phone's
+      // region; an upgrade keeps exactly what the user has been seeing
+      // (Rs, Monday weeks, "9 Nov") instead of switching under them.
+      if (from < 8) {
+        await m.addColumn(userSettings, userSettings.currencySymbol);
+        await m.addColumn(userSettings, userSettings.weekStart);
+        await m.addColumn(userSettings, userSettings.dateOrder);
+        await customStatement(
+          "UPDATE user_settings SET currency_symbol = 'Rs', week_start = 1, "
+          "date_order = 'dm'",
+        );
       }
     },
     beforeOpen: (details) async {

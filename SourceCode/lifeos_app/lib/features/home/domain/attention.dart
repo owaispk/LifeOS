@@ -1,5 +1,6 @@
 // Home dashboard rules (PBI-021) — pure, no database; words via l10nNow.
 import '../../../core/l10n.dart';
+import '../../../core/region.dart';
 import '../../../data/db/app_database.dart';
 import '../../money/domain/money_rules.dart' show parseIsoDate;
 
@@ -100,24 +101,25 @@ List<AttentionItem> attentionItems({
   return items;
 }
 
-/// Monday–Sunday of [now]'s week.
-({DateTime from, DateTime to}) weekOf(DateTime now) {
+/// First to last day of [now]'s week — the week starts on the user's day
+/// (Saturday, Sunday or Monday; PBI-035).
+({DateTime from, DateTime to}) weekOf(DateTime now, {int? weekStart}) {
+  final start = weekStart ?? AppRegion.current.weekStart;
   final today = _day(now);
-  final monday = DateTime(
+  final first = DateTime(
     today.year,
     today.month,
-    today.day - (today.weekday - 1),
+    today.day - (today.weekday - start) % 7,
   );
   return (
-    from: monday,
-    to: DateTime(monday.year, monday.month, monday.day + 6),
+    from: first,
+    to: DateTime(first.year, first.month, first.day + 6),
   );
 }
 
-/// Sum of unpaid payments due Monday–Sunday of this week (AC3). Unknown
-/// amounts are left out.
-int weekPaymentsMinor(List<Payment> payments, DateTime now) {
-  final w = weekOf(now);
+/// Sum of unpaid payments due this week (AC3). Unknown amounts are left out.
+int weekPaymentsMinor(List<Payment> payments, DateTime now, {int? weekStart}) {
+  final w = weekOf(now, weekStart: weekStart);
   var sum = 0;
   for (final p in payments) {
     if (p.deletedAt != null || p.status == 'paid' || p.status == 'skipped') {

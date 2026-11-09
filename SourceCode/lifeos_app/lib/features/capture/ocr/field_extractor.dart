@@ -629,7 +629,7 @@ String autoTitle(String type, Map<String, String> fields, DateTime now) {
 
   switch (type) {
     case 'other':
-      return 'Unclassified · ${now.day} ${shortMonth(now)} ${now.year}';
+      return 'Unclassified · ${dayMonth(now)} ${now.year}';
     case 'bill':
       final issuer = fields[Fields.issuer];
       final month = fields[Fields.periodMonth] ?? fields[Fields.dueDate];
@@ -674,7 +674,7 @@ List<IssuerHint> learnHints(
       final minor = int.tryParse(c.value);
       if (minor != null) {
         needles
-          ..add(Money.format(minor).replaceFirst('Rs ', ''))
+          ..add(Money.formatPlain(minor))
           ..add((minor ~/ 100).toString());
       }
     }

@@ -1,4 +1,5 @@
 // Overload Shield (PBI-011) — pure capacity maths, no Flutter.
+import '../../../core/region.dart';
 import '../../../data/db/app_database.dart';
 import 'task_rules.dart';
 
@@ -52,16 +53,19 @@ List<DayLoad> loadsFrom(
   ];
 }
 
-/// The Monday-to-Sunday week containing [day].
+/// The week containing [day], starting on the user's first day of the week
+/// (PBI-035).
 List<DayLoad> weekOf(
   List<Task> tasks,
   DateTime day,
   int capacityMin, {
   String? excludeTaskId,
+  int? weekStart,
 }) {
   final d = startOfDay(day);
-  final monday = DateTime(d.year, d.month, d.day - (d.weekday - 1));
-  return loadsFrom(tasks, monday, 7, capacityMin, excludeTaskId: excludeTaskId);
+  final start = weekStart ?? AppRegion.current.weekStart;
+  final first = DateTime(d.year, d.month, d.day - (d.weekday - start) % 7);
+  return loadsFrom(tasks, first, 7, capacityMin, excludeTaskId: excludeTaskId);
 }
 
 /// Nearest day after [day] (never before today) whose current load is under
@@ -107,7 +111,7 @@ class OverloadCheck {
   final int capacityMin;
   final DateTime? suggested;
 
-  /// The day's Monday–Sunday week, including the new task's minutes.
+  /// The day's week (from the user's first day), including the new task.
   final List<DayLoad> week;
 }
 
