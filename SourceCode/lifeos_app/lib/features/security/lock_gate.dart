@@ -7,6 +7,7 @@ import '../../core/l10n.dart';
 import '../../core/now_provider.dart';
 import '../../core/theme/tokens.dart';
 import '../settings/settings_providers.dart';
+import '../../core/log/app_log.dart';
 
 /// Biometric / device-PIN check (PBI-024). Faked in tests.
 abstract interface class Authenticator {
@@ -162,6 +163,7 @@ class _LockGateState extends ConsumerState<LockGate>
       final ok = await ref
           .read(authenticatorProvider)
           .authenticate(context.l10n.unlockReason);
+      AppLog.i('lock', ok ? 'app unlocked' : 'app unlock cancelled');
       if (ok && mounted) ref.read(lockProvider.notifier).unlockApp();
     } finally {
       _asking = false;

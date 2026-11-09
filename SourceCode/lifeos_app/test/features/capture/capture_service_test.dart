@@ -113,6 +113,26 @@ void main() {
     expect(files.map((f) => f.phash).toSet(), hasLength(3));
   });
 
+  test('a JPEG with an EXIF rotation is saved upright, tag removed', () async {
+    // Sensor pixels are landscape (40x20); EXIF 6 says "rotate 90° CW",
+    // so the real page is portrait (20x40).
+    final sideways = img.Image(width: 40, height: 20)
+      ..exif.imageIfd.orientation = 6;
+    final path = await File(p.join(tmp.path, 'rot.jpg'))
+        .writeAsBytes(img.encodeJpg(sideways))
+        .then((f) => f.path);
+    final doc = await service.save(
+      CaptureDraft.scan([path]),
+      const FilingDetails(title: 'Rotated', format: OutputFormat.jpeg),
+    );
+    final f = (await filesOf(doc.id)).single;
+    final bytes = await File(f.localPath!).readAsBytes();
+    final ifd = img.decodeJpgExif(bytes)?.imageIfd;
+    expect(ifd?.hasOrientation ?? false, isFalse);
+    final stored = img.decodeJpg(bytes)!;
+    expect((stored.width, stored.height), (20, 40));
+  });
+
   test('an imported PDF is stored as-is', () async {
     final pdf = await buildPdf([jpeg(fakeDocument())]);
     final src = await File(p.join(tmp.path, 'in.pdf')).writeAsBytes(pdf);

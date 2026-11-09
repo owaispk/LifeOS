@@ -584,6 +584,63 @@ class AppLocalizationsUr extends AppLocalizations {
   String get deleteForever => 'ہمیشہ کے لیے حذف';
 
   @override
+  String get dgClear => 'لاگز صاف کریں';
+
+  @override
+  String get dgCleared => 'لاگز صاف ہو گئے';
+
+  @override
+  String dgCount(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n اندراجات',
+      one: '1 اندراج',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dgEmpty => 'ابھی کچھ درج نہیں ہوا';
+
+  @override
+  String get dgEntry => 'تشخیص اور لاگز';
+
+  @override
+  String get dgEntrySub => 'ٹیسٹنگ کے لیے: ایپ کا لاگ دیکھیں اور شیئر کریں';
+
+  @override
+  String dgErrorsCount(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n خرابیاں',
+      one: '1 خرابی',
+      zero: 'کوئی خرابی نہیں',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dgErrorsOnly => 'صرف خرابیاں';
+
+  @override
+  String get dgPrivacy =>
+      'لاگ اسی فون پر رہتا ہے اور اس میں ذاتی معلومات نہیں۔ صرف شیئر دبانے پر بھیجا جاتا ہے۔';
+
+  @override
+  String get dgShare => 'لاگز شیئر کریں';
+
+  @override
+  String get dgTestError => 'ٹیسٹ خرابی درج کریں';
+
+  @override
+  String get dgTestErrorText => 'تشخیص سے ٹیسٹ خرابی درج کی گئی';
+
+  @override
+  String get dgTitle => 'تشخیص';
+
+  @override
   String digestBills(int n) {
     String _temp0 = intl.Intl.pluralLogic(
       n,

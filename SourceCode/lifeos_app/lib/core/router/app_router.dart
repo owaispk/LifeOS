@@ -2,6 +2,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../log/app_log.dart';
+
 import '../../features/atc/atc_rules_screen.dart';
 import '../../features/atc/rule_detail_screen.dart';
 import '../../features/capture/capture_entry.dart';
@@ -12,6 +14,7 @@ import '../../features/money/money_screen.dart';
 import '../../features/more/more_screen.dart';
 import '../../features/onboarding/onboarding_screen.dart';
 import '../../features/score/score_screen.dart';
+import '../../features/settings/diagnostics_screen.dart';
 import '../../features/settings/settings_screen.dart';
 import '../../features/tasks/tasks_screen.dart';
 import '../../features/tasks/ui/task_detail_screen.dart';
@@ -139,6 +142,12 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'settings',
                 builder: (context, state) => const SettingsScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'diagnostics',
+                    builder: (context, state) => const DiagnosticsScreen(),
+                  ),
+                ],
               ),
               GoRoute(
                 path: 'atc',
@@ -157,6 +166,17 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
     ],
   );
+  // The current screen goes with every log line (PBI-030).
+  void track() {
+    final route = router.state.matchedLocation;
+    if (route != AppLog.currentRoute) {
+      AppLog.currentRoute = route;
+      AppLog.i('nav', route);
+    }
+  }
+
+  router.routerDelegate.addListener(track);
+  ref.onDispose(() => router.routerDelegate.removeListener(track));
   ref.onDispose(router.dispose);
   return router;
 });

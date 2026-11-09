@@ -584,6 +584,63 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteForever => 'Delete forever';
 
   @override
+  String get dgClear => 'Clear logs';
+
+  @override
+  String get dgCleared => 'Logs cleared';
+
+  @override
+  String dgCount(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n entries',
+      one: '1 entry',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dgEmpty => 'Nothing logged yet';
+
+  @override
+  String get dgEntry => 'Diagnostics & logs';
+
+  @override
+  String get dgEntrySub => 'For testing: see and share the app\'s log';
+
+  @override
+  String dgErrorsCount(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n errors',
+      one: '1 error',
+      zero: 'no errors',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get dgErrorsOnly => 'Errors only';
+
+  @override
+  String get dgPrivacy =>
+      'The log stays on this phone and has no personal data. It is only sent if you tap Share.';
+
+  @override
+  String get dgShare => 'Share logs';
+
+  @override
+  String get dgTestError => 'Record a test error';
+
+  @override
+  String get dgTestErrorText => 'Test error recorded from Diagnostics';
+
+  @override
+  String get dgTitle => 'Diagnostics';
+
+  @override
   String digestBills(int n) {
     String _temp0 = intl.Intl.pluralLogic(
       n,

@@ -6,6 +6,7 @@ import '../../../data/repositories/repositories.dart';
 import '../data/capture_service.dart';
 import 'doc_classifier.dart';
 import 'field_extractor.dart';
+import '../../../core/log/app_log.dart';
 
 /// Reads text from page images, on-device (PBI-004).
 abstract interface class TextReader {
@@ -88,6 +89,12 @@ Future<DocumentAnalysis> analyzeDraft(
   if (text.trim().isEmpty) return DocumentAnalysis.empty;
 
   final classification = classify(text);
+  AppLog.i(
+    'ocr',
+    'type ${classification.type} '
+        '${(classification.confidence * 100).round()}% · '
+        '${draft.pagePaths.length} page(s)',
+  );
   var fields = extractFields(classification.type, text);
   var hints = const <IssuerHint>[];
 

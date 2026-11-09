@@ -10,6 +10,7 @@ import '../score/domain/life_score.dart';
 import '../../data/repositories/repositories.dart';
 import 'domain/reminder_planner.dart';
 import 'platform/notification_gateway.dart';
+import '../../core/log/app_log.dart';
 
 /// Keeps the phone's scheduled notifications equal to the plan
 /// (PBI-012 "rebuild-all"): on start, whenever tasks / reminders / payments
@@ -56,7 +57,13 @@ class ReminderSync {
       prefs: prefs,
       digest: await _digest(settings, tasks, payments, prefs.nextDigest(now)),
     );
-    await _gateway.replaceAll(planned);
+    try {
+      await _gateway.replaceAll(planned);
+    } on Object catch (e, st) {
+      AppLog.e('reminders', 'scheduling failed: ${e.runtimeType}', st);
+      rethrow;
+    }
+    AppLog.i('reminders', 'scheduled ${planned.length}');
     return planned;
   }
 

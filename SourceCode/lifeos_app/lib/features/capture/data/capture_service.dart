@@ -13,6 +13,7 @@ import '../../../shared/format.dart';
 import '../domain/image_checks.dart';
 import '../domain/pdf_builder.dart';
 import '../../security/crypto/vault_crypto.dart';
+import '../../../core/log/app_log.dart';
 
 enum OutputFormat { pdf, jpeg }
 
@@ -295,9 +296,15 @@ class CaptureService {
             DocumentFilesCompanion(localPath: Value(path)),
           );
         }
+        AppLog.i(
+          'capture',
+          'saved ${details.docType} · ${files.length} file(s) · '
+              '${draft.source}${crypto == null ? '' : ' · encrypted'}',
+        );
         return doc;
       });
-    } on Object {
+    } on Object catch (e, st) {
+      AppLog.e('capture', 'save failed: ${e.runtimeType}', st);
       // Never leave orphan files behind a rolled-back document.
       if (dir != null && await dir!.exists()) {
         await dir!.delete(recursive: true);
@@ -320,11 +327,25 @@ class _PreparedFile {
 Future<(Uint8List, String?)> _prepareOffThread(Uint8List raw) =>
     Isolate.run(() => _toJpeg(raw));
 
-/// Normalises a page to JPEG and hashes it (runs in a background isolate).
+/// Normalises a page to an upright JPEG and hashes it (runs in a background
+/// isolate).
+///
+/// Camera/scanner JPEGs often store pixels sideways plus an EXIF
+/// orientation tag. `decodeImage` already bakes that rotation into the
+/// pixels, so a tagged JPEG is re-encoded from the decoded image; keeping
+/// the raw bytes would leave the rotation to each viewer / the PDF writer,
+/// which renders the page rotated.
 (Uint8List, String?) _toJpeg(Uint8List raw) {
   final image = img.decodeImage(raw);
   if (image == null) return (raw, null);
   final isJpeg = raw.length > 2 && raw[0] == 0xFF && raw[1] == 0xD8;
-  final bytes = isJpeg ? raw : img.encodeJpg(image, quality: 90);
+  final keepRaw = isJpeg && !_hasRotation(raw);
+  final bytes = keepRaw ? raw : img.encodeJpg(image, quality: 90);
   return (bytes, differenceHash(image));
+}
+
+/// True if a JPEG carries an EXIF orientation other than "upright".
+bool _hasRotation(Uint8List jpeg) {
+  final ifd = img.decodeJpgExif(jpeg)?.imageIfd;
+  return ifd != null && ifd.hasOrientation && ifd.orientation != 1;
 }

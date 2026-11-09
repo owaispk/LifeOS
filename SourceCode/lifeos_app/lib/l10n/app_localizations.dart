@@ -1094,6 +1094,84 @@ abstract class AppLocalizations {
   /// **'Delete forever'**
   String get deleteForever;
 
+  /// No description provided for @dgClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear logs'**
+  String get dgClear;
+
+  /// No description provided for @dgCleared.
+  ///
+  /// In en, this message translates to:
+  /// **'Logs cleared'**
+  String get dgCleared;
+
+  /// No description provided for @dgCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{n, plural, =1{1 entry} other{{n} entries}}'**
+  String dgCount(int n);
+
+  /// No description provided for @dgEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing logged yet'**
+  String get dgEmpty;
+
+  /// No description provided for @dgEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Diagnostics & logs'**
+  String get dgEntry;
+
+  /// No description provided for @dgEntrySub.
+  ///
+  /// In en, this message translates to:
+  /// **'For testing: see and share the app\'s log'**
+  String get dgEntrySub;
+
+  /// No description provided for @dgErrorsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{n, plural, =0{no errors} =1{1 error} other{{n} errors}}'**
+  String dgErrorsCount(int n);
+
+  /// No description provided for @dgErrorsOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Errors only'**
+  String get dgErrorsOnly;
+
+  /// No description provided for @dgPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'The log stays on this phone and has no personal data. It is only sent if you tap Share.'**
+  String get dgPrivacy;
+
+  /// No description provided for @dgShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Share logs'**
+  String get dgShare;
+
+  /// No description provided for @dgTestError.
+  ///
+  /// In en, this message translates to:
+  /// **'Record a test error'**
+  String get dgTestError;
+
+  /// No description provided for @dgTestErrorText.
+  ///
+  /// In en, this message translates to:
+  /// **'Test error recorded from Diagnostics'**
+  String get dgTestErrorText;
+
+  /// No description provided for @dgTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Diagnostics'**
+  String get dgTitle;
+
   /// No description provided for @digestBills.
   ///
   /// In en, this message translates to:

@@ -8,6 +8,8 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 import 'app.dart';
+import 'core/log/app_log.dart';
+import 'core/log/diagnostics.dart';
 import 'data/data_providers.dart';
 import 'features/atc/data/atc_service.dart';
 import 'features/vault/data/expiry_guard.dart';
@@ -30,6 +32,18 @@ import 'features/score/score_providers.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Diagnostics log first (PBI-030), so start-up problems are recorded.
+  // It lives in the app's private folder; nothing leaves the phone unless
+  // the user shares it from Settings → Diagnostics.
+  if (!kIsWeb) {
+    final support = await getApplicationSupportDirectory();
+    await AppLog.init(Directory(p.join(support.path, 'logs')));
+  }
+  captureErrors();
+  LogLifecycle();
+  final facts = await deviceFacts();
+  AppLog.i('app', 'start ${facts.values.join(' · ')}');
+
   // The web build is a UI preview only for now: Drift on web needs the
   // sqlite3.wasm/worker assets, which are not part of the MVP.
   final repos = kIsWeb ? null : await openLocalData();
@@ -43,7 +57,8 @@ Future<void> main() async {
   // encrypted in place once. The Master Key lives in the device keystore.
   const keyStore = SecureKeyStore();
   if (repos != null) {
-    await VaultFiles(repos, VaultCrypto(keyStore)).migrate();
+    final encrypted = await VaultFiles(repos, VaultCrypto(keyStore)).migrate();
+    if (encrypted > 0) AppLog.i('vault', 'encrypted $encrypted older files');
     await skipOnboardingForExistingData(repos);
   }
 

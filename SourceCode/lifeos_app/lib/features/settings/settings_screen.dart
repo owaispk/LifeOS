@@ -248,6 +248,13 @@ class SettingsScreen extends ConsumerWidget {
             onTap: () => context.go('/vault/trash'),
           ),
           ListTile(
+            key: const ValueKey('set-diagnostics'),
+            leading: const Icon(Icons.bug_report_outlined),
+            title: Text(l.dgEntry),
+            subtitle: Text(l.dgEntrySub),
+            onTap: () => context.go('/more/settings/diagnostics'),
+          ),
+          ListTile(
             key: const ValueKey('set-delete-all'),
             leading: Icon(
               Icons.warning_amber,

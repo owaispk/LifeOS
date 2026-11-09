@@ -3,6 +3,7 @@ import 'package:drift_flutter/drift_flutter.dart';
 
 import '../../core/ids.dart';
 import 'tables.dart';
+import '../../core/log/app_log.dart';
 
 part 'app_database.g.dart';
 
@@ -50,6 +51,7 @@ class AppDatabase extends _$AppDatabase {
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (m) => m.createAll(),
     onUpgrade: (m, from, to) async {
+      AppLog.i('db', 'upgrade v$from → v$to');
       // v2 (Sprint 2): Overload Shield capacity + duplicate-detection hash.
       if (from < 2) {
         await m.addColumn(userSettings, userSettings.dayCapacityMin);

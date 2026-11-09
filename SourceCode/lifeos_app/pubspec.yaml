@@ -61,6 +61,8 @@ dependencies:
   cryptography: ^2.9.0
   speech_to_text: ^7.5.0
   archive: ^4.6.0
+  package_info_plus: ^10.2.2
+  device_info_plus: ^13.3.0
 
 dev_dependencies:
   flutter_test:

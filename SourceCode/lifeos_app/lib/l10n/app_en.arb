@@ -384,6 +384,33 @@
   "deleteAllSub": "Removes everything from this phone",
   "deleteAllTitle": "Delete everything?",
   "deleteForever": "Delete forever",
+  "dgClear": "Clear logs",
+  "dgCleared": "Logs cleared",
+  "dgCount": "{n, plural, =1{1 entry} other{{n} entries}}",
+  "@dgCount": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "dgEmpty": "Nothing logged yet",
+  "dgEntry": "Diagnostics & logs",
+  "dgEntrySub": "For testing: see and share the app's log",
+  "dgErrorsCount": "{n, plural, =0{no errors} =1{1 error} other{{n} errors}}",
+  "@dgErrorsCount": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "dgErrorsOnly": "Errors only",
+  "dgPrivacy": "The log stays on this phone and has no personal data. It is only sent if you tap Share.",
+  "dgShare": "Share logs",
+  "dgTestError": "Record a test error",
+  "dgTestErrorText": "Test error recorded from Diagnostics",
+  "dgTitle": "Diagnostics",
   "digestBills": "{n, plural, =0{no bills due} =1{1 bill due} other{{n} bills due}}",
   "@digestBills": {
     "placeholders": {

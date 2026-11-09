@@ -6,6 +6,7 @@ import '../../../data/repositories/repositories.dart';
 import '../../capture/data/capture_service.dart';
 import '../../tasks/data/task_service.dart';
 import '../domain/money_rules.dart' show isoDate;
+import '../../../core/log/app_log.dart';
 
 /// The payment has no amount yet; the user must enter one first.
 class MissingAmountException implements Exception {
@@ -151,6 +152,10 @@ class PaymentService {
             ),
           );
         }
+        AppLog.i(
+          'money',
+          'payment paid${receiptId == null ? '' : ' · receipt filed'}',
+        );
         return PaidResult(
           paymentId: p.id,
           expenseId: expense.id,

@@ -9,6 +9,7 @@ import '../../../data/repositories/repositories.dart';
 import '../../../data/seed.dart';
 import '../../security/crypto/vault_crypto.dart';
 import '../../security/crypto/vault_files.dart';
+import '../../../core/log/app_log.dart';
 
 /// Key in `app_meta` set once onboarding is finished or skipped (PBI-022).
 const onboardingDoneKey = 'onboarding_done';
@@ -98,6 +99,7 @@ class DataService {
     }
     final all = utf8.encode(const JsonEncoder.withIndent('  ').convert(json));
     archive.addFile(ArchiveFile('data/export.json', all.length, all));
+    AppLog.i('data', 'export: $count documents');
     return ExportResult(
       Uint8List.fromList(ZipEncoder().encode(archive)),
       count,
@@ -124,6 +126,7 @@ class DataService {
     await _keyStore.clear();
     crypto.forget();
     await seedDefaults(_repos);
+    AppLog.w('data', 'all local data deleted');
   }
 }
 
