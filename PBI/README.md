@@ -5,7 +5,9 @@
 
 **Story points:** Fibonacci (1, 2, 3, 5, 8, 13). 1 pt ≈ half a dev-day of focused work, including tests.
 **Definition of Ready:** user story, description, testable AC, story points, dependencies listed.
-**Definition of Done:** every AC demonstrably met · `flutter analyze` clean · unit/widget tests for the logic pass · works offline · PBI status updated here.
+**Definition of Done:** every AC demonstrably met · `flutter analyze` clean · unit/widget tests for the logic pass · works offline · **neutral by default** · PBI status updated here.
+
+**Neutral by default (since PBI-035):** no religious or culture-specific words, symbols, calendars or assumptions in default UI strings or behaviour, in any language. Cultural content (a "Salam" greeting, a currency symbol, a Saturday week) appears only behind an explicit user choice or the phone's own region setting — never inferred from the app language. Enforced by `test/l10n_neutrality_test.dart` (strings) and the hard-coded-currency scan in `test/core/region_test.dart`.
 
 ## Backlog (MVP build order, per spec §16)
 
@@ -49,7 +51,7 @@
 | 32 | [PBI-032 Device Calendar in Today View (read-only)](PBI-032-device-calendar-today.md) | E2 Mind | 5 | 009, 021 | Ready |
 | 33 | [PBI-033 Home-Screen Widget](PBI-033-home-screen-widget.md) | E6 Engagement | 8 | 009, 013, 020, 021 | Ready |
 | 34 | [PBI-034 Share Text to Task](PBI-034-share-text-to-task.md) | E3 ATC / E2 Mind | 3 | 010, 003 | Ready |
-| 35 | [PBI-035 Profile & Personalization (neutral defaults)](PBI-035-profile-personalization.md) | E5 Platform / E6 Engagement | 5 | 021, 025 | Ready |
+| 35 | [PBI-035 Profile & Personalization (neutral defaults)](PBI-035-profile-personalization.md) | E5 Platform / E6 Engagement | 5 | 021, 025 | Done |
 
 ## Suggested sprint plan (2 devs, 2-week sprints, ~27 SP/sprint → 6 sprints ≈ 3 months)
 

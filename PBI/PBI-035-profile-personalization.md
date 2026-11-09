@@ -7,7 +7,7 @@
 | Story Points | 5 |
 | Spec refs | Features §8 (Soul is opt-in — "respects other faiths, configurable or off"), §10 (dashboard greeting), §13 (onboarding), §14 (settings) |
 | Depends on | PBI-021 (Home dashboard), PBI-025 (Settings, EN/UR) |
-| Status | In progress (steps 1–4 of 5 done: neutral greeting, greeting style, My Profile, region formats) |
+| Status | Done (device check of the Region & formats screen still to be done by hand) |
 
 ## User Story
 As a **user anywhere in the world, of any religion**, I want LifeOS to greet me and format my dates, week and money the way *I* choose — with defaults that assume nothing about my culture or faith.
@@ -96,6 +96,29 @@ Add to the backlog README's DoD: *"No culturally specific words, symbols, calend
 - Not done (noted for later): a weekend-days override in the UI (weekend follows the phone's country only); existing Auto Task titles keep the symbol they were generated with (new occurrences use the new one); a timezone-based country guess for phones set to en-US abroad.
 - `flutter analyze` clean · full suite 516/516 passed, identical on two runs.
 - Remaining: step 5 (README DoD rule + AC evidence → Done).
+
+## Dev Notes (step 5 — neutrality rule and close-out, 2026-11-09)
+- **Found in the final audit:** the Urdu *label* of the greeting setting was "سلام کا انداز" (also in My Profile's subtitle and the custom hint) — the same Islamic default, moved from the greeting into its label. Now "استقبالیہ" (greeting/welcome); the opt-in "السلام علیکم" choice itself is unchanged.
+- **New guard:** `test/l10n_neutrality_test.dart` scans every EN and UR string for faith- or culture-specific words, allowing only the opt-in greeting styles. It would have caught both the original "Salam" default and the Urdu label. Its first run flagged جمعہ — that is simply the Urdu word for Friday (`wd5`, `tkWeekday5`, the voice hint), so it is deliberately not on the list.
+- README Definition of Done gains **"neutral by default"**, pointing at both guard tests.
+- `flutter analyze` clean · full suite 518/518 passed.
+
+## AC Evidence
+
+| AC | Result | Evidence |
+|---|---|---|
+| 1 | ✅ | Fresh install: unit test covers 09:00/14:00/19:00/23:00 and the 5/12/17/21/4:59 boundaries, with and without a name; widget tests see "Good morning ☀️" on Home at the 10:00 test clock (`app_shell_test`, `profile_test`). Urdu default "صبح بخیر ☀️" seen in `profile_test` and the digest test. The neutrality test proves no religious wording in any default EN/UR string. *(The four hours are checked in unit tests, not four widget tests.)* |
+| 2 | ✅ | `profile_test` AC2: Salam → Home "Salam 👋"; Custom "Shalom" → "Shalom 👋"; Auto → "Good morning ☀️". The digest test reads a stored "salam" style back from the database → "Salam 👋". Persistence is the settings row (schema v7); *not* exercised by an app restart in tests. |
+| 3 | ✅ | `profile_test` AC3: the name typed in My Profile updates the one `self` person (still exactly one) and Home's greeting; a blank field never erases the name; the avatar shows on Home's profile button. Me-person stays undeletable (existing Vault test, `updatePerson` pins `self`). |
+| 4 | ✅ *(re-scoped)* | The ACs named "Upcoming's week grouping" and "the forecast month grid", but neither groups by week (Upcoming groups by day; the forecast has no grid). The week start is applied where weeks actually exist: Home's weekly payments, the Overload Shield week, the weekly expiry nudge and quick-add's "next <day>" — `region_test` for Sat/Sun/Mon each; `profile_test` changes Home's total from Rs 14,500 (Mon weeks) to ₹ 9,000 (Sun weeks) live. "weekend" added to quick-add and resolves to Sat–Sun, Fri–Sat and Sun-only weekends (`region_test`). |
+| 5 | ✅ | Symbol change updates amounts live (`profile_test`); `Money` tests for $, ₹, AED, prefix and plain; source scan in `region_test` fails on any hard-coded "Rs" in display code; no "Rs"/"PKR" left in either ARB. Stored values unchanged (minor units, `currency` columns untouched); export unchanged (PBI-025 export test still passes). |
+| 6 | ✅ | `region_test`: en-US → $, Sunday, "Nov 9"; ur-PK → Rs, Monday, "9 Nov"; choices override the phone and invalid ones fall back. Country, not language, decides (en-PK → Rs, ar-SA → SAR, en-AE → AED). Overrides live in the settings row and are applied in `main()` before anything runs — that start-up path is code-reviewed, *not* tested by a restart. |
+| 7 | ✅ | All new strings in EN and UR (and the generator scripts); no network involved; `flutter analyze` clean; 518/518 tests; earlier greeting/digest/settings tests updated, none deleted (the settings greeting test moved to `profile_test`). |
+| 8 | ✅ | README Definition of Done: "neutral by default", enforced by `l10n_neutrality_test.dart` and the currency scan. |
+
+**Still to do by hand on a phone:** look over My Profile → Region & formats in both languages (Urdu RTL with the chips and segmented buttons), and change the symbol with Money open in another tab.
+
+**Follow-ups (not in this PBI):** a weekend-days override; regenerating existing Auto Task titles after a symbol change; guessing the country from the time zone for en-US phones abroad; Hijri or other calendars as an opt-in.
 
 ## Grooming Notes
 - **Greeting:** `greeting(Person? self)` in `lib/features/home/domain/attention.dart` gains a `GreetingStyle` + `DateTime now` input (keep it pure; the widget injects the clock — same pattern the score/digest code uses). ARB keys: retire `hmSalam`/`hmSalamName`, add `hmMorning(Name)`, `hmAfternoon(Name)`, `hmEvening(Name)`, `hmNight(Name)` + no-name variants, `hmCustom` is pass-through.

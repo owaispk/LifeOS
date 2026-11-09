@@ -860,7 +860,7 @@ class AppLocalizationsUr extends AppLocalizations {
   }
 
   @override
-  String get setGreeting => 'سلام کا انداز';
+  String get setGreeting => 'استقبالیہ';
 
   @override
   String get setGreetingAuto => 'خودکار — وقت کے مطابق';
@@ -878,7 +878,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get setGreetingCustom => 'اپنی مرضی…';
 
   @override
-  String get setGreetingCustomHint => 'آپ کا سلام، مثلاً Shalom';
+  String get setGreetingCustomHint => 'آپ کے اپنے الفاظ، مثلاً Shalom';
 
   @override
   String hmSeeAllCount(String n) {
@@ -1264,7 +1264,7 @@ class AppLocalizationsUr extends AppLocalizations {
   String get mrProfile => 'میری پروفائل';
 
   @override
-  String get mrProfileSub => 'آپ کا نام، سلام کا انداز اور زبان';
+  String get mrProfileSub => 'آپ کا نام، استقبالیہ اور زبان';
 
   @override
   String get mrTitle => 'مزید';

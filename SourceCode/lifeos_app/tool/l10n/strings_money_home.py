@@ -126,13 +126,13 @@ S = {
     "hmGreetHelloName": ("Hello, {name} 👋", "ہیلو، {name} 👋"),
     "hmGreetCustom": ("{greeting} 👋", "{greeting} 👋"),
     "hmGreetCustomName": ("{greeting}, {name} 👋", "{greeting}، {name} 👋"),
-    "setGreeting": ("Greeting", "سلام کا انداز"),
+    "setGreeting": ("Greeting", "استقبالیہ"),
     "setGreetingAuto": ("Automatic — time of day", "خودکار — وقت کے مطابق"),
     "setGreetingSalam": ("Salam", "السلام علیکم"),
     "setGreetingNamaste": ("Namaste", "نمستے"),
     "setGreetingHello": ("Hello", "ہیلو"),
     "setGreetingCustom": ("Custom…", "اپنی مرضی…"),
-    "setGreetingCustomHint": ("Your greeting, e.g. Shalom", "آپ کا سلام، مثلاً Shalom"),
+    "setGreetingCustomHint": ("Your greeting, e.g. Shalom", "آپ کے اپنے الفاظ، مثلاً Shalom"),
 
     # ── Life Score (score_screen.dart, ui/*, domain/life_score.dart) ──
     # PBI-020: no guilt words in either language.
@@ -176,7 +176,7 @@ S = {
     "mrTitle": ("More", "مزید"),
     # My Profile (PBI-035)
     "mrProfile": ("My profile", "میری پروفائل"),
-    "mrProfileSub": ("Your name, greeting and language", "آپ کا نام، سلام کا انداز اور زبان"),
+    "mrProfileSub": ("Your name, greeting and language", "آپ کا نام، استقبالیہ اور زبان"),
     "profileAboutYou": ("About you", "آپ کے بارے میں"),
     "profileNameLabel": ("What should we call you?", "ہم آپ کو کس نام سے پکاریں؟"),
     # Region & formats (PBI-035) — the symbol itself is never a string.
