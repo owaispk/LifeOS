@@ -673,9 +673,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get digestTime => 'Morning summary';
 
   @override
-  String get digestTitle => 'Good morning';
-
-  @override
   String get domainHealth => 'Health';
 
   @override
@@ -837,6 +834,61 @@ class AppLocalizationsEn extends AppLocalizations {
   String hmGreetNightName(String name) {
     return 'Working late, $name? 🌙';
   }
+
+  @override
+  String get hmGreetSalam => 'Salam 👋';
+
+  @override
+  String hmGreetSalamName(String name) {
+    return 'Salam, $name 👋';
+  }
+
+  @override
+  String get hmGreetNamaste => 'Namaste 🙏';
+
+  @override
+  String hmGreetNamasteName(String name) {
+    return 'Namaste, $name 🙏';
+  }
+
+  @override
+  String get hmGreetHello => 'Hello 👋';
+
+  @override
+  String hmGreetHelloName(String name) {
+    return 'Hello, $name 👋';
+  }
+
+  @override
+  String hmGreetCustom(String greeting) {
+    return '$greeting 👋';
+  }
+
+  @override
+  String hmGreetCustomName(String greeting, String name) {
+    return '$greeting, $name 👋';
+  }
+
+  @override
+  String get setGreeting => 'Greeting';
+
+  @override
+  String get setGreetingAuto => 'Automatic — time of day';
+
+  @override
+  String get setGreetingSalam => 'Salam';
+
+  @override
+  String get setGreetingNamaste => 'Namaste';
+
+  @override
+  String get setGreetingHello => 'Hello';
+
+  @override
+  String get setGreetingCustom => 'Custom…';
+
+  @override
+  String get setGreetingCustomHint => 'Your greeting, e.g. Shalom';
 
   @override
   String hmSeeAllCount(String n) {

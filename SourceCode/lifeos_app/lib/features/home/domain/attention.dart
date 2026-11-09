@@ -130,13 +130,36 @@ int weekPaymentsMinor(List<Payment> payments, DateTime now) {
   return sum;
 }
 
-/// Time-of-day greeting — "Good morning, Owais ☀️", just "Good morning ☀️"
-/// while the profile is still "Me". Neutral by design (PBI-035): default
-/// strings carry no religious or cultural wording in any language.
-String greeting(Person? self, DateTime now) {
-  final l = l10nNow;
-  final name = self?.name.trim();
+/// Greeting style (PBI-035). [auto] is time-of-day and neutral — religion
+/// and culture are never inferred; the others are the user's own choice.
+enum GreetStyle { auto, salam, namaste, hello, custom }
+
+/// The greeting in an explicit language — used by the Home app bar through
+/// [greeting] and by the morning digest, which renders ahead of time in the
+/// app's set language. The name is left out while the profile is still "Me".
+String greetingText(
+  AppLocalizations l,
+  String? rawName,
+  DateTime now, {
+  GreetStyle style = GreetStyle.auto,
+  String custom = '',
+}) {
+  final name = rawName?.trim();
   final named = name != null && name.isNotEmpty && name != 'Me';
+  switch (style) {
+    case GreetStyle.salam:
+      return named ? l.hmGreetSalamName(name) : l.hmGreetSalam;
+    case GreetStyle.namaste:
+      return named ? l.hmGreetNamasteName(name) : l.hmGreetNamaste;
+    case GreetStyle.hello:
+      return named ? l.hmGreetHelloName(name) : l.hmGreetHello;
+    case GreetStyle.custom:
+      final word = custom.trim();
+      if (word.isEmpty) break; // nothing typed yet → auto
+      return named ? l.hmGreetCustomName(word, name) : l.hmGreetCustom(word);
+    case GreetStyle.auto:
+      break;
+  }
   return switch (now.hour) {
     >= 5 && < 12 => named ? l.hmGreetMorningName(name) : l.hmGreetMorning,
     >= 12 && < 17 => named ? l.hmGreetAfternoonName(name) : l.hmGreetAfternoon,
@@ -144,3 +167,12 @@ String greeting(Person? self, DateTime now) {
     _ => named ? l.hmGreetNightName(name) : l.hmGreetNight,
   };
 }
+
+/// Time-of-day greeting — "Good morning, Owais ☀️", just "Good morning ☀️"
+/// while the profile is still "Me" — or the user's chosen style (PBI-035).
+String greeting(
+  Person? self,
+  DateTime now, {
+  GreetStyle style = GreetStyle.auto,
+  String custom = '',
+}) => greetingText(l10nNow, self?.name, now, style: style, custom: custom);

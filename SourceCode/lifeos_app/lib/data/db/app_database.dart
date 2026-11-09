@@ -45,7 +45,7 @@ class AppDatabase extends _$AppDatabase {
   );
 
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -85,6 +85,11 @@ class AppDatabase extends _$AppDatabase {
       if (from < 6) {
         await m.addColumn(userSettings, userSettings.language);
         await m.addColumn(userSettings, userSettings.screenshotBlock);
+      }
+      // v7 (PBI-035): greeting style — neutral by default, cultural by choice.
+      if (from < 7) {
+        await m.addColumn(userSettings, userSettings.greetStyle);
+        await m.addColumn(userSettings, userSettings.greetCustom);
       }
     },
     beforeOpen: (details) async {

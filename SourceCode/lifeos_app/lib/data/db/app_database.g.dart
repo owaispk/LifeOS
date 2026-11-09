@@ -3188,6 +3188,30 @@ class $UserSettingsTable extends UserSettings
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _greetStyleMeta = const VerificationMeta(
+    'greetStyle',
+  );
+  @override
+  late final GeneratedColumn<String> greetStyle = GeneratedColumn<String>(
+    'greet_style',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('auto'),
+  );
+  static const VerificationMeta _greetCustomMeta = const VerificationMeta(
+    'greetCustom',
+  );
+  @override
+  late final GeneratedColumn<String> greetCustom = GeneratedColumn<String>(
+    'greet_custom',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -3211,6 +3235,8 @@ class $UserSettingsTable extends UserSettings
     salaryMinor,
     language,
     screenshotBlock,
+    greetStyle,
+    greetCustom,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3365,6 +3391,21 @@ class $UserSettingsTable extends UserSettings
         ),
       );
     }
+    if (data.containsKey('greet_style')) {
+      context.handle(
+        _greetStyleMeta,
+        greetStyle.isAcceptableOrUnknown(data['greet_style']!, _greetStyleMeta),
+      );
+    }
+    if (data.containsKey('greet_custom')) {
+      context.handle(
+        _greetCustomMeta,
+        greetCustom.isAcceptableOrUnknown(
+          data['greet_custom']!,
+          _greetCustomMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -3462,6 +3503,14 @@ class $UserSettingsTable extends UserSettings
         DriftSqlType.bool,
         data['${effectivePrefix}screenshot_block'],
       )!,
+      greetStyle: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}greet_style'],
+      )!,
+      greetCustom: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}greet_custom'],
+      )!,
     );
   }
 
@@ -3501,6 +3550,13 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
 
   /// Block screenshots inside the Vault (schema v6, PBI-024).
   final bool screenshotBlock;
+
+  /// Greeting style (schema v7, PBI-035): auto|salam|namaste|hello|custom.
+  /// Neutral time-of-day by default; anything cultural is the user's choice.
+  final String greetStyle;
+
+  /// The user's own greeting word when [greetStyle] is 'custom'.
+  final String greetCustom;
   const UserSettingsRow({
     required this.id,
     required this.userId,
@@ -3523,6 +3579,8 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     this.salaryMinor,
     required this.language,
     required this.screenshotBlock,
+    required this.greetStyle,
+    required this.greetCustom,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -3554,6 +3612,8 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     }
     map['language'] = Variable<String>(language);
     map['screenshot_block'] = Variable<bool>(screenshotBlock);
+    map['greet_style'] = Variable<String>(greetStyle);
+    map['greet_custom'] = Variable<String>(greetCustom);
     return map;
   }
 
@@ -3586,6 +3646,8 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
           : Value(salaryMinor),
       language: Value(language),
       screenshotBlock: Value(screenshotBlock),
+      greetStyle: Value(greetStyle),
+      greetCustom: Value(greetCustom),
     );
   }
 
@@ -3616,6 +3678,8 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
       salaryMinor: serializer.fromJson<int?>(json['salaryMinor']),
       language: serializer.fromJson<String>(json['language']),
       screenshotBlock: serializer.fromJson<bool>(json['screenshotBlock']),
+      greetStyle: serializer.fromJson<String>(json['greetStyle']),
+      greetCustom: serializer.fromJson<String>(json['greetCustom']),
     );
   }
   @override
@@ -3643,6 +3707,8 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
       'salaryMinor': serializer.toJson<int?>(salaryMinor),
       'language': serializer.toJson<String>(language),
       'screenshotBlock': serializer.toJson<bool>(screenshotBlock),
+      'greetStyle': serializer.toJson<String>(greetStyle),
+      'greetCustom': serializer.toJson<String>(greetCustom),
     };
   }
 
@@ -3668,6 +3734,8 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     Value<int?> salaryMinor = const Value.absent(),
     String? language,
     bool? screenshotBlock,
+    String? greetStyle,
+    String? greetCustom,
   }) => UserSettingsRow(
     id: id ?? this.id,
     userId: userId ?? this.userId,
@@ -3690,6 +3758,8 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     salaryMinor: salaryMinor.present ? salaryMinor.value : this.salaryMinor,
     language: language ?? this.language,
     screenshotBlock: screenshotBlock ?? this.screenshotBlock,
+    greetStyle: greetStyle ?? this.greetStyle,
+    greetCustom: greetCustom ?? this.greetCustom,
   );
   UserSettingsRow copyWithCompanion(UserSettingsCompanion data) {
     return UserSettingsRow(
@@ -3732,6 +3802,12 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
       screenshotBlock: data.screenshotBlock.present
           ? data.screenshotBlock.value
           : this.screenshotBlock,
+      greetStyle: data.greetStyle.present
+          ? data.greetStyle.value
+          : this.greetStyle,
+      greetCustom: data.greetCustom.present
+          ? data.greetCustom.value
+          : this.greetCustom,
     );
   }
 
@@ -3758,7 +3834,9 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
           ..write('salaryDay: $salaryDay, ')
           ..write('salaryMinor: $salaryMinor, ')
           ..write('language: $language, ')
-          ..write('screenshotBlock: $screenshotBlock')
+          ..write('screenshotBlock: $screenshotBlock, ')
+          ..write('greetStyle: $greetStyle, ')
+          ..write('greetCustom: $greetCustom')
           ..write(')'))
         .toString();
   }
@@ -3786,6 +3864,8 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     salaryMinor,
     language,
     screenshotBlock,
+    greetStyle,
+    greetCustom,
   ]);
   @override
   bool operator ==(Object other) =>
@@ -3811,7 +3891,9 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
           other.salaryDay == this.salaryDay &&
           other.salaryMinor == this.salaryMinor &&
           other.language == this.language &&
-          other.screenshotBlock == this.screenshotBlock);
+          other.screenshotBlock == this.screenshotBlock &&
+          other.greetStyle == this.greetStyle &&
+          other.greetCustom == this.greetCustom);
 }
 
 class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
@@ -3836,6 +3918,8 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
   final Value<int?> salaryMinor;
   final Value<String> language;
   final Value<bool> screenshotBlock;
+  final Value<String> greetStyle;
+  final Value<String> greetCustom;
   final Value<int> rowid;
   const UserSettingsCompanion({
     this.id = const Value.absent(),
@@ -3859,6 +3943,8 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     this.salaryMinor = const Value.absent(),
     this.language = const Value.absent(),
     this.screenshotBlock = const Value.absent(),
+    this.greetStyle = const Value.absent(),
+    this.greetCustom = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   UserSettingsCompanion.insert({
@@ -3883,6 +3969,8 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     this.salaryMinor = const Value.absent(),
     this.language = const Value.absent(),
     this.screenshotBlock = const Value.absent(),
+    this.greetStyle = const Value.absent(),
+    this.greetCustom = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   static Insertable<UserSettingsRow> custom({
@@ -3907,6 +3995,8 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     Expression<int>? salaryMinor,
     Expression<String>? language,
     Expression<bool>? screenshotBlock,
+    Expression<String>? greetStyle,
+    Expression<String>? greetCustom,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -3931,6 +4021,8 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
       if (salaryMinor != null) 'salary_minor': salaryMinor,
       if (language != null) 'language': language,
       if (screenshotBlock != null) 'screenshot_block': screenshotBlock,
+      if (greetStyle != null) 'greet_style': greetStyle,
+      if (greetCustom != null) 'greet_custom': greetCustom,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -3957,6 +4049,8 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     Value<int?>? salaryMinor,
     Value<String>? language,
     Value<bool>? screenshotBlock,
+    Value<String>? greetStyle,
+    Value<String>? greetCustom,
     Value<int>? rowid,
   }) {
     return UserSettingsCompanion(
@@ -3981,6 +4075,8 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
       salaryMinor: salaryMinor ?? this.salaryMinor,
       language: language ?? this.language,
       screenshotBlock: screenshotBlock ?? this.screenshotBlock,
+      greetStyle: greetStyle ?? this.greetStyle,
+      greetCustom: greetCustom ?? this.greetCustom,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -4051,6 +4147,12 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     if (screenshotBlock.present) {
       map['screenshot_block'] = Variable<bool>(screenshotBlock.value);
     }
+    if (greetStyle.present) {
+      map['greet_style'] = Variable<String>(greetStyle.value);
+    }
+    if (greetCustom.present) {
+      map['greet_custom'] = Variable<String>(greetCustom.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -4081,6 +4183,8 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
           ..write('salaryMinor: $salaryMinor, ')
           ..write('language: $language, ')
           ..write('screenshotBlock: $screenshotBlock, ')
+          ..write('greetStyle: $greetStyle, ')
+          ..write('greetCustom: $greetCustom, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -15620,6 +15724,8 @@ typedef $$UserSettingsTableCreateCompanionBuilder =
       Value<int?> salaryMinor,
       Value<String> language,
       Value<bool> screenshotBlock,
+      Value<String> greetStyle,
+      Value<String> greetCustom,
       Value<int> rowid,
     });
 typedef $$UserSettingsTableUpdateCompanionBuilder =
@@ -15645,6 +15751,8 @@ typedef $$UserSettingsTableUpdateCompanionBuilder =
       Value<int?> salaryMinor,
       Value<String> language,
       Value<bool> screenshotBlock,
+      Value<String> greetStyle,
+      Value<String> greetCustom,
       Value<int> rowid,
     });
 
@@ -15759,6 +15867,16 @@ class $$UserSettingsTableFilterComposer
 
   ColumnFilters<bool> get screenshotBlock => $composableBuilder(
     column: $table.screenshotBlock,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get greetStyle => $composableBuilder(
+    column: $table.greetStyle,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get greetCustom => $composableBuilder(
+    column: $table.greetCustom,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -15876,6 +15994,16 @@ class $$UserSettingsTableOrderingComposer
     column: $table.screenshotBlock,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get greetStyle => $composableBuilder(
+    column: $table.greetStyle,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get greetCustom => $composableBuilder(
+    column: $table.greetCustom,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$UserSettingsTableAnnotationComposer
@@ -15967,6 +16095,16 @@ class $$UserSettingsTableAnnotationComposer
     column: $table.screenshotBlock,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get greetStyle => $composableBuilder(
+    column: $table.greetStyle,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get greetCustom => $composableBuilder(
+    column: $table.greetCustom,
+    builder: (column) => column,
+  );
 }
 
 class $$UserSettingsTableTableManager
@@ -16021,6 +16159,8 @@ class $$UserSettingsTableTableManager
                 Value<int?> salaryMinor = const Value.absent(),
                 Value<String> language = const Value.absent(),
                 Value<bool> screenshotBlock = const Value.absent(),
+                Value<String> greetStyle = const Value.absent(),
+                Value<String> greetCustom = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => UserSettingsCompanion(
                 id: id,
@@ -16044,6 +16184,8 @@ class $$UserSettingsTableTableManager
                 salaryMinor: salaryMinor,
                 language: language,
                 screenshotBlock: screenshotBlock,
+                greetStyle: greetStyle,
+                greetCustom: greetCustom,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -16069,6 +16211,8 @@ class $$UserSettingsTableTableManager
                 Value<int?> salaryMinor = const Value.absent(),
                 Value<String> language = const Value.absent(),
                 Value<bool> screenshotBlock = const Value.absent(),
+                Value<String> greetStyle = const Value.absent(),
+                Value<String> greetCustom = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => UserSettingsCompanion.insert(
                 id: id,
@@ -16092,6 +16236,8 @@ class $$UserSettingsTableTableManager
                 salaryMinor: salaryMinor,
                 language: language,
                 screenshotBlock: screenshotBlock,
+                greetStyle: greetStyle,
+                greetCustom: greetCustom,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

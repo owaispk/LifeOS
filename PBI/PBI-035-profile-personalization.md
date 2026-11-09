@@ -7,7 +7,7 @@
 | Story Points | 5 |
 | Spec refs | Features §8 (Soul is opt-in — "respects other faiths, configurable or off"), §10 (dashboard greeting), §13 (onboarding), §14 (settings) |
 | Depends on | PBI-021 (Home dashboard), PBI-025 (Settings, EN/UR) |
-| Status | In progress (step 1 of 5 done: neutral greeting) |
+| Status | In progress (steps 1–2 of 5 done: neutral greeting + greeting style) |
 
 ## User Story
 As a **user anywhere in the world, of any religion**, I want LifeOS to greet me and format my dates, week and money the way *I* choose — with defaults that assume nothing about my culture or faith.
@@ -61,6 +61,16 @@ Add to the backlog README's DoD: *"No culturally specific words, symbols, calend
 - Tests: the greeting unit test now covers all four periods, the name/no-name/"Me" rules and every boundary hour (5:00, 12:00, 17:00, 21:00, 4:59 — AC1); `app_shell_test` follows the fixed 10:00 test clock ("Good morning ☀️").
 - `flutter analyze` clean · full suite 486/486 passed.
 - Remaining: steps 2–5 (greeting-style setting + digest title routing, My Profile screen, region formats/currency sweep, README DoD rule).
+
+## Dev Notes (step 2 — greeting style setting, 2026-11-09)
+- **Schema v7:** `user_settings` gains `greet_style` ('auto' default) and `greet_custom` (''), migration tested from every v1–v6 start plus the data-survival case; schema v7 dumped and the generated migration helpers refreshed.
+- **Domain:** `GreetStyle` enum lives in `attention.dart`; `greetingText(l, name, now, style, custom)` is the core (explicit `AppLocalizations`, so the digest can render in the saved language ahead of time); `greeting(...)` wraps it with `l10nNow`. Custom with an empty word falls back to auto — the greeting is never blank.
+- **Digest:** the morning digest title now comes from the same function at the digest's own fire time (07:30 → morning); `digestTitle` ARB key retired. Style changes resync notifications via the existing `userSettings` table watch — no new plumbing.
+- **Settings UI:** a Greeting section (radio: Auto / Salam / Namaste / Hello / Custom… + text field, 24-char cap) with keys `set-greet-*`. Moves to My Profile in step 3.
+- **Strings:** `hmGreetSalam/Namaste/Hello/Custom` (± name) + `setGreeting*` labels, EN/UR, generator scripts in `tool/l10n/` kept in sync.
+- Tests: style-wins-over-clock unit cases; settings widget flow Salam → custom "Shalom" → back to Auto, asserting the Home app bar each time; digest title in EN, UR and with a chosen style. Found in dev: the custom text field adds a second scrollable (use `ensureVisible`), and the More branch keeps its route state when switching tabs.
+- `flutter analyze` clean · full suite 489/489 passed.
+- Remaining: steps 3–5 (My Profile screen, region formats/currency sweep, README DoD rule).
 
 ## Grooming Notes
 - **Greeting:** `greeting(Person? self)` in `lib/features/home/domain/attention.dart` gains a `GreetingStyle` + `DateTime now` input (keep it pure; the widget injects the clock — same pattern the score/digest code uses). ARB keys: retire `hmSalam`/`hmSalamName`, add `hmMorning(Name)`, `hmAfternoon(Name)`, `hmEvening(Name)`, `hmNight(Name)` + no-name variants, `hmCustom` is pass-through.

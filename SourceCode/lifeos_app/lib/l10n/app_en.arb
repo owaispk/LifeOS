@@ -442,7 +442,6 @@
     }
   },
   "digestTime": "Morning summary",
-  "digestTitle": "Good morning",
   "domainHealth": "Health",
   "domainMind": "Tasks",
   "domainMoney": "Money",
@@ -551,6 +550,59 @@
       }
     }
   },
+  "hmGreetSalam": "Salam 👋",
+  "hmGreetSalamName": "Salam, {name} 👋",
+  "@hmGreetSalamName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "hmGreetNamaste": "Namaste 🙏",
+  "hmGreetNamasteName": "Namaste, {name} 🙏",
+  "@hmGreetNamasteName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "hmGreetHello": "Hello 👋",
+  "hmGreetHelloName": "Hello, {name} 👋",
+  "@hmGreetHelloName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "hmGreetCustom": "{greeting} 👋",
+  "@hmGreetCustom": {
+    "placeholders": {
+      "greeting": {
+        "type": "String"
+      }
+    }
+  },
+  "hmGreetCustomName": "{greeting}, {name} 👋",
+  "@hmGreetCustomName": {
+    "placeholders": {
+      "greeting": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "setGreeting": "Greeting",
+  "setGreetingAuto": "Automatic — time of day",
+  "setGreetingSalam": "Salam",
+  "setGreetingNamaste": "Namaste",
+  "setGreetingHello": "Hello",
+  "setGreetingCustom": "Custom…",
+  "setGreetingCustomHint": "Your greeting, e.g. Shalom",
   "hmSeeAllCount": "See all ({n})",
   "@hmSeeAllCount": {
     "placeholders": {

@@ -106,7 +106,7 @@ S = {
     "speak": ("Speak", "بولیں"),
     "parseHigh": ("High", "اہم"),
     # ── Digest (PBI-023) ──
-    "digestTitle": ("Good morning", "صبح بخیر"),
+    # The digest title is the user's greeting (PBI-035) — see hmGreet* keys.
     "digestBody": ("Life Score {score} · {tasks} · {bills}", "لائف اسکور {score} · {tasks} · {bills}"),
     "digestTasks": ("{n, plural, =0{no tasks} =1{1 task} other{{n} tasks}}", "{n, plural, =0{کوئی کام نہیں} =1{1 کام} other{{n} کام}}"),
     "digestBills": ("{n, plural, =0{no bills due} =1{1 bill due} other{{n} bills due}}", "{n, plural, =0{کوئی بل واجب نہیں} =1{1 بل واجب} other{{n} بل واجب}}"),

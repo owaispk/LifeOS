@@ -15,7 +15,7 @@ void main() {
 
   // The current database can only migrate to the current version; every
   // older starting point is checked against it.
-  for (final (from, to) in [(1, 6), (2, 6), (3, 6), (4, 6), (5, 6)]) {
+  for (final (from, to) in [(1, 7), (2, 7), (3, 7), (4, 7), (5, 7), (6, 7)]) {
     test('v$from → v$to produces exactly the v$to schema', () async {
       final connection = await verifier.startAt(from);
       final db = AppDatabase(connection);
@@ -43,6 +43,8 @@ void main() {
     final db = AppDatabase(schema.newConnection());
     final settings = await db.select(db.userSettings).getSingle();
     expect((settings.id, settings.dayCapacityMin), ('s1', 360));
+    // v7: greeting defaults to neutral auto (PBI-035).
+    expect((settings.greetStyle, settings.greetCustom), ('auto', ''));
     final file = await db.select(db.documentFiles).getSingle();
     expect((file.byteSize, file.sha256, file.phash), (2048, 'abc', null));
     final doc = await db.select(db.documents).getSingle();

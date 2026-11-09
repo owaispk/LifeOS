@@ -64,6 +64,13 @@ class UserSettings extends Table with SyncColumns {
   BoolColumn get screenshotBlock =>
       boolean().withDefault(const Constant(false))();
 
+  /// Greeting style (schema v7, PBI-035): auto|salam|namaste|hello|custom.
+  /// Neutral time-of-day by default; anything cultural is the user's choice.
+  TextColumn get greetStyle => text().withDefault(const Constant('auto'))();
+
+  /// The user's own greeting word when [greetStyle] is 'custom'.
+  TextColumn get greetCustom => text().withDefault(const Constant(''))();
+
   @override
   List<Set<Column<Object>>> get uniqueKeys => [
     {userId},

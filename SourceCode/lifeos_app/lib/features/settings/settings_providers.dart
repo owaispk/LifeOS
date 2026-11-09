@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/data_providers.dart';
 import '../../data/db/app_database.dart';
 import '../../data/repositories/repositories.dart';
+import '../home/domain/attention.dart' show GreetStyle;
 
 /// The single settings row, live; null until loaded (and on the web
 /// preview, which has no local database).
@@ -33,7 +34,19 @@ class SettingsService {
 
   Future<void> setLanguage(String code) =>
       update(UserSettingsCompanion(language: Value(code)));
+
+  /// Greeting style (PBI-035). [custom] is kept even when switching styles,
+  /// so coming back to Custom restores the user's word.
+  Future<void> setGreeting(GreetStyle style, {String? custom}) =>
+      update(UserSettingsCompanion(
+        greetStyle: Value(style.name),
+        greetCustom: custom == null ? const Value.absent() : Value(custom),
+      ));
 }
+
+/// Greeting style from the setting (PBI-035): neutral auto by default.
+GreetStyle greetStyleOf(UserSettingsRow? s) =>
+    GreetStyle.values.asNameMap()[s?.greetStyle] ?? GreetStyle.auto;
 
 /// App locale from the setting: English or Urdu (RTL).
 Locale localeOf(UserSettingsRow? s) =>

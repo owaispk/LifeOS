@@ -14,6 +14,7 @@ import '../../data/data_providers.dart';
 import '../../data/db/app_database.dart';
 import '../../shared/format.dart';
 import '../capture/capture_providers.dart' show vaultRootProvider;
+import '../home/domain/attention.dart' show GreetStyle;
 import '../security/lock_gate.dart';
 import '../security/security_providers.dart';
 import 'data/data_service.dart';
@@ -199,6 +200,42 @@ class SettingsScreen extends ConsumerWidget {
               onSelectionChanged: (v) => service.setLanguage(v.first),
             ),
           ),
+          _Header(l.setGreeting),
+          RadioGroup<String>(
+            groupValue: greetStyleOf(s).name,
+            onChanged: (v) => service.setGreeting(
+              GreetStyle.values.asNameMap()[v] ?? GreetStyle.auto,
+            ),
+            child: Column(
+              children: [
+                for (final (key, label) in [
+                  ('auto', l.setGreetingAuto),
+                  ('salam', l.setGreetingSalam),
+                  ('namaste', l.setGreetingNamaste),
+                  ('hello', l.setGreetingHello),
+                  ('custom', l.setGreetingCustom),
+                ])
+                  RadioListTile<String>(
+                    key: ValueKey('set-greet-$key'),
+                    value: key,
+                    title: Text(label),
+                    dense: true,
+                  ),
+              ],
+            ),
+          ),
+          if (greetStyleOf(s) == GreetStyle.custom)
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: Tokens.gutter),
+              child: TextFormField(
+                key: const ValueKey('set-greet-custom-text'),
+                initialValue: s?.greetCustom ?? '',
+                maxLength: 24,
+                decoration: InputDecoration(hintText: l.setGreetingCustomHint),
+                onChanged: (v) =>
+                    service.setGreeting(GreetStyle.custom, custom: v),
+              ),
+            ),
           _Header(l.settingsAppearance),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: Tokens.gutter),

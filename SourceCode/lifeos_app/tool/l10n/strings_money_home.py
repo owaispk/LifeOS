@@ -119,6 +119,22 @@ S = {
     "hmGreetEveningName": ("Good evening, {name} 🌆", "شام بخیر، {name} 🌆"),
     "hmGreetNight": ("Working late? 🌙", "ابھی تک جاگ رہے ہیں؟ 🌙"),
     "hmGreetNightName": ("Working late, {name}? 🌙", "ابھی تک جاگ رہے ہیں، {name}؟ 🌙"),
+    # Chosen styles (PBI-035) — only shown when the user picks them.
+    "hmGreetSalam": ("Salam 👋", "السلام علیکم 👋"),
+    "hmGreetSalamName": ("Salam, {name} 👋", "السلام علیکم، {name} 👋"),
+    "hmGreetNamaste": ("Namaste 🙏", "نمستے 🙏"),
+    "hmGreetNamasteName": ("Namaste, {name} 🙏", "نمستے، {name} 🙏"),
+    "hmGreetHello": ("Hello 👋", "ہیلو 👋"),
+    "hmGreetHelloName": ("Hello, {name} 👋", "ہیلو، {name} 👋"),
+    "hmGreetCustom": ("{greeting} 👋", "{greeting} 👋"),
+    "hmGreetCustomName": ("{greeting}, {name} 👋", "{greeting}، {name} 👋"),
+    "setGreeting": ("Greeting", "سلام کا انداز"),
+    "setGreetingAuto": ("Automatic — time of day", "خودکار — وقت کے مطابق"),
+    "setGreetingSalam": ("Salam", "السلام علیکم"),
+    "setGreetingNamaste": ("Namaste", "نمستے"),
+    "setGreetingHello": ("Hello", "ہیلو"),
+    "setGreetingCustom": ("Custom…", "اپنی مرضی…"),
+    "setGreetingCustomHint": ("Your greeting, e.g. Shalom", "آپ کا سلام، مثلاً Shalom"),
 
     # ── Life Score (score_screen.dart, ui/*, domain/life_score.dart) ──
     # PBI-020: no guilt words in either language.

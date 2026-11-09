@@ -169,6 +169,42 @@ void main() {
       expect(greeting(null, at(21)), 'Working late? 🌙');
       expect(greeting(null, DateTime(2026, 11, 8, 4, 59)), 'Working late? 🌙');
     });
+
+    test('a chosen greeting style wins over the clock (PBI-035)', () {
+      Person p(String name) => Person(
+        id: 'x',
+        userId: 'u',
+        updatedAt: 0,
+        version: 1,
+        name: name,
+        relation: 'self',
+        sortOrder: 0,
+      );
+      final morning = DateTime(2026, 11, 8, 9);
+      expect(
+        greeting(p('Owais'), morning, style: GreetStyle.salam),
+        'Salam, Owais 👋',
+      );
+      expect(greeting(null, morning, style: GreetStyle.salam), 'Salam 👋');
+      expect(greeting(null, morning, style: GreetStyle.namaste), 'Namaste 🙏');
+      expect(
+        greeting(p('Owais'), morning, style: GreetStyle.hello),
+        'Hello, Owais 👋',
+      );
+      expect(
+        greeting(p('Owais'), morning, style: GreetStyle.custom, custom: 'Shalom'),
+        'Shalom, Owais 👋',
+      );
+      expect(
+        greeting(null, morning, style: GreetStyle.custom, custom: 'Sat Sri Akal'),
+        'Sat Sri Akal 👋',
+      );
+      // Custom with nothing typed yet falls back to the neutral auto text.
+      expect(
+        greeting(null, morning, style: GreetStyle.custom, custom: '  '),
+        'Good morning ☀️',
+      );
+    });
   });
 
   appTest('AC4: a new user sees prompts, not empty sections', (

@@ -1196,12 +1196,6 @@ abstract class AppLocalizations {
   /// **'Morning summary'**
   String get digestTime;
 
-  /// No description provided for @digestTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Good morning'**
-  String get digestTitle;
-
   /// No description provided for @domainHealth.
   ///
   /// In en, this message translates to:
@@ -1471,6 +1465,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Working late, {name}? 🌙'**
   String hmGreetNightName(String name);
+
+  /// No description provided for @hmGreetSalam.
+  ///
+  /// In en, this message translates to:
+  /// **'Salam 👋'**
+  String get hmGreetSalam;
+
+  /// No description provided for @hmGreetSalamName.
+  ///
+  /// In en, this message translates to:
+  /// **'Salam, {name} 👋'**
+  String hmGreetSalamName(String name);
+
+  /// No description provided for @hmGreetNamaste.
+  ///
+  /// In en, this message translates to:
+  /// **'Namaste 🙏'**
+  String get hmGreetNamaste;
+
+  /// No description provided for @hmGreetNamasteName.
+  ///
+  /// In en, this message translates to:
+  /// **'Namaste, {name} 🙏'**
+  String hmGreetNamasteName(String name);
+
+  /// No description provided for @hmGreetHello.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello 👋'**
+  String get hmGreetHello;
+
+  /// No description provided for @hmGreetHelloName.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello, {name} 👋'**
+  String hmGreetHelloName(String name);
+
+  /// No description provided for @hmGreetCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'{greeting} 👋'**
+  String hmGreetCustom(String greeting);
+
+  /// No description provided for @hmGreetCustomName.
+  ///
+  /// In en, this message translates to:
+  /// **'{greeting}, {name} 👋'**
+  String hmGreetCustomName(String greeting, String name);
+
+  /// No description provided for @setGreeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Greeting'**
+  String get setGreeting;
+
+  /// No description provided for @setGreetingAuto.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic — time of day'**
+  String get setGreetingAuto;
+
+  /// No description provided for @setGreetingSalam.
+  ///
+  /// In en, this message translates to:
+  /// **'Salam'**
+  String get setGreetingSalam;
+
+  /// No description provided for @setGreetingNamaste.
+  ///
+  /// In en, this message translates to:
+  /// **'Namaste'**
+  String get setGreetingNamaste;
+
+  /// No description provided for @setGreetingHello.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello'**
+  String get setGreetingHello;
+
+  /// No description provided for @setGreetingCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom…'**
+  String get setGreetingCustom;
+
+  /// No description provided for @setGreetingCustomHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your greeting, e.g. Shalom'**
+  String get setGreetingCustomHint;
 
   /// No description provided for @hmSeeAllCount.
   ///

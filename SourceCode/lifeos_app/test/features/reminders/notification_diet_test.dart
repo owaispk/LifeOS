@@ -228,7 +228,9 @@ void main() {
       );
       final planned = await sync.resync();
       final digest = planned.firstWhere((p) => p.kind == ReminderKind.digest);
-      expect(digest.title, 'Good morning');
+      // The title is the user's greeting at the digest's own time
+      // (07:30 → morning, PBI-035).
+      expect(digest.title, 'Good morning ☀️');
       expect(digest.body, 'Life Score 100 · 1 task · no bills due');
       final s = (await repos.userSettings.getAll()).first;
       await repos.userSettings.update(
@@ -238,7 +240,20 @@ void main() {
       final ur = (await sync.resync()).firstWhere(
         (p) => p.kind == ReminderKind.digest,
       );
-      expect(ur.title, 'صبح بخیر');
+      expect(ur.title, 'صبح بخیر ☀️');
+
+      // A chosen greeting style carries into the digest too (PBI-035).
+      await repos.userSettings.update(
+        s.id,
+        const UserSettingsCompanion(
+          language: Value('en'),
+          greetStyle: Value('salam'),
+        ),
+      );
+      final salam = (await sync.resync()).firstWhere(
+        (p) => p.kind == ReminderKind.digest,
+      );
+      expect(salam.title, 'Salam 👋');
     });
   });
 }

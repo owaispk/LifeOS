@@ -13,6 +13,8 @@ import '../atc/ui/rule_form.dart' show showAddRuleSheet;
 import '../capture/capture_entry.dart';
 import '../score/score_providers.dart';
 import '../score/ui/score_ring.dart';
+import '../settings/settings_providers.dart'
+    show greetStyleOf, settingsProvider;
 import '../tasks/domain/task_rules.dart';
 import '../tasks/tasks_providers.dart' show allTasksProvider;
 import '../tasks/ui/new_task_sheet.dart';
@@ -56,6 +58,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final now = ref.watch(nowProvider)();
+    final settings = ref.watch(settingsProvider).value;
     final persons = ref.watch(personsProvider).value ?? const <Person>[];
     final self = persons.where((p) => p.relation == 'self').firstOrNull;
     final score = ref.watch(liveScoreProvider);
@@ -72,7 +75,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(greeting(self, now), key: const ValueKey('home-greeting')),
+        title: Text(
+          greeting(
+            self,
+            now,
+            style: greetStyleOf(settings),
+            custom: settings?.greetCustom ?? '',
+          ),
+          key: const ValueKey('home-greeting'),
+        ),
         actions: [
           IconButton(
             key: const ValueKey('home-bell'),

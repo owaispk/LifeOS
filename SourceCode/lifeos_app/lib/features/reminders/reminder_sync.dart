@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart' show Locale;
 
 import '../../data/db/app_database.dart';
 import '../../core/l10n.dart';
+import '../home/domain/attention.dart' show GreetStyle, greetingText;
 import '../score/domain/life_score.dart';
 
 import '../../data/repositories/repositories.dart';
@@ -92,8 +93,19 @@ class ReminderSync {
         ? '$score'
         : '$score ${delta > 0 ? '↑' : '↓'}${delta.abs()}';
     final c = digestCounts(tasks: tasks, payments: payments, day: at);
+    // The title is the user's greeting (PBI-035): neutral time-of-day by
+    // default, or their chosen style — same words as the Home app bar.
+    final title = greetingText(
+      l,
+      null,
+      at,
+      style:
+          GreetStyle.values.asNameMap()[settings?.greetStyle] ??
+          GreetStyle.auto,
+      custom: settings?.greetCustom ?? '',
+    );
     return DigestText(
-      l.digestTitle,
+      title,
       l.digestBody(scoreText, l.digestTasks(c.tasks), l.digestBills(c.bills)),
     );
   }
