@@ -507,7 +507,6 @@
       }
     }
   },
-  "hmProfileMore": "Profile and more",
   "hmPromptAtcBody": "Rent, fees, bills: reminded every month, automatically.",
   "hmPromptAtcTitle": "Add what you pay regularly ⚡",
   "hmPromptScanBody": "CNIC, passport, a bill — LifeOS files it and reminds you.",
@@ -860,7 +859,11 @@
   "moreSettingsSub": "Security, notifications, language, data",
   "mrAutoTasks": "Auto Tasks",
   "mrAutoTasksSub": "Rules that create payment tasks for you",
+  "mrProfile": "My profile",
+  "mrProfileSub": "Your name, greeting and language",
   "mrTitle": "More",
+  "profileAboutYou": "About you",
+  "profileNameLabel": "What should we call you?",
   "mrTrashSub": "Deleted documents, kept for 30 days",
   "name": "Name",
   "next": "Next",

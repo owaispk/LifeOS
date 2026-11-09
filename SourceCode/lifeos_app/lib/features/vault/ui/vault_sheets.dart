@@ -6,7 +6,7 @@ import '../../../core/theme/tokens.dart';
 import '../../../data/db/app_database.dart';
 import '../vault_providers.dart';
 
-const _personEmojis = ['🙂', '👩', '👨', '👧', '👦', '👵', '👴', '🧑'];
+const personEmojis = ['🙂', '👩', '👨', '👧', '👦', '👵', '👴', '🧑'];
 const _folderIcons = ['📁', '✈️', '💼', '🏦', '🐾', '🎮', '🍽️', '🧳'];
 Map<String, String> _relations(AppLocalizations l) => {
   'spouse': l.vtRelationSpouse,
@@ -101,8 +101,8 @@ class _PersonSheetState extends ConsumerState<_PersonSheet> {
           ),
         ],
         SizedBox(height: Tokens.spaceM),
-        _EmojiPicker(
-          options: _personEmojis,
+        EmojiPicker(
+          options: personEmojis,
           selected: _avatar,
           onSelected: (e) => setState(() => _avatar = e),
         ),
@@ -170,7 +170,7 @@ class _FolderSheetState extends ConsumerState<_FolderSheet> {
           onChanged: (_) => setState(() {}),
         ),
         SizedBox(height: Tokens.spaceM),
-        _EmojiPicker(
+        EmojiPicker(
           options: _folderIcons,
           selected: _icon,
           onSelected: (e) => setState(() => _icon = e),
@@ -226,8 +226,10 @@ class _SheetFrame extends StatelessWidget {
   }
 }
 
-class _EmojiPicker extends StatelessWidget {
-  const _EmojiPicker({
+/// A row of emoji chips (person avatars, folder icons, My Profile).
+class EmojiPicker extends StatelessWidget {
+  const EmojiPicker({
+    super.key,
     required this.options,
     required this.selected,
     required this.onSelected,
@@ -244,6 +246,7 @@ class _EmojiPicker extends StatelessWidget {
       children: [
         for (final e in options)
           ChoiceChip(
+            key: ValueKey('emoji-$e'),
             label: Text(e, style: const TextStyle(fontSize: 20)),
             selected: selected == e,
             showCheckmark: false,

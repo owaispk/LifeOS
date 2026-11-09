@@ -7,7 +7,7 @@
 | Story Points | 5 |
 | Spec refs | Features §8 (Soul is opt-in — "respects other faiths, configurable or off"), §10 (dashboard greeting), §13 (onboarding), §14 (settings) |
 | Depends on | PBI-021 (Home dashboard), PBI-025 (Settings, EN/UR) |
-| Status | In progress (steps 1–2 of 5 done: neutral greeting + greeting style) |
+| Status | In progress (steps 1–3 of 5 done: neutral greeting, greeting style, My Profile) |
 
 ## User Story
 As a **user anywhere in the world, of any religion**, I want LifeOS to greet me and format my dates, week and money the way *I* choose — with defaults that assume nothing about my culture or faith.
@@ -71,6 +71,17 @@ Add to the backlog README's DoD: *"No culturally specific words, symbols, calend
 - Tests: style-wins-over-clock unit cases; settings widget flow Salam → custom "Shalom" → back to Auto, asserting the Home app bar each time; digest title in EN, UR and with a chosen style. Found in dev: the custom text field adds a second scrollable (use `ensureVisible`), and the More branch keeps its route state when switching tabs.
 - `flutter analyze` clean · full suite 489/489 passed.
 - Remaining: steps 3–5 (My Profile screen, region formats/currency sweep, README DoD rule).
+
+## Dev Notes (step 3 — My Profile screen, 2026-11-09)
+- **Route** `/more/profile` → `lib/features/profile/profile_screen.dart`. **More** lists My Profile first (avatar + name, or "Your name, greeting and language" while still "Me"); Home's profile button now opens it directly (tooltip "My profile"; `hmProfileMore` retired).
+- **No new storage:** name and avatar edit the seeded Me-person through `VaultService.updatePerson` (relation pinned to 'self', still undeletable). A new `selfPersonProvider` exposes it. The placeholder "Me" shows as an empty field with "What should we call you?"; clearing the field never blanks the stored name (last good name kept).
+- **Avatar** is the existing emoji avatar (no photo/file handling — stays local, no permissions); `EmojiPicker`/`personEmojis` made public in `vault_sheets.dart` and reused, chips keyed `emoji-<e>`.
+- **Live preview** at the top shows exactly what Home will say.
+- **Greeting style moved** from Settings to My Profile (keys `set-greet-*` unchanged); **Language mirrored** in both places. Settings' section header extracted to `shared/widgets/section_header.dart` and shared.
+- Strings: `mrProfile`, `mrProfileSub`, `profileAboutYou`, `profileNameLabel` in EN/UR + generator script.
+- Tests: new `test/features/profile/profile_test.dart` (5): More order + Home entry + placeholder prompt; name → one self record + Home greeting + blank-guard; avatar on Home; greeting style flow (moved from the settings test); Urdu from My Profile.
+- `flutter analyze` clean · full suite 493/493 passed.
+- Remaining: steps 4–5 (region formats/currency sweep, README DoD rule).
 
 ## Grooming Notes
 - **Greeting:** `greeting(Person? self)` in `lib/features/home/domain/attention.dart` gains a `GreetingStyle` + `DateTime now` input (keep it pure; the widget injects the clock — same pattern the score/digest code uses). ARB keys: retire `hmSalam`/`hmSalamName`, add `hmMorning(Name)`, `hmAfternoon(Name)`, `hmEvening(Name)`, `hmNight(Name)` + no-name variants, `hmCustom` is pass-through.

@@ -13,8 +13,8 @@ import '../../core/theme/tokens.dart';
 import '../../data/data_providers.dart';
 import '../../data/db/app_database.dart';
 import '../../shared/format.dart';
+import '../../shared/widgets/section_header.dart';
 import '../capture/capture_providers.dart' show vaultRootProvider;
-import '../home/domain/attention.dart' show GreetStyle;
 import '../security/lock_gate.dart';
 import '../security/security_providers.dart';
 import 'data/data_service.dart';
@@ -83,7 +83,7 @@ class SettingsScreen extends ConsumerWidget {
         key: const ValueKey('settings-list'),
         padding: EdgeInsets.only(bottom: Tokens.listEnd),
         children: [
-          _Header(l.settingsSecurity),
+          SectionHeader(l.settingsSecurity),
           SwitchListTile(
             key: const ValueKey('set-app-lock'),
             title: Text(l.appLock),
@@ -125,7 +125,7 @@ class SettingsScreen extends ConsumerWidget {
             onChanged: (v) =>
                 set(UserSettingsCompanion(screenshotBlock: Value(v))),
           ),
-          _Header(l.settingsNotifications),
+          SectionHeader(l.settingsNotifications),
           ListTile(
             key: const ValueKey('set-digest'),
             title: Text(l.digestTime),
@@ -187,7 +187,7 @@ class SettingsScreen extends ConsumerWidget {
               ],
             ),
           ),
-          _Header(l.settingsLanguage),
+          SectionHeader(l.settingsLanguage),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: Tokens.gutter),
             child: SegmentedButton<String>(
@@ -200,43 +200,7 @@ class SettingsScreen extends ConsumerWidget {
               onSelectionChanged: (v) => service.setLanguage(v.first),
             ),
           ),
-          _Header(l.setGreeting),
-          RadioGroup<String>(
-            groupValue: greetStyleOf(s).name,
-            onChanged: (v) => service.setGreeting(
-              GreetStyle.values.asNameMap()[v] ?? GreetStyle.auto,
-            ),
-            child: Column(
-              children: [
-                for (final (key, label) in [
-                  ('auto', l.setGreetingAuto),
-                  ('salam', l.setGreetingSalam),
-                  ('namaste', l.setGreetingNamaste),
-                  ('hello', l.setGreetingHello),
-                  ('custom', l.setGreetingCustom),
-                ])
-                  RadioListTile<String>(
-                    key: ValueKey('set-greet-$key'),
-                    value: key,
-                    title: Text(label),
-                    dense: true,
-                  ),
-              ],
-            ),
-          ),
-          if (greetStyleOf(s) == GreetStyle.custom)
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: Tokens.gutter),
-              child: TextFormField(
-                key: const ValueKey('set-greet-custom-text'),
-                initialValue: s?.greetCustom ?? '',
-                maxLength: 24,
-                decoration: InputDecoration(hintText: l.setGreetingCustomHint),
-                onChanged: (v) =>
-                    service.setGreeting(GreetStyle.custom, custom: v),
-              ),
-            ),
-          _Header(l.settingsAppearance),
+          SectionHeader(l.settingsAppearance),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: Tokens.gutter),
             child: SegmentedButton<String>(
@@ -270,7 +234,7 @@ class SettingsScreen extends ConsumerWidget {
               ],
             ),
           ),
-          _Header(l.settingsData),
+          SectionHeader(l.settingsData),
           ListTile(
             key: const ValueKey('set-export'),
             leading: const Icon(Icons.ios_share),
@@ -301,7 +265,7 @@ class SettingsScreen extends ConsumerWidget {
             subtitle: Text(l.deleteAllSub),
             onTap: () => _deleteAll(context, ref),
           ),
-          _Header(l.settingsPremium),
+          SectionHeader(l.settingsPremium),
           ListTile(
             enabled: false,
             leading: const Text('⭐', style: TextStyle(fontSize: 22)),
@@ -412,31 +376,7 @@ class _TypeDeleteDialogState extends State<_TypeDeleteDialog> {
   }
 }
 
-class _Header extends StatelessWidget {
-  const _Header(this.text);
-  final String text;
 
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-        Tokens.gutter,
-        Tokens.spaceL,
-        Tokens.gutter,
-        Tokens.spaceXs,
-      ),
-      child: Text(
-        text.toUpperCase(),
-        style: theme.textTheme.labelLarge?.copyWith(
-          color: theme.colorScheme.primary,
-          fontWeight: FontWeight.w700,
-          letterSpacing: 0.8,
-        ),
-      ),
-    );
-  }
-}
 
 String _domainLabel(AppLocalizations l, String d) => switch (d) {
   'money' => l.domainMoney,

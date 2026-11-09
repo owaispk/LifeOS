@@ -77,7 +77,6 @@ S = {
 
     # ── Home (home_screen.dart, attention_screen.dart, attention_tile.dart) ──
     "hmNeedsAttention": ("Needs attention", "توجہ طلب"),
-    "hmProfileMore": ("Profile and more", "پروفائل اور مزید"),
     "hmAttentionSection": ("⚠ Needs attention", "⚠ توجہ طلب"),
     "hmNothingUrgentNice": ("Nothing urgent — nice ✓", "کچھ فوری نہیں — زبردست ✓"),
     "hmSeeAllCount": ("See all ({n})", "سب دیکھیں ({n})"),
@@ -176,6 +175,11 @@ S = {
 
     # ── More (more_screen.dart) ──
     "mrTitle": ("More", "مزید"),
+    # My Profile (PBI-035)
+    "mrProfile": ("My profile", "میری پروفائل"),
+    "mrProfileSub": ("Your name, greeting and language", "آپ کا نام، سلام کا انداز اور زبان"),
+    "profileAboutYou": ("About you", "آپ کے بارے میں"),
+    "profileNameLabel": ("What should we call you?", "ہم آپ کو کس نام سے پکاریں؟"),
     "mrAutoTasks": ("Auto Tasks", "خودکار کام"),
     "mrAutoTasksSub": ("Rules that create payment tasks for you", "اصول جو آپ کے لیے ادائیگی کے کام بناتے ہیں"),
     "mrTrashSub": ("Deleted documents, kept for 30 days", "حذف شدہ دستاویزات، 30 دن تک محفوظ"),

@@ -781,9 +781,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get hmProfileMore => 'Profile and more';
-
-  @override
   String get hmPromptAtcBody =>
       'Rent, fees, bills: reminded every month, automatically.';
 
@@ -1275,7 +1272,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mrAutoTasksSub => 'Rules that create payment tasks for you';
 
   @override
+  String get mrProfile => 'My profile';
+
+  @override
+  String get mrProfileSub => 'Your name, greeting and language';
+
+  @override
   String get mrTitle => 'More';
+
+  @override
+  String get profileAboutYou => 'About you';
+
+  @override
+  String get profileNameLabel => 'What should we call you?';
 
   @override
   String get mrTrashSub => 'Deleted documents, kept for 30 days';

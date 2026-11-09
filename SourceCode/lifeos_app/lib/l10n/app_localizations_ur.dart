@@ -781,9 +781,6 @@ class AppLocalizationsUr extends AppLocalizations {
   }
 
   @override
-  String get hmProfileMore => 'پروفائل اور مزید';
-
-  @override
   String get hmPromptAtcBody => 'کرایہ، فیس، بل: ہر مہینے خودکار یاد دہانی۔';
 
   @override
@@ -1273,7 +1270,19 @@ class AppLocalizationsUr extends AppLocalizations {
   String get mrAutoTasksSub => 'اصول جو آپ کے لیے ادائیگی کے کام بناتے ہیں';
 
   @override
+  String get mrProfile => 'میری پروفائل';
+
+  @override
+  String get mrProfileSub => 'آپ کا نام، سلام کا انداز اور زبان';
+
+  @override
   String get mrTitle => 'مزید';
+
+  @override
+  String get profileAboutYou => 'آپ کے بارے میں';
+
+  @override
+  String get profileNameLabel => 'ہم آپ کو کس نام سے پکاریں؟';
 
   @override
   String get mrTrashSub => 'حذف شدہ دستاویزات، 30 دن تک محفوظ';

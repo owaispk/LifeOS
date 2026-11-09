@@ -97,8 +97,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
           IconButton(
             key: const ValueKey('home-profile'),
-            tooltip: l.hmProfileMore,
-            onPressed: () => context.go('/more'),
+            tooltip: l.mrProfile,
+            onPressed: () => context.go('/more/profile'),
             icon: Text(
               self?.avatar ?? '👤',
               style: const TextStyle(fontSize: 22),

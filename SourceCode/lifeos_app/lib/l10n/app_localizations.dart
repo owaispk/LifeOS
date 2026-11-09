@@ -1376,12 +1376,6 @@ abstract class AppLocalizations {
   /// **'{amount} in payments this week'**
   String hmPaymentsWeek(String amount);
 
-  /// No description provided for @hmProfileMore.
-  ///
-  /// In en, this message translates to:
-  /// **'Profile and more'**
-  String get hmProfileMore;
-
   /// No description provided for @hmPromptAtcBody.
   ///
   /// In en, this message translates to:
@@ -2198,11 +2192,35 @@ abstract class AppLocalizations {
   /// **'Rules that create payment tasks for you'**
   String get mrAutoTasksSub;
 
+  /// No description provided for @mrProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'My profile'**
+  String get mrProfile;
+
+  /// No description provided for @mrProfileSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Your name, greeting and language'**
+  String get mrProfileSub;
+
   /// No description provided for @mrTitle.
   ///
   /// In en, this message translates to:
   /// **'More'**
   String get mrTitle;
+
+  /// No description provided for @profileAboutYou.
+  ///
+  /// In en, this message translates to:
+  /// **'About you'**
+  String get profileAboutYou;
+
+  /// No description provided for @profileNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'What should we call you?'**
+  String get profileNameLabel;
 
   /// No description provided for @mrTrashSub.
   ///

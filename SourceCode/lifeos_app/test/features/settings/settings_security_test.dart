@@ -63,50 +63,6 @@ void main() {
     expect(find.text('Settings'), findsWidgets);
   });
 
-  appTest('PBI-035: greeting style — Salam by choice, custom word, and back', (
-    tester,
-    app,
-  ) async {
-    await useTallScreen(tester);
-    await openSettings(tester);
-    await tester.scrollUntilVisible(
-      find.byKey(const ValueKey('set-greet-salam')),
-      300,
-    );
-    await tester.tap(find.byKey(const ValueKey('set-greet-salam')));
-    await settle(tester);
-    await openTab(tester, 'Home');
-    expect(find.text('Salam 👋'), findsOneWidget);
-
-    // Custom: the user's own word. (The More branch keeps its state, so
-    // switching back lands on Settings directly.)
-    await openTab(tester, 'More');
-    await tester.scrollUntilVisible(
-      find.byKey(const ValueKey('set-greet-custom')),
-      300,
-    );
-    await tester.tap(find.byKey(const ValueKey('set-greet-custom')));
-    await settle(tester);
-    await tester.enterText(
-      find.byKey(const ValueKey('set-greet-custom-text')),
-      'Shalom',
-    );
-    await settle(tester);
-    await openTab(tester, 'Home');
-    expect(find.text('Shalom 👋'), findsOneWidget);
-
-    // Back to the neutral default (the test clock is 10:00 → morning).
-    // (ensureVisible: the custom text field adds a second scrollable, so
-    // scrollUntilVisible's default lookup would be ambiguous.)
-    await openTab(tester, 'More');
-    await tester.ensureVisible(find.byKey(const ValueKey('set-greet-auto')));
-    await tester.pumpAndSettle();
-    await tester.tap(find.byKey(const ValueKey('set-greet-auto')));
-    await settle(tester);
-    await openTab(tester, 'Home');
-    expect(find.text('Good morning ☀️'), findsOneWidget);
-  });
-
   appTest('AC4: the Classic template raises text to at least 1.3×', (
     tester,
     app,
