@@ -94,9 +94,10 @@ class _TaskTileState extends ConsumerState<TaskTile> {
       },
       child: ListTile(
         minTileHeight: meta ? Tokens.rowTwoLine : Tokens.rowOneLine,
-        // The 28 dp circle's left edge lands on the gutter.
+        // The circle's ring (inset ~2 dp inside its 28 dp icon box) lands
+        // on the gutter: 8 = 6 dp button padding + 2 dp glyph inset.
         contentPadding: EdgeInsetsDirectional.only(
-          start: Tokens.gutter - 6,
+          start: Tokens.gutter - 8,
           end: Tokens.gutter,
         ),
         onTap: () => context.go('/tasks/task/${task.id}'),
@@ -104,7 +105,7 @@ class _TaskTileState extends ConsumerState<TaskTile> {
           key: ValueKey('complete-${task.id}'),
           tooltip: l.tkMarkDone(task.title),
           iconSize: 28,
-          padding: const EdgeInsets.all(6),
+          padding: EdgeInsets.all(Tokens.spaceXs + Tokens.spaceXxs),
           constraints: const BoxConstraints.tightFor(width: 40, height: 40),
           onPressed: _complete,
           icon: AnimatedSwitcher(

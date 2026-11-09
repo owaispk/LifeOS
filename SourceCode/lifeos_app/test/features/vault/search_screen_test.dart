@@ -120,7 +120,7 @@ void main() {
     expect(results, findsNothing);
     expect(
       tester
-          .widget<SearchBar>(find.byKey(const ValueKey('vault-search')))
+          .widget<TextField>(find.byKey(const ValueKey('vault-search')))
           .controller!
           .text,
       isEmpty,

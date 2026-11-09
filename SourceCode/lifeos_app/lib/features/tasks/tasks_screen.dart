@@ -36,30 +36,51 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l.tkTasks),
-        // The view switch sits in the title bar: no extra band, so more
-        // rows fit (PBI-031).
-        actions: [
-          Padding(
-            padding: EdgeInsetsDirectional.only(end: Tokens.gutter),
-            child: SegmentedButton<TasksView>(
-              showSelectedIcon: false,
-              segments: [
-                ButtonSegment(value: TasksView.today, label: Text(l.today)),
-                ButtonSegment(
-                  value: TasksView.upcoming,
-                  label: Text(l.tkUpcoming),
-                ),
-                ButtonSegment(
-                  value: TasksView.domains,
-                  label: Text(l.tkDomains),
-                ),
-              ],
-              selected: {_view},
-              onSelectionChanged: (s) => setState(() => _view = s.first),
+        // The view switch shares the title bar and shrinks to fit any
+        // width or language, so there is no extra band (PBI-031).
+        title: Row(
+          children: [
+            // The title gives way first; the switch keeps its full-size
+            // (48 dp) tap targets and scrolls sideways only when even it
+            // doesn't fit (Urdu at large text).
+            Flexible(
+              child: Text(
+                l.tkTasks,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
-          ),
-        ],
+            SizedBox(width: Tokens.spaceS),
+            Flexible(
+              flex: 4,
+              child: Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: SegmentedButton<TasksView>(
+                    showSelectedIcon: false,
+                    segments: [
+                      ButtonSegment(
+                        value: TasksView.today,
+                        label: Text(l.today),
+                      ),
+                      ButtonSegment(
+                        value: TasksView.upcoming,
+                        label: Text(l.tkUpcoming),
+                      ),
+                      ButtonSegment(
+                        value: TasksView.domains,
+                        label: Text(l.tkDomains),
+                      ),
+                    ],
+                    selected: {_view},
+                    onSelectionChanged: (s) => setState(() => _view = s.first),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
       body: tasks.when(
         loading: () => const Center(child: CircularProgressIndicator()),

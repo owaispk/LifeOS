@@ -227,9 +227,13 @@ class _Hero extends StatelessWidget {
               children: [
                 Icon(icon, size: 18, color: muted),
                 SizedBox(width: Tokens.spaceXs),
-                Text(
-                  text,
-                  style: theme.textTheme.bodyMedium?.copyWith(color: muted),
+                // Long words (Urdu, large text) wrap instead of overflowing.
+                Flexible(
+                  child: Text(
+                    text,
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.bodyMedium?.copyWith(color: muted),
+                  ),
                 ),
               ],
             ),

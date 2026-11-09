@@ -114,6 +114,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               _SectionTitle(
                 key: const ValueKey('home-attention'),
                 l.hmAttentionSection,
+                action: attention.length > attentionCap
+                    ? _SeeAll(
+                        key: const ValueKey('attention-see-all'),
+                        label: l.hmSeeAllCount('${attention.length}'),
+                        onTap: () => context.go('/home/attention'),
+                      )
+                    : null,
               ),
               if (attention.isEmpty)
                 _FriendlyLine(
@@ -123,19 +130,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               else ...[
                 for (final item in attention.take(attentionCap))
                   AttentionTile(item: item),
-                if (attention.length > attentionCap)
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: TextButton(
-                      key: const ValueKey('attention-see-all'),
-                      onPressed: () => context.go('/home/attention'),
-                      child: Text(l.hmSeeAllCount('${attention.length}')),
-                    ),
-                  ),
               ],
               _SectionTitle(
                 key: const ValueKey('home-today'),
                 l.hmTodayTasks(today.length),
+                action: today.length > homeTaskCap
+                    ? _SeeAll(
+                        key: const ValueKey('today-see-all'),
+                        label: l.hmSeeAllN('${today.length}'),
+                        onTap: () => context.go('/tasks'),
+                      )
+                    : null,
               ),
               if (today.isEmpty)
                 _FriendlyLine(
@@ -149,15 +154,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               else ...[
                 for (final t in today.take(homeTaskCap))
                   TaskTile(task: t, showDomain: false),
-                if (today.length > homeTaskCap)
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: TextButton(
-                      key: const ValueKey('today-see-all'),
-                      onPressed: () => context.go('/tasks'),
-                      child: Text(l.hmSeeAllN('${today.length}')),
-                    ),
-                  ),
               ],
               // One compact row on the gutter: the card's theme margin is
               // the only spacing (PBI-031).
@@ -242,30 +238,54 @@ class _ScoreCard extends StatelessWidget {
   }
 }
 
+/// A section header on the gutter, with an optional "See all" at the end
+/// of the same line (PBI-031: no extra row for it).
 class _SectionTitle extends StatelessWidget {
-  const _SectionTitle(this.title, {super.key});
+  const _SectionTitle(this.title, {super.key, this.action});
   final String title;
+  final Widget? action;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Padding(
-      padding: EdgeInsets.fromLTRB(
-        Tokens.gutter,
-        Tokens.spaceM,
-        Tokens.gutter,
-        Tokens.spaceXs,
+      padding: EdgeInsetsDirectional.only(
+        start: Tokens.gutter,
+        top: Tokens.spaceM,
+        // The action's own padding supplies the end gap.
+        end: action == null ? Tokens.gutter : Tokens.gutter - 12,
       ),
-      child: Text(
-        title.toUpperCase(),
-        style: theme.textTheme.labelLarge?.copyWith(
-          color: theme.colorScheme.onSurfaceVariant,
-          letterSpacing: 0.8,
-          fontWeight: FontWeight.w700,
+      child: SizedBox(
+        height: Tokens.minTouchTarget,
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                title.toUpperCase(),
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.labelLarge?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  letterSpacing: 0.8,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+            ?action,
+          ],
         ),
       ),
     );
   }
+}
+
+class _SeeAll extends StatelessWidget {
+  const _SeeAll({super.key, required this.label, required this.onTap});
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) =>
+      TextButton(onPressed: onTap, child: Text(label));
 }
 
 class _FriendlyLine extends StatelessWidget {

@@ -20,6 +20,10 @@ void main() {
 
   test('accessibility sizes', () {
     expect(Tokens.minTouchTarget, greaterThanOrEqualTo(48));
-    expect(Tokens.bodyFontSize, 16);
+    // Body text follows the look (PBI-031): 15 sp in the compact looks,
+    // 16 sp in Classic (which also scales text to at least 1.3×).
+    expect(AppSpacing.compact.body, 15);
+    expect(AppSpacing.roomy.body, 16);
+    expect(AppSpacing.compact.label, greaterThanOrEqualTo(12));
   });
 }

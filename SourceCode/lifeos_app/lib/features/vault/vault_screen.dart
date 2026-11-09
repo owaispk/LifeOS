@@ -78,19 +78,35 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
                   Tokens.gutter,
                   Tokens.spaceS,
                 ),
-                child: SearchBar(
+                // A text field styled as a search pill: the whole pill is
+                // the tap target (≥ 48 dp), not just the text line
+                // (PBI-031 AC3).
+                child: TextField(
                   key: const ValueKey('vault-search'),
                   controller: _search,
-                  hintText: l.vtSearchHint,
-                  leading: const Icon(Icons.search),
-                  trailing: [
-                    if (query.isNotEmpty)
-                      IconButton(
-                        tooltip: l.vtClearSearch,
-                        icon: const Icon(Icons.close),
-                        onPressed: () => setState(_search.clear),
-                      ),
-                  ],
+                  textInputAction: TextInputAction.search,
+                  decoration: InputDecoration(
+                    hintText: l.vtSearchHint,
+                    prefixIcon: const Icon(Icons.search),
+                    suffixIcon: query.isEmpty
+                        ? null
+                        : IconButton(
+                            tooltip: l.vtClearSearch,
+                            icon: const Icon(Icons.close),
+                            onPressed: () => setState(_search.clear),
+                          ),
+                    filled: true,
+                    fillColor: Theme.of(context)
+                        .colorScheme
+                        .surfaceContainerHigh,
+                    contentPadding: EdgeInsets.symmetric(
+                      vertical: Tokens.spaceM,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(Tokens.radius * 2),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
                   onChanged: (_) => setState(() {}),
                 ),
               ),

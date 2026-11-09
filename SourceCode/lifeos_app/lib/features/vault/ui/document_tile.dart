@@ -143,8 +143,9 @@ class VaultSectionTitle extends StatelessWidget {
     return Semantics(
       header: true,
       child: Padding(
-        padding: EdgeInsets.fromLTRB(
-          Tokens.spaceM,
+        // Start/end (not left/right), so Urdu mirrors it exactly.
+        padding: EdgeInsetsDirectional.fromSTEB(
+          Tokens.gutter,
           Tokens.spaceL,
           Tokens.spaceS,
           Tokens.spaceXs,

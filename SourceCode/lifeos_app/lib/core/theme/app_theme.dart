@@ -29,11 +29,13 @@ abstract final class AppTheme {
       colorScheme: scheme,
       materialTapTargetSize: MaterialTapTargetSize.padded,
       // Classic: roomier controls for larger text.
-      // Flagship/Funky: tighter controls; tap areas stay 48 dp because
-      // materialTapTargetSize is padded. Classic: roomier.
+      // Flagship/Funky: slightly tighter controls; Classic: roomier.
       visualDensity: look == LookTemplate.classic
           ? const VisualDensity(horizontal: 1, vertical: 1)
-          : const VisualDensity(horizontal: -1, vertical: -2),
+          // Vertical stays 0: a negative value would shrink buttons with
+          // a 48 dp minimum below 48 (found by the tap-target test). Rows
+          // get compact heights from the list-tile theme instead.
+          : const VisualDensity(horizontal: -1, vertical: 0),
       cardTheme: look == LookTemplate.funky
           ? const CardThemeData(
               shape: RoundedRectangleBorder(
