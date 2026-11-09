@@ -17,7 +17,7 @@ void main() {
   // The current database can only migrate to the current version; every
   // older starting point is checked against it.
   for (final (from, to) in [
-    (1, 8), (2, 8), (3, 8), (4, 8), (5, 8), (6, 8), (7, 8), //
+    (1, 9), (2, 9), (3, 9), (4, 9), (5, 9), (6, 9), (7, 9), (8, 9), //
   ]) {
     test('v$from → v$to produces exactly the v$to schema', () async {
       final connection = await verifier.startAt(from);
@@ -61,6 +61,8 @@ void main() {
       (null, null, null),
     );
     expect((settings.salaryDay, settings.salaryMinor), (null, null));
+    // v9: widget details default on (PBI-033).
+    expect(settings.widgetDetails, true);
 
     // v3: documents written before the index existed are searchable.
     final hits = await db

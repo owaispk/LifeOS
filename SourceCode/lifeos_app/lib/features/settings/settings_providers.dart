@@ -58,6 +58,29 @@ class SettingsService {
         greetStyle: Value(style.name),
         greetCustom: custom == null ? const Value.absent() : Value(custom),
       ));
+
+  /// "Show details on widget" (PBI-033 AC5).
+  Future<void> setWidgetDetails(bool on) =>
+      update(UserSettingsCompanion(widgetDetails: Value(on)));
+
+  static const _widgetPromptKey = 'widget_details_prompted';
+
+  /// Enabling App Lock offers to hide widget details exactly once
+  /// (PBI-033 AC5). True only the first time.
+  Future<bool> shouldPromptWidgetDetails() async {
+    final db = _repos.db;
+    final row = await (db.select(
+      db.appMeta,
+    )..where((m) => m.key.equals(_widgetPromptKey))).getSingleOrNull();
+    if (row != null) return false;
+    await db
+        .into(db.appMeta)
+        .insert(
+          AppMetaCompanion.insert(key: _widgetPromptKey, value: '1'),
+          mode: InsertMode.insertOrIgnore,
+        );
+    return true;
+  }
 }
 
 /// Greeting style from the setting (PBI-035): neutral auto by default.

@@ -1322,6 +1322,102 @@ abstract class AppLocalizations {
   /// **'expires tomorrow'**
   String get hmExpiresTomorrow;
 
+  /// No description provided for @hmGreetAfternoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Good afternoon 👋'**
+  String get hmGreetAfternoon;
+
+  /// No description provided for @hmGreetAfternoonName.
+  ///
+  /// In en, this message translates to:
+  /// **'Good afternoon, {name} 👋'**
+  String hmGreetAfternoonName(String name);
+
+  /// No description provided for @hmGreetCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'{greeting} 👋'**
+  String hmGreetCustom(String greeting);
+
+  /// No description provided for @hmGreetCustomName.
+  ///
+  /// In en, this message translates to:
+  /// **'{greeting}, {name} 👋'**
+  String hmGreetCustomName(String greeting, String name);
+
+  /// No description provided for @hmGreetEvening.
+  ///
+  /// In en, this message translates to:
+  /// **'Good evening 🌆'**
+  String get hmGreetEvening;
+
+  /// No description provided for @hmGreetEveningName.
+  ///
+  /// In en, this message translates to:
+  /// **'Good evening, {name} 🌆'**
+  String hmGreetEveningName(String name);
+
+  /// No description provided for @hmGreetHello.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello 👋'**
+  String get hmGreetHello;
+
+  /// No description provided for @hmGreetHelloName.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello, {name} 👋'**
+  String hmGreetHelloName(String name);
+
+  /// No description provided for @hmGreetMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Good morning ☀️'**
+  String get hmGreetMorning;
+
+  /// No description provided for @hmGreetMorningName.
+  ///
+  /// In en, this message translates to:
+  /// **'Good morning, {name} ☀️'**
+  String hmGreetMorningName(String name);
+
+  /// No description provided for @hmGreetNamaste.
+  ///
+  /// In en, this message translates to:
+  /// **'Namaste 🙏'**
+  String get hmGreetNamaste;
+
+  /// No description provided for @hmGreetNamasteName.
+  ///
+  /// In en, this message translates to:
+  /// **'Namaste, {name} 🙏'**
+  String hmGreetNamasteName(String name);
+
+  /// No description provided for @hmGreetNight.
+  ///
+  /// In en, this message translates to:
+  /// **'Working late? 🌙'**
+  String get hmGreetNight;
+
+  /// No description provided for @hmGreetNightName.
+  ///
+  /// In en, this message translates to:
+  /// **'Working late, {name}? 🌙'**
+  String hmGreetNightName(String name);
+
+  /// No description provided for @hmGreetSalam.
+  ///
+  /// In en, this message translates to:
+  /// **'Salam 👋'**
+  String get hmGreetSalam;
+
+  /// No description provided for @hmGreetSalamName.
+  ///
+  /// In en, this message translates to:
+  /// **'Salam, {name} 👋'**
+  String hmGreetSalamName(String name);
+
   /// No description provided for @hmNeedsAttention.
   ///
   /// In en, this message translates to:
@@ -1399,144 +1495,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add a task ➕'**
   String get hmPromptTaskTitle;
-
-  /// No description provided for @hmGreetMorning.
-  ///
-  /// In en, this message translates to:
-  /// **'Good morning ☀️'**
-  String get hmGreetMorning;
-
-  /// No description provided for @hmGreetMorningName.
-  ///
-  /// In en, this message translates to:
-  /// **'Good morning, {name} ☀️'**
-  String hmGreetMorningName(String name);
-
-  /// No description provided for @hmGreetAfternoon.
-  ///
-  /// In en, this message translates to:
-  /// **'Good afternoon 👋'**
-  String get hmGreetAfternoon;
-
-  /// No description provided for @hmGreetAfternoonName.
-  ///
-  /// In en, this message translates to:
-  /// **'Good afternoon, {name} 👋'**
-  String hmGreetAfternoonName(String name);
-
-  /// No description provided for @hmGreetEvening.
-  ///
-  /// In en, this message translates to:
-  /// **'Good evening 🌆'**
-  String get hmGreetEvening;
-
-  /// No description provided for @hmGreetEveningName.
-  ///
-  /// In en, this message translates to:
-  /// **'Good evening, {name} 🌆'**
-  String hmGreetEveningName(String name);
-
-  /// No description provided for @hmGreetNight.
-  ///
-  /// In en, this message translates to:
-  /// **'Working late? 🌙'**
-  String get hmGreetNight;
-
-  /// No description provided for @hmGreetNightName.
-  ///
-  /// In en, this message translates to:
-  /// **'Working late, {name}? 🌙'**
-  String hmGreetNightName(String name);
-
-  /// No description provided for @hmGreetSalam.
-  ///
-  /// In en, this message translates to:
-  /// **'Salam 👋'**
-  String get hmGreetSalam;
-
-  /// No description provided for @hmGreetSalamName.
-  ///
-  /// In en, this message translates to:
-  /// **'Salam, {name} 👋'**
-  String hmGreetSalamName(String name);
-
-  /// No description provided for @hmGreetNamaste.
-  ///
-  /// In en, this message translates to:
-  /// **'Namaste 🙏'**
-  String get hmGreetNamaste;
-
-  /// No description provided for @hmGreetNamasteName.
-  ///
-  /// In en, this message translates to:
-  /// **'Namaste, {name} 🙏'**
-  String hmGreetNamasteName(String name);
-
-  /// No description provided for @hmGreetHello.
-  ///
-  /// In en, this message translates to:
-  /// **'Hello 👋'**
-  String get hmGreetHello;
-
-  /// No description provided for @hmGreetHelloName.
-  ///
-  /// In en, this message translates to:
-  /// **'Hello, {name} 👋'**
-  String hmGreetHelloName(String name);
-
-  /// No description provided for @hmGreetCustom.
-  ///
-  /// In en, this message translates to:
-  /// **'{greeting} 👋'**
-  String hmGreetCustom(String greeting);
-
-  /// No description provided for @hmGreetCustomName.
-  ///
-  /// In en, this message translates to:
-  /// **'{greeting}, {name} 👋'**
-  String hmGreetCustomName(String greeting, String name);
-
-  /// No description provided for @setGreeting.
-  ///
-  /// In en, this message translates to:
-  /// **'Greeting'**
-  String get setGreeting;
-
-  /// No description provided for @setGreetingAuto.
-  ///
-  /// In en, this message translates to:
-  /// **'Automatic — time of day'**
-  String get setGreetingAuto;
-
-  /// No description provided for @setGreetingSalam.
-  ///
-  /// In en, this message translates to:
-  /// **'Salam'**
-  String get setGreetingSalam;
-
-  /// No description provided for @setGreetingNamaste.
-  ///
-  /// In en, this message translates to:
-  /// **'Namaste'**
-  String get setGreetingNamaste;
-
-  /// No description provided for @setGreetingHello.
-  ///
-  /// In en, this message translates to:
-  /// **'Hello'**
-  String get setGreetingHello;
-
-  /// No description provided for @setGreetingCustom.
-  ///
-  /// In en, this message translates to:
-  /// **'Custom…'**
-  String get setGreetingCustom;
-
-  /// No description provided for @setGreetingCustomHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Your greeting, e.g. Shalom'**
-  String get setGreetingCustomHint;
 
   /// No description provided for @hmSeeAllCount.
   ///
@@ -2192,60 +2150,6 @@ abstract class AppLocalizations {
   /// **'More'**
   String get mrTitle;
 
-  /// No description provided for @profileAboutYou.
-  ///
-  /// In en, this message translates to:
-  /// **'About you'**
-  String get profileAboutYou;
-
-  /// No description provided for @profileAuto.
-  ///
-  /// In en, this message translates to:
-  /// **'Auto'**
-  String get profileAuto;
-
-  /// No description provided for @profileAutoValue.
-  ///
-  /// In en, this message translates to:
-  /// **'Auto ({value})'**
-  String profileAutoValue(String value);
-
-  /// No description provided for @profileCurrency.
-  ///
-  /// In en, this message translates to:
-  /// **'Currency symbol'**
-  String get profileCurrency;
-
-  /// No description provided for @profileCurrencyOther.
-  ///
-  /// In en, this message translates to:
-  /// **'Another symbol'**
-  String get profileCurrencyOther;
-
-  /// No description provided for @profileDateOrder.
-  ///
-  /// In en, this message translates to:
-  /// **'Dates'**
-  String get profileDateOrder;
-
-  /// No description provided for @profileNameLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'What should we call you?'**
-  String get profileNameLabel;
-
-  /// No description provided for @profileRegion.
-  ///
-  /// In en, this message translates to:
-  /// **'Region & formats'**
-  String get profileRegion;
-
-  /// No description provided for @profileWeekStart.
-  ///
-  /// In en, this message translates to:
-  /// **'Week starts on'**
-  String get profileWeekStart;
-
   /// No description provided for @mrTrashSub.
   ///
   /// In en, this message translates to:
@@ -2395,6 +2299,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'School fee'**
   String get paySchoolFee;
+
+  /// No description provided for @profileAboutYou.
+  ///
+  /// In en, this message translates to:
+  /// **'About you'**
+  String get profileAboutYou;
+
+  /// No description provided for @profileAuto.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto'**
+  String get profileAuto;
+
+  /// No description provided for @profileAutoValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto ({value})'**
+  String profileAutoValue(String value);
+
+  /// No description provided for @profileCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency symbol'**
+  String get profileCurrency;
+
+  /// No description provided for @profileCurrencyOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Another symbol'**
+  String get profileCurrencyOther;
+
+  /// No description provided for @profileDateOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Dates'**
+  String get profileDateOrder;
+
+  /// No description provided for @profileNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'What should we call you?'**
+  String get profileNameLabel;
+
+  /// No description provided for @profileRegion.
+  ///
+  /// In en, this message translates to:
+  /// **'Region & formats'**
+  String get profileRegion;
+
+  /// No description provided for @profileWeekStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Week starts on'**
+  String get profileWeekStart;
 
   /// No description provided for @quietHours.
   ///
@@ -2683,6 +2641,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Block screenshots in the Vault'**
   String get screenshotBlock;
+
+  /// No description provided for @setGreeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Greeting'**
+  String get setGreeting;
+
+  /// No description provided for @setGreetingAuto.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic — time of day'**
+  String get setGreetingAuto;
+
+  /// No description provided for @setGreetingCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom…'**
+  String get setGreetingCustom;
+
+  /// No description provided for @setGreetingCustomHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your greeting, e.g. Shalom'**
+  String get setGreetingCustomHint;
+
+  /// No description provided for @setGreetingHello.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello'**
+  String get setGreetingHello;
+
+  /// No description provided for @setGreetingNamaste.
+  ///
+  /// In en, this message translates to:
+  /// **'Namaste'**
+  String get setGreetingNamaste;
+
+  /// No description provided for @setGreetingSalam.
+  ///
+  /// In en, this message translates to:
+  /// **'Salam'**
+  String get setGreetingSalam;
+
+  /// No description provided for @setWidgetDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Show details on widget'**
+  String get setWidgetDetails;
+
+  /// No description provided for @setWidgetDetailsSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Task titles and amounts on the home-screen widget'**
+  String get setWidgetDetailsSub;
 
   /// No description provided for @settingsAppearance.
   ///
@@ -4513,6 +4525,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sun'**
   String get wd7;
+
+  /// No description provided for @wgAllClear.
+  ///
+  /// In en, this message translates to:
+  /// **'All clear today ✨'**
+  String get wgAllClear;
+
+  /// No description provided for @wgDueShort.
+  ///
+  /// In en, this message translates to:
+  /// **'{n, plural, =1{1 due} other{{n} due}}'**
+  String wgDueShort(int n);
+
+  /// No description provided for @wgLockPromptBody.
+  ///
+  /// In en, this message translates to:
+  /// **'App Lock is on, but the home-screen widget can still show task titles and amounts. Show only the score and counts instead?'**
+  String get wgLockPromptBody;
+
+  /// No description provided for @wgLockPromptHide.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide details'**
+  String get wgLockPromptHide;
+
+  /// No description provided for @wgLockPromptKeep.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep showing'**
+  String get wgLockPromptKeep;
+
+  /// No description provided for @wgLockPromptTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide details on the widget?'**
+  String get wgLockPromptTitle;
+
+  /// No description provided for @wgMore.
+  ///
+  /// In en, this message translates to:
+  /// **'+{n} more'**
+  String wgMore(String n);
+
+  /// No description provided for @wgPaymentLine.
+  ///
+  /// In en, this message translates to:
+  /// **'⚡ {title} ~{amount} · {day}'**
+  String wgPaymentLine(String title, String amount, String day);
+
+  /// No description provided for @wgPaymentLineNoAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'⚡ {title} · {day}'**
+  String wgPaymentLineNoAmount(String title, String day);
+
+  /// No description provided for @wgTasksShort.
+  ///
+  /// In en, this message translates to:
+  /// **'{n, plural, =0{No tasks} =1{1 task} other{{n} tasks}}'**
+  String wgTasksShort(int n);
 
   /// No description provided for @yesterday.
   ///

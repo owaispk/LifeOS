@@ -7,7 +7,7 @@
 | Story Points | 8 |
 | Spec refs | Features §9 (Life Score — "the retention engine"), §10 (Home dashboard), §12 (notification diet — the widget informs without nagging) |
 | Depends on | PBI-009 (tasks), PBI-013 (payments), PBI-020 (Life Score), PBI-021 (dashboard) |
-| Status | Ready |
+| Status | Dev complete (Android) — device QA pending |
 
 ## User Story
 As a **user**, I want a home-screen widget showing my Life Score, today's tasks and the next payment due, so that LifeOS keeps me on track without me even opening the app.
@@ -39,3 +39,13 @@ As a **user**, I want a home-screen widget showing my Life Score, today's tasks 
 - Midnight update rides the existing background recompute (PBI-020); if the OS deferred it, the next app open corrects the widget — acceptable.
 - Deep links: `lifeos://` scheme routes already exist for notifications (PBI-012); reuse the same table.
 - iOS effort is the risk; if it balloons, split iOS out as a follow-up PBI and ship Android (decide at sprint planning, not mid-sprint).
+
+## Implementation notes (2026-11-09)
+- **Scope decision:** Android only, per the grooming note — iOS WidgetKit split out as a follow-up PBI (no iOS toolchain on the dev machine).
+- Two grooming assumptions were false in the code and were built here instead:
+  - No `lifeos://` routes existed (notification taps just open the app). Added `core/router/deep_links.dart` (one URI→location table), `WidgetClickListener` in the app shell, and `home_widget`'s launch intents on the native side.
+  - No background midnight recompute exists (PBI-020 refreshes at start/resume). The snapshot instead carries a precomputed **tomorrow** variant; the Android provider swaps to it at the date change, re-rendered by the plugin's scheduled update at 00:05 (survives reboot via `BOOT_COMPLETED`). The next app open corrects any drift — as groomed.
+- `widget_snapshot.dart` is the single builder (score + task lines + payment line + counts, EN/UR, details on/off), serialised as one JSON; the Kotlin provider (`LifeOsWidgetProvider`) only renders. `WidgetSync` pushes on start, on table changes (1 s debounce) and on app pause.
+- Schema v9: `user_settings.widget_details` (default on). The one-time App-Lock prompt is tracked in `app_meta`.
+- Layout switch: < ~200 dp width renders 2×2 (ring + counts), wider renders the full 4×2. Light/dark via `values-night`; RTL via `setLayoutDirection` when the app language is Urdu.
+- Device QA still to run (phone/emulator): add widget, both sizes, both themes, Urdu RTL, tap targets incl. cold start + App Lock, midnight swap.

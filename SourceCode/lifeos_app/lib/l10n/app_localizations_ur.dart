@@ -751,6 +751,72 @@ class AppLocalizationsUr extends AppLocalizations {
   String get hmExpiresTomorrow => 'کل ختم ہو رہی ہے';
 
   @override
+  String get hmGreetAfternoon => 'دوپہر بخیر 👋';
+
+  @override
+  String hmGreetAfternoonName(String name) {
+    return 'دوپہر بخیر، $name 👋';
+  }
+
+  @override
+  String hmGreetCustom(String greeting) {
+    return '$greeting 👋';
+  }
+
+  @override
+  String hmGreetCustomName(String greeting, String name) {
+    return '$greeting، $name 👋';
+  }
+
+  @override
+  String get hmGreetEvening => 'شام بخیر 🌆';
+
+  @override
+  String hmGreetEveningName(String name) {
+    return 'شام بخیر، $name 🌆';
+  }
+
+  @override
+  String get hmGreetHello => 'ہیلو 👋';
+
+  @override
+  String hmGreetHelloName(String name) {
+    return 'ہیلو، $name 👋';
+  }
+
+  @override
+  String get hmGreetMorning => 'صبح بخیر ☀️';
+
+  @override
+  String hmGreetMorningName(String name) {
+    return 'صبح بخیر، $name ☀️';
+  }
+
+  @override
+  String get hmGreetNamaste => 'نمستے 🙏';
+
+  @override
+  String hmGreetNamasteName(String name) {
+    return 'نمستے، $name 🙏';
+  }
+
+  @override
+  String get hmGreetNight => 'ابھی تک جاگ رہے ہیں؟ 🌙';
+
+  @override
+  String hmGreetNightName(String name) {
+    return 'ابھی تک جاگ رہے ہیں، $name؟ 🌙';
+  }
+
+  @override
+  String get hmGreetSalam => 'السلام علیکم 👋';
+
+  @override
+  String hmGreetSalamName(String name) {
+    return 'السلام علیکم، $name 👋';
+  }
+
+  @override
   String get hmNeedsAttention => 'توجہ طلب';
 
   @override
@@ -792,93 +858,6 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get hmPromptTaskTitle => 'کام شامل کریں ➕';
-
-  @override
-  String get hmGreetMorning => 'صبح بخیر ☀️';
-
-  @override
-  String hmGreetMorningName(String name) {
-    return 'صبح بخیر، $name ☀️';
-  }
-
-  @override
-  String get hmGreetAfternoon => 'دوپہر بخیر 👋';
-
-  @override
-  String hmGreetAfternoonName(String name) {
-    return 'دوپہر بخیر، $name 👋';
-  }
-
-  @override
-  String get hmGreetEvening => 'شام بخیر 🌆';
-
-  @override
-  String hmGreetEveningName(String name) {
-    return 'شام بخیر، $name 🌆';
-  }
-
-  @override
-  String get hmGreetNight => 'ابھی تک جاگ رہے ہیں؟ 🌙';
-
-  @override
-  String hmGreetNightName(String name) {
-    return 'ابھی تک جاگ رہے ہیں، $name؟ 🌙';
-  }
-
-  @override
-  String get hmGreetSalam => 'السلام علیکم 👋';
-
-  @override
-  String hmGreetSalamName(String name) {
-    return 'السلام علیکم، $name 👋';
-  }
-
-  @override
-  String get hmGreetNamaste => 'نمستے 🙏';
-
-  @override
-  String hmGreetNamasteName(String name) {
-    return 'نمستے، $name 🙏';
-  }
-
-  @override
-  String get hmGreetHello => 'ہیلو 👋';
-
-  @override
-  String hmGreetHelloName(String name) {
-    return 'ہیلو، $name 👋';
-  }
-
-  @override
-  String hmGreetCustom(String greeting) {
-    return '$greeting 👋';
-  }
-
-  @override
-  String hmGreetCustomName(String greeting, String name) {
-    return '$greeting، $name 👋';
-  }
-
-  @override
-  String get setGreeting => 'استقبالیہ';
-
-  @override
-  String get setGreetingAuto => 'خودکار — وقت کے مطابق';
-
-  @override
-  String get setGreetingSalam => 'السلام علیکم';
-
-  @override
-  String get setGreetingNamaste => 'نمستے';
-
-  @override
-  String get setGreetingHello => 'ہیلو';
-
-  @override
-  String get setGreetingCustom => 'اپنی مرضی…';
-
-  @override
-  String get setGreetingCustomHint => 'آپ کے اپنے الفاظ، مثلاً Shalom';
 
   @override
   String hmSeeAllCount(String n) {
@@ -1270,35 +1249,6 @@ class AppLocalizationsUr extends AppLocalizations {
   String get mrTitle => 'مزید';
 
   @override
-  String get profileAboutYou => 'آپ کے بارے میں';
-
-  @override
-  String get profileAuto => 'خودکار';
-
-  @override
-  String profileAutoValue(String value) {
-    return 'خودکار ($value)';
-  }
-
-  @override
-  String get profileCurrency => 'کرنسی کی علامت';
-
-  @override
-  String get profileCurrencyOther => 'کوئی اور علامت';
-
-  @override
-  String get profileDateOrder => 'تاریخیں';
-
-  @override
-  String get profileNameLabel => 'ہم آپ کو کس نام سے پکاریں؟';
-
-  @override
-  String get profileRegion => 'علاقہ اور فارمیٹ';
-
-  @override
-  String get profileWeekStart => 'ہفتے کا پہلا دن';
-
-  @override
   String get mrTrashSub => 'حذف شدہ دستاویزات، 30 دن تک محفوظ';
 
   @override
@@ -1377,6 +1327,35 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get paySchoolFee => 'اسکول فیس';
+
+  @override
+  String get profileAboutYou => 'آپ کے بارے میں';
+
+  @override
+  String get profileAuto => 'خودکار';
+
+  @override
+  String profileAutoValue(String value) {
+    return 'خودکار ($value)';
+  }
+
+  @override
+  String get profileCurrency => 'کرنسی کی علامت';
+
+  @override
+  String get profileCurrencyOther => 'کوئی اور علامت';
+
+  @override
+  String get profileDateOrder => 'تاریخیں';
+
+  @override
+  String get profileNameLabel => 'ہم آپ کو کس نام سے پکاریں؟';
+
+  @override
+  String get profileRegion => 'علاقہ اور فارمیٹ';
+
+  @override
+  String get profileWeekStart => 'ہفتے کا پہلا دن';
 
   @override
   String get quietHours => 'خاموش اوقات';
@@ -1559,6 +1538,34 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get screenshotBlock => 'والٹ میں اسکرین شاٹ بند';
+
+  @override
+  String get setGreeting => 'استقبالیہ';
+
+  @override
+  String get setGreetingAuto => 'خودکار — وقت کے مطابق';
+
+  @override
+  String get setGreetingCustom => 'اپنی مرضی…';
+
+  @override
+  String get setGreetingCustomHint => 'آپ کے اپنے الفاظ، مثلاً Shalom';
+
+  @override
+  String get setGreetingHello => 'ہیلو';
+
+  @override
+  String get setGreetingNamaste => 'نمستے';
+
+  @override
+  String get setGreetingSalam => 'السلام علیکم';
+
+  @override
+  String get setWidgetDetails => 'ویجٹ پر تفصیل دکھائیں';
+
+  @override
+  String get setWidgetDetailsSub =>
+      'ہوم اسکرین ویجٹ پر ٹاسک کے عنوان اور رقمیں';
 
   @override
   String get settingsAppearance => 'ظاہری شکل';
@@ -2591,6 +2598,60 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get wd7 => 'اتوار';
+
+  @override
+  String get wgAllClear => 'آج سب کچھ صاف ہے ✨';
+
+  @override
+  String wgDueShort(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n واجب الادا',
+      one: '1 واجب الادا',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get wgLockPromptBody =>
+      'ایپ لاک آن ہے، مگر ہوم اسکرین ویجٹ اب بھی ٹاسک کے عنوان اور رقمیں دکھا سکتا ہے۔ کیا صرف اسکور اور تعداد دکھائی جائے؟';
+
+  @override
+  String get wgLockPromptHide => 'تفصیل چھپائیں';
+
+  @override
+  String get wgLockPromptKeep => 'دکھاتے رہیں';
+
+  @override
+  String get wgLockPromptTitle => 'ویجٹ پر تفصیل چھپائیں؟';
+
+  @override
+  String wgMore(String n) {
+    return '+$n مزید';
+  }
+
+  @override
+  String wgPaymentLine(String title, String amount, String day) {
+    return '⚡ $title ~$amount · $day';
+  }
+
+  @override
+  String wgPaymentLineNoAmount(String title, String day) {
+    return '⚡ $title · $day';
+  }
+
+  @override
+  String wgTasksShort(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n ٹاسکس',
+      one: '1 ٹاسک',
+      zero: 'کوئی ٹاسک نہیں',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get yesterday => 'گزشتہ کل';

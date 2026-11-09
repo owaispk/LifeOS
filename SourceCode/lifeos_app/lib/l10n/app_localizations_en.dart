@@ -751,6 +751,72 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hmExpiresTomorrow => 'expires tomorrow';
 
   @override
+  String get hmGreetAfternoon => 'Good afternoon 👋';
+
+  @override
+  String hmGreetAfternoonName(String name) {
+    return 'Good afternoon, $name 👋';
+  }
+
+  @override
+  String hmGreetCustom(String greeting) {
+    return '$greeting 👋';
+  }
+
+  @override
+  String hmGreetCustomName(String greeting, String name) {
+    return '$greeting, $name 👋';
+  }
+
+  @override
+  String get hmGreetEvening => 'Good evening 🌆';
+
+  @override
+  String hmGreetEveningName(String name) {
+    return 'Good evening, $name 🌆';
+  }
+
+  @override
+  String get hmGreetHello => 'Hello 👋';
+
+  @override
+  String hmGreetHelloName(String name) {
+    return 'Hello, $name 👋';
+  }
+
+  @override
+  String get hmGreetMorning => 'Good morning ☀️';
+
+  @override
+  String hmGreetMorningName(String name) {
+    return 'Good morning, $name ☀️';
+  }
+
+  @override
+  String get hmGreetNamaste => 'Namaste 🙏';
+
+  @override
+  String hmGreetNamasteName(String name) {
+    return 'Namaste, $name 🙏';
+  }
+
+  @override
+  String get hmGreetNight => 'Working late? 🌙';
+
+  @override
+  String hmGreetNightName(String name) {
+    return 'Working late, $name? 🌙';
+  }
+
+  @override
+  String get hmGreetSalam => 'Salam 👋';
+
+  @override
+  String hmGreetSalamName(String name) {
+    return 'Salam, $name 👋';
+  }
+
+  @override
   String get hmNeedsAttention => 'Needs attention';
 
   @override
@@ -793,93 +859,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get hmPromptTaskTitle => 'Add a task ➕';
-
-  @override
-  String get hmGreetMorning => 'Good morning ☀️';
-
-  @override
-  String hmGreetMorningName(String name) {
-    return 'Good morning, $name ☀️';
-  }
-
-  @override
-  String get hmGreetAfternoon => 'Good afternoon 👋';
-
-  @override
-  String hmGreetAfternoonName(String name) {
-    return 'Good afternoon, $name 👋';
-  }
-
-  @override
-  String get hmGreetEvening => 'Good evening 🌆';
-
-  @override
-  String hmGreetEveningName(String name) {
-    return 'Good evening, $name 🌆';
-  }
-
-  @override
-  String get hmGreetNight => 'Working late? 🌙';
-
-  @override
-  String hmGreetNightName(String name) {
-    return 'Working late, $name? 🌙';
-  }
-
-  @override
-  String get hmGreetSalam => 'Salam 👋';
-
-  @override
-  String hmGreetSalamName(String name) {
-    return 'Salam, $name 👋';
-  }
-
-  @override
-  String get hmGreetNamaste => 'Namaste 🙏';
-
-  @override
-  String hmGreetNamasteName(String name) {
-    return 'Namaste, $name 🙏';
-  }
-
-  @override
-  String get hmGreetHello => 'Hello 👋';
-
-  @override
-  String hmGreetHelloName(String name) {
-    return 'Hello, $name 👋';
-  }
-
-  @override
-  String hmGreetCustom(String greeting) {
-    return '$greeting 👋';
-  }
-
-  @override
-  String hmGreetCustomName(String greeting, String name) {
-    return '$greeting, $name 👋';
-  }
-
-  @override
-  String get setGreeting => 'Greeting';
-
-  @override
-  String get setGreetingAuto => 'Automatic — time of day';
-
-  @override
-  String get setGreetingSalam => 'Salam';
-
-  @override
-  String get setGreetingNamaste => 'Namaste';
-
-  @override
-  String get setGreetingHello => 'Hello';
-
-  @override
-  String get setGreetingCustom => 'Custom…';
-
-  @override
-  String get setGreetingCustomHint => 'Your greeting, e.g. Shalom';
 
   @override
   String hmSeeAllCount(String n) {
@@ -1272,35 +1251,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mrTitle => 'More';
 
   @override
-  String get profileAboutYou => 'About you';
-
-  @override
-  String get profileAuto => 'Auto';
-
-  @override
-  String profileAutoValue(String value) {
-    return 'Auto ($value)';
-  }
-
-  @override
-  String get profileCurrency => 'Currency symbol';
-
-  @override
-  String get profileCurrencyOther => 'Another symbol';
-
-  @override
-  String get profileDateOrder => 'Dates';
-
-  @override
-  String get profileNameLabel => 'What should we call you?';
-
-  @override
-  String get profileRegion => 'Region & formats';
-
-  @override
-  String get profileWeekStart => 'Week starts on';
-
-  @override
   String get mrTrashSub => 'Deleted documents, kept for 30 days';
 
   @override
@@ -1378,6 +1328,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get paySchoolFee => 'School fee';
+
+  @override
+  String get profileAboutYou => 'About you';
+
+  @override
+  String get profileAuto => 'Auto';
+
+  @override
+  String profileAutoValue(String value) {
+    return 'Auto ($value)';
+  }
+
+  @override
+  String get profileCurrency => 'Currency symbol';
+
+  @override
+  String get profileCurrencyOther => 'Another symbol';
+
+  @override
+  String get profileDateOrder => 'Dates';
+
+  @override
+  String get profileNameLabel => 'What should we call you?';
+
+  @override
+  String get profileRegion => 'Region & formats';
+
+  @override
+  String get profileWeekStart => 'Week starts on';
 
   @override
   String get quietHours => 'Quiet hours';
@@ -1560,6 +1539,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get screenshotBlock => 'Block screenshots in the Vault';
+
+  @override
+  String get setGreeting => 'Greeting';
+
+  @override
+  String get setGreetingAuto => 'Automatic — time of day';
+
+  @override
+  String get setGreetingCustom => 'Custom…';
+
+  @override
+  String get setGreetingCustomHint => 'Your greeting, e.g. Shalom';
+
+  @override
+  String get setGreetingHello => 'Hello';
+
+  @override
+  String get setGreetingNamaste => 'Namaste';
+
+  @override
+  String get setGreetingSalam => 'Salam';
+
+  @override
+  String get setWidgetDetails => 'Show details on widget';
+
+  @override
+  String get setWidgetDetailsSub =>
+      'Task titles and amounts on the home-screen widget';
 
   @override
   String get settingsAppearance => 'Appearance';
@@ -2595,6 +2602,60 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get wd7 => 'Sun';
+
+  @override
+  String get wgAllClear => 'All clear today ✨';
+
+  @override
+  String wgDueShort(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n due',
+      one: '1 due',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get wgLockPromptBody =>
+      'App Lock is on, but the home-screen widget can still show task titles and amounts. Show only the score and counts instead?';
+
+  @override
+  String get wgLockPromptHide => 'Hide details';
+
+  @override
+  String get wgLockPromptKeep => 'Keep showing';
+
+  @override
+  String get wgLockPromptTitle => 'Hide details on the widget?';
+
+  @override
+  String wgMore(String n) {
+    return '+$n more';
+  }
+
+  @override
+  String wgPaymentLine(String title, String amount, String day) {
+    return '⚡ $title ~$amount · $day';
+  }
+
+  @override
+  String wgPaymentLineNoAmount(String title, String day) {
+    return '⚡ $title · $day';
+  }
+
+  @override
+  String wgTasksShort(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n tasks',
+      one: '1 task',
+      zero: 'No tasks',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get yesterday => 'Yesterday';

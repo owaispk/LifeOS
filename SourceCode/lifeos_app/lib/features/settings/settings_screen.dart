@@ -90,8 +90,21 @@ class SettingsScreen extends ConsumerWidget {
             subtitle: Text(canAuth ? l.appLockSub : l.lockUnavailable),
             value: (s?.appLock ?? false) && canAuth,
             onChanged: canAuth
-                ? (v) => set(UserSettingsCompanion(appLock: Value(v)))
+                ? (v) async {
+                    await set(UserSettingsCompanion(appLock: Value(v)));
+                    // The widget privacy choice, once (PBI-033 AC5).
+                    if (v && context.mounted) {
+                      await _maybePromptWidgetDetails(context, service, s);
+                    }
+                  }
                 : null,
+          ),
+          SwitchListTile(
+            key: const ValueKey('set-widget-details'),
+            title: Text(l.setWidgetDetails),
+            subtitle: Text(l.setWidgetDetailsSub),
+            value: s?.widgetDetails ?? true,
+            onChanged: (v) => service.setWidgetDetails(v),
           ),
           SwitchListTile(
             key: const ValueKey('set-vault-lock'),
@@ -288,6 +301,41 @@ class SettingsScreen extends ConsumerWidget {
         SnackBar(content: Text(l.exportDone('${result.documentCount}'))),
       );
     await ref.read(shareExportProvider)(result.zip);
+  }
+
+  /// Enabling App Lock offers — once — to hide task titles and amounts on
+  /// the home-screen widget (PBI-033 AC5).
+  Future<void> _maybePromptWidgetDetails(
+    BuildContext context,
+    SettingsService service,
+    UserSettingsRow? s,
+  ) async {
+    if (!(s?.widgetDetails ?? true)) return; // already hidden
+    if (!await service.shouldPromptWidgetDetails()) return;
+    if (!context.mounted) return;
+    final l = context.l10n;
+    final hide = await showDialog<bool>(
+      context: context,
+      useRootNavigator: true,
+      builder: (context) => AlertDialog(
+        key: const ValueKey('widget-details-prompt'),
+        title: Text(l.wgLockPromptTitle),
+        content: Text(l.wgLockPromptBody),
+        actions: [
+          TextButton(
+            key: const ValueKey('widget-details-keep'),
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(l.wgLockPromptKeep),
+          ),
+          FilledButton(
+            key: const ValueKey('widget-details-hide'),
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(l.wgLockPromptHide),
+          ),
+        ],
+      ),
+    );
+    if (hide == true) await service.setWidgetDetails(false);
   }
 
   /// Double confirmation (AC5): a dialog, then typing DELETE.

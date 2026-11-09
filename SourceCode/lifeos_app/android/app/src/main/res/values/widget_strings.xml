@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PBI-033: only picker metadata lives here; all content strings are
+     rendered in Dart in the app's language. -->
+<resources>
+    <string name="widget_label">LifeOS</string>
+    <string name="widget_description">Life Score, today\'s tasks and the next payment at a glance.</string>
+</resources>

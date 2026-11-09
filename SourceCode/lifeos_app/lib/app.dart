@@ -10,6 +10,7 @@ import 'core/theme/tokens.dart';
 import 'features/capture/share_in_listener.dart';
 import 'features/security/lock_gate.dart';
 import 'features/settings/settings_providers.dart';
+import 'features/widget/widget_click_listener.dart';
 
 /// Marks every element for one rebuild (keeps all state).
 void _redrawAll() {
@@ -69,8 +70,11 @@ class LifeOsApp extends ConsumerWidget {
             ),
           ),
           // App lock (PBI-024) covers everything; "Share to LifeOS" can
-          // arrive at any time (PBI-003).
-          child: LockGate(child: ShareInListener(child: child!)),
+          // arrive at any time (PBI-003), and so can a widget tap
+          // (PBI-033) — the target shows after unlock.
+          child: LockGate(
+            child: ShareInListener(child: WidgetClickListener(child: child!)),
+          ),
         );
       },
     );

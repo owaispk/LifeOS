@@ -63,6 +63,7 @@ dependencies:
   archive: ^4.6.0
   package_info_plus: ^10.2.2
   device_info_plus: ^13.3.0
+  home_widget: ^0.10.0
 
 dev_dependencies:
   flutter_test:

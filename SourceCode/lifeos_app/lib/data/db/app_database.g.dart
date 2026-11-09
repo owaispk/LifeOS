@@ -3245,6 +3245,21 @@ class $UserSettingsTable extends UserSettings
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _widgetDetailsMeta = const VerificationMeta(
+    'widgetDetails',
+  );
+  @override
+  late final GeneratedColumn<bool> widgetDetails = GeneratedColumn<bool>(
+    'widget_details',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("widget_details" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -3273,6 +3288,7 @@ class $UserSettingsTable extends UserSettings
     currencySymbol,
     weekStart,
     dateOrder,
+    widgetDetails,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3463,6 +3479,15 @@ class $UserSettingsTable extends UserSettings
         dateOrder.isAcceptableOrUnknown(data['date_order']!, _dateOrderMeta),
       );
     }
+    if (data.containsKey('widget_details')) {
+      context.handle(
+        _widgetDetailsMeta,
+        widgetDetails.isAcceptableOrUnknown(
+          data['widget_details']!,
+          _widgetDetailsMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -3580,6 +3605,10 @@ class $UserSettingsTable extends UserSettings
         DriftSqlType.string,
         data['${effectivePrefix}date_order'],
       ),
+      widgetDetails: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}widget_details'],
+      )!,
     );
   }
 
@@ -3636,6 +3665,10 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
 
   /// Day/month order: 'dm' ("9 Nov") or 'md' ("Nov 9").
   final String? dateOrder;
+
+  /// Show task titles and amounts on the home-screen widget (schema v9,
+  /// PBI-033). When off, the widget shows only the score ring and counts.
+  final bool widgetDetails;
   const UserSettingsRow({
     required this.id,
     required this.userId,
@@ -3663,6 +3696,7 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     this.currencySymbol,
     this.weekStart,
     this.dateOrder,
+    required this.widgetDetails,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -3705,6 +3739,7 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     if (!nullToAbsent || dateOrder != null) {
       map['date_order'] = Variable<String>(dateOrder);
     }
+    map['widget_details'] = Variable<bool>(widgetDetails);
     return map;
   }
 
@@ -3748,6 +3783,7 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
       dateOrder: dateOrder == null && nullToAbsent
           ? const Value.absent()
           : Value(dateOrder),
+      widgetDetails: Value(widgetDetails),
     );
   }
 
@@ -3783,6 +3819,7 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
       currencySymbol: serializer.fromJson<String?>(json['currencySymbol']),
       weekStart: serializer.fromJson<int?>(json['weekStart']),
       dateOrder: serializer.fromJson<String?>(json['dateOrder']),
+      widgetDetails: serializer.fromJson<bool>(json['widgetDetails']),
     );
   }
   @override
@@ -3815,6 +3852,7 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
       'currencySymbol': serializer.toJson<String?>(currencySymbol),
       'weekStart': serializer.toJson<int?>(weekStart),
       'dateOrder': serializer.toJson<String?>(dateOrder),
+      'widgetDetails': serializer.toJson<bool>(widgetDetails),
     };
   }
 
@@ -3845,6 +3883,7 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     Value<String?> currencySymbol = const Value.absent(),
     Value<int?> weekStart = const Value.absent(),
     Value<String?> dateOrder = const Value.absent(),
+    bool? widgetDetails,
   }) => UserSettingsRow(
     id: id ?? this.id,
     userId: userId ?? this.userId,
@@ -3874,6 +3913,7 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
         : this.currencySymbol,
     weekStart: weekStart.present ? weekStart.value : this.weekStart,
     dateOrder: dateOrder.present ? dateOrder.value : this.dateOrder,
+    widgetDetails: widgetDetails ?? this.widgetDetails,
   );
   UserSettingsRow copyWithCompanion(UserSettingsCompanion data) {
     return UserSettingsRow(
@@ -3927,6 +3967,9 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
           : this.currencySymbol,
       weekStart: data.weekStart.present ? data.weekStart.value : this.weekStart,
       dateOrder: data.dateOrder.present ? data.dateOrder.value : this.dateOrder,
+      widgetDetails: data.widgetDetails.present
+          ? data.widgetDetails.value
+          : this.widgetDetails,
     );
   }
 
@@ -3958,7 +4001,8 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
           ..write('greetCustom: $greetCustom, ')
           ..write('currencySymbol: $currencySymbol, ')
           ..write('weekStart: $weekStart, ')
-          ..write('dateOrder: $dateOrder')
+          ..write('dateOrder: $dateOrder, ')
+          ..write('widgetDetails: $widgetDetails')
           ..write(')'))
         .toString();
   }
@@ -3991,6 +4035,7 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     currencySymbol,
     weekStart,
     dateOrder,
+    widgetDetails,
   ]);
   @override
   bool operator ==(Object other) =>
@@ -4021,7 +4066,8 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
           other.greetCustom == this.greetCustom &&
           other.currencySymbol == this.currencySymbol &&
           other.weekStart == this.weekStart &&
-          other.dateOrder == this.dateOrder);
+          other.dateOrder == this.dateOrder &&
+          other.widgetDetails == this.widgetDetails);
 }
 
 class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
@@ -4051,6 +4097,7 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
   final Value<String?> currencySymbol;
   final Value<int?> weekStart;
   final Value<String?> dateOrder;
+  final Value<bool> widgetDetails;
   final Value<int> rowid;
   const UserSettingsCompanion({
     this.id = const Value.absent(),
@@ -4079,6 +4126,7 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     this.currencySymbol = const Value.absent(),
     this.weekStart = const Value.absent(),
     this.dateOrder = const Value.absent(),
+    this.widgetDetails = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   UserSettingsCompanion.insert({
@@ -4108,6 +4156,7 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     this.currencySymbol = const Value.absent(),
     this.weekStart = const Value.absent(),
     this.dateOrder = const Value.absent(),
+    this.widgetDetails = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   static Insertable<UserSettingsRow> custom({
@@ -4137,6 +4186,7 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     Expression<String>? currencySymbol,
     Expression<int>? weekStart,
     Expression<String>? dateOrder,
+    Expression<bool>? widgetDetails,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -4166,6 +4216,7 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
       if (currencySymbol != null) 'currency_symbol': currencySymbol,
       if (weekStart != null) 'week_start': weekStart,
       if (dateOrder != null) 'date_order': dateOrder,
+      if (widgetDetails != null) 'widget_details': widgetDetails,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -4197,6 +4248,7 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     Value<String?>? currencySymbol,
     Value<int?>? weekStart,
     Value<String?>? dateOrder,
+    Value<bool>? widgetDetails,
     Value<int>? rowid,
   }) {
     return UserSettingsCompanion(
@@ -4226,6 +4278,7 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
       currencySymbol: currencySymbol ?? this.currencySymbol,
       weekStart: weekStart ?? this.weekStart,
       dateOrder: dateOrder ?? this.dateOrder,
+      widgetDetails: widgetDetails ?? this.widgetDetails,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -4311,6 +4364,9 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     if (dateOrder.present) {
       map['date_order'] = Variable<String>(dateOrder.value);
     }
+    if (widgetDetails.present) {
+      map['widget_details'] = Variable<bool>(widgetDetails.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -4346,6 +4402,7 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
           ..write('currencySymbol: $currencySymbol, ')
           ..write('weekStart: $weekStart, ')
           ..write('dateOrder: $dateOrder, ')
+          ..write('widgetDetails: $widgetDetails, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -15890,6 +15947,7 @@ typedef $$UserSettingsTableCreateCompanionBuilder =
       Value<String?> currencySymbol,
       Value<int?> weekStart,
       Value<String?> dateOrder,
+      Value<bool> widgetDetails,
       Value<int> rowid,
     });
 typedef $$UserSettingsTableUpdateCompanionBuilder =
@@ -15920,6 +15978,7 @@ typedef $$UserSettingsTableUpdateCompanionBuilder =
       Value<String?> currencySymbol,
       Value<int?> weekStart,
       Value<String?> dateOrder,
+      Value<bool> widgetDetails,
       Value<int> rowid,
     });
 
@@ -16059,6 +16118,11 @@ class $$UserSettingsTableFilterComposer
 
   ColumnFilters<String> get dateOrder => $composableBuilder(
     column: $table.dateOrder,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get widgetDetails => $composableBuilder(
+    column: $table.widgetDetails,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -16201,6 +16265,11 @@ class $$UserSettingsTableOrderingComposer
     column: $table.dateOrder,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<bool> get widgetDetails => $composableBuilder(
+    column: $table.widgetDetails,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$UserSettingsTableAnnotationComposer
@@ -16313,6 +16382,11 @@ class $$UserSettingsTableAnnotationComposer
 
   GeneratedColumn<String> get dateOrder =>
       $composableBuilder(column: $table.dateOrder, builder: (column) => column);
+
+  GeneratedColumn<bool> get widgetDetails => $composableBuilder(
+    column: $table.widgetDetails,
+    builder: (column) => column,
+  );
 }
 
 class $$UserSettingsTableTableManager
@@ -16372,6 +16446,7 @@ class $$UserSettingsTableTableManager
                 Value<String?> currencySymbol = const Value.absent(),
                 Value<int?> weekStart = const Value.absent(),
                 Value<String?> dateOrder = const Value.absent(),
+                Value<bool> widgetDetails = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => UserSettingsCompanion(
                 id: id,
@@ -16400,6 +16475,7 @@ class $$UserSettingsTableTableManager
                 currencySymbol: currencySymbol,
                 weekStart: weekStart,
                 dateOrder: dateOrder,
+                widgetDetails: widgetDetails,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -16430,6 +16506,7 @@ class $$UserSettingsTableTableManager
                 Value<String?> currencySymbol = const Value.absent(),
                 Value<int?> weekStart = const Value.absent(),
                 Value<String?> dateOrder = const Value.absent(),
+                Value<bool> widgetDetails = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => UserSettingsCompanion.insert(
                 id: id,
@@ -16458,6 +16535,7 @@ class $$UserSettingsTableTableManager
                 currencySymbol: currencySymbol,
                 weekStart: weekStart,
                 dateOrder: dateOrder,
+                widgetDetails: widgetDetails,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

@@ -81,6 +81,10 @@ class UserSettings extends Table with SyncColumns {
   /// Day/month order: 'dm' ("9 Nov") or 'md' ("Nov 9").
   TextColumn get dateOrder => text().nullable()();
 
+  /// Show task titles and amounts on the home-screen widget (schema v9,
+  /// PBI-033). When off, the widget shows only the score ring and counts.
+  BoolColumn get widgetDetails => boolean().withDefault(const Constant(true))();
+
   @override
   List<Set<Column<Object>>> get uniqueKeys => [
     {userId},

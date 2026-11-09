@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PBI-033, 2×2: score ring + counts only. All text arrives pre-rendered
+     from Dart; this layout never computes anything. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_bg"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <FrameLayout
+        android:id="@+id/ring_box"
+        android:layout_width="76dp"
+        android:layout_height="76dp">
+
+        <ProgressBar
+            android:id="@+id/ring_low"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:indeterminate="false"
+            android:max="100"
+            android:progressDrawable="@drawable/widget_ring_low"
+            android:visibility="gone" />
+
+        <ProgressBar
+            android:id="@+id/ring_mid"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:indeterminate="false"
+            android:max="100"
+            android:progressDrawable="@drawable/widget_ring_mid"
+            android:visibility="gone" />
+
+        <ProgressBar
+            android:id="@+id/ring_high"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:indeterminate="false"
+            android:max="100"
+            android:progressDrawable="@drawable/widget_ring_high"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/score_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@color/widget_text"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/counts_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:gravity="center"
+        android:maxLines="2"
+        android:textColor="@color/widget_text_dim"
+        android:textSize="12sp" />
+</LinearLayout>

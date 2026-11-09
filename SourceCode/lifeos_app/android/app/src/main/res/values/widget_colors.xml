@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PBI-033 home-screen widget: Flagship look, light theme. -->
+<resources>
+    <color name="widget_bg">#FFFDFBFF</color>
+    <color name="widget_text">#DE1B1B1F</color>
+    <color name="widget_text_dim">#8A1B1B1F</color>
+    <color name="widget_track">#1F1B1B1F</color>
+    <!-- Score colours, same thresholds as Tokens.scoreColor. -->
+    <color name="widget_score_low">#FFE53935</color>
+    <color name="widget_score_mid">#FFFFB300</color>
+    <color name="widget_score_high">#FF43A047</color>
+</resources>

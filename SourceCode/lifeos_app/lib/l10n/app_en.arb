@@ -491,83 +491,9 @@
   },
   "hmExpiresToday": "expires today",
   "hmExpiresTomorrow": "expires tomorrow",
-  "hmNeedsAttention": "Needs attention",
-  "hmNoPaymentsWeek": "No payments due this week",
-  "hmNothingUrgent": "Nothing urgent",
-  "hmNothingUrgentBody": "Payments due soon and expiring documents show here.",
-  "hmNothingUrgentNice": "Nothing urgent — nice ✓",
-  "hmPaid": "Paid",
-  "hmPaymentsWeek": "{amount} in payments this week",
-  "@hmPaymentsWeek": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
-  "hmPromptAtcBody": "Rent, fees, bills: reminded every month, automatically.",
-  "hmPromptAtcTitle": "Add what you pay regularly ⚡",
-  "hmPromptScanBody": "CNIC, passport, a bill — LifeOS files it and reminds you.",
-  "hmPromptScanTitle": "Scan your first document 📸",
-  "hmPromptTaskBody": "Anything on your mind, with a reminder.",
-  "hmPromptTaskTitle": "Add a task ➕",
-  "hmGreetMorning": "Good morning ☀️",
-  "hmGreetMorningName": "Good morning, {name} ☀️",
-  "@hmGreetMorningName": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
   "hmGreetAfternoon": "Good afternoon 👋",
   "hmGreetAfternoonName": "Good afternoon, {name} 👋",
   "@hmGreetAfternoonName": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "hmGreetEvening": "Good evening 🌆",
-  "hmGreetEveningName": "Good evening, {name} 🌆",
-  "@hmGreetEveningName": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "hmGreetNight": "Working late? 🌙",
-  "hmGreetNightName": "Working late, {name}? 🌙",
-  "@hmGreetNightName": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "hmGreetSalam": "Salam 👋",
-  "hmGreetSalamName": "Salam, {name} 👋",
-  "@hmGreetSalamName": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "hmGreetNamaste": "Namaste 🙏",
-  "hmGreetNamasteName": "Namaste, {name} 🙏",
-  "@hmGreetNamasteName": {
-    "placeholders": {
-      "name": {
-        "type": "String"
-      }
-    }
-  },
-  "hmGreetHello": "Hello 👋",
-  "hmGreetHelloName": "Hello, {name} 👋",
-  "@hmGreetHelloName": {
     "placeholders": {
       "name": {
         "type": "String"
@@ -593,13 +519,80 @@
       }
     }
   },
-  "setGreeting": "Greeting",
-  "setGreetingAuto": "Automatic — time of day",
-  "setGreetingSalam": "Salam",
-  "setGreetingNamaste": "Namaste",
-  "setGreetingHello": "Hello",
-  "setGreetingCustom": "Custom…",
-  "setGreetingCustomHint": "Your greeting, e.g. Shalom",
+  "hmGreetEvening": "Good evening 🌆",
+  "hmGreetEveningName": "Good evening, {name} 🌆",
+  "@hmGreetEveningName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "hmGreetHello": "Hello 👋",
+  "hmGreetHelloName": "Hello, {name} 👋",
+  "@hmGreetHelloName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "hmGreetMorning": "Good morning ☀️",
+  "hmGreetMorningName": "Good morning, {name} ☀️",
+  "@hmGreetMorningName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "hmGreetNamaste": "Namaste 🙏",
+  "hmGreetNamasteName": "Namaste, {name} 🙏",
+  "@hmGreetNamasteName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "hmGreetNight": "Working late? 🌙",
+  "hmGreetNightName": "Working late, {name}? 🌙",
+  "@hmGreetNightName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "hmGreetSalam": "Salam 👋",
+  "hmGreetSalamName": "Salam, {name} 👋",
+  "@hmGreetSalamName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "hmNeedsAttention": "Needs attention",
+  "hmNoPaymentsWeek": "No payments due this week",
+  "hmNothingUrgent": "Nothing urgent",
+  "hmNothingUrgentBody": "Payments due soon and expiring documents show here.",
+  "hmNothingUrgentNice": "Nothing urgent — nice ✓",
+  "hmPaid": "Paid",
+  "hmPaymentsWeek": "{amount} in payments this week",
+  "@hmPaymentsWeek": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "hmPromptAtcBody": "Rent, fees, bills: reminded every month, automatically.",
+  "hmPromptAtcTitle": "Add what you pay regularly ⚡",
+  "hmPromptScanBody": "CNIC, passport, a bill — LifeOS files it and reminds you.",
+  "hmPromptScanTitle": "Scan your first document 📸",
+  "hmPromptTaskBody": "Anything on your mind, with a reminder.",
+  "hmPromptTaskTitle": "Add a task ➕",
   "hmSeeAllCount": "See all ({n})",
   "@hmSeeAllCount": {
     "placeholders": {
@@ -859,22 +852,6 @@
   "mrProfile": "My profile",
   "mrProfileSub": "Your name, greeting and language",
   "mrTitle": "More",
-  "profileAboutYou": "About you",
-  "profileAuto": "Auto",
-  "profileAutoValue": "Auto ({value})",
-  "@profileAutoValue": {
-    "placeholders": {
-      "value": {
-        "type": "String"
-      }
-    }
-  },
-  "profileCurrency": "Currency symbol",
-  "profileCurrencyOther": "Another symbol",
-  "profileDateOrder": "Dates",
-  "profileNameLabel": "What should we call you?",
-  "profileRegion": "Region & formats",
-  "profileWeekStart": "Week starts on",
   "mrTrashSub": "Deleted documents, kept for 30 days",
   "name": "Name",
   "next": "Next",
@@ -910,6 +887,22 @@
   "payMobile": "Mobile",
   "payRent": "Rent",
   "paySchoolFee": "School fee",
+  "profileAboutYou": "About you",
+  "profileAuto": "Auto",
+  "profileAutoValue": "Auto ({value})",
+  "@profileAutoValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "profileCurrency": "Currency symbol",
+  "profileCurrencyOther": "Another symbol",
+  "profileDateOrder": "Dates",
+  "profileNameLabel": "What should we call you?",
+  "profileRegion": "Region & formats",
+  "profileWeekStart": "Week starts on",
   "quietHours": "Quiet hours",
   "quietHoursValue": "{from} – {to}",
   "@quietHoursValue": {
@@ -1064,6 +1057,15 @@
     }
   },
   "screenshotBlock": "Block screenshots in the Vault",
+  "setGreeting": "Greeting",
+  "setGreetingAuto": "Automatic — time of day",
+  "setGreetingCustom": "Custom…",
+  "setGreetingCustomHint": "Your greeting, e.g. Shalom",
+  "setGreetingHello": "Hello",
+  "setGreetingNamaste": "Namaste",
+  "setGreetingSalam": "Salam",
+  "setWidgetDetails": "Show details on widget",
+  "setWidgetDetailsSub": "Task titles and amounts on the home-screen widget",
   "settingsAppearance": "Appearance",
   "settingsData": "Data",
   "settingsLanguage": "Language",
@@ -1697,5 +1699,59 @@
   "wd5": "Fri",
   "wd6": "Sat",
   "wd7": "Sun",
+  "wgAllClear": "All clear today ✨",
+  "wgDueShort": "{n, plural, =1{1 due} other{{n} due}}",
+  "@wgDueShort": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "wgLockPromptBody": "App Lock is on, but the home-screen widget can still show task titles and amounts. Show only the score and counts instead?",
+  "wgLockPromptHide": "Hide details",
+  "wgLockPromptKeep": "Keep showing",
+  "wgLockPromptTitle": "Hide details on the widget?",
+  "wgMore": "+{n} more",
+  "@wgMore": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "wgPaymentLine": "⚡ {title} ~{amount} · {day}",
+  "@wgPaymentLine": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      },
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "wgPaymentLineNoAmount": "⚡ {title} · {day}",
+  "@wgPaymentLineNoAmount": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "wgTasksShort": "{n, plural, =0{No tasks} =1{1 task} other{{n} tasks}}",
+  "@wgTasksShort": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
   "yesterday": "Yesterday"
 }

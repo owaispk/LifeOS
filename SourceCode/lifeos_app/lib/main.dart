@@ -30,6 +30,9 @@ import 'features/settings/settings_providers.dart' show applyRegion;
 import 'features/score/domain/life_score.dart';
 import 'features/score/score_providers.dart';
 import 'features/tasks/ui/quick_parse.dart';
+import 'features/widget/platform/widget_gateway.dart';
+import 'features/widget/widget_providers.dart';
+import 'features/widget/widget_sync.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -101,6 +104,16 @@ Future<void> main() async {
     AppLifecycleListener(onResume: sync.onResume);
   }
 
+  // Home-screen widget (PBI-033): Android first-class. The widget is
+  // pushed fresh data on every relevant change and on app pause.
+  WidgetGateway? widgetGateway;
+  if (repos != null && defaultTargetPlatform == TargetPlatform.android) {
+    widgetGateway = const HomeWidgetGateway();
+    final widgets = WidgetSync(repos, widgetGateway, weights: weights);
+    await widgets.start();
+    AppLifecycleListener(onPause: widgets.onPause);
+  }
+
   // Vault files live in the app's private documents folder (PBI-003).
   final vaultRoot = repos == null
       ? null
@@ -115,6 +128,8 @@ Future<void> main() async {
         if (repos != null) repositoriesProvider.overrideWithValue(repos),
         if (gateway != null)
           notificationGatewayProvider.overrideWithValue(gateway),
+        if (widgetGateway != null)
+          widgetGatewayProvider.overrideWithValue(widgetGateway),
         if (vaultRoot != null) vaultRootProvider.overrideWithValue(vaultRoot),
         if (isPhone) ...[
           keyStoreProvider.overrideWithValue(keyStore),

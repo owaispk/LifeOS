@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- PBI-033 home-screen widget: dark theme follows the system. -->
+<resources>
+    <color name="widget_bg">#FF1C1B1F</color>
+    <color name="widget_text">#DEE6E1E5</color>
+    <color name="widget_text_dim">#8AE6E1E5</color>
+    <color name="widget_track">#33E6E1E5</color>
+    <color name="widget_score_low">#FFEF5350</color>
+    <color name="widget_score_mid">#FFFFCA28</color>
+    <color name="widget_score_high">#FF66BB6A</color>
+</resources>

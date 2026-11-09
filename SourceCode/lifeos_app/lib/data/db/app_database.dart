@@ -45,7 +45,7 @@ class AppDatabase extends _$AppDatabase {
   );
 
   @override
-  int get schemaVersion => 8;
+  int get schemaVersion => 9;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -102,6 +102,10 @@ class AppDatabase extends _$AppDatabase {
           "UPDATE user_settings SET currency_symbol = 'Rs', week_start = 1, "
           "date_order = 'dm'",
         );
+      }
+      // v9 (PBI-033): home-screen widget detail visibility.
+      if (from < 9) {
+        await m.addColumn(userSettings, userSettings.widgetDetails);
       }
     },
     beforeOpen: (details) async {

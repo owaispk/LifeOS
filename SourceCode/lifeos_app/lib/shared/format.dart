@@ -88,3 +88,6 @@ String formatMonth(DateTime d) => '${_month(d.month)} ${d.year}';
 
 /// "Nov" (short month name).
 String shortMonth(DateTime d) => _mon(d.month);
+
+/// "Thu" (short weekday name).
+String weekdayShort(DateTime d) => _weekday(d.weekday);
