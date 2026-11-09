@@ -5,6 +5,7 @@ import '../../core/l10n.dart';
 import '../../shared/widgets/empty_state.dart';
 import 'home_screen.dart' show attentionProvider;
 import 'ui/attention_tile.dart';
+import '../../core/theme/tokens.dart';
 
 /// 1.2 Needs Attention — the full list (PBI-021 "See all").
 class AttentionScreen extends ConsumerWidget {
@@ -23,7 +24,7 @@ class AttentionScreen extends ConsumerWidget {
             )
           : ListView(
               key: const ValueKey('attention-list'),
-              padding: const EdgeInsets.only(bottom: 120),
+              padding: EdgeInsets.only(bottom: Tokens.listEnd),
               children: [for (final i in items) AttentionTile(item: i)],
             ),
     );

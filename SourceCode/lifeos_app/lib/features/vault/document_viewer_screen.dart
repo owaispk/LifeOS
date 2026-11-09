@@ -71,7 +71,7 @@ class DocumentViewerScreen extends ConsumerWidget {
         actions: [
           if (doc.archivedAt != null)
             Padding(
-              padding: const EdgeInsets.only(right: Tokens.spaceS),
+              padding: EdgeInsets.only(right: Tokens.spaceS),
               child: Chip(label: Text(context.l10n.vtArchived)),
             ),
         ],
@@ -84,7 +84,7 @@ class DocumentViewerScreen extends ConsumerWidget {
       ),
       bottomNavigationBar: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: Tokens.spaceXs),
+          padding: EdgeInsets.symmetric(vertical: Tokens.spaceXs),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -179,7 +179,7 @@ class _Action extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(icon),
-            const SizedBox(height: 2),
+            SizedBox(height: Tokens.spaceXxs),
             Text(label, style: Theme.of(context).textTheme.labelSmall),
           ],
         ),
@@ -222,10 +222,10 @@ class _InfoPanel extends ConsumerWidget {
         ),
         child: ListView(
           controller: controller,
-          padding: const EdgeInsets.fromLTRB(
-            Tokens.spaceM,
+          padding: EdgeInsets.fromLTRB(
+            Tokens.gutter,
             Tokens.spaceS,
-            Tokens.spaceM,
+            Tokens.gutter,
             Tokens.spaceXl,
           ),
           children: [
@@ -239,13 +239,13 @@ class _InfoPanel extends ConsumerWidget {
                 ),
               ),
             ),
-            const SizedBox(height: Tokens.spaceS),
+            SizedBox(height: Tokens.spaceS),
             Text(
               context.l10n.vtDetails,
               key: const ValueKey('viewer-details'),
               style: theme.textTheme.titleMedium,
             ),
-            const SizedBox(height: Tokens.spaceM),
+            SizedBox(height: Tokens.spaceM),
             // One-time "Does this document expire?" (PBI-008).
             if (expiringTypes.contains(doc.docType) &&
                 doc.expiryDate == null &&
@@ -254,7 +254,7 @@ class _InfoPanel extends ConsumerWidget {
               Card(
                 key: const ValueKey('expiry-prompt'),
                 child: Padding(
-                  padding: const EdgeInsets.all(Tokens.spaceM),
+                  padding: EdgeInsets.all(Tokens.spaceM),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -377,7 +377,7 @@ class _InfoPanel extends ConsumerWidget {
                   ),
                 ),
             ],
-            const SizedBox(height: Tokens.spaceM),
+            SizedBox(height: Tokens.spaceM),
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.folder_outlined),
@@ -403,7 +403,7 @@ class _InfoPanel extends ConsumerWidget {
                 children: [for (final t in tags) Chip(label: Text(t))],
               ),
             if (tasks.isNotEmpty) ...[
-              const SizedBox(height: Tokens.spaceM),
+              SizedBox(height: Tokens.spaceM),
               Text(
                 context.l10n.vtLinkedTasks,
                 style: theme.textTheme.labelLarge,
@@ -466,7 +466,7 @@ class _TextDetailState extends State<_TextDetail> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: Tokens.spaceS),
+      padding: EdgeInsets.only(top: Tokens.spaceS),
       child: TextField(
         key: ValueKey('info-field-${widget.field}'),
         controller: _ctrl,
@@ -550,7 +550,10 @@ class _ExpiryLadder extends ConsumerWidget {
             : l.vtLadderDaysBefore('$d'),
     ];
     return Padding(
-      padding: const EdgeInsets.only(left: 40, bottom: Tokens.spaceS),
+      padding: EdgeInsetsDirectional.only(
+        start: Tokens.leadingIndent,
+        bottom: Tokens.spaceS,
+      ),
       child: Text(
         upcoming.isEmpty
             ? l.vtLadderExpired

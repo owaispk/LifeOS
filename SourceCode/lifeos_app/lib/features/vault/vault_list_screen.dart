@@ -11,6 +11,7 @@ import 'domain/vault_rules.dart';
 import 'ui/document_tile.dart';
 import 'ui/vault_sheets.dart';
 import 'vault_providers.dart';
+import '../../core/theme/tokens.dart';
 
 /// What a [VaultListScreen] shows.
 sealed class VaultScope {
@@ -96,7 +97,7 @@ class VaultListScreen extends ConsumerWidget {
             )
           : ListView(
               key: const ValueKey('vault-list'),
-              padding: const EdgeInsets.only(bottom: 120),
+              padding: EdgeInsets.only(bottom: Tokens.listEnd),
               children: [for (final d in list) DocumentTile(document: d)],
             ),
     );

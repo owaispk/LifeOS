@@ -269,7 +269,7 @@ class _VoiceOverlayState extends ConsumerState<VoiceOverlay> {
       key: const ValueKey('voice-overlay'),
       appBar: AppBar(title: Text(l.voiceTitle)),
       body: Padding(
-        padding: const EdgeInsets.all(Tokens.spaceL),
+        padding: EdgeInsets.all(Tokens.spaceL),
         child: Column(
           children: [
             const Spacer(),
@@ -278,7 +278,7 @@ class _VoiceOverlayState extends ConsumerState<VoiceOverlay> {
               size: 72,
               color: theme.colorScheme.primary,
             ),
-            const SizedBox(height: Tokens.spaceM),
+            SizedBox(height: Tokens.spaceM),
             if (_state == _VoiceState.unavailable) ...[
               Text(
                 l.voiceUnavailable,
@@ -293,10 +293,10 @@ class _VoiceOverlayState extends ConsumerState<VoiceOverlay> {
                 textAlign: TextAlign.center,
                 style: theme.textTheme.headlineSmall,
               ),
-              const SizedBox(height: Tokens.spaceS),
+              SizedBox(height: Tokens.spaceS),
               if (_words.isEmpty)
                 Text(l.voiceHint, textAlign: TextAlign.center),
-              const SizedBox(height: Tokens.spaceM),
+              SizedBox(height: Tokens.spaceM),
               ParseChips(
                 parse: q,
                 onDrop: (p) => setState(() => _dropped = {..._dropped, p}),

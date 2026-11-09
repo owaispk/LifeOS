@@ -28,7 +28,7 @@ class EmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    const padding = EdgeInsets.all(Tokens.spaceXl);
+    final padding = EdgeInsets.all(Tokens.spaceXl);
     final content = _content(theme);
     if (inList) return Padding(padding: padding, child: content);
     return Center(
@@ -43,13 +43,13 @@ class EmptyState extends StatelessWidget {
         ExcludeSemantics(
           child: Text(emoji, style: const TextStyle(fontSize: 64)),
         ),
-        const SizedBox(height: Tokens.spaceM),
+        SizedBox(height: Tokens.spaceM),
         Text(
           title,
           style: theme.textTheme.titleLarge,
           textAlign: TextAlign.center,
         ),
-        const SizedBox(height: Tokens.spaceS),
+        SizedBox(height: Tokens.spaceS),
         Text(
           message,
           style: theme.textTheme.bodyLarge?.copyWith(
@@ -58,7 +58,7 @@ class EmptyState extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         if (actionLabel != null && onAction != null) ...[
-          const SizedBox(height: Tokens.spaceL),
+          SizedBox(height: Tokens.spaceL),
           FilledButton(
             style: FilledButton.styleFrom(
               minimumSize: const Size(0, Tokens.minTouchTarget),

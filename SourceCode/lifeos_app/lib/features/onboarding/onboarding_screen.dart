@@ -179,10 +179,10 @@ class _RoleStep extends StatelessWidget {
       (Role.justMe, '🙂', l.roleJustMe),
     ];
     return ListView(
-      padding: const EdgeInsets.all(Tokens.spaceM),
+      padding: EdgeInsets.all(Tokens.spaceM),
       children: [
         Text(l.obRoleQ, style: Theme.of(context).textTheme.headlineSmall),
-        const SizedBox(height: Tokens.spaceM),
+        SizedBox(height: Tokens.spaceM),
         for (final (role, emoji, label) in roles)
           Card(
             child: ListTile(
@@ -207,16 +207,16 @@ class _ScanStep extends StatelessWidget {
     final l = context.l10n;
     final theme = Theme.of(context);
     return Padding(
-      padding: const EdgeInsets.all(Tokens.spaceL),
+      padding: EdgeInsets.all(Tokens.spaceL),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Text('📸', style: TextStyle(fontSize: 64)),
-          const SizedBox(height: Tokens.spaceM),
+          SizedBox(height: Tokens.spaceM),
           Text(l.obScanTitle, style: theme.textTheme.headlineSmall),
-          const SizedBox(height: Tokens.spaceS),
+          SizedBox(height: Tokens.spaceS),
           Text(l.obScanBody, textAlign: TextAlign.center),
-          const SizedBox(height: Tokens.spaceL),
+          SizedBox(height: Tokens.spaceL),
           // The camera permission comes from the scanner itself — only
           // after this tap (AC4).
           FilledButton(
@@ -290,12 +290,12 @@ class _PayStepState extends ConsumerState<_PayStep> {
     final l = context.l10n;
     final theme = Theme.of(context);
     return ListView(
-      padding: const EdgeInsets.all(Tokens.spaceM),
+      padding: EdgeInsets.all(Tokens.spaceM),
       children: [
         Text(l.obPayTitle, style: theme.textTheme.headlineSmall),
-        const SizedBox(height: Tokens.spaceXs),
+        SizedBox(height: Tokens.spaceXs),
         Text(l.obPayBody),
-        const SizedBox(height: Tokens.spaceM),
+        SizedBox(height: Tokens.spaceM),
         Wrap(
           spacing: Tokens.spaceS,
           runSpacing: Tokens.spaceS,
@@ -318,11 +318,11 @@ class _PayStepState extends ConsumerState<_PayStep> {
           ],
         ),
         if (_open != null) ...[
-          const SizedBox(height: Tokens.spaceM),
+          SizedBox(height: Tokens.spaceM),
           _chipForm(context, payChips.firstWhere((c) => c.key == _open)),
         ],
         if (_on.isNotEmpty) ...[
-          const SizedBox(height: Tokens.spaceM),
+          SizedBox(height: Tokens.spaceM),
           for (final k in _on)
             ListTile(
               key: ValueKey('ob-on-$k'),
@@ -333,14 +333,14 @@ class _PayStepState extends ConsumerState<_PayStep> {
         ],
         if (_error != null)
           Padding(
-            padding: const EdgeInsets.only(top: Tokens.spaceS),
+            padding: EdgeInsets.only(top: Tokens.spaceS),
             child: Text(
               _error!,
               key: const ValueKey('ob-limit'),
               style: TextStyle(color: theme.colorScheme.error),
             ),
           ),
-        const SizedBox(height: Tokens.spaceL),
+        SizedBox(height: Tokens.spaceL),
         FilledButton(
           key: const ValueKey('ob-next'),
           onPressed: widget.onNext,
@@ -354,7 +354,7 @@ class _PayStepState extends ConsumerState<_PayStep> {
     final l = context.l10n;
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(Tokens.spaceM),
+        padding: EdgeInsets.all(Tokens.spaceM),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -374,7 +374,7 @@ class _PayStepState extends ConsumerState<_PayStep> {
               ),
               onChanged: (_) => setState(() {}),
             ),
-            const SizedBox(height: Tokens.spaceS),
+            SizedBox(height: Tokens.spaceS),
             Row(
               children: [
                 Expanded(child: Text(l.dayOfMonth)),
@@ -389,7 +389,7 @@ class _PayStepState extends ConsumerState<_PayStep> {
                 ),
               ],
             ),
-            const SizedBox(height: Tokens.spaceS),
+            SizedBox(height: Tokens.spaceS),
             FilledButton.tonal(
               key: const ValueKey('ob-turn-on'),
               onPressed: c.optional || (Money.parseMinor(_amount.text) ?? 0) > 0
@@ -437,14 +437,14 @@ class _DoneStepState extends ConsumerState<_DoneStep> {
       now: now,
     );
     return Padding(
-      padding: const EdgeInsets.all(Tokens.spaceL),
+      padding: EdgeInsets.all(Tokens.spaceL),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Text('🎉', style: TextStyle(fontSize: 64)),
-          const SizedBox(height: Tokens.spaceM),
+          SizedBox(height: Tokens.spaceM),
           Text(l.obDoneTitle, style: theme.textTheme.headlineSmall),
-          const SizedBox(height: Tokens.spaceM),
+          SizedBox(height: Tokens.spaceM),
           Text(
             f.totalMinor == 0
                 ? l.obForecastNone
@@ -456,9 +456,9 @@ class _DoneStepState extends ConsumerState<_DoneStep> {
             textAlign: TextAlign.center,
             style: theme.textTheme.titleMedium,
           ),
-          const SizedBox(height: Tokens.spaceS),
+          SizedBox(height: Tokens.spaceS),
           Text(l.obNotifAsk, textAlign: TextAlign.center),
-          const SizedBox(height: Tokens.spaceL),
+          SizedBox(height: Tokens.spaceL),
           FilledButton(
             key: const ValueKey('ob-finish'),
             onPressed: widget.onDone,

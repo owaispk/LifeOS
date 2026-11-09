@@ -33,7 +33,7 @@ class _Tab {
 }
 
 /// Vertical space the floating FAB occupies above the bottom bar.
-const double _fabClearance = 56 + Tokens.spaceM * 2 + Tokens.spaceS;
+double get _fabClearance => 56 + Tokens.spaceM * 2 + Tokens.spaceS;
 
 final _tabs = <_Tab>[
   _Tab((l) => l.tkTabHome, Icons.home_outlined, Icons.home),
@@ -86,7 +86,7 @@ class AppShell extends ConsumerWidget {
                 child: Padding(
                   // Stack the menu above the FAB (56dp + margins) so the
                   // FAB never covers the lowest action.
-                  padding: const EdgeInsets.only(bottom: _fabClearance),
+                  padding: EdgeInsets.only(bottom: _fabClearance),
                   child: _QuickActionMenu(
                     onSelected: (action) {
                       fab.collapse();
@@ -155,7 +155,7 @@ class _QuickActionMenu extends StatelessWidget {
       children: [
         for (final action in QuickAction.values)
           Padding(
-            padding: const EdgeInsets.only(bottom: Tokens.spaceS),
+            padding: EdgeInsets.only(bottom: Tokens.spaceS),
             child: FilledButton.tonal(
               key: ValueKey('quick-action-${action.name}'),
               style: FilledButton.styleFrom(

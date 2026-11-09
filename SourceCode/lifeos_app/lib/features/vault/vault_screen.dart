@@ -46,7 +46,7 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
         title: Text(l.vtVaultTitle),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: Tokens.spaceS),
+            padding: EdgeInsets.only(right: Tokens.spaceS),
             child: FilledButton.tonalIcon(
               key: const ValueKey('vault-scan'),
               onPressed: () => startScan(context),
@@ -72,10 +72,10 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  Tokens.spaceM,
+                padding: EdgeInsets.fromLTRB(
+                  Tokens.gutter,
                   0,
-                  Tokens.spaceM,
+                  Tokens.gutter,
                   Tokens.spaceS,
                 ),
                 child: SearchBar(
@@ -140,18 +140,18 @@ class _VaultHome extends ConsumerWidget {
 
     return ListView(
       key: const ValueKey('vault-home'),
-      padding: const EdgeInsets.only(bottom: 120),
+      padding: EdgeInsets.only(bottom: Tokens.listEnd),
       children: [
         VaultSectionTitle(l.vtPeople),
         SizedBox(
           height: 56,
           child: ListView(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: Tokens.spaceM),
+            padding: EdgeInsets.symmetric(horizontal: Tokens.gutter),
             children: [
               for (final p in persons)
                 Padding(
-                  padding: const EdgeInsets.only(right: Tokens.spaceS),
+                  padding: EdgeInsets.only(right: Tokens.spaceS),
                   child: ActionChip(
                     key: ValueKey('person-${p.id}'),
                     avatar: Text(p.avatar ?? '👤'),
@@ -182,7 +182,7 @@ class _VaultHome extends ConsumerWidget {
             child: ListView(
               key: const ValueKey('expiring-strip'),
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: Tokens.spaceM),
+              padding: EdgeInsets.symmetric(horizontal: Tokens.gutter),
               children: [
                 for (final e in expiring)
                   _ExpiryCard(
@@ -249,14 +249,14 @@ class _ExpiryCard extends StatelessWidget {
       ExpiryUrgency.later => (scheme.outline, Icons.event),
     };
     return Padding(
-      padding: const EdgeInsets.only(right: Tokens.spaceS),
+      padding: EdgeInsets.only(right: Tokens.spaceS),
       child: InkWell(
         key: ValueKey('expiring-${item.document.id}'),
         borderRadius: BorderRadius.circular(12),
         onTap: () => context.push('/doc/${item.document.id}'),
         child: Container(
           width: 168,
-          padding: const EdgeInsets.all(Tokens.spaceS),
+          padding: EdgeInsets.all(Tokens.spaceS),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             border: Border(left: BorderSide(color: accent, width: 4)),
@@ -281,7 +281,7 @@ class _ExpiryCard extends StatelessWidget {
               Row(
                 children: [
                   Icon(icon, size: 14, color: accent),
-                  const SizedBox(width: 4),
+                  SizedBox(width: Tokens.spaceXs),
                   Text(item.label, style: theme.textTheme.labelMedium),
                 ],
               ),
@@ -326,7 +326,7 @@ class _SearchResults extends ConsumerWidget {
             )
           : ListView(
               key: const ValueKey('vault-search-results'),
-              padding: const EdgeInsets.only(bottom: 120),
+              padding: EdgeInsets.only(bottom: Tokens.listEnd),
               children: [
                 for (final h in hits)
                   DocumentTile(document: h.document, snippet: h.snippet),
@@ -376,7 +376,7 @@ class _FilterBar extends ConsumerWidget {
       child: ListView(
         key: const ValueKey('vault-filters'),
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: Tokens.spaceM),
+        padding: EdgeInsets.symmetric(horizontal: Tokens.gutter),
         children: [
           _MenuChip<String?>(
             key: const ValueKey('filter-person'),
@@ -416,7 +416,7 @@ class _FilterBar extends ConsumerWidget {
             onSelected: (v) => onChanged(copy(added: v)),
           ),
           Padding(
-            padding: const EdgeInsets.only(right: Tokens.spaceS),
+            padding: EdgeInsets.only(right: Tokens.spaceS),
             child: FilterChip(
               key: const ValueKey('filter-expiring'),
               label: Text(l.vtExpiringSoon),
@@ -454,7 +454,7 @@ class _MenuChip<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(right: Tokens.spaceS),
+      padding: EdgeInsets.only(right: Tokens.spaceS),
       child: PopupMenuButton<int>(
         tooltip: label,
         onSelected: (i) => onSelected(options[i].$1),

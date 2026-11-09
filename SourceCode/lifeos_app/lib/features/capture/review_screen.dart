@@ -305,21 +305,21 @@ class _DraftFormState extends ConsumerState<_DraftForm> {
     final l = context.l10n;
 
     return ListView(
-      padding: const EdgeInsets.all(Tokens.spaceM),
+      padding: EdgeInsets.all(Tokens.spaceM),
       children: [
         _PagesStrip(draft: draft),
-        const SizedBox(height: Tokens.spaceM),
+        SizedBox(height: Tokens.spaceM),
         if (analysis == null)
           Padding(
             key: const ValueKey('review-reading'),
-            padding: const EdgeInsets.symmetric(vertical: Tokens.spaceS),
+            padding: EdgeInsets.symmetric(vertical: Tokens.spaceS),
             child: Row(
               children: [
                 const SizedBox.square(
                   dimension: 18,
                   child: CircularProgressIndicator(strokeWidth: 2),
                 ),
-                const SizedBox(width: Tokens.spaceS),
+                SizedBox(width: Tokens.spaceS),
                 Text(l.cpReading),
               ],
             ),
@@ -330,7 +330,7 @@ class _DraftFormState extends ConsumerState<_DraftForm> {
             type: _type,
             onPick: (t) => setState(() => _applyType(t, analysis.fieldsFor(t))),
           ),
-        const SizedBox(height: Tokens.spaceM),
+        SizedBox(height: Tokens.spaceM),
         TextField(
           key: const ValueKey('review-name'),
           controller: _title,
@@ -341,7 +341,7 @@ class _DraftFormState extends ConsumerState<_DraftForm> {
           ),
         ),
         for (final e in _fieldCtrls.entries) ...[
-          const SizedBox(height: Tokens.spaceS),
+          SizedBox(height: Tokens.spaceS),
           TextField(
             key: ValueKey('review-field-${e.key}'),
             controller: e.value,
@@ -358,7 +358,7 @@ class _DraftFormState extends ConsumerState<_DraftForm> {
             ),
           ),
         ],
-        const SizedBox(height: Tokens.spaceM),
+        SizedBox(height: Tokens.spaceM),
         DropdownButtonFormField<String?>(
           key: ValueKey('review-folder-$_folderId'),
           initialValue: _folderId,
@@ -376,7 +376,7 @@ class _DraftFormState extends ConsumerState<_DraftForm> {
             _folderChosen = true;
           }),
         ),
-        const SizedBox(height: Tokens.spaceM),
+        SizedBox(height: Tokens.spaceM),
         DropdownButtonFormField<String?>(
           key: const ValueKey('review-person'),
           initialValue: _personId,
@@ -395,9 +395,9 @@ class _DraftFormState extends ConsumerState<_DraftForm> {
           onChanged: (v) => setState(() => _personId = v),
         ),
         if (!draft.isPdfImport) ...[
-          const SizedBox(height: Tokens.spaceM),
+          SizedBox(height: Tokens.spaceM),
           Text(l.cpSaveAs, style: theme.textTheme.labelLarge),
-          const SizedBox(height: Tokens.spaceS),
+          SizedBox(height: Tokens.spaceS),
           SegmentedButton<OutputFormat>(
             key: const ValueKey('review-format'),
             showSelectedIcon: false,
@@ -409,7 +409,7 @@ class _DraftFormState extends ConsumerState<_DraftForm> {
             onSelectionChanged: (s) => setState(() => _format = s.first),
           ),
         ],
-        const SizedBox(height: Tokens.spaceL),
+        SizedBox(height: Tokens.spaceL),
         FilledButton.icon(
           key: const ValueKey('review-save'),
           style: FilledButton.styleFrom(
@@ -425,7 +425,7 @@ class _DraftFormState extends ConsumerState<_DraftForm> {
               : const Icon(Icons.save_alt),
           label: Text(l.cpSaveToVault),
         ),
-        const SizedBox(height: Tokens.spaceS),
+        SizedBox(height: Tokens.spaceS),
         TextButton(
           key: const ValueKey('review-discard'),
           onPressed: _saving ? null : () => _advance(saved: false),
@@ -465,7 +465,7 @@ class _TypeRow extends StatelessWidget {
       children: [
         if (message != null)
           Padding(
-            padding: const EdgeInsets.only(bottom: Tokens.spaceS),
+            padding: EdgeInsets.only(bottom: Tokens.spaceS),
             child: Text(
               message,
               key: const ValueKey('review-type-hint'),
@@ -489,7 +489,7 @@ class _TypeRow extends StatelessWidget {
                       : typeName(type!),
                 ),
               ),
-            const SizedBox(width: Tokens.spaceS),
+            SizedBox(width: Tokens.spaceS),
             Expanded(
               child: DropdownButtonFormField<String>(
                 key: const ValueKey('review-type-picker'),
@@ -581,7 +581,7 @@ class _PagesStrip extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: Tokens.spaceXs),
+        SizedBox(height: Tokens.spaceXs),
         Text(
           context.l10n.cpPages(count),
           key: const ValueKey('review-pages'),
@@ -599,7 +599,7 @@ class _PageBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(right: Tokens.spaceS),
+      padding: EdgeInsets.only(right: Tokens.spaceS),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8),
         child: Container(

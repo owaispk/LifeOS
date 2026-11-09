@@ -57,10 +57,10 @@ class _ScoreScreenState extends ConsumerState<ScoreScreen> {
       appBar: AppBar(title: Text(l.scLifeScore)),
       body: ListView(
         key: const ValueKey('score-list'),
-        padding: const EdgeInsets.fromLTRB(
-          Tokens.spaceM,
+        padding: EdgeInsets.fromLTRB(
+          Tokens.gutter,
           Tokens.spaceS,
-          Tokens.spaceM,
+          Tokens.gutter,
           120,
         ),
         children: [
@@ -74,24 +74,24 @@ class _ScoreScreenState extends ConsumerState<ScoreScreen> {
                   stroke: 14,
                   showLabel: true,
                 ),
-                const SizedBox(width: Tokens.spaceM),
+                SizedBox(width: Tokens.spaceM),
                 ScoreDelta(delta: delta),
               ],
             ),
           ),
-          const SizedBox(height: Tokens.spaceL),
+          SizedBox(height: Tokens.spaceL),
           Text(l.scLast7, style: theme.textTheme.titleSmall),
-          const SizedBox(height: Tokens.spaceS),
+          SizedBox(height: Tokens.spaceS),
           ScoreSparkline(values: days, dayLabels: labels),
-          const SizedBox(height: Tokens.spaceL),
+          SizedBox(height: Tokens.spaceL),
           Text(l.scWhatsInIt, style: theme.textTheme.titleSmall),
-          const SizedBox(height: Tokens.spaceS),
+          SizedBox(height: Tokens.spaceS),
           for (final c in score.components) _ComponentBar(c),
-          const SizedBox(height: Tokens.spaceL),
+          SizedBox(height: Tokens.spaceL),
           if (score.drags.isEmpty)
             Card(
               child: Padding(
-                padding: const EdgeInsets.all(Tokens.spaceM),
+                padding: EdgeInsets.all(Tokens.spaceM),
                 child: Text(
                   l.scNothingPulling,
                   key: const ValueKey('score-clear'),
@@ -105,7 +105,7 @@ class _ScoreScreenState extends ConsumerState<ScoreScreen> {
               key: const ValueKey('drags-title'),
               style: theme.textTheme.titleSmall,
             ),
-            const SizedBox(height: Tokens.spaceS),
+            SizedBox(height: Tokens.spaceS),
             for (final d in drags) _DragTile(d),
             if (triage && score.drags.length > 3)
               TextButton(
@@ -131,7 +131,7 @@ class _ComponentBar extends StatelessWidget {
     final l = context.l10n;
     return Padding(
       key: ValueKey('component-${c.component.name}'),
-      padding: const EdgeInsets.symmetric(vertical: Tokens.spaceXs),
+      padding: EdgeInsets.symmetric(vertical: Tokens.spaceXs),
       child: Semantics(
         label: l.scComponentSemantics(
           componentLabel(c.component),

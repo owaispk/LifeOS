@@ -125,7 +125,7 @@ class _NewTaskSheetState extends ConsumerState<NewTaskSheet> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(l.tkNewTask, style: Theme.of(context).textTheme.titleLarge),
-            const SizedBox(height: Tokens.spaceM),
+            SizedBox(height: Tokens.spaceM),
             Row(
               children: [
                 Expanded(
@@ -154,7 +154,7 @@ class _NewTaskSheetState extends ConsumerState<NewTaskSheet> {
                   },
                   icon: const Icon(Icons.mic_none),
                 ),
-                const SizedBox(width: Tokens.spaceS),
+                SizedBox(width: Tokens.spaceS),
                 FilledButton(
                   key: const ValueKey('new-task-save'),
                   style: FilledButton.styleFrom(
@@ -165,13 +165,13 @@ class _NewTaskSheetState extends ConsumerState<NewTaskSheet> {
                 ),
               ],
             ),
-            const SizedBox(height: Tokens.spaceS),
+            SizedBox(height: Tokens.spaceS),
             if (!_manualDate)
               ParseChips(
                 parse: _parse,
                 onDrop: (part) => setState(() => _parse = _parse.drop(part)),
               ),
-            const SizedBox(height: Tokens.spaceS),
+            SizedBox(height: Tokens.spaceS),
             Wrap(
               spacing: Tokens.spaceS,
               children: [
@@ -345,7 +345,7 @@ class _Label extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(top: Tokens.spaceM, bottom: Tokens.spaceS),
+    padding: EdgeInsets.only(top: Tokens.spaceM, bottom: Tokens.spaceS),
     child: Text(text, style: Theme.of(context).textTheme.labelLarge),
   );
 }

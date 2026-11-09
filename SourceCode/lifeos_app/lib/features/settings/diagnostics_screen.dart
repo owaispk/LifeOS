@@ -120,18 +120,18 @@ class _DiagnosticsScreenState extends ConsumerState<DiagnosticsScreen> {
         onRefresh: _load,
         child: ListView(
           key: const ValueKey('diag-list'),
-          padding: const EdgeInsets.only(bottom: 120),
+          padding: EdgeInsets.only(bottom: Tokens.listEnd),
           children: [
             Padding(
-              padding: const EdgeInsets.all(Tokens.spaceM),
+              padding: EdgeInsets.all(Tokens.spaceM),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   for (final v in facts.values)
                     Text(v, style: theme.textTheme.bodySmall),
-                  const SizedBox(height: Tokens.spaceS),
+                  SizedBox(height: Tokens.spaceS),
                   Text(l.dgPrivacy, style: theme.textTheme.bodySmall),
-                  const SizedBox(height: Tokens.spaceS),
+                  SizedBox(height: Tokens.spaceS),
                   Text(
                     '${l.dgCount(_entries.length)} · ${l.dgErrorsCount(errors)}',
                     key: const ValueKey('diag-counts'),
@@ -141,7 +141,7 @@ class _DiagnosticsScreenState extends ConsumerState<DiagnosticsScreen> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: Tokens.spaceM),
+              padding: EdgeInsets.symmetric(horizontal: Tokens.gutter),
               child: Wrap(
                 spacing: Tokens.spaceS,
                 runSpacing: Tokens.spaceS,
@@ -175,7 +175,7 @@ class _DiagnosticsScreenState extends ConsumerState<DiagnosticsScreen> {
             const Divider(height: 1),
             if (shown.isEmpty)
               Padding(
-                padding: const EdgeInsets.all(Tokens.spaceL),
+                padding: EdgeInsets.all(Tokens.spaceL),
                 child: Center(child: Text(l.dgEmpty)),
               ),
             for (final e in shown) _EntryTile(e),
@@ -227,7 +227,7 @@ class _EntryTile extends StatelessWidget {
       children: [
         if (e.stack != null)
           Padding(
-            padding: const EdgeInsets.all(Tokens.spaceM),
+            padding: EdgeInsets.all(Tokens.spaceM),
             child: SelectableText(
               e.stack!,
               style: theme.textTheme.bodySmall?.copyWith(

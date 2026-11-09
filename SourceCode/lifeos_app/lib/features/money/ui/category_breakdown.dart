@@ -51,11 +51,11 @@ class CategoryBreakdown extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: Tokens.spaceM),
+        SizedBox(height: Tokens.spaceM),
         for (final s in slices)
           Padding(
             key: ValueKey('category-row-${s.categoryId ?? 'none'}'),
-            padding: const EdgeInsets.symmetric(vertical: Tokens.spaceXs),
+            padding: EdgeInsets.symmetric(vertical: Tokens.spaceXs),
             child: Row(
               children: [
                 Container(
@@ -66,9 +66,9 @@ class CategoryBreakdown extends StatelessWidget {
                     borderRadius: BorderRadius.circular(3),
                   ),
                 ),
-                const SizedBox(width: Tokens.spaceS),
+                SizedBox(width: Tokens.spaceS),
                 Text(s.icon),
-                const SizedBox(width: Tokens.spaceS),
+                SizedBox(width: Tokens.spaceS),
                 Expanded(child: Text(s.name, style: theme.textTheme.bodyLarge)),
                 Text(
                   Money.format(s.amountMinor),

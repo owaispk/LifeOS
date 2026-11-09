@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/l10n.dart';
+import '../../../core/theme/tokens.dart';
 
 /// 7-day score sparkline (PBI-020). One series, so no legend: the heading
 /// names it. A 2 px line on a fixed 0–100 scale with a recessive baseline,
@@ -47,7 +48,7 @@ class ScoreSparkline extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 4),
+          SizedBox(height: Tokens.spaceXs),
           Row(
             children: [
               for (final l in dayLabels)

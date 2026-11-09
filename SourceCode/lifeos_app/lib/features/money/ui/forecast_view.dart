@@ -51,7 +51,7 @@ class ForecastView extends ConsumerWidget {
 
     return ListView(
       key: const ValueKey('forecast-list'),
-      padding: const EdgeInsets.only(bottom: 120),
+      padding: EdgeInsets.only(bottom: Tokens.listEnd),
       children: [
         header,
         if (f.items.isEmpty)
@@ -65,9 +65,9 @@ class ForecastView extends ConsumerWidget {
           // Digest card (PBI-019; the notification is PBI-023).
           Card(
             key: const ValueKey('forecast-digest'),
-            margin: const EdgeInsets.symmetric(horizontal: Tokens.spaceM),
+            margin: EdgeInsets.symmetric(horizontal: Tokens.gutter),
             child: Padding(
-              padding: const EdgeInsets.all(Tokens.spaceM),
+              padding: EdgeInsets.all(Tokens.spaceM),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -79,7 +79,7 @@ class ForecastView extends ConsumerWidget {
                     ),
                     style: theme.textTheme.titleMedium,
                   ),
-                  const SizedBox(height: Tokens.spaceXs),
+                  SizedBox(height: Tokens.spaceXs),
                   Text(
                     l.mnTotals(
                       Money.format(f.totalMinor),
@@ -88,7 +88,7 @@ class ForecastView extends ConsumerWidget {
                     ),
                     key: const ValueKey('forecast-totals'),
                   ),
-                  const SizedBox(height: Tokens.spaceXs),
+                  SizedBox(height: Tokens.spaceXs),
                   if (f.salaryPercent != null)
                     Text(
                       l.mnSalaryShare('${f.salaryPercent}'),
@@ -216,8 +216,8 @@ class _CalendarStrip extends StatelessWidget {
       child: ListView.builder(
         key: const ValueKey('forecast-calendar'),
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(
-          horizontal: Tokens.spaceM,
+        padding: EdgeInsets.symmetric(
+          horizontal: Tokens.gutter,
           vertical: Tokens.spaceS,
         ),
         itemCount: days,
@@ -229,7 +229,7 @@ class _CalendarStrip extends StatelessWidget {
               now.day == d;
           return Container(
             width: 36,
-            margin: const EdgeInsets.only(right: 4),
+            margin: EdgeInsetsDirectional.only(end: Tokens.spaceXs),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
               border: isToday ? Border.all(color: scheme.primary) : null,
@@ -238,7 +238,7 @@ class _CalendarStrip extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text('$d'),
-                const SizedBox(height: 2),
+                SizedBox(height: Tokens.spaceXxs),
                 Container(
                   key: dueDays.contains(d) ? ValueKey('due-dot-$d') : null,
                   width: 6,

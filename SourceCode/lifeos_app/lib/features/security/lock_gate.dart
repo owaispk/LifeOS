@@ -287,9 +287,9 @@ class _LockScreenState extends State<_LockScreen> {
                 size: 64,
                 color: theme.colorScheme.primary,
               ),
-              const SizedBox(height: Tokens.spaceM),
+              SizedBox(height: Tokens.spaceM),
               Text(widget.title, style: theme.textTheme.titleLarge),
-              const SizedBox(height: Tokens.spaceL),
+              SizedBox(height: Tokens.spaceL),
               FilledButton.icon(
                 key: const ValueKey('unlock'),
                 onPressed: widget.onUnlock,

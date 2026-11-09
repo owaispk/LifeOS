@@ -93,7 +93,7 @@ class _DocumentSheetState extends ConsumerState<DocumentSheet> {
                   docTypeIcon(doc.docType),
                   style: const TextStyle(fontSize: 28),
                 ),
-                const SizedBox(width: Tokens.spaceS),
+                SizedBox(width: Tokens.spaceS),
                 Expanded(
                   child: TextField(
                     key: const ValueKey('doc-title'),
@@ -176,7 +176,7 @@ class _DocumentSheetState extends ConsumerState<DocumentSheet> {
               textInputAction: TextInputAction.done,
               onSubmitted: (_) => addTag(),
             ),
-            const SizedBox(height: Tokens.spaceM),
+            SizedBox(height: Tokens.spaceM),
             Align(
               alignment: Alignment.centerLeft,
               child: TextButton.icon(
@@ -224,7 +224,7 @@ class _Label extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(top: Tokens.spaceM, bottom: Tokens.spaceXs),
+    padding: EdgeInsets.only(top: Tokens.spaceM, bottom: Tokens.spaceXs),
     child: Text(text, style: Theme.of(context).textTheme.labelLarge),
   );
 }

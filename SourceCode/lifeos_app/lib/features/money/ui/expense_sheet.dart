@@ -117,7 +117,7 @@ class _ExpenseSheetState extends ConsumerState<ExpenseSheet> {
               _editing ? l.mnEditExpense : l.mnAddExpense,
               style: theme.textTheme.titleLarge,
             ),
-            const SizedBox(height: Tokens.spaceM),
+            SizedBox(height: Tokens.spaceM),
             TextField(
               key: const ValueKey('expense-amount'),
               controller: _amount,
@@ -136,9 +136,9 @@ class _ExpenseSheetState extends ConsumerState<ExpenseSheet> {
               ),
               onChanged: (_) => setState(() {}),
             ),
-            const SizedBox(height: Tokens.spaceM),
+            SizedBox(height: Tokens.spaceM),
             Text(l.mnCategory, style: theme.textTheme.labelLarge),
-            const SizedBox(height: Tokens.spaceS),
+            SizedBox(height: Tokens.spaceS),
             Wrap(
               spacing: Tokens.spaceS,
               runSpacing: Tokens.spaceXs,
@@ -157,7 +157,7 @@ class _ExpenseSheetState extends ConsumerState<ExpenseSheet> {
                   ),
               ],
             ),
-            const SizedBox(height: Tokens.spaceS),
+            SizedBox(height: Tokens.spaceS),
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.event),
@@ -182,7 +182,7 @@ class _ExpenseSheetState extends ConsumerState<ExpenseSheet> {
                 border: const OutlineInputBorder(),
               ),
             ),
-            const SizedBox(height: Tokens.spaceM),
+            SizedBox(height: Tokens.spaceM),
             Row(
               children: [
                 if (_editing && !linked)

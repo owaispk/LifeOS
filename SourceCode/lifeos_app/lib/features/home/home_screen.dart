@@ -101,7 +101,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         child: ListView(
           key: const ValueKey('home-list'),
           physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.only(bottom: 120),
+          padding: EdgeInsets.only(bottom: Tokens.listEnd),
           children: [
             _ScoreCard(
               score: score.score,
@@ -159,8 +159,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ),
                   ),
               ],
+              // One compact row on the gutter: the card's theme margin is
+              // the only spacing (PBI-031).
               Padding(
-                padding: const EdgeInsets.all(Tokens.spaceM),
+                padding: EdgeInsets.only(top: Tokens.spaceS),
                 child: Card(
                   key: const ValueKey('home-money'),
                   color: theme.colorScheme.surfaceContainerHigh,
@@ -204,16 +206,19 @@ class _ScoreCard extends StatelessWidget {
       key: const ValueKey('home-score'),
       onTap: () => context.go('/home/score'),
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: Tokens.spaceM,
+        padding: EdgeInsets.symmetric(
+          horizontal: Tokens.gutter,
           vertical: Tokens.spaceS,
         ),
         child: Row(
           children: [
-            ScoreRing(score: score, size: 96),
-            const SizedBox(width: Tokens.spaceS),
+            ScoreRing(
+              score: score,
+              size: AppSpacing.current.isCompact ? 80 : 96,
+            ),
+            SizedBox(width: Tokens.spaceS),
             ScoreDelta(delta: delta),
-            const SizedBox(width: Tokens.spaceM),
+            SizedBox(width: Tokens.spaceM),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -245,10 +250,10 @@ class _SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Padding(
-      padding: const EdgeInsets.fromLTRB(
+      padding: EdgeInsets.fromLTRB(
+        Tokens.gutter,
         Tokens.spaceM,
-        Tokens.spaceM,
-        Tokens.spaceM,
+        Tokens.gutter,
         Tokens.spaceXs,
       ),
       child: Text(
@@ -271,7 +276,7 @@ class _FriendlyLine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: Tokens.spaceM),
+      padding: EdgeInsets.symmetric(horizontal: Tokens.gutter),
       child: Row(
         children: [
           Expanded(
@@ -318,7 +323,7 @@ class _NewUserPrompts extends StatelessWidget {
     ];
     return Padding(
       key: const ValueKey('home-prompts'),
-      padding: const EdgeInsets.all(Tokens.spaceM),
+      padding: EdgeInsets.all(Tokens.spaceM),
       child: Column(
         children: [
           for (final p in prompts)

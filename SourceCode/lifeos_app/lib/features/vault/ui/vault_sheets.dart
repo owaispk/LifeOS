@@ -86,7 +86,7 @@ class _PersonSheetState extends ConsumerState<_PersonSheet> {
           onChanged: (_) => setState(() {}),
         ),
         if (!_isSelf) ...[
-          const SizedBox(height: Tokens.spaceM),
+          SizedBox(height: Tokens.spaceM),
           Wrap(
             spacing: Tokens.spaceS,
             children: [
@@ -100,7 +100,7 @@ class _PersonSheetState extends ConsumerState<_PersonSheet> {
             ],
           ),
         ],
-        const SizedBox(height: Tokens.spaceM),
+        SizedBox(height: Tokens.spaceM),
         _EmojiPicker(
           options: _personEmojis,
           selected: _avatar,
@@ -169,7 +169,7 @@ class _FolderSheetState extends ConsumerState<_FolderSheet> {
           ),
           onChanged: (_) => setState(() {}),
         ),
-        const SizedBox(height: Tokens.spaceM),
+        SizedBox(height: Tokens.spaceM),
         _EmojiPicker(
           options: _folderIcons,
           selected: _icon,
@@ -205,9 +205,9 @@ class _SheetFrame extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(title, style: Theme.of(context).textTheme.titleLarge),
-            const SizedBox(height: Tokens.spaceM),
+            SizedBox(height: Tokens.spaceM),
             ...children,
-            const SizedBox(height: Tokens.spaceM),
+            SizedBox(height: Tokens.spaceM),
             Align(
               alignment: Alignment.centerRight,
               child: FilledButton(

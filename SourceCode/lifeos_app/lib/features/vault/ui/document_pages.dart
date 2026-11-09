@@ -153,7 +153,7 @@ class _DocumentPagesState extends ConsumerState<DocumentPages> {
                     Container(
                       width: i == _page ? 18 : 8,
                       height: 8,
-                      margin: const EdgeInsets.symmetric(horizontal: 3),
+                      margin: EdgeInsets.symmetric(horizontal: Tokens.spaceXxs),
                       decoration: BoxDecoration(
                         color: i == _page
                             ? Theme.of(context).colorScheme.primary

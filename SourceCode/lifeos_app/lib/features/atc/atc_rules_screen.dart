@@ -78,7 +78,7 @@ class AtcRulesScreen extends ConsumerWidget {
         actions: [
           // In the app bar, not a second floating button beside the ➕.
           Padding(
-            padding: const EdgeInsets.only(right: Tokens.spaceS),
+            padding: EdgeInsets.only(right: Tokens.spaceS),
             child: FilledButton.tonalIcon(
               key: const ValueKey('atc-add'),
               onPressed: () => showAddRuleSheet(context),
@@ -98,10 +98,10 @@ class AtcRulesScreen extends ConsumerWidget {
             )
           : ListView(
               key: const ValueKey('atc-list'),
-              padding: const EdgeInsets.only(bottom: 120),
+              padding: EdgeInsets.only(bottom: Tokens.listEnd),
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(Tokens.spaceM),
+                  padding: EdgeInsets.all(Tokens.spaceM),
                   child: Text(
                     l.atcCreatedThisMonth(createdThisMonth),
                     key: const ValueKey('atc-header'),
@@ -128,10 +128,10 @@ class _GroupTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Padding(
-      padding: const EdgeInsets.fromLTRB(
+      padding: EdgeInsets.fromLTRB(
+        Tokens.gutter,
         Tokens.spaceM,
-        Tokens.spaceM,
-        Tokens.spaceM,
+        Tokens.gutter,
         Tokens.spaceXs,
       ),
       child: Text(

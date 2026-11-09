@@ -137,7 +137,7 @@ class _PaidSheetState extends State<_PaidSheet> {
             style: theme.textTheme.titleLarge,
           ),
           if (needsAmount) ...[
-            const SizedBox(height: Tokens.spaceM),
+            SizedBox(height: Tokens.spaceM),
             TextField(
               key: const ValueKey('paid-amount'),
               controller: _amount,
@@ -153,9 +153,9 @@ class _PaidSheetState extends State<_PaidSheet> {
               onChanged: (_) => setState(() {}),
             ),
           ],
-          const SizedBox(height: Tokens.spaceM),
+          SizedBox(height: Tokens.spaceM),
           Text(l.mnAttachReceipt, style: theme.textTheme.titleSmall),
-          const SizedBox(height: Tokens.spaceS),
+          SizedBox(height: Tokens.spaceS),
           Row(
             children: [
               Expanded(
@@ -166,7 +166,7 @@ class _PaidSheetState extends State<_PaidSheet> {
                   label: Text(l.mnScan),
                 ),
               ),
-              const SizedBox(width: Tokens.spaceS),
+              SizedBox(width: Tokens.spaceS),
               Expanded(
                 child: OutlinedButton.icon(
                   key: const ValueKey('paid-import'),
@@ -175,7 +175,7 @@ class _PaidSheetState extends State<_PaidSheet> {
                   label: Text(l.mnImport),
                 ),
               ),
-              const SizedBox(width: Tokens.spaceS),
+              SizedBox(width: Tokens.spaceS),
               Expanded(
                 child: FilledButton(
                   key: const ValueKey('paid-skip'),

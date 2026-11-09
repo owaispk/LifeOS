@@ -96,7 +96,7 @@ class _TaskDetailBodyState extends ConsumerState<_TaskDetailBody> {
     final due = task.dueAt == null ? null : localDue(task);
 
     return ListView(
-      padding: const EdgeInsets.all(Tokens.spaceM),
+      padding: EdgeInsets.all(Tokens.spaceM),
       children: [
         TextField(
           key: const ValueKey('detail-title'),
@@ -201,7 +201,7 @@ class _TaskDetailBodyState extends ConsumerState<_TaskDetailBody> {
                   ),
           ),
         _RemindersSection(task: task),
-        const SizedBox(height: Tokens.spaceS),
+        SizedBox(height: Tokens.spaceS),
 
         _Label(l.tkPriority),
         SegmentedButton<int>(
@@ -332,7 +332,7 @@ class _TaskDetailBodyState extends ConsumerState<_TaskDetailBody> {
           },
         ),
 
-        const SizedBox(height: Tokens.spaceXl),
+        SizedBox(height: Tokens.spaceXl),
         Wrap(
           spacing: Tokens.spaceS,
           runSpacing: Tokens.spaceS,
@@ -393,7 +393,7 @@ class _TaskDetailBodyState extends ConsumerState<_TaskDetailBody> {
             ),
           ],
         ),
-        const SizedBox(height: 120),
+        SizedBox(height: Tokens.listEnd),
       ],
     );
   }
@@ -437,13 +437,13 @@ void _showDocumentSummary(BuildContext context, Document doc) {
     builder: (context) => SafeArea(
       child: Padding(
         key: const ValueKey('document-summary'),
-        padding: const EdgeInsets.all(Tokens.spaceL),
+        padding: EdgeInsets.all(Tokens.spaceL),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(doc.title, style: Theme.of(context).textTheme.titleLarge),
-            const SizedBox(height: Tokens.spaceS),
+            SizedBox(height: Tokens.spaceS),
             Text(context.l10n.tkDocType(doc.docType)),
             if (doc.issuer != null) Text(context.l10n.tkDocIssuer(doc.issuer!)),
             if (doc.dueDate != null) Text(context.l10n.tkDocDue(doc.dueDate!)),
@@ -460,7 +460,7 @@ class _Label extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(top: Tokens.spaceL, bottom: Tokens.spaceS),
+    padding: EdgeInsets.only(top: Tokens.spaceL, bottom: Tokens.spaceS),
     child: Text(text, style: Theme.of(context).textTheme.labelLarge),
   );
 }
@@ -543,12 +543,12 @@ class _RemindersSection extends ConsumerWidget {
               PopupMenuItem(value: 'custom', child: Text(l.tkPickTime)),
             ],
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: Tokens.spaceS),
+              padding: EdgeInsets.symmetric(vertical: Tokens.spaceS),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Icon(Icons.add_alert_outlined),
-                  const SizedBox(width: Tokens.spaceS),
+                  SizedBox(width: Tokens.spaceS),
                   Text(l.tkAddReminder),
                 ],
               ),

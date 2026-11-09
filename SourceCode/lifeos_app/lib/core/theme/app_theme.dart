@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import '../../features/settings/settings_providers.dart' show LookTemplate;
 import 'tokens.dart';
 
-/// Material 3 light/dark themes with a 16sp body baseline.
+/// Material 3 light/dark themes per look (PBI-025). Flagship and Funky
+/// are compact and dense; Classic keeps roomy spacing (PBI-031).
 abstract final class AppTheme {
   static ThemeData light([LookTemplate look = LookTemplate.flagship]) =>
       _build(Brightness.light, look);
@@ -13,7 +14,12 @@ abstract final class AppTheme {
   /// Funky uses a warmer seed and rounder shapes (PBI-025).
   static const funkySeed = Color(0xFFE91E63);
 
+  /// The spacing scale for [look] (PBI-031).
+  static AppSpacing spacingFor(LookTemplate look) =>
+      look == LookTemplate.classic ? AppSpacing.roomy : AppSpacing.compact;
+
   static ThemeData _build(Brightness brightness, LookTemplate look) {
+    final sp = spacingFor(look);
     final scheme = ColorScheme.fromSeed(
       seedColor: look == LookTemplate.funky ? funkySeed : Tokens.seed,
       brightness: brightness,
@@ -23,9 +29,11 @@ abstract final class AppTheme {
       colorScheme: scheme,
       materialTapTargetSize: MaterialTapTargetSize.padded,
       // Classic: roomier controls for larger text.
+      // Flagship/Funky: tighter controls; tap areas stay 48 dp because
+      // materialTapTargetSize is padded. Classic: roomier.
       visualDensity: look == LookTemplate.classic
           ? const VisualDensity(horizontal: 1, vertical: 1)
-          : VisualDensity.standard,
+          : const VisualDensity(horizontal: -1, vertical: -2),
       cardTheme: look == LookTemplate.funky
           ? const CardThemeData(
               shape: RoundedRectangleBorder(
@@ -36,15 +44,31 @@ abstract final class AppTheme {
     );
     return base.copyWith(
       textTheme: base.textTheme.copyWith(
-        bodyLarge: base.textTheme.bodyLarge?.copyWith(
-          fontSize: Tokens.bodyFontSize,
-        ),
-        bodyMedium: base.textTheme.bodyMedium?.copyWith(
-          fontSize: Tokens.bodyFontSize,
+        bodyLarge: base.textTheme.bodyLarge?.copyWith(fontSize: sp.body),
+        bodyMedium: base.textTheme.bodyMedium?.copyWith(fontSize: sp.body),
+        bodySmall: base.textTheme.bodySmall?.copyWith(fontSize: sp.secondary),
+        labelSmall: base.textTheme.labelSmall?.copyWith(fontSize: sp.label),
+        // Amounts and times line up in columns.
+        labelMedium: base.textTheme.labelMedium?.copyWith(
+          fontFeatures: const [FontFeature.tabularFigures()],
         ),
       ),
+      // One list-row rhythm everywhere; content on the page gutter.
+      listTileTheme: ListTileThemeData(
+        minTileHeight: sp.rowOneLine,
+        minVerticalPadding: sp.isCompact ? 6 : 8,
+        contentPadding: EdgeInsets.symmetric(horizontal: sp.gutter),
+        horizontalTitleGap: sp.isCompact ? 12 : 16,
+        subtitleTextStyle: base.textTheme.bodySmall?.copyWith(
+          fontSize: sp.secondary,
+          color: scheme.onSurfaceVariant,
+        ),
+      ),
+      cardTheme: (base.cardTheme).copyWith(
+        margin: EdgeInsets.symmetric(horizontal: sp.gutter, vertical: sp.xs),
+      ),
       navigationBarTheme: NavigationBarThemeData(
-        height: 72,
+        height: sp.navBar,
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         indicatorColor: scheme.secondaryContainer,
       ),

@@ -37,15 +37,11 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(l.tkTasks),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(56),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(
-              Tokens.spaceM,
-              0,
-              Tokens.spaceM,
-              Tokens.spaceS,
-            ),
+        // The view switch sits in the title bar: no extra band, so more
+        // rows fit (PBI-031).
+        actions: [
+          Padding(
+            padding: EdgeInsetsDirectional.only(end: Tokens.gutter),
             child: SegmentedButton<TasksView>(
               showSelectedIcon: false,
               segments: [
@@ -63,7 +59,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
               onSelectionChanged: (s) => setState(() => _view = s.first),
             ),
           ),
-        ),
+        ],
       ),
       body: tasks.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -111,7 +107,7 @@ class _TodayList extends StatelessWidget {
     }
     return ListView(
       key: const ValueKey('today-list'),
-      padding: const EdgeInsets.only(bottom: 120),
+      padding: EdgeInsets.only(bottom: Tokens.listEnd),
       children: [
         for (final entry in sections.entries) ...[
           _SectionHeader(
@@ -153,7 +149,7 @@ class _UpcomingList extends StatelessWidget {
     }
     return ListView(
       key: const ValueKey('upcoming-list'),
-      padding: const EdgeInsets.only(bottom: 120),
+      padding: EdgeInsets.only(bottom: Tokens.listEnd),
       children: [
         LoadHeatmap(days: heat),
         for (final entry in days.entries) ...[
@@ -187,7 +183,7 @@ class _DomainList extends StatelessWidget {
     }
     return ListView(
       key: const ValueKey('domain-list'),
-      padding: const EdgeInsets.only(bottom: 120),
+      padding: EdgeInsets.only(bottom: Tokens.listEnd),
       children: [
         for (final entry in groups.entries) ...[
           _SectionHeader(
@@ -227,10 +223,10 @@ class _SectionHeader extends StatelessWidget {
     return Semantics(
       header: true,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(
-          Tokens.spaceM,
+        padding: EdgeInsets.fromLTRB(
+          Tokens.gutter,
           Tokens.spaceL,
-          Tokens.spaceM,
+          Tokens.gutter,
           Tokens.spaceXs,
         ),
         child: Row(
@@ -244,7 +240,7 @@ class _SectionHeader extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
               ),
-              const SizedBox(width: Tokens.spaceS),
+              SizedBox(width: Tokens.spaceS),
             ],
             Text(
               title.toUpperCase(),
@@ -254,7 +250,7 @@ class _SectionHeader extends StatelessWidget {
                 fontWeight: FontWeight.w700,
               ),
             ),
-            const SizedBox(width: Tokens.spaceS),
+            SizedBox(width: Tokens.spaceS),
             Text(
               '$count',
               style: theme.textTheme.labelLarge?.copyWith(color: color),

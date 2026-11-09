@@ -16,7 +16,7 @@ class MoreScreen extends StatelessWidget {
       title: context.l10n.mrTitle,
       body: ListView(
         key: const ValueKey('more-menu'),
-        padding: const EdgeInsets.symmetric(vertical: Tokens.spaceS),
+        padding: EdgeInsets.symmetric(vertical: Tokens.spaceS),
         children: [
           ListTile(
             key: const ValueKey('more-atc'),

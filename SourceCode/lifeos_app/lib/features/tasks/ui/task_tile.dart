@@ -59,6 +59,14 @@ class _TaskTileState extends ConsumerState<TaskTile> {
     final persons = ref.watch(personsProvider).value ?? const <Person>[];
     final person = persons.where((p) => p.id == task.personId).firstOrNull;
     final overdue = isOverdue(task, now);
+    // A second line only when it says something (PBI-031): ⚡, ‼ or a
+    // person. Classic keeps the full chip line with the area.
+    final compact = AppSpacing.current.isCompact;
+    final meta =
+        isAtc(task) ||
+        task.priority == 2 ||
+        person != null ||
+        (!compact && widget.showDomain);
     final l = context.l10n;
 
     return Dismissible(
@@ -85,12 +93,19 @@ class _TaskTileState extends ConsumerState<TaskTile> {
         return false;
       },
       child: ListTile(
-        minTileHeight: 64,
+        minTileHeight: meta ? Tokens.rowTwoLine : Tokens.rowOneLine,
+        // The 28 dp circle's left edge lands on the gutter.
+        contentPadding: EdgeInsetsDirectional.only(
+          start: Tokens.gutter - 6,
+          end: Tokens.gutter,
+        ),
         onTap: () => context.go('/tasks/task/${task.id}'),
         leading: IconButton(
           key: ValueKey('complete-${task.id}'),
           tooltip: l.tkMarkDone(task.title),
           iconSize: 28,
+          padding: const EdgeInsets.all(6),
+          constraints: const BoxConstraints.tightFor(width: 40, height: 40),
           onPressed: _complete,
           icon: AnimatedSwitcher(
             duration: const Duration(milliseconds: 200),
@@ -109,20 +124,45 @@ class _TaskTileState extends ConsumerState<TaskTile> {
                   ),
           ),
         ),
-        title: Text(
-          task.title,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          style: _checked
-              ? const TextStyle(decoration: TextDecoration.lineThrough)
-              : null,
+        title: Row(
+          children: [
+            // Compact looks: the area is a coloured dot before the title,
+            // so most rows stay one line (PBI-031).
+            if (compact && widget.showDomain) ...[
+              Semantics(
+                label: domainLabel(task.domain),
+                child: Container(
+                  key: const ValueKey('domain-dot'),
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: domainColor(task.domain),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+              SizedBox(width: Tokens.spaceS),
+            ],
+            Expanded(
+              child: Text(
+                task.title,
+                maxLines: compact ? 1 : 2,
+                overflow: TextOverflow.ellipsis,
+                style: _checked
+                    ? const TextStyle(decoration: TextDecoration.lineThrough)
+                    : null,
+              ),
+            ),
+          ],
         ),
-        subtitle: _Chips(
-          atc: isAtc(task),
-          domain: widget.showDomain ? task.domain : null,
-          person: person,
-          priority: task.priority,
-        ),
+        subtitle: meta
+            ? _Chips(
+                atc: isAtc(task),
+                domain: !compact && widget.showDomain ? task.domain : null,
+                person: person,
+                priority: task.priority,
+              )
+            : null,
         trailing: task.dueAt == null
             ? null
             : Text(
@@ -173,7 +213,7 @@ class _Chips extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
             ),
-            const SizedBox(width: 4),
+            SizedBox(width: Tokens.spaceXs),
             Text(domainLabel(domain!), style: style),
           ],
         ),
@@ -182,7 +222,7 @@ class _Chips extends StatelessWidget {
     ];
     if (chips.isEmpty) return const SizedBox.shrink();
     return Padding(
-      padding: const EdgeInsets.only(top: Tokens.spaceXs),
+      padding: EdgeInsets.only(top: Tokens.spaceXs),
       child: Wrap(spacing: Tokens.spaceS, runSpacing: 2, children: chips),
     );
   }
@@ -206,12 +246,12 @@ class _SwipeBackground extends StatelessWidget {
     return Container(
       color: color,
       alignment: alignment,
-      padding: const EdgeInsets.symmetric(horizontal: Tokens.spaceL),
+      padding: EdgeInsets.symmetric(horizontal: Tokens.spaceL),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, color: Colors.white),
-          const SizedBox(width: Tokens.spaceS),
+          SizedBox(width: Tokens.spaceS),
           Text(label, style: const TextStyle(color: Colors.white)),
         ],
       ),

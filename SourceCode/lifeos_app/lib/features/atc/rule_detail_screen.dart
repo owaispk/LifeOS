@@ -123,21 +123,21 @@ class _RuleFormState extends ConsumerState<_RuleForm> {
         history.created > 0 && history.paidOnTime == history.created;
 
     return ListView(
-      padding: const EdgeInsets.all(Tokens.spaceM),
+      padding: EdgeInsets.all(Tokens.spaceM),
       children: [
         if (late) ...[
           Card(
             key: const ValueKey('missed-bill'),
             color: theme.colorScheme.secondaryContainer,
             child: Padding(
-              padding: const EdgeInsets.all(Tokens.spaceM),
+              padding: EdgeInsets.all(Tokens.spaceM),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     l.atcMissedBill(billStatsOf(rule).label ?? l.atcUtility),
                   ),
-                  const SizedBox(height: Tokens.spaceS),
+                  SizedBox(height: Tokens.spaceS),
                   Wrap(
                     spacing: Tokens.spaceS,
                     children: [
@@ -157,16 +157,16 @@ class _RuleFormState extends ConsumerState<_RuleForm> {
               ),
             ),
           ),
-          const SizedBox(height: Tokens.spaceS),
+          SizedBox(height: Tokens.spaceS),
         ],
         Card(
           child: Padding(
-            padding: const EdgeInsets.all(Tokens.spaceM),
+            padding: EdgeInsets.all(Tokens.spaceM),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(cadenceLabel(rule), style: theme.textTheme.titleMedium),
-                const SizedBox(height: Tokens.spaceXs),
+                SizedBox(height: Tokens.spaceXs),
                 Text(
                   allPaidOnTime ? '$historyText ✓' : historyText,
                   key: const ValueKey('rule-history'),
@@ -206,7 +206,7 @@ class _RuleFormState extends ConsumerState<_RuleForm> {
                   }
                 },
         ),
-        const SizedBox(height: Tokens.spaceS),
+        SizedBox(height: Tokens.spaceS),
         TextField(
           key: const ValueKey('detail-rule-name'),
           controller: _name,
@@ -215,7 +215,7 @@ class _RuleFormState extends ConsumerState<_RuleForm> {
             border: const OutlineInputBorder(),
           ),
         ),
-        const SizedBox(height: Tokens.spaceS),
+        SizedBox(height: Tokens.spaceS),
         Row(
           children: [
             Expanded(
@@ -232,7 +232,7 @@ class _RuleFormState extends ConsumerState<_RuleForm> {
                 ),
               ),
             ),
-            const SizedBox(width: Tokens.spaceS),
+            SizedBox(width: Tokens.spaceS),
             SizedBox(
               width: 120,
               child: DropdownButtonFormField<int>(
@@ -250,7 +250,7 @@ class _RuleFormState extends ConsumerState<_RuleForm> {
             ),
           ],
         ),
-        const SizedBox(height: Tokens.spaceS),
+        SizedBox(height: Tokens.spaceS),
         SkipMonthsPicker(
           selected: _skip,
           onToggle: (m) => setState(
@@ -273,7 +273,7 @@ class _RuleFormState extends ConsumerState<_RuleForm> {
             ),
           ],
         ),
-        const SizedBox(height: Tokens.spaceS),
+        SizedBox(height: Tokens.spaceS),
         FilledButton(
           key: const ValueKey('detail-rule-save'),
           onPressed: () async {
@@ -292,7 +292,7 @@ class _RuleFormState extends ConsumerState<_RuleForm> {
           },
           child: Text(l.atcSaveChanges),
         ),
-        const SizedBox(height: Tokens.spaceL),
+        SizedBox(height: Tokens.spaceL),
         TextButton.icon(
           key: const ValueKey('detail-rule-delete'),
           style: TextButton.styleFrom(foregroundColor: theme.colorScheme.error),

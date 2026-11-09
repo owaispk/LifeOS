@@ -83,7 +83,7 @@ class OverloadDialog extends StatelessWidget {
                 : l.tkHasRoom(formatDay(suggested)),
             style: theme.textTheme.bodyMedium,
           ),
-          const SizedBox(height: Tokens.spaceM),
+          SizedBox(height: Tokens.spaceM),
           WeekLoadChart(week: check.week, highlight: check.day),
         ],
       ),
@@ -195,7 +195,7 @@ class WeekLoadChart extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: Tokens.spaceXs),
                   Text(
                     _weekdayName(d.day).substring(0, 1),
                     style: theme.textTheme.labelSmall?.copyWith(
@@ -233,10 +233,10 @@ class LoadHeatmap extends StatelessWidget {
     final l = context.l10n;
     return Padding(
       key: const ValueKey('load-heatmap'),
-      padding: const EdgeInsets.fromLTRB(
+      padding: EdgeInsets.fromLTRB(
+        Tokens.gutter,
         Tokens.spaceM,
-        Tokens.spaceM,
-        Tokens.spaceM,
+        Tokens.gutter,
         0,
       ),
       // Equal-height cells even when a label wraps (large text sizes).
@@ -253,10 +253,8 @@ class LoadHeatmap extends StatelessWidget {
                   excludeSemantics: true,
                   child: Container(
                     key: ValueKey('heat-${d.day.day}'),
-                    margin: const EdgeInsets.symmetric(horizontal: 2),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: Tokens.spaceS,
-                    ),
+                    margin: EdgeInsets.symmetric(horizontal: Tokens.spaceXxs),
+                    padding: EdgeInsets.symmetric(vertical: Tokens.spaceS),
                     decoration: BoxDecoration(
                       // Sequential: 0% → faint, 100%+ → full primary.
                       color: scheme.primary.withValues(

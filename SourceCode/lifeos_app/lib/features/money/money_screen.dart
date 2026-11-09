@@ -51,10 +51,10 @@ class _MoneyScreenState extends ConsumerState<MoneyScreen> {
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(56),
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(
-              Tokens.spaceM,
+            padding: EdgeInsets.fromLTRB(
+              Tokens.gutter,
               0,
-              Tokens.spaceM,
+              Tokens.gutter,
               Tokens.spaceS,
             ),
             child: SegmentedButton<bool>(
@@ -86,7 +86,7 @@ class _MoneyScreenState extends ConsumerState<MoneyScreen> {
                 final summary = summarize(all, categories, month);
                 return ListView(
                   key: const ValueKey('money-list'),
-                  padding: const EdgeInsets.only(bottom: 120),
+                  padding: EdgeInsets.only(bottom: Tokens.listEnd),
                   children: [
                     switcher,
                     _Hero(summary: summary),
@@ -102,8 +102,8 @@ class _MoneyScreenState extends ConsumerState<MoneyScreen> {
                     else ...[
                       _SectionTitle(l.mnSpendingByCategory),
                       Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: Tokens.spaceM,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: Tokens.gutter,
                         ),
                         child: CategoryBreakdown(
                           slices: summary.slices,
@@ -144,7 +144,7 @@ class _MonthSwitcher extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: Tokens.spaceS),
+      padding: EdgeInsets.symmetric(horizontal: Tokens.spaceS),
       child: Row(
         children: [
           IconButton(
@@ -201,10 +201,10 @@ class _Hero extends StatelessWidget {
     final muted = theme.colorScheme.onSurfaceVariant;
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        Tokens.spaceM,
+      padding: EdgeInsets.fromLTRB(
+        Tokens.gutter,
         Tokens.spaceS,
-        Tokens.spaceM,
+        Tokens.gutter,
         Tokens.spaceM,
       ),
       child: Column(
@@ -226,7 +226,7 @@ class _Hero extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(icon, size: 18, color: muted),
-                const SizedBox(width: Tokens.spaceXs),
+                SizedBox(width: Tokens.spaceXs),
                 Text(
                   text,
                   style: theme.textTheme.bodyMedium?.copyWith(color: muted),
@@ -257,7 +257,7 @@ class _ExpenseRow extends StatelessWidget {
     final when = relativeDay(parseIsoDate(expense.spentOn), now);
     return ListTile(
       key: ValueKey('expense-${expense.id}'),
-      minTileHeight: 64,
+      minTileHeight: Tokens.rowTwoLine,
       onTap: () => showExpenseSheet(context, existing: expense),
       leading: CircleAvatar(
         backgroundColor: categoryColor(
@@ -277,7 +277,7 @@ class _ExpenseRow extends StatelessWidget {
         children: [
           if (expense.paymentId != null)
             Padding(
-              padding: const EdgeInsets.only(right: Tokens.spaceXs),
+              padding: EdgeInsets.only(right: Tokens.spaceXs),
               child: Text(
                 '⚡',
                 semanticsLabel: context.l10n.mnLoggedFromPayment,
@@ -285,7 +285,7 @@ class _ExpenseRow extends StatelessWidget {
             ),
           if (expense.receiptDocumentId != null)
             Padding(
-              padding: const EdgeInsets.only(right: Tokens.spaceXs),
+              padding: EdgeInsets.only(right: Tokens.spaceXs),
               child: Icon(
                 Icons.attach_file,
                 size: 18,
@@ -314,10 +314,10 @@ class _SectionTitle extends StatelessWidget {
     return Semantics(
       header: true,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(
-          Tokens.spaceM,
+        padding: EdgeInsets.fromLTRB(
+          Tokens.gutter,
           Tokens.spaceL,
-          Tokens.spaceM,
+          Tokens.gutter,
           Tokens.spaceS,
         ),
         child: Text(

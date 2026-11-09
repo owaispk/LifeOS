@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/l10n.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
+import 'core/theme/tokens.dart';
 import 'features/capture/share_in_listener.dart';
 import 'features/security/lock_gate.dart';
 import 'features/settings/settings_providers.dart';
@@ -18,6 +19,8 @@ class LifeOsApp extends ConsumerWidget {
     // Pure helpers (dates, labels) read the language from here.
     AppLocale.current = localeOf(settings);
     final look = templateOf(settings);
+    // Spacing and density follow the look (PBI-031).
+    AppSpacing.current = AppTheme.spacingFor(look);
     final scale = textScaleOf(settings);
     return MaterialApp.router(
       onGenerateTitle: (context) => 'LifeOS',

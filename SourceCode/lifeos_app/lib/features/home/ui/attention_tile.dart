@@ -63,12 +63,12 @@ class AttentionTile extends ConsumerWidget {
       background: Container(
         color: Tokens.scoreHigh,
         alignment: Alignment.centerLeft,
-        padding: const EdgeInsets.symmetric(horizontal: Tokens.spaceL),
+        padding: EdgeInsets.symmetric(horizontal: Tokens.spaceL),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             const Icon(Icons.check, color: Colors.white),
-            const SizedBox(width: Tokens.spaceS),
+            SizedBox(width: Tokens.spaceS),
             Text(
               context.l10n.hmPaid,
               style: const TextStyle(color: Colors.white),

@@ -192,7 +192,7 @@ class _AddRuleSheetState extends ConsumerState<AddRuleSheet> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(l.atcWhatPay, style: theme.textTheme.titleLarge),
-            const SizedBox(height: Tokens.spaceM),
+            SizedBox(height: Tokens.spaceM),
             Wrap(
               spacing: Tokens.spaceS,
               runSpacing: Tokens.spaceXs,
@@ -213,7 +213,7 @@ class _AddRuleSheetState extends ConsumerState<AddRuleSheet> {
               ],
             ),
             if (p != null) ...[
-              const SizedBox(height: Tokens.spaceM),
+              SizedBox(height: Tokens.spaceM),
               TextField(
                 key: const ValueKey('rule-name'),
                 controller: _name,
@@ -224,7 +224,7 @@ class _AddRuleSheetState extends ConsumerState<AddRuleSheet> {
                 ),
                 onChanged: (_) => setState(() {}),
               ),
-              const SizedBox(height: Tokens.spaceS),
+              SizedBox(height: Tokens.spaceS),
               Row(
                 children: [
                   Expanded(
@@ -244,7 +244,7 @@ class _AddRuleSheetState extends ConsumerState<AddRuleSheet> {
                       onChanged: (_) => setState(() {}),
                     ),
                   ),
-                  const SizedBox(width: Tokens.spaceS),
+                  SizedBox(width: Tokens.spaceS),
                   SizedBox(
                     width: 120,
                     child: DropdownButtonFormField<int>(
@@ -264,7 +264,7 @@ class _AddRuleSheetState extends ConsumerState<AddRuleSheet> {
                 ],
               ),
               if (p.installment) ...[
-                const SizedBox(height: Tokens.spaceS),
+                SizedBox(height: Tokens.spaceS),
                 TextField(
                   key: const ValueKey('rule-total'),
                   controller: _total,
@@ -276,7 +276,7 @@ class _AddRuleSheetState extends ConsumerState<AddRuleSheet> {
                   onChanged: (_) => setState(() {}),
                 ),
               ],
-              const SizedBox(height: Tokens.spaceM),
+              SizedBox(height: Tokens.spaceM),
               Text(l.atcHowOften, style: theme.textTheme.labelLarge),
               Wrap(
                 spacing: Tokens.spaceS,
@@ -296,7 +296,7 @@ class _AddRuleSheetState extends ConsumerState<AddRuleSheet> {
                 ],
               ),
               if (_cycle == 'semester') ...[
-                const SizedBox(height: Tokens.spaceS),
+                SizedBox(height: Tokens.spaceS),
                 Text(l.atcDueDates, style: theme.textTheme.labelLarge),
                 Wrap(
                   spacing: Tokens.spaceS,
@@ -315,14 +315,14 @@ class _AddRuleSheetState extends ConsumerState<AddRuleSheet> {
                   ],
                 ),
               ],
-              const SizedBox(height: Tokens.spaceS),
+              SizedBox(height: Tokens.spaceS),
               SkipMonthsPicker(
                 selected: _skip,
                 onToggle: (m) => setState(
                   () => _skip.contains(m) ? _skip.remove(m) : _skip.add(m),
                 ),
               ),
-              const SizedBox(height: Tokens.spaceS),
+              SizedBox(height: Tokens.spaceS),
               Row(
                 children: [
                   Expanded(child: Text(l.atcRemindBefore)),
@@ -363,7 +363,7 @@ class _AddRuleSheetState extends ConsumerState<AddRuleSheet> {
                   ],
                   onChanged: (v) => setState(() => _personId = v),
                 ),
-              const SizedBox(height: Tokens.spaceM),
+              SizedBox(height: Tokens.spaceM),
               FilledButton(
                 key: const ValueKey('rule-save'),
                 style: FilledButton.styleFrom(

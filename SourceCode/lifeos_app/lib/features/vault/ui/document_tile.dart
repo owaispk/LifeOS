@@ -31,7 +31,7 @@ class DocumentTile extends ConsumerWidget {
 
     return ListTile(
       key: ValueKey('doc-${document.id}'),
-      minTileHeight: 64,
+      minTileHeight: Tokens.rowTwoLine,
       onTap: () => context.push('/doc/${document.id}'),
       leading: _Thumbnail(document: document, page: page),
       title: Text(document.title, maxLines: 2, overflow: TextOverflow.ellipsis),
@@ -143,7 +143,7 @@ class VaultSectionTitle extends StatelessWidget {
     return Semantics(
       header: true,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(
+        padding: EdgeInsets.fromLTRB(
           Tokens.spaceM,
           Tokens.spaceL,
           Tokens.spaceS,

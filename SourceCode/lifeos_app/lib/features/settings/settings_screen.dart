@@ -80,7 +80,7 @@ class SettingsScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(l.settingsTitle)),
       body: ListView(
         key: const ValueKey('settings-list'),
-        padding: const EdgeInsets.only(bottom: 120),
+        padding: EdgeInsets.only(bottom: Tokens.listEnd),
         children: [
           _Header(l.settingsSecurity),
           SwitchListTile(
@@ -159,16 +159,16 @@ class SettingsScreen extends ConsumerWidget {
             },
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(
-              Tokens.spaceM,
+            padding: EdgeInsets.fromLTRB(
+              Tokens.gutter,
               Tokens.spaceS,
-              Tokens.spaceM,
+              Tokens.gutter,
               0,
             ),
             child: Text(l.notifyAbout),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: Tokens.spaceM),
+            padding: EdgeInsets.symmetric(horizontal: Tokens.gutter),
             child: Wrap(
               spacing: Tokens.spaceS,
               children: [
@@ -188,7 +188,7 @@ class SettingsScreen extends ConsumerWidget {
           ),
           _Header(l.settingsLanguage),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: Tokens.spaceM),
+            padding: EdgeInsets.symmetric(horizontal: Tokens.gutter),
             child: SegmentedButton<String>(
               key: const ValueKey('set-language'),
               segments: [
@@ -201,7 +201,7 @@ class SettingsScreen extends ConsumerWidget {
           ),
           _Header(l.settingsAppearance),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: Tokens.spaceM),
+            padding: EdgeInsets.symmetric(horizontal: Tokens.gutter),
             child: SegmentedButton<String>(
               key: const ValueKey('set-theme'),
               segments: [
@@ -383,10 +383,10 @@ class _Header extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        Tokens.spaceM,
+      padding: EdgeInsets.fromLTRB(
+        Tokens.gutter,
         Tokens.spaceL,
-        Tokens.spaceM,
+        Tokens.gutter,
         Tokens.spaceXs,
       ),
       child: Text(
