@@ -142,7 +142,7 @@ void main() {
       expect(weekOf(DateTime(2026, 11, 2)).from, DateTime(2026, 11, 2));
     });
 
-    test('greeting uses the name once it is set', () {
+    test('greeting follows the time of day and uses the name once set', () {
       Person p(String name) => Person(
         id: 'x',
         userId: 'u',
@@ -152,9 +152,22 @@ void main() {
         relation: 'self',
         sortOrder: 0,
       );
-      expect(greeting(null), 'Salam 👋');
-      expect(greeting(p('Me')), 'Salam 👋');
-      expect(greeting(p('Owais')), 'Salam, Owais 👋');
+      DateTime at(int hour) => DateTime(2026, 11, 8, hour);
+      // PBI-035 AC1: neutral, time-based defaults — no religious wording.
+      expect(greeting(null, at(9)), 'Good morning ☀️');
+      expect(greeting(p('Me'), at(9)), 'Good morning ☀️');
+      expect(greeting(p('Owais'), at(9)), 'Good morning, Owais ☀️');
+      expect(greeting(p('Owais'), at(14)), 'Good afternoon, Owais 👋');
+      expect(greeting(p('Owais'), at(19)), 'Good evening, Owais 🌆');
+      expect(greeting(p('Owais'), at(23)), 'Working late, Owais? 🌙');
+      expect(greeting(null, at(23)), 'Working late? 🌙');
+      // Boundaries: 5:00 starts morning, 12:00 afternoon, 17:00 evening,
+      // 21:00 night; 4:59 is still night.
+      expect(greeting(null, at(5)), 'Good morning ☀️');
+      expect(greeting(null, at(12)), 'Good afternoon 👋');
+      expect(greeting(null, at(17)), 'Good evening 🌆');
+      expect(greeting(null, at(21)), 'Working late? 🌙');
+      expect(greeting(null, DateTime(2026, 11, 8, 4, 59)), 'Working late? 🌙');
     });
   });
 

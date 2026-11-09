@@ -42,8 +42,14 @@
 
 | # | PBI | Epic | SP | Depends on | Status |
 |---|---|---|---|---|---|
+| 27a | [PBI-027a Premium AI: Bring-Your-Own-Key (no backend)](PBI-027a-premium-ai-byok.md) | E3 ATC / E1 Vault | 5 | 004, 024, 029 | Ready (blocked by 029) |
+| 27b | [PBI-027b Premium AI: Managed Mode + Lightweight Proxy](PBI-027b-premium-ai-managed.md) | E3 ATC / E1 Vault | 5 | 027a, 029 | Ready (blocked by 027a, 029) |
 | 30 | [PBI-030 Diagnostics Log & Share](PBI-030-diagnostics-log.md) | E5 Platform | 3 | 025, 007 | Done |
 | 31 | [PBI-031 Flagship: Compact, Professional Layout](PBI-031-flagship-compact-layout.md) | E5 Platform / Design | 5 | 001, 025 | Done |
+| 32 | [PBI-032 Device Calendar in Today View (read-only)](PBI-032-device-calendar-today.md) | E2 Mind | 5 | 009, 021 | Ready |
+| 33 | [PBI-033 Home-Screen Widget](PBI-033-home-screen-widget.md) | E6 Engagement | 8 | 009, 013, 020, 021 | Ready |
+| 34 | [PBI-034 Share Text to Task](PBI-034-share-text-to-task.md) | E3 ATC / E2 Mind | 3 | 010, 003 | Ready |
+| 35 | [PBI-035 Profile & Personalization (neutral defaults)](PBI-035-profile-personalization.md) | E5 Platform / E6 Engagement | 5 | 021, 025 | Ready |
 
 ## Suggested sprint plan (2 devs, 2-week sprints, ~27 SP/sprint → 6 sprints ≈ 3 months)
 
@@ -70,7 +76,6 @@
 
 ## Not yet groomed (post-MVP, will become PBIs before development)
 - PBI-026 Supabase backend + offline sync (push/pull, conflict rules) + E2E encrypted cloud backup (premium)
-- PBI-027 Premium cloud LLM classification fallback
 - PBI-028 Share-safe expiring links, watermark, bundles
 - PBI-029 Premium/subscription & free-tier limits (25 docs / 3 rules)
 - V2 (P1): Health, People, Work/Study, Soul, Goals, full Money, Emergency Card, appointments OCR

@@ -806,11 +806,35 @@ class AppLocalizationsUr extends AppLocalizations {
   String get hmPromptTaskTitle => 'کام شامل کریں ➕';
 
   @override
-  String get hmSalam => 'السلام علیکم 👋';
+  String get hmGreetMorning => 'صبح بخیر ☀️';
 
   @override
-  String hmSalamName(String name) {
-    return 'السلام علیکم، $name 👋';
+  String hmGreetMorningName(String name) {
+    return 'صبح بخیر، $name ☀️';
+  }
+
+  @override
+  String get hmGreetAfternoon => 'دوپہر بخیر 👋';
+
+  @override
+  String hmGreetAfternoonName(String name) {
+    return 'دوپہر بخیر، $name 👋';
+  }
+
+  @override
+  String get hmGreetEvening => 'شام بخیر 🌆';
+
+  @override
+  String hmGreetEveningName(String name) {
+    return 'شام بخیر، $name 🌆';
+  }
+
+  @override
+  String get hmGreetNight => 'ابھی تک جاگ رہے ہیں؟ 🌙';
+
+  @override
+  String hmGreetNightName(String name) {
+    return 'ابھی تک جاگ رہے ہیں، $name؟ 🌙';
   }
 
   @override

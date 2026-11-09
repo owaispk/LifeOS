@@ -130,9 +130,17 @@ int weekPaymentsMinor(List<Payment> payments, DateTime now) {
   return sum;
 }
 
-/// "Salam, Owais 👋" — just "Salam 👋" while the profile is still "Me".
-String greeting(Person? self) {
+/// Time-of-day greeting — "Good morning, Owais ☀️", just "Good morning ☀️"
+/// while the profile is still "Me". Neutral by design (PBI-035): default
+/// strings carry no religious or cultural wording in any language.
+String greeting(Person? self, DateTime now) {
+  final l = l10nNow;
   final name = self?.name.trim();
-  if (name == null || name.isEmpty || name == 'Me') return l10nNow.hmSalam;
-  return l10nNow.hmSalamName(name);
+  final named = name != null && name.isNotEmpty && name != 'Me';
+  return switch (now.hour) {
+    >= 5 && < 12 => named ? l.hmGreetMorningName(name) : l.hmGreetMorning,
+    >= 12 && < 17 => named ? l.hmGreetAfternoonName(name) : l.hmGreetAfternoon,
+    >= 17 && < 21 => named ? l.hmGreetEveningName(name) : l.hmGreetEvening,
+    _ => named ? l.hmGreetNightName(name) : l.hmGreetNight,
+  };
 }

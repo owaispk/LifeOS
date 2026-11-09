@@ -515,9 +515,36 @@
   "hmPromptScanTitle": "Scan your first document 📸",
   "hmPromptTaskBody": "Anything on your mind, with a reminder.",
   "hmPromptTaskTitle": "Add a task ➕",
-  "hmSalam": "Salam 👋",
-  "hmSalamName": "Salam, {name} 👋",
-  "@hmSalamName": {
+  "hmGreetMorning": "Good morning ☀️",
+  "hmGreetMorningName": "Good morning, {name} ☀️",
+  "@hmGreetMorningName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "hmGreetAfternoon": "Good afternoon 👋",
+  "hmGreetAfternoonName": "Good afternoon, {name} 👋",
+  "@hmGreetAfternoonName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "hmGreetEvening": "Good evening 🌆",
+  "hmGreetEveningName": "Good evening, {name} 🌆",
+  "@hmGreetEveningName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "hmGreetNight": "Working late? 🌙",
+  "hmGreetNightName": "Working late, {name}? 🌙",
+  "@hmGreetNightName": {
     "placeholders": {
       "name": {
         "type": "String"

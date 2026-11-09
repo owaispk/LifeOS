@@ -72,7 +72,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(greeting(self), key: const ValueKey('home-greeting')),
+        title: Text(greeting(self, now), key: const ValueKey('home-greeting')),
         actions: [
           IconButton(
             key: const ValueKey('home-bell'),

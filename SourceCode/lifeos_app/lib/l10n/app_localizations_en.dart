@@ -807,11 +807,35 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hmPromptTaskTitle => 'Add a task ➕';
 
   @override
-  String get hmSalam => 'Salam 👋';
+  String get hmGreetMorning => 'Good morning ☀️';
 
   @override
-  String hmSalamName(String name) {
-    return 'Salam, $name 👋';
+  String hmGreetMorningName(String name) {
+    return 'Good morning, $name ☀️';
+  }
+
+  @override
+  String get hmGreetAfternoon => 'Good afternoon 👋';
+
+  @override
+  String hmGreetAfternoonName(String name) {
+    return 'Good afternoon, $name 👋';
+  }
+
+  @override
+  String get hmGreetEvening => 'Good evening 🌆';
+
+  @override
+  String hmGreetEveningName(String name) {
+    return 'Good evening, $name 🌆';
+  }
+
+  @override
+  String get hmGreetNight => 'Working late? 🌙';
+
+  @override
+  String hmGreetNightName(String name) {
+    return 'Working late, $name? 🌙';
   }
 
   @override

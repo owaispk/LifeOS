@@ -1424,17 +1424,53 @@ abstract class AppLocalizations {
   /// **'Add a task ➕'**
   String get hmPromptTaskTitle;
 
-  /// No description provided for @hmSalam.
+  /// No description provided for @hmGreetMorning.
   ///
   /// In en, this message translates to:
-  /// **'Salam 👋'**
-  String get hmSalam;
+  /// **'Good morning ☀️'**
+  String get hmGreetMorning;
 
-  /// No description provided for @hmSalamName.
+  /// No description provided for @hmGreetMorningName.
   ///
   /// In en, this message translates to:
-  /// **'Salam, {name} 👋'**
-  String hmSalamName(String name);
+  /// **'Good morning, {name} ☀️'**
+  String hmGreetMorningName(String name);
+
+  /// No description provided for @hmGreetAfternoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Good afternoon 👋'**
+  String get hmGreetAfternoon;
+
+  /// No description provided for @hmGreetAfternoonName.
+  ///
+  /// In en, this message translates to:
+  /// **'Good afternoon, {name} 👋'**
+  String hmGreetAfternoonName(String name);
+
+  /// No description provided for @hmGreetEvening.
+  ///
+  /// In en, this message translates to:
+  /// **'Good evening 🌆'**
+  String get hmGreetEvening;
+
+  /// No description provided for @hmGreetEveningName.
+  ///
+  /// In en, this message translates to:
+  /// **'Good evening, {name} 🌆'**
+  String hmGreetEveningName(String name);
+
+  /// No description provided for @hmGreetNight.
+  ///
+  /// In en, this message translates to:
+  /// **'Working late? 🌙'**
+  String get hmGreetNight;
+
+  /// No description provided for @hmGreetNightName.
+  ///
+  /// In en, this message translates to:
+  /// **'Working late, {name}? 🌙'**
+  String hmGreetNightName(String name);
 
   /// No description provided for @hmSeeAllCount.
   ///

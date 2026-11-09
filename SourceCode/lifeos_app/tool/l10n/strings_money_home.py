@@ -109,9 +109,16 @@ S = {
     "hmExpiresTomorrow": ("expires tomorrow", "کل ختم ہو رہی ہے"),
     "hmDueIn": ("due in {n} days", "{n} دن میں واجب"),
     "hmExpiresIn": ("expires in {n} days", "{n} دن میں ختم"),
-    # attention.dart: greeting
-    "hmSalam": ("Salam 👋", "السلام علیکم 👋"),
-    "hmSalamName": ("Salam, {name} 👋", "السلام علیکم، {name} 👋"),
+    # attention.dart: greeting — time-based and neutral (PBI-035): default
+    # strings carry no religious or cultural wording in any language.
+    "hmGreetMorning": ("Good morning ☀️", "صبح بخیر ☀️"),
+    "hmGreetMorningName": ("Good morning, {name} ☀️", "صبح بخیر، {name} ☀️"),
+    "hmGreetAfternoon": ("Good afternoon 👋", "دوپہر بخیر 👋"),
+    "hmGreetAfternoonName": ("Good afternoon, {name} 👋", "دوپہر بخیر، {name} 👋"),
+    "hmGreetEvening": ("Good evening 🌆", "شام بخیر 🌆"),
+    "hmGreetEveningName": ("Good evening, {name} 🌆", "شام بخیر، {name} 🌆"),
+    "hmGreetNight": ("Working late? 🌙", "ابھی تک جاگ رہے ہیں؟ 🌙"),
+    "hmGreetNightName": ("Working late, {name}? 🌙", "ابھی تک جاگ رہے ہیں، {name}؟ 🌙"),
 
     # ── Life Score (score_screen.dart, ui/*, domain/life_score.dart) ──
     # PBI-020: no guilt words in either language.

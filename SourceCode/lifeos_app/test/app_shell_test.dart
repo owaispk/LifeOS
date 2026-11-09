@@ -12,8 +12,9 @@ Finder appBarTitle(String title) =>
 void main() {
   const tabs = ['Home', 'Tasks', 'Vault', 'Money', 'More'];
 
-  // Home's app bar is the greeting since PBI-021.
-  String titleOf(String tab) => tab == 'Home' ? 'Salam 👋' : tab;
+  // Home's app bar is the greeting since PBI-021; time-based and neutral
+  // since PBI-035 (the test clock is 10:00 → morning).
+  String titleOf(String tab) => tab == 'Home' ? 'Good morning ☀️' : tab;
 
   appTest('AC1: opens on the Home tab', (tester, app) async {
     expect(appBarTitle(titleOf('Home')), findsOneWidget);
