@@ -86,7 +86,7 @@ List<Override> extras() {
   shared.clear();
   return [
     pdfPagesBuilderProvider.overrideWithValue(
-      (path) => Center(child: Text('PDF ${p.basename(path)}')),
+      (f) => Center(child: Text('PDF ${p.basename(f.localPath!)}')),
     ),
     shareFilesProvider.overrideWithValue((files) async => shared.add(files)),
   ];

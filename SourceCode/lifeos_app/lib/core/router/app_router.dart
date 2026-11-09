@@ -10,7 +10,9 @@ import '../../features/home/attention_screen.dart';
 import '../../features/home/home_screen.dart';
 import '../../features/money/money_screen.dart';
 import '../../features/more/more_screen.dart';
+import '../../features/onboarding/onboarding_screen.dart';
 import '../../features/score/score_screen.dart';
+import '../../features/settings/settings_screen.dart';
 import '../../features/tasks/tasks_screen.dart';
 import '../../features/tasks/ui/task_detail_screen.dart';
 import '../../features/vault/document_viewer_screen.dart';
@@ -18,6 +20,7 @@ import '../../features/vault/expiring_screen.dart';
 import '../../features/vault/trash_screen.dart';
 import '../../features/vault/vault_list_screen.dart';
 import '../../features/vault/vault_screen.dart';
+import '../../features/security/lock_gate.dart';
 import '../../shared/widgets/app_shell.dart';
 
 abstract final class Routes {
@@ -30,14 +33,32 @@ abstract final class Routes {
 
 /// One router per ProviderScope, so tests always start fresh.
 final routerProvider = Provider<GoRouter>((ref) {
+  // Onboarding shows until it is finished or skipped (PBI-022 AC1).
+  final refresh = ValueNotifier(0);
+  ref.listen(onboardingDoneProvider, (_, _) => refresh.value++);
+  ref.onDispose(refresh.dispose);
   final router = GoRouter(
     initialLocation: Routes.home,
+    refreshListenable: refresh,
+    redirect: (context, state) {
+      final done = ref.read(onboardingDoneProvider).value;
+      if (done == null) return null; // loading, or no local database
+      final atOnboarding = state.matchedLocation == '/onboarding';
+      if (!done && !atOnboarding) return '/onboarding';
+      if (done && atOnboarding) return Routes.home;
+      return null;
+    },
     routes: [
+      GoRoute(
+        path: '/onboarding',
+        builder: (context, state) => const OnboardingScreen(),
+      ),
       // Full-screen document viewer, above the tabs (PBI-007).
       GoRoute(
         path: '/doc/:id',
-        builder: (context, state) =>
-            DocumentViewerScreen(documentId: state.pathParameters['id']!),
+        builder: (context, state) => VaultGate(
+          child: DocumentViewerScreen(documentId: state.pathParameters['id']!),
+        ),
       ),
       // Full-screen capture confirm step, above the tabs (PBI-003).
       GoRoute(
@@ -74,32 +95,39 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           _branch(
             Routes.vault,
-            const VaultScreen(),
+            const VaultGate(child: VaultScreen()),
             routes: [
               GoRoute(
                 path: 'folder/:id',
-                builder: (context, state) => VaultListScreen(
-                  scope: FolderScope(state.pathParameters['id']!),
+                builder: (context, state) => VaultGate(
+                  child: VaultListScreen(
+                    scope: FolderScope(state.pathParameters['id']!),
+                  ),
                 ),
               ),
               GoRoute(
                 path: 'person/:id',
-                builder: (context, state) => VaultListScreen(
-                  scope: PersonScope(state.pathParameters['id']!),
+                builder: (context, state) => VaultGate(
+                  child: VaultListScreen(
+                    scope: PersonScope(state.pathParameters['id']!),
+                  ),
                 ),
               ),
               GoRoute(
                 path: 'expiring',
-                builder: (context, state) => const ExpiringScreen(),
+                builder: (context, state) =>
+                    VaultGate(child: const ExpiringScreen()),
               ),
               GoRoute(
                 path: 'trash',
-                builder: (context, state) => const TrashScreen(),
+                builder: (context, state) =>
+                    VaultGate(child: const TrashScreen()),
               ),
               GoRoute(
                 path: 'unfiled',
-                builder: (context, state) =>
-                    const VaultListScreen(scope: UnfiledScope()),
+                builder: (context, state) => const VaultGate(
+                  child: VaultListScreen(scope: UnfiledScope()),
+                ),
               ),
             ],
           ),
@@ -108,6 +136,10 @@ final routerProvider = Provider<GoRouter>((ref) {
             Routes.more,
             const MoreScreen(),
             routes: [
+              GoRoute(
+                path: 'settings',
+                builder: (context, state) => const SettingsScreen(),
+              ),
               GoRoute(
                 path: 'atc',
                 builder: (context, state) => const AtcRulesScreen(),

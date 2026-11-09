@@ -232,4 +232,37 @@ Current Bill Charges 2,140
     // Guards the OCR-tolerant label matching (was 9/26 before it).
     expect(hits / checks, greaterThanOrEqualTo(0.8));
   });
+
+  group('reference numbers (device QA finding)', () {
+    String? ref(String type, String text) =>
+        extractFields(type, text)[Fields.refNumber]?.value;
+
+    test('LESCO keeps every group: "08 11111 2233445 U"', () {
+      expect(ref('bill', fixture('bill_lesco')), '08 11111 2233445 U');
+    });
+
+    test('single-token references are unchanged', () {
+      expect(ref('bill', fixture('bill_kelectric_1')), '0400012345678');
+      expect(ref('bill', fixture('bill_ssgc')), '1122334455');
+      expect(ref('bill', fixture('bill_ptcl')), '021-34567890');
+      expect(ref('fee_voucher', fixture('fee_voucher_1')), '2026-11-778');
+    });
+
+    test('a following word is never swallowed; spaces normalised', () {
+      expect(
+        ref(
+          'bill',
+          'K-ELECTRIC\nELECTRICITY BILL\nAccount No: 0400012345678 Name ALI',
+        ),
+        '0400012345678',
+      );
+      expect(
+        ref(
+          'bill',
+          'LESCO\nELECTRICITY BILL\nReference No 08   11111  2233445 U',
+        ),
+        '08 11111 2233445 U',
+      );
+    });
+  });
 }

@@ -7,7 +7,7 @@
 | Story Points | 13 |
 | Spec refs | Features §1.2; UI flow §3.4 step 3; Data model `extracted_fields` |
 | Depends on | PBI-003 |
-| Status | Dev Complete — device QA pending (real-scan accuracy) |
+| Status | Done |
 
 ## User Story
 As a **user**, I want the app to recognise what I scanned so I don't have to name and file it manually.
@@ -106,3 +106,25 @@ The Review & file screen now shows a type chip with confidence or a picker, edit
 - Real-scan accuracy is measured during device QA.
 
 `flutter analyze`: no issues · full suite **245/245 passed** (41 new in Sprint 3), identical on three runs.
+
+## Device QA (2026-11-09)
+Android emulator `sdk gphone64 x86 64`, Android 17 (API 37), Google Play services; debug APK; 2026-11-09.
+
+On-device ML Kit OCR, run on 8 photo-like document images (rendered from the fixtures, slightly tilted, blurred and unevenly lit) imported through the app:
+
+| Image | Type (confidence) | Fields read on device |
+|---|---|---|
+| K-Electric bill | Bill 100% | Rs 4,850 · due 2026-11-14 · Nov 2026 · ref 0400012345678 |
+| SSGC bill | Bill 100% | Rs 1,860 · due 2026-11-20 · Nov 2026 · ref 1122334455 |
+| LESCO bill | Bill 100% | Rs 2,410 · due 2026-11-21 · Nov 2026 · ref 08 11111 2233445 U *(after fix)* |
+| PTCL bill | Bill 100% | Rs 2,999 · due 2026-11-25 · Nov 2026 · ref 021-34567890 |
+| Passport | Passport 100% | AB1234567 · issued 2012-01-05 · expires 2027-03-09 |
+| CNIC | CNIC 80% | 42101-1234567-1 · 1990-03-12 · expires 2029-06-15 |
+| Fee voucher | Fee voucher 96% | The City School · Ali Owais · Rs 12,000 · due 2026-11-05 · challan 2026-11-778 |
+| Warranty | Warranty 100% | 2025-08-12 → 2027-08-11 |
+
+Result: type 8/8, and every expected amount, date and number matched. Each image was filed to the right folder (Bills & Receipts, Identity, Education, Insurance).
+
+**Device QA finding, fixed:** LESCO's reference "08 11111 2233445 U" was read as just "11111", the subdivision code shared by neighbouring meters. Two LESCO meters would have merged into one learned rule (PBI-014 AC4), and duplicate detection could misfire. The new `refAfter` keeps space-separated groups whole, without swallowing a following word. 3 new unit tests; re-verified on the device.
+
+Still open: accuracy on photos of real paper documents (needs physical documents, ideally on a phone). The pipeline is now proven on the device.

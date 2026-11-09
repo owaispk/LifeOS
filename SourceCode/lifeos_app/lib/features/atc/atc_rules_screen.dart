@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/ids.dart';
+import '../../core/l10n.dart';
 import '../../core/now_provider.dart';
 import '../../core/theme/tokens.dart';
 import '../../data/db/app_database.dart';
@@ -27,11 +28,19 @@ RuleGroup groupOf(AtcRule r, Map<String, Category> categories) {
   return RuleGroup.fixed;
 }
 
-const _groupTitles = {
+/// Stable ids for widget keys (`atc-group-Bills`).
+const _groupIds = {
   RuleGroup.bills: 'Bills',
   RuleGroup.fees: 'Fees',
   RuleGroup.fixed: 'Fixed',
   RuleGroup.appointments: 'Appointments',
+};
+
+String _groupTitle(AppLocalizations l, RuleGroup g) => switch (g) {
+  RuleGroup.bills => l.atcGroupBills,
+  RuleGroup.fees => l.atcGroupFees,
+  RuleGroup.fixed => l.atcGroupFixed,
+  RuleGroup.appointments => l.atcGroupAppointments,
 };
 
 /// 5.1 ATC Rules Manager (PBI-017).
@@ -57,6 +66,7 @@ class AtcRulesScreen extends ConsumerWidget {
       return c.year == now.year && c.month == now.month;
     }).length;
 
+    final l = context.l10n;
     final groups = <RuleGroup, List<AtcRule>>{};
     for (final r in rules) {
       groups.putIfAbsent(groupOf(r, categories), () => []).add(r);
@@ -64,7 +74,7 @@ class AtcRulesScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Auto Tasks'),
+        title: Text(l.atcTitle),
         actions: [
           // In the app bar, not a second floating button beside the ➕.
           Padding(
@@ -73,7 +83,7 @@ class AtcRulesScreen extends ConsumerWidget {
               key: const ValueKey('atc-add'),
               onPressed: () => showAddRuleSheet(context),
               icon: const Icon(Icons.add),
-              label: const Text('Add'),
+              label: Text(l.atcAdd),
             ),
           ),
         ],
@@ -81,11 +91,9 @@ class AtcRulesScreen extends ConsumerWidget {
       body: rules.isEmpty
           ? EmptyState(
               emoji: '⚡',
-              title: 'Let LifeOS remember your payments',
-              message:
-                  'Tell it once what you pay regularly — rent, fees, bills — '
-                  'and it creates the reminders every month.',
-              actionLabel: '➕ Add a payment',
+              title: l.atcEmptyTitle,
+              message: l.atcEmptyBody,
+              actionLabel: l.atcEmptyAction,
               onAction: () => showAddRuleSheet(context),
             )
           : ListView(
@@ -95,16 +103,14 @@ class AtcRulesScreen extends ConsumerWidget {
                 Padding(
                   padding: const EdgeInsets.all(Tokens.spaceM),
                   child: Text(
-                    '⚡ ATC created $createdThisMonth '
-                    '${createdThisMonth == 1 ? 'task' : 'tasks'} for you this '
-                    'month',
+                    l.atcCreatedThisMonth(createdThisMonth),
                     key: const ValueKey('atc-header'),
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                 ),
                 for (final g in RuleGroup.values)
                   if (groups[g] != null) ...[
-                    _GroupTitle(_groupTitles[g]!),
+                    _GroupTitle(id: _groupIds[g]!, title: _groupTitle(l, g)),
                     for (final r in groups[g]!) _RuleTile(rule: r, now: now),
                   ],
               ],
@@ -114,7 +120,8 @@ class AtcRulesScreen extends ConsumerWidget {
 }
 
 class _GroupTitle extends StatelessWidget {
-  const _GroupTitle(this.title);
+  const _GroupTitle({required this.id, required this.title});
+  final String id;
   final String title;
 
   @override
@@ -129,7 +136,7 @@ class _GroupTitle extends StatelessWidget {
       ),
       child: Text(
         title.toUpperCase(),
-        key: ValueKey('atc-group-$title'),
+        key: ValueKey('atc-group-$id'),
         style: theme.textTheme.labelLarge?.copyWith(
           color: theme.colorScheme.onSurfaceVariant,
           letterSpacing: 0.8,
@@ -150,11 +157,12 @@ class _RuleTile extends ConsumerWidget {
     final next = rule.lastGeneratedPeriod == null
         ? null
         : parseIsoDate(rule.lastGeneratedPeriod!);
+    final l = context.l10n;
     final status = switch (rule.status) {
-      'proposed' => 'Proposed',
-      'ended' => 'Ended',
-      'paused' => 'Paused',
-      _ => next == null ? null : 'Next ${relativeDay(next, now)}',
+      'proposed' => l.atcProposed,
+      'ended' => l.atcEnded,
+      'paused' => l.atcPaused,
+      _ => next == null ? null : l.atcNext(relativeDay(next, now)),
     };
     final service = ref.read(atcServiceProvider);
 

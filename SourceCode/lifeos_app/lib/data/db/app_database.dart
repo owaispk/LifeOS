@@ -44,7 +44,7 @@ class AppDatabase extends _$AppDatabase {
   );
 
   @override
-  int get schemaVersion => 5;
+  int get schemaVersion => 6;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -78,6 +78,11 @@ class AppDatabase extends _$AppDatabase {
       if (from < 5) {
         await m.addColumn(atcRules, atcRules.refNumber);
         await m.addColumn(atcRules, atcRules.scheduleDates);
+      }
+      // v6 (Sprint 6): language and Vault screenshot blocking.
+      if (from < 6) {
+        await m.addColumn(userSettings, userSettings.language);
+        await m.addColumn(userSettings, userSettings.screenshotBlock);
       }
     },
     beforeOpen: (details) async {

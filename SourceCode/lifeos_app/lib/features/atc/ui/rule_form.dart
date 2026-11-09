@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/l10n.dart';
 import '../../../core/money.dart';
 import '../../../core/now_provider.dart';
 import '../../../core/theme/tokens.dart';
@@ -9,46 +10,49 @@ import '../../../data/db/app_database.dart';
 import '../../../shared/format.dart';
 import '../atc_providers.dart';
 import '../data/atc_service.dart';
+import '../domain/atc_schedule.dart' show freeTierRuleLimit;
 
 /// "What do you pay regularly?" presets (PBI-013 grooming).
 class PaymentPreset {
   const PaymentPreset(
     this.key,
     this.emoji,
-    this.label,
     this.categoryKey, {
     this.amountOptional = false,
     this.installment = false,
   });
   final String key;
   final String emoji;
-  final String label;
   final String categoryKey;
+
+  /// Display label (also the suggested rule name), in the app's language.
+  String get label {
+    final l = l10nNow;
+    return switch (key) {
+      'rent' => l.atcPresetRent,
+      'fees' => l.atcPresetFees,
+      'utility' => l.atcPresetUtility,
+      'internet' => l.atcPresetInternet,
+      'mobile' => l.atcPresetMobile,
+      'installment' => l.atcPresetInstallment,
+      'subscription' => l.atcPresetSubscription,
+      _ => l.atcPresetCustom,
+    };
+  }
+
   final bool amountOptional;
   final bool installment;
 }
 
 const paymentPresets = [
-  PaymentPreset('rent', '🏠', 'Rent', 'rent'),
-  PaymentPreset('fees', '🎓', 'School fee', 'fees'),
-  PaymentPreset(
-    'utility',
-    '💡',
-    'Utility bill',
-    'utilities',
-    amountOptional: true,
-  ),
-  PaymentPreset('internet', '🌐', 'Internet', 'internet'),
-  PaymentPreset('mobile', '📱', 'Mobile', 'mobile'),
-  PaymentPreset(
-    'installment',
-    '📆',
-    'Installment / Committee',
-    'installment',
-    installment: true,
-  ),
-  PaymentPreset('subscription', '🔁', 'Subscription', 'subscription'),
-  PaymentPreset('custom', '✳️', 'Custom', 'other', amountOptional: true),
+  PaymentPreset('rent', '🏠', 'rent'),
+  PaymentPreset('fees', '🎓', 'fees'),
+  PaymentPreset('utility', '💡', 'utilities', amountOptional: true),
+  PaymentPreset('internet', '🌐', 'internet'),
+  PaymentPreset('mobile', '📱', 'mobile'),
+  PaymentPreset('installment', '📆', 'installment', installment: true),
+  PaymentPreset('subscription', '🔁', 'subscription'),
+  PaymentPreset('custom', '✳️', 'other', amountOptional: true),
 ];
 
 /// Opens the add-rule sheet. Shows the upgrade prompt on the 4th rule.
@@ -66,18 +70,16 @@ Future<void> showUpgradePrompt(BuildContext context) {
     context: context,
     builder: (context) => AlertDialog(
       key: const ValueKey('upgrade-prompt'),
-      title: const Text('Upgrade to Premium'),
-      content: const Text(
-        'Free plan includes 3 auto-rules — Premium removes the limit.',
-      ),
+      title: Text(context.l10n.atcUpgradeTitle),
+      content: Text(context.l10n.atcUpgradeBody('$freeTierRuleLimit')),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Not now'),
+          child: Text(context.l10n.atcNotNow),
         ),
         FilledButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('See Premium'),
+          child: Text(context.l10n.atcSeePremium),
         ),
       ],
     ),
@@ -176,6 +178,7 @@ class _AddRuleSheetState extends ConsumerState<AddRuleSheet> {
     final theme = Theme.of(context);
     final persons = ref.watch(personsProvider).value ?? const <Person>[];
     final p = _preset;
+    final l = context.l10n;
 
     return Padding(
       padding: EdgeInsets.only(
@@ -188,10 +191,7 @@ class _AddRuleSheetState extends ConsumerState<AddRuleSheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              'What do you pay regularly?',
-              style: theme.textTheme.titleLarge,
-            ),
+            Text(l.atcWhatPay, style: theme.textTheme.titleLarge),
             const SizedBox(height: Tokens.spaceM),
             Wrap(
               spacing: Tokens.spaceS,
@@ -218,9 +218,9 @@ class _AddRuleSheetState extends ConsumerState<AddRuleSheet> {
                 key: const ValueKey('rule-name'),
                 controller: _name,
                 textCapitalization: TextCapitalization.sentences,
-                decoration: const InputDecoration(
-                  labelText: 'Name',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l.name,
+                  border: const OutlineInputBorder(),
                 ),
                 onChanged: (_) => setState(() {}),
               ),
@@ -236,9 +236,9 @@ class _AddRuleSheetState extends ConsumerState<AddRuleSheet> {
                       ),
                       decoration: InputDecoration(
                         labelText: p.amountOptional
-                            ? 'Amount (optional)'
-                            : 'Amount',
-                        prefixText: 'Rs ',
+                            ? l.atcAmountOptional
+                            : l.amount,
+                        prefixText: l.atcRsPrefix,
                         border: const OutlineInputBorder(),
                       ),
                       onChanged: (_) => setState(() {}),
@@ -250,9 +250,9 @@ class _AddRuleSheetState extends ConsumerState<AddRuleSheet> {
                     child: DropdownButtonFormField<int>(
                       key: const ValueKey('rule-day'),
                       initialValue: _dueDay,
-                      decoration: const InputDecoration(
-                        labelText: 'Due day',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        labelText: l.atcDueDay,
+                        border: const OutlineInputBorder(),
                       ),
                       items: [
                         for (var d = 1; d <= 31; d++)
@@ -269,24 +269,24 @@ class _AddRuleSheetState extends ConsumerState<AddRuleSheet> {
                   key: const ValueKey('rule-total'),
                   controller: _total,
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: 'How many installments in total',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: l.atcInstallmentsTotal,
+                    border: const OutlineInputBorder(),
                   ),
                   onChanged: (_) => setState(() {}),
                 ),
               ],
               const SizedBox(height: Tokens.spaceM),
-              Text('How often', style: theme.textTheme.labelLarge),
+              Text(l.atcHowOften, style: theme.textTheme.labelLarge),
               Wrap(
                 spacing: Tokens.spaceS,
                 children: [
-                  for (final c in const [
-                    ('monthly', 'Monthly'),
-                    ('quarterly', 'Quarterly'),
-                    ('semester', 'Every 6 months'),
-                    ('yearly', 'Yearly'),
-                    ('once', 'Once'),
+                  for (final c in [
+                    ('monthly', l.atcMonthly),
+                    ('quarterly', l.atcQuarterly),
+                    ('semester', l.atcEvery6Months),
+                    ('yearly', l.atcYearly),
+                    ('once', l.atcOnce),
                   ])
                     ChoiceChip(
                       label: Text(c.$2),
@@ -297,10 +297,7 @@ class _AddRuleSheetState extends ConsumerState<AddRuleSheet> {
               ),
               if (_cycle == 'semester') ...[
                 const SizedBox(height: Tokens.spaceS),
-                Text(
-                  'Due dates (optional — otherwise every 6 months)',
-                  style: theme.textTheme.labelLarge,
-                ),
+                Text(l.atcDueDates, style: theme.textTheme.labelLarge),
                 Wrap(
                   spacing: Tokens.spaceS,
                   children: [
@@ -312,7 +309,7 @@ class _AddRuleSheetState extends ConsumerState<AddRuleSheet> {
                     ActionChip(
                       key: const ValueKey('rule-add-date'),
                       avatar: const Icon(Icons.event, size: 18),
-                      label: const Text('Pick dates'),
+                      label: Text(l.atcPickDates),
                       onPressed: _pickDate,
                     ),
                   ],
@@ -328,17 +325,20 @@ class _AddRuleSheetState extends ConsumerState<AddRuleSheet> {
               const SizedBox(height: Tokens.spaceS),
               Row(
                 children: [
-                  const Expanded(child: Text('Remind me before')),
+                  Expanded(child: Text(l.atcRemindBefore)),
                   IconButton(
-                    tooltip: 'Fewer days',
+                    tooltip: l.atcFewerDays,
                     onPressed: _remind > 0
                         ? () => setState(() => _remind--)
                         : null,
                     icon: const Icon(Icons.remove),
                   ),
-                  Text('$_remind days', key: const ValueKey('rule-remind')),
+                  Text(
+                    l.atcDays('$_remind'),
+                    key: const ValueKey('rule-remind'),
+                  ),
                   IconButton(
-                    tooltip: 'More days',
+                    tooltip: l.atcMoreDays,
                     onPressed: _remind < 15
                         ? () => setState(() => _remind++)
                         : null,
@@ -349,19 +349,16 @@ class _AddRuleSheetState extends ConsumerState<AddRuleSheet> {
               if (persons.length > 1)
                 DropdownButtonFormField<String?>(
                   initialValue: _personId,
-                  decoration: const InputDecoration(
-                    labelText: 'For',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: l.atcFor,
+                    border: const OutlineInputBorder(),
                   ),
                   items: [
-                    const DropdownMenuItem(
-                      value: null,
-                      child: Text('Household'),
-                    ),
+                    DropdownMenuItem(value: null, child: Text(l.atcHousehold)),
                     for (final x in persons)
                       DropdownMenuItem(
                         value: x.id,
-                        child: Text('${x.avatar ?? '👤'} ${x.name}'),
+                        child: Text([x.avatar ?? '👤', x.name].join(' ')),
                       ),
                   ],
                   onChanged: (v) => setState(() => _personId = v),
@@ -373,7 +370,7 @@ class _AddRuleSheetState extends ConsumerState<AddRuleSheet> {
                   minimumSize: const Size.fromHeight(Tokens.minTouchTarget),
                 ),
                 onPressed: _valid && !_saving ? _save : null,
-                child: const Text('⚡ Turn on auto-reminder'),
+                child: Text(l.atcTurnOn),
               ),
             ],
           ],
@@ -394,28 +391,13 @@ class SkipMonthsPicker extends StatelessWidget {
   final Set<int> selected;
   final ValueChanged<int> onToggle;
 
-  static const _names = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Skip these months',
+          context.l10n.atcSkipMonths,
           style: Theme.of(context).textTheme.labelLarge,
         ),
         Wrap(
@@ -424,7 +406,7 @@ class SkipMonthsPicker extends StatelessWidget {
             for (var m = 1; m <= 12; m++)
               FilterChip(
                 key: ValueKey('skip-$m'),
-                label: Text(_names[m - 1]),
+                label: Text(shortMonth(DateTime(2000, m))),
                 selected: selected.contains(m),
                 showCheckmark: false,
                 visualDensity: VisualDensity.compact,

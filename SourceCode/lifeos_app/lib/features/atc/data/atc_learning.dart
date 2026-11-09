@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:drift/drift.dart';
 
 import '../../../core/ids.dart';
+import '../../../core/l10n.dart';
 import '../../../core/money.dart';
 import '../../../data/db/app_database.dart';
 import '../../../data/repositories/repositories.dart';
@@ -28,11 +29,13 @@ class FeeChange {
 
   bool get isIncrease => newMinor > oldMinor;
 
-  String get message =>
-      'Fee ${isIncrease ? 'increased' : 'decreased'} from '
-      '${Money.format(oldMinor).replaceFirst('Rs ', '')} → '
-      '${Money.format(newMinor).replaceFirst('Rs ', '')}. '
-      'Update future tasks?';
+  String get message {
+    final from = Money.format(oldMinor).replaceFirst('Rs ', '');
+    final to = Money.format(newMinor).replaceFirst('Rs ', '');
+    return isIncrease
+        ? l10nNow.atcFeeIncreasedMsg(from, to)
+        : l10nNow.atcFeeDecreasedMsg(from, to);
+  }
 }
 
 /// What saving one document taught the Auto Task Creator.

@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/l10n.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../data/db/app_database.dart';
 import '../vault_providers.dart';
 
 const _personEmojis = ['🙂', '👩', '👨', '👧', '👦', '👵', '👴', '🧑'];
 const _folderIcons = ['📁', '✈️', '💼', '🏦', '🐾', '🎮', '🍽️', '🧳'];
-const _relations = {
-  'spouse': 'Spouse',
-  'child': 'Child',
-  'parent': 'Parent',
-  'other': 'Other',
+Map<String, String> _relations(AppLocalizations l) => {
+  'spouse': l.vtRelationSpouse,
+  'child': l.vtRelationChild,
+  'parent': l.vtRelationParent,
+  'other': l.vtRelationOther,
 };
 
 /// Add (when [person] is null) or edit a person profile.
@@ -68,8 +69,9 @@ class _PersonSheetState extends ConsumerState<_PersonSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     return _SheetFrame(
-      title: widget.person == null ? 'Add person' : 'Edit person',
+      title: widget.person == null ? l.vtAddPerson : l.vtEditPerson,
       onSave: _name.text.trim().isEmpty ? null : _save,
       children: [
         TextField(
@@ -77,9 +79,9 @@ class _PersonSheetState extends ConsumerState<_PersonSheet> {
           controller: _name,
           autofocus: widget.person == null,
           textCapitalization: TextCapitalization.words,
-          decoration: const InputDecoration(
-            labelText: 'Name',
-            border: OutlineInputBorder(),
+          decoration: InputDecoration(
+            labelText: l.name,
+            border: const OutlineInputBorder(),
           ),
           onChanged: (_) => setState(() {}),
         ),
@@ -88,7 +90,7 @@ class _PersonSheetState extends ConsumerState<_PersonSheet> {
           Wrap(
             spacing: Tokens.spaceS,
             children: [
-              for (final e in _relations.entries)
+              for (final e in _relations(l).entries)
                 ChoiceChip(
                   key: ValueKey('relation-${e.key}'),
                   label: Text(e.value),
@@ -151,8 +153,9 @@ class _FolderSheetState extends ConsumerState<_FolderSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     return _SheetFrame(
-      title: widget.folder == null ? 'New folder' : 'Rename folder',
+      title: widget.folder == null ? l.vtNewFolder : l.vtRenameFolder,
       onSave: _name.text.trim().isEmpty ? null : _save,
       children: [
         TextField(
@@ -160,9 +163,9 @@ class _FolderSheetState extends ConsumerState<_FolderSheet> {
           controller: _name,
           autofocus: true,
           textCapitalization: TextCapitalization.sentences,
-          decoration: const InputDecoration(
-            labelText: 'Folder name',
-            border: OutlineInputBorder(),
+          decoration: InputDecoration(
+            labelText: l.vtFolderName,
+            border: const OutlineInputBorder(),
           ),
           onChanged: (_) => setState(() {}),
         ),
@@ -213,7 +216,7 @@ class _SheetFrame extends StatelessWidget {
                   minimumSize: const Size(96, Tokens.minTouchTarget),
                 ),
                 onPressed: onSave,
-                child: const Text('Save'),
+                child: Text(context.l10n.vtSave),
               ),
             ),
           ],

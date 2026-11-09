@@ -1,19 +1,34 @@
 import 'package:flutter/material.dart';
 
+import '../../core/l10n.dart';
 import 'empty_state.dart';
 
 /// The four FAB quick actions (UI flow §1.1).
 enum QuickAction {
-  task('➕', 'Task', 'Add a task', 'PBI-009'),
-  scan('📸', 'Scan', 'Scan a document', 'PBI-003'),
-  voice('🎤', 'Voice', 'Speak a task', 'PBI-010'),
-  expense('💸', 'Expense', 'Log an expense', 'PBI-018');
+  task('➕', 'PBI-009'),
+  scan('📸', 'PBI-003'),
+  voice('🎤', 'PBI-010'),
+  expense('💸', 'PBI-018');
 
-  const QuickAction(this.emoji, this.label, this.title, this.pbi);
+  const QuickAction(this.emoji, this.pbi);
 
   final String emoji;
-  final String label;
-  final String title;
+
+  /// Short button text ("Task"), in the app's language.
+  String get label => switch (this) {
+    QuickAction.task => l10nNow.tkQaTask,
+    QuickAction.scan => l10nNow.tkQaScan,
+    QuickAction.voice => l10nNow.tkQaVoice,
+    QuickAction.expense => l10nNow.tkQaExpense,
+  };
+
+  /// Sheet title ("Add a task"), in the app's language.
+  String get title => switch (this) {
+    QuickAction.task => l10nNow.tkQaTaskTitle,
+    QuickAction.scan => l10nNow.tkQaScanTitle,
+    QuickAction.voice => l10nNow.tkQaVoiceTitle,
+    QuickAction.expense => l10nNow.tkQaExpenseTitle,
+  };
 
   /// The backlog item that will implement this action.
   final String pbi;
@@ -30,7 +45,7 @@ Future<void> showQuickActionSheet(BuildContext context, QuickAction action) {
         key: ValueKey('quick-action-sheet-${action.name}'),
         emoji: action.emoji,
         title: action.title,
-        message: 'Coming soon (${action.pbi}).',
+        message: context.l10n.tkComingSoon(action.pbi),
       ),
     ),
   );

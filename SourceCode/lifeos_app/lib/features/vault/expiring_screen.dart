@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/l10n.dart';
 import '../../core/now_provider.dart';
 import '../../data/db/app_database.dart';
 import '../../shared/widgets/empty_state.dart';
@@ -22,12 +23,12 @@ class ExpiringScreen extends ConsumerWidget {
     final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Expiring soon')),
+      appBar: AppBar(title: Text(context.l10n.vtExpiringSoon)),
       body: items.isEmpty
-          ? const EmptyState(
+          ? EmptyState(
               emoji: '✅',
-              title: 'Nothing expiring',
-              message: 'Documents due to expire in the next 90 days show here.',
+              title: context.l10n.vtNothingExpiring,
+              message: context.l10n.vtNothingExpiringMessage,
             )
           : ListView(
               key: const ValueKey('expiring-list'),

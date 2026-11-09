@@ -1,4 +1,5 @@
-// Pure Money-light logic for PBI-018 — no database, no Flutter.
+// Pure Money-light logic for PBI-018 — no database (display names via l10nNow).
+import '../../../core/l10n.dart';
 import '../../../data/db/app_database.dart';
 
 // ─────────────────────────────── Dates ─────────────────────────────────────
@@ -82,6 +83,24 @@ int? colorSlotFor(Category? c) {
   return i < 0 ? null : i;
 }
 
+/// Display name for [c]: system categories (seeded in English) show in the
+/// app's language; custom ones as typed; none → "Uncategorised".
+String categoryName(Category? c) {
+  final l = l10nNow;
+  if (c == null) return l.mnUncategorised;
+  return switch (c.systemKey) {
+    'rent' => l.mnCatRent,
+    'fees' => l.mnCatFees,
+    'utilities' => l.mnCatUtilities,
+    'internet' => l.mnCatInternet,
+    'mobile' => l.mnCatMobile,
+    'installment' => l.mnCatInstallment,
+    'subscription' => l.mnCatSubscription,
+    'other' => l.mnCatOther,
+    _ => c.name,
+  };
+}
+
 class CategorySlice {
   const CategorySlice({
     required this.categoryId,
@@ -154,7 +173,7 @@ MonthSummary summarize(
         for (final entry in sums.entries)
           CategorySlice(
             categoryId: entry.key,
-            name: byId[entry.key]?.name ?? 'Uncategorised',
+            name: categoryName(byId[entry.key]),
             icon: byId[entry.key]?.icon ?? '❔',
             amountMinor: entry.value,
             colorSlot: colorSlotFor(byId[entry.key]),

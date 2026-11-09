@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../../../core/l10n.dart';
 import '../../../core/theme/tokens.dart';
 import '../domain/life_score.dart';
 
@@ -26,7 +27,7 @@ class ScoreRing extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Semantics(
-      label: 'Life Score $score, ${scoreLabel(score)}',
+      label: context.l10n.scRingSemantics('$score', scoreLabel(score)),
       excludeSemantics: true,
       child: TweenAnimationBuilder<double>(
         tween: Tween(begin: 0, end: score.toDouble()),
@@ -124,8 +125,10 @@ class ScoreDelta extends StatelessWidget {
         : '=';
     return Semantics(
       label: d == 0
-          ? 'Same as yesterday'
-          : '${d > 0 ? 'Up' : 'Down'} ${d.abs()} since yesterday',
+          ? context.l10n.scSameYesterday
+          : d > 0
+          ? context.l10n.scUpSince('${d.abs()}')
+          : context.l10n.scDownSince('${d.abs()}'),
       excludeSemantics: true,
       child: Text(
         text,

@@ -1,18 +1,31 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/l10n.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../shared/format.dart';
 import '../domain/overload.dart';
 
-const _weekdayNames = [
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
-  'Sunday',
-];
+/// Full weekday name, in the app's language.
+String _weekdayName(DateTime d) => switch (d.weekday) {
+  1 => l10nNow.tkWeekday1,
+  2 => l10nNow.tkWeekday2,
+  3 => l10nNow.tkWeekday3,
+  4 => l10nNow.tkWeekday4,
+  5 => l10nNow.tkWeekday5,
+  6 => l10nNow.tkWeekday6,
+  _ => l10nNow.tkWeekday7,
+};
+
+/// Short weekday name ("Mon"), in the app's language.
+String _weekdayShort(DateTime d) => switch (d.weekday) {
+  1 => l10nNow.wd1,
+  2 => l10nNow.wd2,
+  3 => l10nNow.wd3,
+  4 => l10nNow.wd4,
+  5 => l10nNow.wd5,
+  6 => l10nNow.wd6,
+  _ => l10nNow.wd7,
+};
 
 /// What the user chose in the Overload Shield dialog.
 sealed class OverloadChoice {
@@ -47,15 +60,18 @@ class OverloadDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final dayName = _weekdayNames[check.day.weekday - 1];
+    final l = context.l10n;
+    final dayName = _weekdayName(check.day);
     final suggested = check.suggested;
 
     return AlertDialog(
       key: const ValueKey('overload-dialog'),
       title: Text(
-        '$dayName is already full '
-        '(${formatHours(check.loadWithTaskMin)} of '
-        '${formatHours(check.capacityMin)})',
+        l.tkDayFull(
+          dayName,
+          formatHours(check.loadWithTaskMin),
+          formatHours(check.capacityMin),
+        ),
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -63,9 +79,8 @@ class OverloadDialog extends StatelessWidget {
         children: [
           Text(
             suggested == null
-                ? 'No lighter day in the next two weeks — pick a day, or add '
-                      'it anyway.'
-                : '${formatDay(suggested)} has room.',
+                ? l.tkNoLighterDay
+                : l.tkHasRoom(formatDay(suggested)),
             style: theme.textTheme.bodyMedium,
           ),
           const SizedBox(height: Tokens.spaceM),
@@ -78,7 +93,7 @@ class OverloadDialog extends StatelessWidget {
         TextButton(
           key: const ValueKey('overload-add-anyway'),
           onPressed: () => Navigator.pop(context, const AddAnyway()),
-          child: const Text('Add anyway'),
+          child: Text(l.tkAddAnyway),
         ),
         TextButton(
           key: const ValueKey('overload-pick'),
@@ -93,15 +108,13 @@ class OverloadDialog extends StatelessWidget {
               Navigator.pop(context, MoveTo(picked));
             }
           },
-          child: const Text('Pick a day'),
+          child: Text(l.tkPickDay),
         ),
         if (suggested != null)
           FilledButton(
             key: const ValueKey('overload-move'),
             onPressed: () => Navigator.pop(context, MoveTo(suggested)),
-            child: Text(
-              'Move to ${_weekdayNames[suggested.weekday - 1].substring(0, 3)}',
-            ),
+            child: Text(l.tkMoveTo(_weekdayShort(suggested))),
           ),
       ],
     );
@@ -125,10 +138,12 @@ class WeekLoadChart extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
+    final l = context.l10n;
     final label = [
       for (final d in week)
-        '${_weekdayNames[d.day.weekday - 1]} ${formatHours(d.loadMin)}'
-            '${d.isFull ? ', over capacity' : ''}',
+        d.isFull
+            ? l.tkDayLoadOver(_weekdayName(d.day), formatHours(d.loadMin))
+            : l.tkDayLoad(_weekdayName(d.day), formatHours(d.loadMin)),
     ].join('; ');
     const markerTop = _plotHeight - _plotHeight * 100 / _maxPercent;
 
@@ -140,7 +155,7 @@ class WeekLoadChart extends StatelessWidget {
           );
 
     return Semantics(
-      label: 'Week load: $label',
+      label: l.tkWeekLoad(label),
       excludeSemantics: true,
       child: Row(
         key: const ValueKey('week-load-chart'),
@@ -182,7 +197,7 @@ class WeekLoadChart extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    _weekdayNames[d.day.weekday - 1].substring(0, 1),
+                    _weekdayName(d.day).substring(0, 1),
                     style: theme.textTheme.labelSmall?.copyWith(
                       fontWeight: d.day == highlight
                           ? FontWeight.w800
@@ -215,6 +230,7 @@ class LoadHeatmap extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
+    final l = context.l10n;
     return Padding(
       key: const ValueKey('load-heatmap'),
       padding: const EdgeInsets.fromLTRB(
@@ -231,9 +247,9 @@ class LoadHeatmap extends StatelessWidget {
             for (final d in days)
               Expanded(
                 child: Semantics(
-                  label:
-                      '${_weekdayNames[d.day.weekday - 1]}: ${d.percent} percent'
-                      '${d.isFull ? ', full' : ''}',
+                  label: d.isFull
+                      ? l.tkHeatDayFull(_weekdayName(d.day), '${d.percent}')
+                      : l.tkHeatDay(_weekdayName(d.day), '${d.percent}'),
                   excludeSemantics: true,
                   child: Container(
                     key: ValueKey('heat-${d.day.day}'),
@@ -254,7 +270,7 @@ class LoadHeatmap extends StatelessWidget {
                     child: Column(
                       children: [
                         Text(
-                          _weekdayNames[d.day.weekday - 1].substring(0, 3),
+                          _weekdayShort(d.day),
                           style: theme.textTheme.labelSmall?.copyWith(
                             color: d.percent > 55
                                 ? scheme.onPrimary
@@ -272,7 +288,7 @@ class LoadHeatmap extends StatelessWidget {
                         ),
                         // Same height for every cell; only full days say so.
                         Text(
-                          d.isFull ? '⚠ Full' : ' ',
+                          d.isFull ? l.tkFull : ' ',
                           style: theme.textTheme.labelSmall?.copyWith(
                             color: scheme.onPrimary,
                             fontWeight: FontWeight.w700,

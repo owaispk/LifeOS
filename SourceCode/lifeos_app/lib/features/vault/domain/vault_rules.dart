@@ -1,7 +1,9 @@
-// Pure Vault rules for PBI-005 — no database, no Flutter.
+// Pure Vault rules for PBI-005 — no database, no Flutter (except the
+// display labels, which read the app's current language via `l10nNow`).
 import 'dart:convert';
 
 import '../../../core/ids.dart';
+import '../../../core/l10n.dart';
 import '../../../data/db/app_database.dart';
 
 /// System folders can't be renamed or deleted.
@@ -73,10 +75,10 @@ class ExpiringDoc {
   ExpiryUrgency get urgency => urgencyFor(daysLeft);
 
   String get label => daysLeft < 0
-      ? 'Expired ${-daysLeft}d ago'
+      ? l10nNow.vtExpiredAgo('${-daysLeft}')
       : daysLeft == 0
-      ? 'Expires today'
-      : '${daysLeft}d left';
+      ? l10nNow.vtExpiresToday
+      : l10nNow.vtDaysLeftShort('$daysLeft');
 }
 
 /// Documents expiring within [windowDays] (or already expired), soonest
@@ -126,9 +128,41 @@ const _typeIcons = {
 
 String docTypeIcon(String type) => _typeIcons[type] ?? '📄';
 
-String docTypeLabel(String type) => switch (type) {
-  'cnic' => 'CNIC',
-  'fee_voucher' => 'Fee voucher',
-  'other' => 'Document',
-  _ => type[0].toUpperCase() + type.substring(1),
-};
+String docTypeLabel(String type) {
+  final l = l10nNow;
+  return switch (type) {
+    'cnic' => l.vtTypeCnic,
+    'passport' => l.vtTypePassport,
+    'visa' => l.vtTypeVisa,
+    'license' => l.vtTypeLicense,
+    'bill' => l.vtTypeBill,
+    'fee_voucher' => l.vtTypeFeeVoucher,
+    'receipt' => l.vtTypeReceipt,
+    'prescription' => l.vtTypePrescription,
+    'report' => l.vtTypeReport,
+    'degree' => l.vtTypeDegree,
+    'certificate' => l.vtTypeCertificate,
+    'warranty' => l.vtTypeWarranty,
+    'policy' => l.vtTypePolicy,
+    'agreement' => l.vtTypeAgreement,
+    'other' => l.vtTypeOther,
+    _ => type[0].toUpperCase() + type.substring(1),
+  };
+}
+
+/// A folder's display name: system folders (stored in English by the seed)
+/// show in the app's language; custom folders show their own name.
+String folderLabel(Folder f) {
+  final l = l10nNow;
+  return switch (f.kind) {
+    'identity' => l.vtFolderIdentity,
+    'education' => l.vtFolderEducation,
+    'medical' => l.vtFolderMedical,
+    'bills' => l.vtFolderBills,
+    'property' => l.vtFolderProperty,
+    'vehicles' => l.vtFolderVehicles,
+    'insurance' => l.vtFolderInsurance,
+    'work' => l.vtFolderWork,
+    _ => f.name,
+  };
+}

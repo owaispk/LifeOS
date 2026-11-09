@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/now_provider.dart';
 import '../../data/data_providers.dart';
+import '../security/security_providers.dart';
 import 'data/capture_service.dart';
 import 'ocr/document_analysis.dart';
 import 'platform/capture_platform.dart';
@@ -30,6 +31,7 @@ final captureServiceProvider = Provider<CaptureService>(
     ref.watch(repositoriesProvider),
     ref.watch(vaultRootProvider),
     now: ref.watch(nowProvider),
+    crypto: ref.watch(vaultCryptoProvider),
   ),
 );
 

@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/l10n.dart';
 import '../../core/theme/tokens.dart';
 import '../../features/atc/ui/proposal_dialog.dart';
 import '../../features/capture/capture_entry.dart';
 import '../../features/money/ui/expense_sheet.dart';
 import '../../features/tasks/ui/new_task_sheet.dart';
+import '../../features/tasks/ui/quick_parse.dart';
 import 'quick_actions.dart';
 
 /// Whether the FAB quick-action menu is open.
@@ -25,7 +27,7 @@ final fabExpandedProvider = NotifierProvider<FabExpandedNotifier, bool>(
 /// One entry of the bottom bar.
 class _Tab {
   const _Tab(this.label, this.icon, this.selectedIcon);
-  final String label;
+  final String Function(AppLocalizations l) label;
   final IconData icon;
   final IconData selectedIcon;
 }
@@ -33,16 +35,16 @@ class _Tab {
 /// Vertical space the floating FAB occupies above the bottom bar.
 const double _fabClearance = 56 + Tokens.spaceM * 2 + Tokens.spaceS;
 
-const _tabs = <_Tab>[
-  _Tab('Home', Icons.home_outlined, Icons.home),
-  _Tab('Tasks', Icons.check_circle_outline, Icons.check_circle),
-  _Tab('Vault', Icons.folder_outlined, Icons.folder),
+final _tabs = <_Tab>[
+  _Tab((l) => l.tkTabHome, Icons.home_outlined, Icons.home),
+  _Tab((l) => l.tkTasks, Icons.check_circle_outline, Icons.check_circle),
+  _Tab((l) => l.tkTabVault, Icons.folder_outlined, Icons.folder),
   _Tab(
-    'Money',
+    (l) => l.tkTabMoney,
     Icons.account_balance_wallet_outlined,
     Icons.account_balance_wallet,
   ),
-  _Tab('More', Icons.more_horiz, Icons.more_horiz),
+  _Tab((l) => l.tkTabMore, Icons.more_horiz, Icons.more_horiz),
 ];
 
 /// The global frame: 5-tab bottom bar + expandable quick-action FAB.
@@ -56,6 +58,7 @@ class AppShell extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final expanded = ref.watch(fabExpandedProvider);
     final fab = ref.read(fabExpandedProvider.notifier);
+    final l = context.l10n;
 
     return PopScope(
       canPop: !expanded,
@@ -69,7 +72,7 @@ class AppShell extends ConsumerWidget {
             if (expanded) ...[
               Positioned.fill(
                 child: Semantics(
-                  label: 'Close quick actions',
+                  label: l.tkCloseQuickActions,
                   button: true,
                   child: GestureDetector(
                     key: const ValueKey('fab-barrier'),
@@ -95,7 +98,7 @@ class AppShell extends ConsumerWidget {
                         case QuickAction.scan:
                           startScan(context);
                         case QuickAction.voice:
-                          showQuickActionSheet(context, action);
+                          showVoiceOverlay(context);
                       }
                     },
                   ),
@@ -106,7 +109,7 @@ class AppShell extends ConsumerWidget {
         ),
         floatingActionButton: FloatingActionButton(
           key: const ValueKey('quick-action-fab'),
-          tooltip: expanded ? 'Close quick actions' : 'Quick actions',
+          tooltip: expanded ? l.tkCloseQuickActions : l.tkQuickActions,
           onPressed: fab.toggle,
           child: AnimatedRotation(
             turns: expanded ? 0.125 : 0,
@@ -130,8 +133,8 @@ class AppShell extends ConsumerWidget {
               NavigationDestination(
                 icon: Icon(tab.icon),
                 selectedIcon: Icon(tab.selectedIcon),
-                label: tab.label,
-                tooltip: tab.label,
+                label: tab.label(l),
+                tooltip: tab.label(l),
               ),
           ],
         ),

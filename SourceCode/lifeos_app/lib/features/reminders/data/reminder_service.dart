@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 
+import '../../../core/l10n.dart';
 import '../../../data/db/app_database.dart';
 import '../../../data/repositories/repositories.dart';
 import '../../money/data/payment_service.dart';
@@ -94,7 +95,7 @@ class ReminderService {
             : await _repos.documents.getById(task.sourceDocumentId!);
         final n = _now();
         await tasks.create(
-          title: 'Renew ${doc?.title ?? 'document'}',
+          title: l10nNow.tkRenewTitle(doc?.title ?? l10nNow.tkRenewDocument),
           due: DateTime(n.year, n.month, n.day + 1),
           domain: 'vault',
           priority: 2,

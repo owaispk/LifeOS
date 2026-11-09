@@ -1,4 +1,5 @@
 // Per-type field extraction from OCR text (PBI-004) — pure Dart, offline.
+import '../../../core/l10n.dart';
 import '../../../core/money.dart';
 import '../../../core/text.dart';
 import '../../../shared/format.dart';
@@ -22,23 +23,27 @@ abstract final class Fields {
   static const startDate = 'start_date';
   static const endDate = 'end_date';
 
-  static const labels = {
-    issuer: 'Issuer',
-    refNumber: 'Reference no.',
-    amount: 'Amount',
-    dueDate: 'Due date',
-    periodMonth: 'Billing month',
-    name: 'Name',
-    number: 'Number',
-    issueDate: 'Issue date',
-    expiryDate: 'Expiry date',
-    institution: 'Institution',
-    studentName: 'Student',
-    doctor: 'Doctor',
-    product: 'Product',
-    startDate: 'Start date',
-    endDate: 'End date',
-  };
+  /// Display labels for the confirm screen, in the app's language.
+  static Map<String, String> get labels {
+    final l = l10nNow;
+    return {
+      issuer: l.cpFieldIssuer,
+      refNumber: l.cpFieldRefNumber,
+      amount: l.amount,
+      dueDate: l.cpFieldDueDate,
+      periodMonth: l.cpFieldBillingMonth,
+      name: l.name,
+      number: l.cpFieldNumber,
+      issueDate: l.cpFieldIssueDate,
+      expiryDate: l.cpFieldExpiryDate,
+      institution: l.cpFieldInstitution,
+      studentName: l.cpFieldStudent,
+      doctor: l.cpFieldDoctor,
+      product: l.cpFieldProduct,
+      startDate: l.cpFieldStartDate,
+      endDate: l.cpFieldEndDate,
+    };
+  }
 
   /// Which fields each type asks for, in display order.
   static const forType = {
@@ -232,6 +237,28 @@ class _Doc {
     return null;
   }
 
+  /// A reference / account number, keeping space-separated groups such as
+  /// LESCO's "08 11111 2233445 U" whole (found in device QA: the first
+  /// 5+ character group alone was taken, so meters in one subdivision
+  /// collided). Later groups must hold a digit or be a single letter, so a
+  /// following word ("Name") is never swallowed. Spaces are normalised.
+  String? refAfter(List<String> labels) {
+    final pattern = RegExp(
+      r'[A-Z0-9][A-Z0-9\-/]*(?: +(?:[A-Z\-/]*\d[A-Z0-9\-/]*|[A-Z]\b))*',
+      caseSensitive: false,
+    );
+    for (final part in after(labels)) {
+      for (final m in pattern.allMatches(part)) {
+        final v = m[0]!.trim().replaceAll(RegExp(r' +'), ' ');
+        if (v.replaceAll(RegExp(r'[^A-Za-z0-9]'), '').length >= 5 &&
+            RegExp(r'\d').hasMatch(v)) {
+          return v.toUpperCase();
+        }
+      }
+    }
+    return null;
+  }
+
   String? phraseAfter(List<String> labels) {
     for (final part in after(labels)) {
       final cleaned = part
@@ -394,7 +421,7 @@ Map<String, Extracted> extractFields(
           .nonNulls
           .firstOrNull;
       fill(Fields.periodMonth, iso(month), 0.8);
-      fill(Fields.refNumber, doc.tokenAfter(_refLabels), 0.8);
+      fill(Fields.refNumber, doc.refAfter(_refLabels), 0.8);
     case 'cnic' || 'passport' || 'visa' || 'license':
       fill(Fields.name, doc.phraseAfter(['name']), 0.7);
       final number = switch (type) {
@@ -429,7 +456,7 @@ Map<String, Extracted> extractFields(
       );
       fill(Fields.amount, doc.amountAfter(_amountLabels)?.toString(), 0.8);
       fill(Fields.dueDate, iso(doc.dateAfter(_dueLabels)), 0.85);
-      fill(Fields.refNumber, doc.tokenAfter(_refLabels), 0.75);
+      fill(Fields.refNumber, doc.refAfter(_refLabels), 0.75);
     case 'receipt':
       fill(
         Fields.issuer,
@@ -548,7 +575,8 @@ String _iso(DateTime d) =>
 
 // ─────────────────────────── Titles & folders ──────────────────────────────
 
-const _typeNames = {
+/// English type names, used in auto-titles (stored as document titles).
+const _typeNamesEn = {
   'cnic': 'CNIC',
   'passport': 'Passport',
   'visa': 'Visa',
@@ -566,7 +594,29 @@ const _typeNames = {
   'other': 'Document',
 };
 
-String typeName(String type) => _typeNames[type] ?? 'Document';
+/// Display name of a document type, in the app's language.
+String typeName(String type) {
+  final l = l10nNow;
+  return switch (type) {
+    'cnic' => l.cpTypeCnic,
+    'passport' => l.cpTypePassport,
+    'visa' => l.cpTypeVisa,
+    'license' => l.cpTypeLicense,
+    'bill' => l.cpTypeBill,
+    'fee_voucher' => l.cpTypeFeeVoucher,
+    'receipt' => l.cpTypeReceipt,
+    'prescription' => l.cpTypePrescription,
+    'report' => l.cpTypeReport,
+    'degree' => l.cpTypeDegree,
+    'certificate' => l.cpTypeCertificate,
+    'warranty' => l.cpTypeWarranty,
+    'policy' => l.cpTypePolicy,
+    'agreement' => l.cpTypeAgreement,
+    _ => l.cpTypeOther,
+  };
+}
+
+String _typeNameEn(String type) => _typeNamesEn[type] ?? 'Document';
 
 /// Auto-title (features spec §1.2): "K-Electric Bill — Nov 2026",
 /// "Passport — Ali Khan", "Unclassified · 8 Nov 2026".
@@ -596,7 +646,7 @@ String autoTitle(String type, Map<String, String> fields, DateTime now) {
           fields[Fields.institution] ??
           fields[Fields.product] ??
           fields[Fields.doctor];
-      return who == null ? typeName(type) : '${typeName(type)} — $who';
+      return who == null ? _typeNameEn(type) : '${_typeNameEn(type)} — $who';
   }
 }
 

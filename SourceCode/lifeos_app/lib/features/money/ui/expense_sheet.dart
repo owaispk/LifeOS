@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/l10n.dart';
 import '../../../core/money.dart';
 import '../../../core/now_provider.dart';
 import '../../../core/theme/tokens.dart';
@@ -99,6 +100,7 @@ class _ExpenseSheetState extends ConsumerState<ExpenseSheet> {
     final date = _date ?? today;
     final categories = ref.watch(categoriesProvider).value ?? const [];
     final linked = widget.existing?.paymentId != null;
+    final l = context.l10n;
 
     return Padding(
       padding: EdgeInsets.only(
@@ -112,7 +114,7 @@ class _ExpenseSheetState extends ConsumerState<ExpenseSheet> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              _editing ? 'Edit expense' : 'Add expense',
+              _editing ? l.mnEditExpense : l.mnAddExpense,
               style: theme.textTheme.titleLarge,
             ),
             const SizedBox(height: Tokens.spaceM),
@@ -125,17 +127,17 @@ class _ExpenseSheetState extends ConsumerState<ExpenseSheet> {
               ),
               style: theme.textTheme.headlineSmall,
               decoration: InputDecoration(
-                prefixText: 'Rs ',
+                prefixText: l.mnRsPrefix,
                 hintText: '0',
                 border: const OutlineInputBorder(),
                 errorText: _amount.text.isNotEmpty && _amountMinor == null
-                    ? 'Enter an amount above 0'
+                    ? l.mnAmountError
                     : null,
               ),
               onChanged: (_) => setState(() {}),
             ),
             const SizedBox(height: Tokens.spaceM),
-            Text('Category', style: theme.textTheme.labelLarge),
+            Text(l.mnCategory, style: theme.textTheme.labelLarge),
             const SizedBox(height: Tokens.spaceS),
             Wrap(
               spacing: Tokens.spaceS,
@@ -148,7 +150,7 @@ class _ExpenseSheetState extends ConsumerState<ExpenseSheet> {
                       radius: 5,
                       backgroundColor: categoryColor(context, colorSlotFor(c)),
                     ),
-                    label: Text('${c.icon ?? ''} ${c.name}'.trim()),
+                    label: Text('${c.icon ?? ''} ${categoryName(c)}'.trim()),
                     selected: _categoryId == c.id,
                     onSelected: (on) =>
                         setState(() => _categoryId = on ? c.id : null),
@@ -159,7 +161,7 @@ class _ExpenseSheetState extends ConsumerState<ExpenseSheet> {
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.event),
-              title: const Text('Date'),
+              title: Text(l.mnDate),
               subtitle: Text(relativeDay(date, now)),
               onTap: () async {
                 final picked = await showDatePicker(
@@ -175,9 +177,9 @@ class _ExpenseSheetState extends ConsumerState<ExpenseSheet> {
               key: const ValueKey('expense-note'),
               controller: _note,
               textCapitalization: TextCapitalization.sentences,
-              decoration: const InputDecoration(
-                hintText: 'Note (optional)',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                hintText: l.mnNoteHint,
+                border: const OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: Tokens.spaceM),
@@ -191,12 +193,12 @@ class _ExpenseSheetState extends ConsumerState<ExpenseSheet> {
                     ),
                     onPressed: _delete,
                     icon: const Icon(Icons.delete_outline),
-                    label: const Text('Delete'),
+                    label: Text(l.mnDelete),
                   ),
                 if (linked)
                   Expanded(
                     child: Text(
-                      '⚡ Logged from a payment',
+                      l.mnLinkedNote,
                       key: const ValueKey('expense-linked-note'),
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
@@ -213,7 +215,7 @@ class _ExpenseSheetState extends ConsumerState<ExpenseSheet> {
                   onPressed: _amountMinor == null || _saving
                       ? null
                       : () => _save(today),
-                  child: Text(_editing ? 'Save' : 'Add'),
+                  child: Text(_editing ? l.mnSave : l.mnAdd),
                 ),
               ],
             ),

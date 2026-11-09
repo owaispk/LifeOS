@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/l10n.dart';
 import 'capture_providers.dart';
 import 'data/capture_service.dart';
 import 'platform/capture_platform.dart';
@@ -30,12 +31,10 @@ Future<void> startScan(
     final go = await _ask(
       context,
       key: 'low-storage',
-      title: 'Storage is almost full',
-      body:
-          'Only ${free.floor()} MB free. Scans may not save — free up some '
-          'space first, or scan anyway.',
-      yes: 'Scan anyway',
-      no: 'Cancel',
+      title: context.l10n.cpStorageFullTitle,
+      body: context.l10n.cpStorageFullBody('${free.floor()}'),
+      yes: context.l10n.cpScanAnyway,
+      no: context.l10n.cancel,
     );
     if (!go) return;
   }
@@ -51,10 +50,10 @@ Future<void> startScan(
       final retake = await _ask(
         context,
         key: 'blurry',
-        title: 'Retake?',
-        body: 'Image looks unclear — text may be hard to read later.',
-        yes: 'Retake',
-        no: 'Keep anyway',
+        title: context.l10n.cpRetakeTitle,
+        body: context.l10n.cpBlurryBody,
+        yes: context.l10n.cpRetake,
+        no: context.l10n.cpKeepAnyway,
       );
       if (retake) continue;
     }

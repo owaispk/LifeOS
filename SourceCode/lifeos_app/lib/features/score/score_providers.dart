@@ -6,6 +6,7 @@ import '../../data/db/app_database.dart';
 import '../atc/atc_providers.dart' show allPaymentsProvider;
 import '../tasks/tasks_providers.dart' show allTasksProvider;
 import '../vault/vault_providers.dart' show documentsProvider;
+import '../settings/settings_providers.dart';
 import 'data/score_service.dart';
 import 'domain/life_score.dart';
 
@@ -23,15 +24,17 @@ final scoreServiceProvider = Provider<ScoreService>(
 /// Today's score, live: recomputed whenever tasks, payments or documents
 /// change. Before data loads (and on the web preview) it is the
 /// nothing-to-punish 100.
-final liveScoreProvider = Provider<LifeScore>(
-  (ref) => computeLifeScore(
+final liveScoreProvider = Provider<LifeScore>((ref) {
+  // Drag details are worded in the app's language: recompute on a switch.
+  ref.watch(settingsProvider.select((s) => s.value?.language));
+  return computeLifeScore(
     tasks: ref.watch(allTasksProvider).value ?? const <Task>[],
     payments: ref.watch(allPaymentsProvider).value ?? const <Payment>[],
     documents: ref.watch(documentsProvider).value ?? const <Document>[],
     now: ref.watch(nowProvider)(),
     weights: ref.watch(scoreWeightsProvider),
-  ),
-);
+  );
+});
 
 /// Every daily snapshot, live.
 final snapshotsProvider = StreamProvider<List<ScoreSnapshot>>(

@@ -7,7 +7,7 @@
 | Story Points | 5 |
 | Spec refs | UI flow §3.3; Data model §1.4 |
 | Depends on | PBI-005 |
-| Status | Dev Complete — device QA pending (PDF rendering, share sheet) |
+| Status | Done |
 
 ## User Story
 As a **user**, I want to open a document, check its details and fix or move it.
@@ -59,11 +59,11 @@ Code:
 
 | AC | Result | Evidence |
 |---|---|---|
-| 1 | ✅ JPEG · ⏳ PDF | Widget: a 3-page scan shows dots and "1 / 3"; swiping reaches pages 2 and 3; pinch-zoom via `InteractiveViewer`. PDFs route to the pdfx viewer, which a test stands in for; real PDF rendering is device QA. |
+| 1 | ✅ JPEG · ✅ PDF (device) | Widget: a 3-page scan shows dots and "1 / 3"; swiping reaches pages 2 and 3; pinch-zoom via `InteractiveViewer`. PDFs route to the pdfx viewer, which a test stands in for; real PDF rendering is device QA. |
 | 2 | ✅ | Widget: editing the reference saves on confirm, and search sees the change. Expiry alerts are wired to these edits by PBI-008 (Sprint 4). |
 | 3 | ✅ | Delete → "Moved to Trash" (with Undo) → Trash shows "N days left" → **Restore**: title, folder, issuer, tags and files all intact. |
 | 4 | ✅ | Fixed-clock test: deleted 38 days ago → purged at start; 7 days ago → kept, "23 days left". Purge removes the files, page rows and extracted fields, and unlinks tasks, payments and expenses without deleting them. |
-| 5 | ✅ (logic) · ⏳ OS sheet | Share sends only the files, named "Document.pdf" / "Document 2.jpg", with the text "Shared from LifeOS". No title, number or contents. The OS share sheet itself is device QA. |
+| 5 | ✅ (logic) · ✅ OS sheet (device) | Share sends only the files, named "Document.pdf" / "Document 2.jpg", with the text "Shared from LifeOS". No title, number or contents. The OS share sheet itself is device QA. |
 
 Also built: Archive / Unarchive (archived documents leave folder lists and counts but stay searchable), linked tasks in the details panel, and **Delete forever** with confirmation.
 
@@ -72,3 +72,13 @@ Also built: Archive / Unarchive (archived documents leave folder lists and count
 2. The viewer sat inside the tab shell, where the ➕ button covered its action bar (seen in a rendered screenshot). It's now a full-screen route.
 
 `flutter analyze`: no issues · full suite **245/245 passed** (41 new in Sprint 3), identical on three runs. 11 tests for this PBI (4 Trash service + 7 widget).
+
+## Device QA (2026-11-09)
+Android emulator `sdk gphone64 x86 64`, Android 17 (API 37), Google Play services; debug APK; 2026-11-09.
+
+| AC | Result | Evidence |
+|---|---|---|
+| 1 (PDF) | ✅ | The scanned PDF opens in the viewer and pdfx renders the page on the device. |
+| 5 (OS sheet) | ✅ *(after fix)* | The Android share sheet opens with "Sharing 1 file" and the targets Quick Share, Print, Drive, Gemini. |
+
+**Device QA finding, fixed:** the shared file showed its internal name `01a1bec1-a308-….pdf`. Android uses a file's real name and ignored share_plus's `fileNameOverrides`, so the widget test, which fakes the share, couldn't catch it. Sharing now copies files into a cleared temporary `share/` folder as **Document.pdf** / **Document N.jpg** and shares the copies. Re-verified on the device ("Document.pdf"). 3 new unit tests.

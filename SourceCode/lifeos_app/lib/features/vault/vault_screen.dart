@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/l10n.dart';
 import '../../core/now_provider.dart';
 import '../../core/theme/tokens.dart';
 import '../../data/db/app_database.dart';
@@ -38,10 +39,11 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
     final docs = ref.watch(documentsProvider);
     final query = _search.text.trim();
     final searching = query.isNotEmpty || hasFilters(_filters);
+    final l = context.l10n;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Vault'),
+        title: Text(l.vtVaultTitle),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: Tokens.spaceS),
@@ -49,18 +51,18 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
               key: const ValueKey('vault-scan'),
               onPressed: () => startScan(context),
               icon: const Icon(Icons.document_scanner_outlined),
-              label: const Text('Scan'),
+              label: Text(l.vtScan),
             ),
           ),
           IconButton(
             key: const ValueKey('vault-import'),
-            tooltip: 'Import from files',
+            tooltip: l.vtImportFiles,
             icon: const Icon(Icons.upload_file_outlined),
             onPressed: () => importFiles(context),
           ),
           IconButton(
             key: const ValueKey('vault-trash'),
-            tooltip: 'Trash',
+            tooltip: l.trash,
             icon: const Icon(Icons.delete_outline),
             onPressed: () => context.push('/vault/trash'),
           ),
@@ -79,12 +81,12 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
                 child: SearchBar(
                   key: const ValueKey('vault-search'),
                   controller: _search,
-                  hintText: 'Search documents…',
+                  hintText: l.vtSearchHint,
                   leading: const Icon(Icons.search),
                   trailing: [
                     if (query.isNotEmpty)
                       IconButton(
-                        tooltip: 'Clear search',
+                        tooltip: l.vtClearSearch,
                         icon: const Icon(Icons.close),
                         onPressed: () => setState(_search.clear),
                       ),
@@ -108,10 +110,10 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
       ),
       body: docs.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => const EmptyState(
+        error: (e, _) => EmptyState(
           emoji: '⚠️',
-          title: "The Vault isn't available",
-          message: 'Local data could not be opened on this device.',
+          title: l.vtUnavailableTitle,
+          message: l.vtUnavailableMessage,
         ),
         data: (list) => searching
             ? _SearchResults(query: query, filters: _filters)
@@ -134,12 +136,13 @@ class _VaultHome extends ConsumerWidget {
     final counts = folderCounts(documents);
     final expiring = expiringSoon(documents, now);
     final unfiled = counts[null] ?? 0;
+    final l = context.l10n;
 
     return ListView(
       key: const ValueKey('vault-home'),
       padding: const EdgeInsets.only(bottom: 120),
       children: [
-        const VaultSectionTitle('People'),
+        VaultSectionTitle(l.vtPeople),
         SizedBox(
           height: 56,
           child: ListView(
@@ -159,7 +162,7 @@ class _VaultHome extends ConsumerWidget {
               ActionChip(
                 key: const ValueKey('add-person'),
                 avatar: const Icon(Icons.add, size: 18),
-                label: const Text('Add'),
+                label: Text(l.vtAdd),
                 onPressed: () => showPersonSheet(context),
               ),
             ],
@@ -167,11 +170,11 @@ class _VaultHome extends ConsumerWidget {
         ),
         if (expiring.isNotEmpty) ...[
           VaultSectionTitle(
-            '⏰ Expiring soon (${expiring.length})',
+            l.vtExpiringSoonCount('${expiring.length}'),
             trailing: TextButton(
               key: const ValueKey('expiring-see-all'),
               onPressed: () => context.go('/vault/expiring'),
-              child: const Text('See all'),
+              child: Text(l.vtSeeAll),
             ),
           ),
           SizedBox(
@@ -193,19 +196,19 @@ class _VaultHome extends ConsumerWidget {
           ),
         ],
         VaultSectionTitle(
-          'Folders',
+          l.vtFolders,
           trailing: TextButton.icon(
             key: const ValueKey('add-folder'),
             onPressed: () => showFolderSheet(context),
             icon: const Icon(Icons.create_new_folder_outlined),
-            label: const Text('New folder'),
+            label: Text(l.vtNewFolder),
           ),
         ),
         for (final f in folders)
           ListTile(
             key: ValueKey('folder-${f.id}'),
             leading: Text(f.icon, style: const TextStyle(fontSize: 24)),
-            title: Text(f.name),
+            title: Text(folderLabel(f)),
             trailing: Text(
               _docCount(counts[f.id] ?? 0),
               key: ValueKey('folder-count-${f.id}'),
@@ -216,7 +219,7 @@ class _VaultHome extends ConsumerWidget {
           ListTile(
             key: const ValueKey('folder-unfiled'),
             leading: const Text('📥', style: TextStyle(fontSize: 24)),
-            title: const Text('Unfiled'),
+            title: Text(l.vtUnfiled),
             trailing: Text(
               _docCount(unfiled),
               key: const ValueKey('folder-count-unfiled'),
@@ -228,7 +231,7 @@ class _VaultHome extends ConsumerWidget {
   }
 }
 
-String _docCount(int n) => n == 1 ? '1 doc' : '$n docs';
+String _docCount(int n) => l10nNow.vtDocCount(n);
 
 class _ExpiryCard extends StatelessWidget {
   const _ExpiryCard({required this.item, required this.person});
@@ -307,20 +310,19 @@ class _SearchResults extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final results = ref.watch(searchResultsProvider((query, filters)));
+    final l = context.l10n;
     return results.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, _) => const EmptyState(
+      error: (e, _) => EmptyState(
         emoji: '⚠️',
-        title: "Search isn't available",
-        message: 'Please try again.',
+        title: l.vtSearchUnavailable,
+        message: l.vtTryAgain,
       ),
       data: (hits) => hits.isEmpty
-          ? const EmptyState(
+          ? EmptyState(
               emoji: '🔍',
-              title: 'No matches',
-              message:
-                  'Try a title, an issuer like K-Electric, a word from the '
-                  'document, or a tag.',
+              title: l.vtNoMatches,
+              message: l.vtNoMatchesHint,
             )
           : ListView(
               key: const ValueKey('vault-search-results'),
@@ -354,6 +356,7 @@ class _FilterBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final persons = ref.watch(personsProvider).value ?? const <Person>[];
     final person = persons.where((p) => p.id == filters.personId).firstOrNull;
+    final l = context.l10n;
     SearchFilters copy({
       Object? personId = _keep,
       Object? docType = _keep,
@@ -377,10 +380,10 @@ class _FilterBar extends ConsumerWidget {
         children: [
           _MenuChip<String?>(
             key: const ValueKey('filter-person'),
-            label: person == null ? 'Person' : person.name,
+            label: person == null ? l.vtPerson : person.name,
             selected: person != null,
             options: [
-              (null, 'Anyone'),
+              (null, l.vtAnyone),
               for (final p in persons) (p.id, '${p.avatar ?? '👤'} ${p.name}'),
             ],
             onSelected: (v) => onChanged(copy(personId: v)),
@@ -388,11 +391,11 @@ class _FilterBar extends ConsumerWidget {
           _MenuChip<String?>(
             key: const ValueKey('filter-type'),
             label: filters.docType == null
-                ? 'Type'
+                ? l.vtType
                 : typeName(filters.docType!),
             selected: filters.docType != null,
             options: [
-              (null, 'Any type'),
+              (null, l.vtAnyType),
               for (final t in docTypes) (t, '${docTypeIcon(t)} ${typeName(t)}'),
             ],
             onSelected: (v) => onChanged(copy(docType: v)),
@@ -400,15 +403,15 @@ class _FilterBar extends ConsumerWidget {
           _MenuChip<AddedWithin>(
             key: const ValueKey('filter-added'),
             label: switch (filters.added) {
-              AddedWithin.any => 'Added',
-              AddedWithin.last30Days => 'Last 30 days',
-              AddedWithin.thisYear => 'This year',
+              AddedWithin.any => l.vtAdded,
+              AddedWithin.last30Days => l.vtLast30Days,
+              AddedWithin.thisYear => l.vtThisYear,
             },
             selected: filters.added != AddedWithin.any,
-            options: const [
-              (AddedWithin.any, 'Any time'),
-              (AddedWithin.last30Days, 'Last 30 days'),
-              (AddedWithin.thisYear, 'This year'),
+            options: [
+              (AddedWithin.any, l.vtAnyTime),
+              (AddedWithin.last30Days, l.vtLast30Days),
+              (AddedWithin.thisYear, l.vtThisYear),
             ],
             onSelected: (v) => onChanged(copy(added: v)),
           ),
@@ -416,7 +419,7 @@ class _FilterBar extends ConsumerWidget {
             padding: const EdgeInsets.only(right: Tokens.spaceS),
             child: FilterChip(
               key: const ValueKey('filter-expiring'),
-              label: const Text('Expiring soon'),
+              label: Text(l.vtExpiringSoon),
               selected: filters.expiringSoon,
               onSelected: (v) => onChanged(copy(expiringSoon: v)),
             ),
@@ -425,7 +428,7 @@ class _FilterBar extends ConsumerWidget {
             ActionChip(
               key: const ValueKey('filter-clear'),
               avatar: const Icon(Icons.close, size: 18),
-              label: const Text('Clear'),
+              label: Text(l.vtClear),
               onPressed: onClear,
             ),
         ],

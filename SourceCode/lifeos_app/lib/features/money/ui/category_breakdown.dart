@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/l10n.dart';
 import '../../../core/money.dart';
 import '../../../core/theme/tokens.dart';
 import '../domain/money_rules.dart';
@@ -21,17 +22,21 @@ class CategoryBreakdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l = context.l10n;
     final description = [
       for (final s in slices)
-        '${s.name} ${Money.format(s.amountMinor)}, '
-            '${s.sharePercent(totalMinor)} percent',
+        l.mnBreakdownItem(
+          s.name,
+          Money.format(s.amountMinor),
+          '${s.sharePercent(totalMinor)}',
+        ),
     ].join('; ');
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Semantics(
-          label: 'Spending by category: $description',
+          label: l.mnBreakdownSemantics(description),
           excludeSemantics: true,
           child: SizedBox(
             key: const ValueKey('category-bar'),

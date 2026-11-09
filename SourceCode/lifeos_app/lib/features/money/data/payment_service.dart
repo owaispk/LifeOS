@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 
+import '../../../core/l10n.dart';
 import '../../../data/db/app_database.dart';
 import '../../../data/repositories/repositories.dart';
 import '../../capture/data/capture_service.dart';
@@ -99,7 +100,7 @@ class PaymentService {
           final doc = await capture!.save(
             receipt,
             FilingDetails(
-              title: 'Receipt — ${p.title}',
+              title: l10nNow.mnReceiptTitle(p.title),
               folderId: folder?.id,
               personId: rule?.personId,
               docType: 'receipt',

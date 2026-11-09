@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lifeos_app/app.dart';
+import 'package:lifeos_app/features/onboarding/onboarding_screen.dart';
 import 'package:lifeos_app/data/data_providers.dart';
 import 'package:lifeos_app/data/db/app_database.dart';
 import 'package:lifeos_app/data/repositories/repositories.dart';
@@ -17,6 +18,10 @@ import 'fakes.dart';
 /// Sunday 8 Nov 2026, 10:00 local — the fixed "now" for widget tests.
 final testNow = DateTime(2026, 11, 8, 10);
 
+/// The app's clock in widget tests: [testNow] unless a test moves it
+/// (e.g. time spent in the background). Reset for every test.
+var testClock = testNow;
+
 /// A seeded in-memory database plus the app, wired together.
 class TestApp {
   TestApp(this.db, this.repos);
@@ -28,14 +33,17 @@ class TestApp {
     NotificationGateway? gateway,
     CaptureFakes? capture,
     List<Override> extra = const [],
+    bool onboarded = true,
   }) async {
     final db = memoryDb();
     final repos = await tester.runAsync(() => openLocalData(db));
+    // Every test but the onboarding ones starts past onboarding (PBI-022).
+    if (onboarded) await tester.runAsync(() => seedOnboardingDone(db));
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
           repositoriesProvider.overrideWithValue(repos!),
-          nowProvider.overrideWithValue(() => testNow),
+          nowProvider.overrideWithValue(() => testClock),
           if (gateway != null)
             notificationGatewayProvider.overrideWithValue(gateway),
           if (capture != null) ...[
@@ -53,6 +61,29 @@ class TestApp {
     );
     await tester.pumpAndSettle();
     return TestApp(db, repos);
+  }
+
+  /// Starts the app again on the same database (a cold start), e.g. after
+  /// changing settings that only apply at launch.
+  static Future<void> restart(
+    WidgetTester tester,
+    TestApp app, {
+    List<Override> extra = const [],
+  }) async {
+    // Unmount first: a new scope cannot replace the old one's overrides.
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump(const Duration(seconds: 1));
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          repositoriesProvider.overrideWithValue(app.repos),
+          nowProvider.overrideWithValue(() => testClock),
+          ...extra,
+        ],
+        child: const LifeOsApp(),
+      ),
+    );
+    await tester.pumpAndSettle();
   }
 
   /// Unmounts the app (cancelling Drift stream queries), flushes the
@@ -110,13 +141,16 @@ void appTest(
   NotificationGateway? gateway,
   CaptureFakes? Function()? capture,
   List<Override> Function()? extra,
+  bool onboarded = true,
 }) {
   testWidgets(description, (tester) async {
+    testClock = testNow;
     final app = await TestApp.pump(
       tester,
       gateway: gateway,
       capture: capture?.call(),
       extra: extra?.call() ?? const [],
+      onboarded: onboarded,
     );
     try {
       await body(tester, app);

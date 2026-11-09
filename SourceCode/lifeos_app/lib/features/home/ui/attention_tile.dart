@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/l10n.dart';
 import '../../../core/money.dart';
 import '../../../core/theme/tokens.dart';
 import '../../money/ui/paid_sheet.dart';
@@ -23,7 +24,7 @@ class AttentionTile extends ConsumerWidget {
     final tile = ListTile(
       key: ValueKey('attention-${item.id}'),
       leading: Semantics(
-        label: item.urgent ? 'Urgent' : 'Soon',
+        label: item.urgent ? context.l10n.hmUrgent : context.l10n.hmSoon,
         excludeSemantics: true,
         child: Text(
           item.urgent ? '🔴' : '🟠',
@@ -63,12 +64,15 @@ class AttentionTile extends ConsumerWidget {
         color: Tokens.scoreHigh,
         alignment: Alignment.centerLeft,
         padding: const EdgeInsets.symmetric(horizontal: Tokens.spaceL),
-        child: const Row(
+        child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.check, color: Colors.white),
-            SizedBox(width: Tokens.spaceS),
-            Text('Paid', style: TextStyle(color: Colors.white)),
+            const Icon(Icons.check, color: Colors.white),
+            const SizedBox(width: Tokens.spaceS),
+            Text(
+              context.l10n.hmPaid,
+              style: const TextStyle(color: Colors.white),
+            ),
           ],
         ),
       ),

@@ -1,4 +1,5 @@
-// Home dashboard rules (PBI-021) — pure, no database, no Flutter.
+// Home dashboard rules (PBI-021) — pure, no database; words via l10nNow.
+import '../../../core/l10n.dart';
 import '../../../data/db/app_database.dart';
 import '../../money/domain/money_rules.dart' show parseIsoDate;
 
@@ -52,16 +53,15 @@ class AttentionItem {
 
   /// "due tomorrow · Rs 4,850" style detail, without the amount.
   String get when {
-    final verb = kind == AttentionKind.payment ? 'due' : 'expires';
+    final l = l10nNow;
+    final pay = kind == AttentionKind.payment;
     if (daysLeft < 0) {
       final n = -daysLeft;
-      return kind == AttentionKind.payment
-          ? 'was due $n ${n == 1 ? 'day' : 'days'} ago'
-          : 'expired $n ${n == 1 ? 'day' : 'days'} ago';
+      return pay ? l.hmWasDueAgo(n) : l.hmExpiredAgo(n);
     }
-    if (daysLeft == 0) return '$verb today';
-    if (daysLeft == 1) return '$verb tomorrow';
-    return '$verb in $daysLeft days';
+    if (daysLeft == 0) return pay ? l.hmDueToday : l.hmExpiresToday;
+    if (daysLeft == 1) return pay ? l.hmDueTomorrow : l.hmExpiresTomorrow;
+    return pay ? l.hmDueIn('$daysLeft') : l.hmExpiresIn('$daysLeft');
   }
 }
 
@@ -133,6 +133,6 @@ int weekPaymentsMinor(List<Payment> payments, DateTime now) {
 /// "Salam, Owais 👋" — just "Salam 👋" while the profile is still "Me".
 String greeting(Person? self) {
   final name = self?.name.trim();
-  if (name == null || name.isEmpty || name == 'Me') return 'Salam 👋';
-  return 'Salam, $name 👋';
+  if (name == null || name.isEmpty || name == 'Me') return l10nNow.hmSalam;
+  return l10nNow.hmSalamName(name);
 }

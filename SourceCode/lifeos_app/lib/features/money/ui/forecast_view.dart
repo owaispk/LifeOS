@@ -2,6 +2,7 @@ import 'package:drift/drift.dart' show Value;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/l10n.dart';
 import '../../../core/money.dart';
 import '../../../core/now_provider.dart';
 import '../../../core/theme/tokens.dart';
@@ -46,6 +47,7 @@ class ForecastView extends ConsumerWidget {
       salaryDay: settings?.salaryDay,
     );
     final monthName = formatMonth(month).split(' ').first;
+    final l = context.l10n;
 
     return ListView(
       key: const ValueKey('forecast-list'),
@@ -53,13 +55,11 @@ class ForecastView extends ConsumerWidget {
       children: [
         header,
         if (f.items.isEmpty)
-          const EmptyState(
+          EmptyState(
             inList: true,
             emoji: '📆',
-            title: 'No fixed payments this month',
-            message:
-                'Add what you pay regularly in More → Auto Tasks and the '
-                'forecast fills itself.',
+            title: l.mnNoFixedTitle,
+            message: l.mnNoFixedBody,
           )
         else ...[
           // Digest card (PBI-019; the notification is PBI-023).
@@ -72,22 +72,26 @@ class ForecastView extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '$monthName fixed payments: ${Money.format(f.totalMinor)} '
-                    'across ${f.items.length} '
-                    '${f.items.length == 1 ? 'item' : 'items'}',
+                    l.mnDigest(
+                      monthName,
+                      Money.format(f.totalMinor),
+                      f.items.length,
+                    ),
                     style: theme.textTheme.titleMedium,
                   ),
                   const SizedBox(height: Tokens.spaceXs),
                   Text(
-                    '${Money.format(f.totalMinor)} total · '
-                    '${Money.format(f.paidMinor)} paid · '
-                    '${Money.format(f.remainingMinor)} remaining',
+                    l.mnTotals(
+                      Money.format(f.totalMinor),
+                      Money.format(f.paidMinor),
+                      Money.format(f.remainingMinor),
+                    ),
                     key: const ValueKey('forecast-totals'),
                   ),
                   const SizedBox(height: Tokens.spaceXs),
                   if (f.salaryPercent != null)
                     Text(
-                      '${f.salaryPercent}% of income goes to fixed payments',
+                      l.mnSalaryShare('${f.salaryPercent}'),
                       key: const ValueKey('forecast-salary'),
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
@@ -98,7 +102,7 @@ class ForecastView extends ConsumerWidget {
                       key: const ValueKey('forecast-set-salary'),
                       onPressed: () => _editSalary(context, ref, settings),
                       icon: const Icon(Icons.payments_outlined),
-                      label: const Text('Add your salary to see the share'),
+                      label: Text(l.mnAddSalary),
                     ),
                 ],
               ),
@@ -110,7 +114,7 @@ class ForecastView extends ConsumerWidget {
             Center(
               child: TextButton(
                 onPressed: () => _editSalary(context, ref, settings),
-                child: const Text('Change salary'),
+                child: Text(l.mnChangeSalary),
               ),
             ),
         ],
@@ -135,7 +139,7 @@ Future<void> _editSalary(
     context: context,
     builder: (context) => StatefulBuilder(
       builder: (context, setState) => AlertDialog(
-        title: const Text('Your salary'),
+        title: Text(context.l10n.mnYourSalary),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -145,15 +149,15 @@ Future<void> _editSalary(
               keyboardType: const TextInputType.numberWithOptions(
                 decimal: true,
               ),
-              decoration: const InputDecoration(
-                labelText: 'Monthly salary',
-                prefixText: 'Rs ',
+              decoration: InputDecoration(
+                labelText: context.l10n.mnMonthlySalary,
+                prefixText: context.l10n.mnRsPrefix,
               ),
             ),
             DropdownButtonFormField<int>(
               key: const ValueKey('salary-day'),
               initialValue: day,
-              decoration: const InputDecoration(labelText: 'Paid on day'),
+              decoration: InputDecoration(labelText: context.l10n.mnPaidOnDay),
               items: [
                 for (var d = 1; d <= 31; d++)
                   DropdownMenuItem(value: d, child: Text('$d')),
@@ -165,12 +169,12 @@ Future<void> _editSalary(
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(context.l10n.cancel),
           ),
           FilledButton(
             key: const ValueKey('salary-save'),
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Save'),
+            child: Text(context.l10n.mnSave),
           ),
         ],
       ),
@@ -263,14 +267,15 @@ class _ForecastRow extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final l = context.l10n;
     final amount = item.amountMinor == null
-        ? 'amount pending'
+        ? l.mnAmountPending
         : '${item.estimated ? '~' : ''}${Money.format(item.amountMinor!)}';
     final (label, color) = switch (item.status) {
-      ForecastStatus.paid => ('Paid ✓', theme.colorScheme.primary),
-      ForecastStatus.overdue => ('Overdue 🔴', theme.colorScheme.error),
+      ForecastStatus.paid => (l.mnStatusPaid, theme.colorScheme.primary),
+      ForecastStatus.overdue => (l.mnStatusOverdue, theme.colorScheme.error),
       ForecastStatus.upcoming => (
-        item.projected ? 'Upcoming · planned' : 'Upcoming',
+        item.projected ? l.mnStatusUpcomingPlanned : l.mnStatusUpcoming,
         theme.colorScheme.onSurfaceVariant,
       ),
     };
@@ -290,7 +295,7 @@ class _ForecastRow extends ConsumerWidget {
           if (item.paymentId != null && item.status != ForecastStatus.paid)
             IconButton(
               key: ValueKey('mark-paid-${item.paymentId}'),
-              tooltip: 'Mark paid',
+              tooltip: l.mnMarkPaid,
               icon: const Icon(Icons.check_circle_outline),
               onPressed: () async {
                 final p = await ref

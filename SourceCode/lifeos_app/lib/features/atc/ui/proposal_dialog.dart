@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/l10n.dart';
 import '../../../data/db/app_database.dart';
 import '../atc_providers.dart';
 import '../data/atc_learning.dart';
@@ -15,18 +16,18 @@ Future<bool?> showProposalDialog(BuildContext context, String question) {
     builder: (context) => AlertDialog(
       key: const ValueKey('atc-proposal'),
       icon: const Text('⚡', style: TextStyle(fontSize: 32)),
-      title: const Text('New pattern detected'),
+      title: Text(context.l10n.atcNewPattern),
       content: Text(question, key: const ValueKey('atc-proposal-text')),
       actions: [
         TextButton(
           key: const ValueKey('atc-proposal-no'),
           onPressed: () => Navigator.pop(context, false),
-          child: const Text('No thanks'),
+          child: Text(context.l10n.atcNoThanks),
         ),
         FilledButton(
           key: const ValueKey('atc-proposal-yes'),
           onPressed: () => Navigator.pop(context, true),
-          child: const Text('Yes, remind me'),
+          child: Text(context.l10n.atcYesRemind),
         ),
       ],
     ),
@@ -40,18 +41,22 @@ Future<bool> showFeeChangeDialog(BuildContext context, FeeChange change) async {
     useRootNavigator: true,
     builder: (context) => AlertDialog(
       key: const ValueKey('fee-change'),
-      title: Text(change.isIncrease ? 'Fee increased' : 'Fee changed'),
+      title: Text(
+        change.isIncrease
+            ? context.l10n.atcFeeIncreased
+            : context.l10n.atcFeeChanged,
+      ),
       content: Text(change.message),
       actions: [
         TextButton(
           key: const ValueKey('fee-change-keep'),
           onPressed: () => Navigator.pop(context, false),
-          child: const Text('Keep as is'),
+          child: Text(context.l10n.atcKeepAsIs),
         ),
         FilledButton(
           key: const ValueKey('fee-change-update'),
           onPressed: () => Navigator.pop(context, true),
-          child: const Text('Update future tasks'),
+          child: Text(context.l10n.atcUpdateFuture),
         ),
       ],
     ),
@@ -99,7 +104,7 @@ class _ProposalListenerState extends ConsumerState<ProposalListener> {
       await service.acceptProposal(rule.id);
       if (!mounted) return;
       ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('⚡ Auto-reminder is on')));
+          .showSnackBar(SnackBar(content: Text(context.l10n.atcReminderOn)));
     } on FreeTierLimitException {
       if (mounted) await showUpgradePrompt(context);
     }

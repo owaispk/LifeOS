@@ -6,6 +6,7 @@ import 'package:lifeos_app/features/capture/ocr/document_analysis.dart';
 import 'package:lifeos_app/features/capture/platform/capture_platform.dart';
 import 'package:lifeos_app/features/reminders/domain/reminder_planner.dart';
 import 'package:lifeos_app/features/reminders/platform/notification_gateway.dart';
+import 'package:lifeos_app/features/security/lock_gate.dart';
 
 /// Records what would be scheduled on the phone.
 class FakeGateway implements NotificationGateway {
@@ -90,4 +91,21 @@ class CaptureFakes {
   final storage = FakeStorage();
   final inbox = FakeShareInbox();
   final reader = FakeTextReader();
+}
+
+/// Biometric / PIN stand-in (PBI-024).
+class FakeAuthenticator implements Authenticator {
+  FakeAuthenticator({this.available = true, this.pass = true});
+  bool available;
+  bool pass;
+  int asks = 0;
+
+  @override
+  Future<bool> canAuthenticate() async => available;
+
+  @override
+  Future<bool> authenticate(String reason) async {
+    asks++;
+    return pass;
+  }
 }

@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 
 import '../../../core/ids.dart';
+import '../../../core/l10n.dart';
 import '../../../core/money.dart';
 import '../../../data/db/app_database.dart';
 import '../../../data/repositories/repositories.dart';
@@ -12,9 +13,7 @@ class FreeTierLimitException implements Exception {
   const FreeTierLimitException();
 
   @override
-  String toString() =>
-      'Free plan includes $freeTierRuleLimit auto-rules — Premium removes '
-      'the limit';
+  String toString() => l10nNow.atcFreeLimit('$freeTierRuleLimit');
 }
 
 /// What the "What do you pay regularly?" form produces.
@@ -110,9 +109,11 @@ class AtcService {
       );
       if (input.categoryKey == 'subscription') {
         final n = _now();
+        // Stored task title (data, not UI) — stays English.
+        final reviewTitle = 'Review ${rule.name} subscription?';
         await _repos.tasks.insert(
           TasksCompanion.insert(
-            title: 'Review ${rule.name} subscription?',
+            title: reviewTitle,
             domain: const Value('money'),
             dueAt: Value(
               DateTime(n.year + 1, n.month, n.day).millisecondsSinceEpoch,
@@ -249,19 +250,21 @@ class AtcService {
       final person = r.personId == null
           ? null
           : await _repos.persons.getById(r.personId!);
-      final who = person == null ? '' : ' for ${person.name}';
+      final l = l10nNow;
+      final who = person == null ? '' : l.atcProposalFor(person.name);
       final amount = r.amountMinor == null
           ? ''
           : ' — ${Money.format(r.amountMinor!)}';
-      final day = r.dueDay == null ? '' : ', due ${ordinal(r.dueDay!)}';
-      return 'Create a fee reminder$who$amount$day?';
+      final day = r.dueDay == null ? '' : l.atcProposalDue(ordinal(r.dueDay!));
+      return l.atcProposalFee(who, amount, day);
     }
-    final label = billStatsOf(r).label ?? 'utility';
+    final l = l10nNow;
+    final label = billStatsOf(r).label ?? l.atcUtility;
     final window = windowOf(r);
     final when = window == null
         ? ''
-        : ' usually arrives the ${ordinal(window.from)}–${ordinal(window.to)}';
-    return 'Your $label bill$when. Create a monthly reminder?';
+        : l.atcProposalWindow(ordinal(window.from), ordinal(window.to));
+    return l.atcProposalBill(label, when);
   }
 
   Future<AtcRule> pause(String id) => _repos.atcRules.update(

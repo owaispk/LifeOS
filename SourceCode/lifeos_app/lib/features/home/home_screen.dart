@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/l10n.dart';
 import '../../core/money.dart';
 import '../../core/now_provider.dart';
 import '../../core/theme/tokens.dart';
@@ -67,6 +68,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final today = todaySections(tasks, now).values.expand((l) => l).toList();
     final week = weekPaymentsMinor(payments, now);
     final isNew = tasks.isEmpty && docs.isEmpty && rules.isEmpty;
+    final l = context.l10n;
 
     return Scaffold(
       appBar: AppBar(
@@ -74,7 +76,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         actions: [
           IconButton(
             key: const ValueKey('home-bell'),
-            tooltip: 'Needs attention',
+            tooltip: l.hmNeedsAttention,
             onPressed: () => context.go('/home/attention'),
             icon: Badge(
               isLabelVisible: attention.isNotEmpty,
@@ -84,7 +86,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
           IconButton(
             key: const ValueKey('home-profile'),
-            tooltip: 'Profile and more',
+            tooltip: l.hmProfileMore,
             onPressed: () => context.go('/more'),
             icon: Text(
               self?.avatar ?? '👤',
@@ -111,12 +113,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             else ...[
               _SectionTitle(
                 key: const ValueKey('home-attention'),
-                '⚠ Needs attention',
+                l.hmAttentionSection,
               ),
               if (attention.isEmpty)
-                const _FriendlyLine(
-                  key: ValueKey('attention-empty'),
-                  'Nothing urgent — nice ✓',
+                _FriendlyLine(
+                  key: const ValueKey('attention-empty'),
+                  l.hmNothingUrgentNice,
                 )
               else ...[
                 for (final item in attention.take(attentionCap))
@@ -127,21 +129,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     child: TextButton(
                       key: const ValueKey('attention-see-all'),
                       onPressed: () => context.go('/home/attention'),
-                      child: Text('See all (${attention.length})'),
+                      child: Text(l.hmSeeAllCount('${attention.length}')),
                     ),
                   ),
               ],
               _SectionTitle(
                 key: const ValueKey('home-today'),
-                'Today · ${today.length} ${today.length == 1 ? 'task' : 'tasks'}',
+                l.hmTodayTasks(today.length),
               ),
               if (today.isEmpty)
                 _FriendlyLine(
                   key: const ValueKey('today-empty'),
-                  'A clear day.',
+                  l.hmClearDay,
                   action: TextButton(
                     onPressed: () => showNewTaskSheet(context),
-                    child: const Text('➕ Add a task'),
+                    child: Text(l.hmAddTask),
                   ),
                 )
               else ...[
@@ -153,7 +155,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     child: TextButton(
                       key: const ValueKey('today-see-all'),
                       onPressed: () => context.go('/tasks'),
-                      child: Text('See all ${today.length}'),
+                      child: Text(l.hmSeeAllN('${today.length}')),
                     ),
                   ),
               ],
@@ -166,8 +168,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     leading: const Text('💰', style: TextStyle(fontSize: 22)),
                     title: Text(
                       week == 0
-                          ? 'No payments due this week'
-                          : '${Money.format(week)} in payments this week',
+                          ? l.hmNoPaymentsWeek
+                          : l.hmPaymentsWeek(Money.format(week)),
                       key: const ValueKey('home-money-text'),
                     ),
                     trailing: const Icon(Icons.chevron_right),
@@ -197,6 +199,7 @@ class _ScoreCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l = context.l10n;
     return InkWell(
       key: const ValueKey('home-score'),
       onTap: () => context.go('/home/score'),
@@ -215,13 +218,11 @@ class _ScoreCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Life Score', style: theme.textTheme.labelLarge),
+                  Text(l.scLifeScore, style: theme.textTheme.labelLarge),
                   Text(
                     attentionCount == 0
-                        ? 'All clear today ✓'
-                        : '$attentionCount '
-                              '${attentionCount == 1 ? 'thing needs' : 'things need'}'
-                              ' attention',
+                        ? l.hmAllClear
+                        : l.hmThingsNeedAttention(attentionCount),
                     key: const ValueKey('home-attention-count'),
                     style: theme.textTheme.titleMedium,
                   ),
@@ -294,23 +295,24 @@ class _NewUserPrompts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     final prompts = [
       (
         'prompt-scan',
-        'Scan your first document 📸',
-        'CNIC, passport, a bill — LifeOS files it and reminds you.',
+        l.hmPromptScanTitle,
+        l.hmPromptScanBody,
         () => startScan(context),
       ),
       (
         'prompt-atc',
-        'Add what you pay regularly ⚡',
-        'Rent, fees, bills: reminded every month, automatically.',
+        l.hmPromptAtcTitle,
+        l.hmPromptAtcBody,
         () => showAddRuleSheet(context),
       ),
       (
         'prompt-task',
-        'Add a task ➕',
-        'Anything on your mind, with a reminder.',
+        l.hmPromptTaskTitle,
+        l.hmPromptTaskBody,
         () => showNewTaskSheet(context),
       ),
     ];

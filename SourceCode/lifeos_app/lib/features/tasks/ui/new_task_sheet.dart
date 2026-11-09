@@ -7,6 +7,9 @@ import '../domain/task_rules.dart';
 import '../../reminders/reminder_providers.dart';
 import '../tasks_providers.dart';
 import 'task_actions.dart';
+import '../../../core/l10n.dart';
+import '../domain/nl_parser.dart';
+import 'quick_parse.dart';
 import 'task_tile.dart';
 
 /// 2.4 New Task — a bottom sheet with one field; the full form lives under
@@ -40,6 +43,14 @@ class _NewTaskSheetState extends ConsumerState<NewTaskSheet> {
   RepeatFreq? _repeat;
   int _duration = 30;
 
+  /// Natural-language parse of the title (PBI-010). Manual choices below
+  /// win over it: picking a date/priority/domain by hand turns that part
+  /// of the parse off.
+  QuickParse _parse = const QuickParse('', ParsedTask(title: ''));
+  bool _manualDate = false;
+  bool _manualPriority = false;
+  bool _manualDomain = false;
+
   @override
   void dispose() {
     _title.dispose();
@@ -51,8 +62,13 @@ class _NewTaskSheetState extends ConsumerState<NewTaskSheet> {
   Future<void> _save() async {
     if (!_canSave) return;
     setState(() => _saving = true);
-    final date = _dueDate;
-    final time = _time;
+    final p = _parse.effective;
+    final useParsedDate =
+        !_manualDate && p.dueAt(ref.read(nowProvider)()) != null;
+    final date = useParsedDate ? p.dueAt(ref.read(nowProvider)()) : _dueDate;
+    final time = useParsedDate
+        ? (p.hasTime ? TimeOfDay(hour: p.hour!, minute: p.minute) : null)
+        : _time;
     final picked = date == null
         ? null
         : time == null
@@ -73,11 +89,11 @@ class _NewTaskSheetState extends ConsumerState<NewTaskSheet> {
     await ref
         .read(taskServiceProvider)
         .create(
-          title: _title.text,
+          title: _parse.input == _title.text ? _parse.title : _title.text,
           due: due,
           allDay: time == null,
-          priority: _priority,
-          domain: _domain,
+          priority: !_manualPriority && p.highPriority ? 2 : _priority,
+          domain: !_manualDomain && p.domain != null ? p.domain! : _domain,
           personId: _personId,
           durationMin: _duration,
           repeat: _repeat,
@@ -95,6 +111,7 @@ class _NewTaskSheetState extends ConsumerState<NewTaskSheet> {
     final today = startOfDay(now);
     final tomorrow = DateTime(today.year, today.month, today.day + 1);
     final persons = ref.watch(personsProvider).value ?? const [];
+    final l = context.l10n;
 
     return Padding(
       padding: EdgeInsets.only(
@@ -107,7 +124,7 @@ class _NewTaskSheetState extends ConsumerState<NewTaskSheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text('New task', style: Theme.of(context).textTheme.titleLarge),
+            Text(l.tkNewTask, style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: Tokens.spaceM),
             Row(
               children: [
@@ -118,13 +135,24 @@ class _NewTaskSheetState extends ConsumerState<NewTaskSheet> {
                     autofocus: true,
                     textCapitalization: TextCapitalization.sentences,
                     textInputAction: TextInputAction.done,
-                    decoration: const InputDecoration(
-                      hintText: 'What needs doing?',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      hintText: l.tkWhatNeedsDoing,
+                      border: const OutlineInputBorder(),
                     ),
-                    onChanged: (_) => setState(() {}),
+                    onChanged: (text) => setState(
+                      () => _parse = quickParse(text, ref.read(nowProvider)()),
+                    ),
                     onSubmitted: (_) => _save(),
                   ),
+                ),
+                IconButton(
+                  key: const ValueKey('new-task-mic'),
+                  tooltip: l.speak,
+                  onPressed: () {
+                    Navigator.pop(context);
+                    showVoiceOverlay(context);
+                  },
+                  icon: const Icon(Icons.mic_none),
                 ),
                 const SizedBox(width: Tokens.spaceS),
                 FilledButton(
@@ -133,18 +161,24 @@ class _NewTaskSheetState extends ConsumerState<NewTaskSheet> {
                     minimumSize: const Size(72, Tokens.minTouchTarget),
                   ),
                   onPressed: _canSave ? _save : null,
-                  child: const Text('Add'),
+                  child: Text(l.tkAdd),
                 ),
               ],
             ),
+            const SizedBox(height: Tokens.spaceS),
+            if (!_manualDate)
+              ParseChips(
+                parse: _parse,
+                onDrop: (part) => setState(() => _parse = _parse.drop(part)),
+              ),
             const SizedBox(height: Tokens.spaceS),
             Wrap(
               spacing: Tokens.spaceS,
               children: [
                 // Tapping a selected day again clears the date.
-                _choice('Today', _dueDate == today, () => _toggleDate(today)),
+                _choice(l.today, _dueDate == today, () => _toggleDate(today)),
                 _choice(
-                  'Tomorrow',
+                  l.tomorrow,
                   _dueDate == tomorrow,
                   () => _toggleDate(tomorrow),
                 ),
@@ -154,7 +188,7 @@ class _NewTaskSheetState extends ConsumerState<NewTaskSheet> {
                     _dueDate == null ||
                             _dueDate == today ||
                             _dueDate == tomorrow
-                        ? 'Pick date'
+                        ? l.tkPickDate
                         : formatDay(_dueDate!, now: now),
                   ),
                   onPressed: () async {
@@ -164,7 +198,12 @@ class _NewTaskSheetState extends ConsumerState<NewTaskSheet> {
                       firstDate: DateTime(today.year - 1),
                       lastDate: DateTime(today.year + 5),
                     );
-                    if (picked != null) setState(() => _dueDate = picked);
+                    if (picked != null) {
+                      setState(() {
+                        _dueDate = picked;
+                        _manualDate = true;
+                      });
+                    }
                   },
                 ),
                 if (_dueDate != null)
@@ -172,7 +211,7 @@ class _NewTaskSheetState extends ConsumerState<NewTaskSheet> {
                     avatar: const Icon(Icons.schedule, size: 18),
                     label: Text(
                       _time == null
-                          ? 'All day'
+                          ? l.tkAllDay
                           : formatTime(
                               DateTime(0, 1, 1, _time!.hour, _time!.minute),
                             ),
@@ -183,7 +222,10 @@ class _NewTaskSheetState extends ConsumerState<NewTaskSheet> {
                         initialTime:
                             _time ?? const TimeOfDay(hour: 9, minute: 0),
                       );
-                      setState(() => _time = picked);
+                      setState(() {
+                        _time = picked;
+                        _manualDate = true;
+                      });
                     },
                   ),
               ],
@@ -194,22 +236,25 @@ class _NewTaskSheetState extends ConsumerState<NewTaskSheet> {
                 key: const ValueKey('new-task-more'),
                 onPressed: () => setState(() => _expanded = !_expanded),
                 icon: Icon(_expanded ? Icons.expand_less : Icons.expand_more),
-                label: Text(_expanded ? 'Fewer options' : 'More options'),
+                label: Text(_expanded ? l.tkFewerOptions : l.tkMoreOptions),
               ),
             ),
             if (_expanded) ...[
-              const _Label('Priority'),
+              _Label(l.tkPriority),
               SegmentedButton<int>(
                 showSelectedIcon: false,
-                segments: const [
-                  ButtonSegment(value: 0, label: Text('Low')),
-                  ButtonSegment(value: 1, label: Text('Medium')),
-                  ButtonSegment(value: 2, label: Text('High')),
+                segments: [
+                  ButtonSegment(value: 0, label: Text(l.tkLow)),
+                  ButtonSegment(value: 1, label: Text(l.tkMedium)),
+                  ButtonSegment(value: 2, label: Text(l.tkHigh)),
                 ],
                 selected: {_priority},
-                onSelectionChanged: (s) => setState(() => _priority = s.first),
+                onSelectionChanged: (s) => setState(() {
+                  _priority = s.first;
+                  _manualPriority = true;
+                }),
               ),
-              const _Label('Life area'),
+              _Label(l.tkLifeArea),
               Wrap(
                 spacing: Tokens.spaceS,
                 children: [
@@ -221,18 +266,21 @@ class _NewTaskSheetState extends ConsumerState<NewTaskSheet> {
                       ),
                       label: Text(domainLabel(d)),
                       selected: _domain == d,
-                      onSelected: (_) => setState(() => _domain = d),
+                      onSelected: (_) => setState(() {
+                        _domain = d;
+                        _manualDomain = true;
+                      }),
                     ),
                 ],
               ),
               if (persons.isNotEmpty) ...[
-                const _Label('For'),
+                _Label(l.tkFor),
                 Wrap(
                   spacing: Tokens.spaceS,
                   children: [
                     for (final p in persons)
                       ChoiceChip(
-                        label: Text('${p.avatar ?? '👤'} ${p.name}'),
+                        label: Text([p.avatar ?? '👤', p.name].join(' ')),
                         selected: _personId == p.id,
                         onSelected: (on) =>
                             setState(() => _personId = on ? p.id : null),
@@ -240,12 +288,12 @@ class _NewTaskSheetState extends ConsumerState<NewTaskSheet> {
                   ],
                 ),
               ],
-              const _Label('Repeat'),
+              _Label(l.tkRepeat),
               Wrap(
                 spacing: Tokens.spaceS,
                 children: [
                   _choice(
-                    'Never',
+                    l.tkNever,
                     _repeat == null,
                     () => setState(() => _repeat = null),
                   ),
@@ -257,13 +305,15 @@ class _NewTaskSheetState extends ConsumerState<NewTaskSheet> {
                     ),
                 ],
               ),
-              const _Label('Takes about'),
+              _Label(l.tkTakesAbout),
               Wrap(
                 spacing: Tokens.spaceS,
                 children: [
                   for (final m in [15, 30, 45, 60, 90, 120])
                     _choice(
-                      m < 60 ? '$m min' : '${m / 60} h'.replaceAll('.0', ''),
+                      m < 60
+                          ? l.tkMinutes('$m')
+                          : l.tkHours('${m / 60}'.replaceAll('.0', '')),
                       _duration == m,
                       () => setState(() => _duration = m),
                     ),
@@ -277,6 +327,7 @@ class _NewTaskSheetState extends ConsumerState<NewTaskSheet> {
   }
 
   void _toggleDate(DateTime day) => setState(() {
+    _manualDate = true;
     _dueDate = _dueDate == day ? null : day;
     if (_dueDate == null) _time = null;
   });

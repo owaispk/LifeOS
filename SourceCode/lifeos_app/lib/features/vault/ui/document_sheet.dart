@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/l10n.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../data/db/app_database.dart';
 import '../domain/vault_rules.dart';
@@ -44,9 +45,9 @@ class _DocumentSheetState extends ConsumerState<DocumentSheet> {
     final docs = ref.watch(documentsProvider).value ?? const <Document>[];
     final doc = docs.where((d) => d.id == widget.documentId).firstOrNull;
     if (doc == null) {
-      return const SizedBox(
+      return SizedBox(
         height: 160,
-        child: Center(child: Text('This document is gone')),
+        child: Center(child: Text(context.l10n.vtDocGoneTitle)),
       );
     }
     if (!_initialised) {
@@ -57,6 +58,7 @@ class _DocumentSheetState extends ConsumerState<DocumentSheet> {
     final folders = ref.watch(foldersProvider).value ?? const <Folder>[];
     final persons = ref.watch(personsProvider).value ?? const <Person>[];
     final tags = parseTags(doc.tags);
+    final l = context.l10n;
 
     void saveTitle() {
       final t = _title.text.trim();
@@ -108,44 +110,44 @@ class _DocumentSheetState extends ConsumerState<DocumentSheet> {
                 IconButton(
                   key: const ValueKey('doc-favorite'),
                   tooltip: doc.favorite
-                      ? 'Remove from favourites'
-                      : 'Add to favourites',
+                      ? l.vtRemoveFavourite
+                      : l.vtAddFavourite,
                   icon: Icon(doc.favorite ? Icons.star : Icons.star_border),
                   onPressed: () => service.setFavorite(doc.id, !doc.favorite),
                 ),
               ],
             ),
-            const _Label('Folder'),
+            _Label(l.vtFolder),
             DropdownButtonFormField<String?>(
               key: const ValueKey('doc-folder'),
               initialValue: doc.folderId,
               items: [
-                const DropdownMenuItem(value: null, child: Text('📥 Unfiled')),
+                DropdownMenuItem(value: null, child: Text(l.vtUnfiledTitle)),
                 for (final f in folders)
                   DropdownMenuItem(
                     value: f.id,
-                    child: Text('${f.icon} ${f.name}'),
+                    child: Text('${f.icon} ${folderLabel(f)}'),
                   ),
               ],
               onChanged: (v) =>
                   service.move(doc.id, folderId: v, personId: doc.personId),
             ),
-            const _Label('Belongs to'),
+            _Label(l.vtBelongsTo),
             DropdownButtonFormField<String?>(
               key: const ValueKey('doc-person'),
               initialValue: doc.personId,
               items: [
-                const DropdownMenuItem(value: null, child: Text('Nobody')),
+                DropdownMenuItem(value: null, child: Text(l.vtNobody)),
                 for (final p in persons)
                   DropdownMenuItem(
                     value: p.id,
-                    child: Text('${p.avatar ?? '👤'} ${p.name}'),
+                    child: Text([p.avatar ?? '👤', p.name].join(' ')),
                   ),
               ],
               onChanged: (v) =>
                   service.move(doc.id, folderId: doc.folderId, personId: v),
             ),
-            const _Label('Tags'),
+            _Label(l.vtTags),
             Wrap(
               spacing: Tokens.spaceS,
               children: [
@@ -155,7 +157,7 @@ class _DocumentSheetState extends ConsumerState<DocumentSheet> {
                     label: Text(t),
                     onDeleted: () =>
                         service.setTags(doc.id, tags.where((x) => x != t)),
-                    deleteButtonTooltipMessage: 'Remove tag $t',
+                    deleteButtonTooltipMessage: l.vtRemoveTag(t),
                   ),
               ],
             ),
@@ -163,10 +165,10 @@ class _DocumentSheetState extends ConsumerState<DocumentSheet> {
               key: const ValueKey('doc-add-tag'),
               controller: _tag,
               decoration: InputDecoration(
-                hintText: 'Add a tag',
+                hintText: l.vtAddTagHint,
                 prefixIcon: const Icon(Icons.sell_outlined),
                 suffixIcon: IconButton(
-                  tooltip: 'Add tag',
+                  tooltip: l.vtAddTag,
                   icon: const Icon(Icons.add),
                   onPressed: addTag,
                 ),
@@ -183,22 +185,22 @@ class _DocumentSheetState extends ConsumerState<DocumentSheet> {
                   foregroundColor: theme.colorScheme.error,
                 ),
                 icon: const Icon(Icons.delete_outline),
-                label: const Text('Delete'),
+                label: Text(l.vtDelete),
                 onPressed: () async {
                   final ok = await showDialog<bool>(
                     context: context,
                     builder: (context) => AlertDialog(
-                      title: const Text('Delete this document?'),
-                      content: Text('"${doc.title}" will be removed.'),
+                      title: Text(l.vtDeleteDocTitle),
+                      content: Text(l.vtDeleteDocBody(doc.title)),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.pop(context, false),
-                          child: const Text('Cancel'),
+                          child: Text(l.cancel),
                         ),
                         FilledButton(
                           key: const ValueKey('confirm-delete-doc'),
                           onPressed: () => Navigator.pop(context, true),
-                          child: const Text('Delete'),
+                          child: Text(l.vtDelete),
                         ),
                       ],
                     ),

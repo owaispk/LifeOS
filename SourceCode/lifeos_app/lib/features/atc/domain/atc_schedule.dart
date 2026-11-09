@@ -2,8 +2,10 @@
 import 'dart:convert';
 
 import '../../../core/ids.dart';
+import '../../../core/l10n.dart';
 import '../../../core/money.dart';
 import '../../../data/db/app_database.dart';
+import '../../../shared/format.dart';
 import '../../money/domain/money_rules.dart' show isoDate, parseIsoDate;
 
 /// Free plan limit on active rules (PBI-013 AC6; Premium is PBI-029).
@@ -200,35 +202,22 @@ PlannedOccurrence? planNext(
 /// "~10th–14th monthly" for learned bill patterns.
 String cadenceLabel(AtcRule r) {
   final w = r.kind == 'bill_pattern' ? windowOf(r) : null;
-  if (w != null) return '~${ordinal(w.from)}–${ordinal(w.to)} monthly';
+  final l = l10nNow;
+  if (w != null) return l.atcCadenceWindow(ordinal(w.from), ordinal(w.to));
   if (scheduleDatesOf(r).isNotEmpty) {
-    return 'On set dates · '
-        '${scheduleDatesOf(r).map((d) => '${d.day} ${_mon[d.month - 1]}').join(', ')}';
+    return l.atcOnSetDates(
+      scheduleDatesOf(r).map((d) => '${d.day} ${shortMonth(d)}').join(', '),
+    );
   }
   final cycle = switch (r.cycle) {
-    'quarterly' => 'Quarterly',
-    'semester' => 'Every 6 months',
-    'yearly' => 'Yearly',
-    'once' => 'Once',
-    _ => 'Monthly',
+    'quarterly' => l.atcQuarterly,
+    'semester' => l.atcEvery6Months,
+    'yearly' => l.atcYearly,
+    'once' => l.atcOnce,
+    _ => l.atcMonthly,
   };
-  return r.dueDay == null ? cycle : '$cycle · ${ordinal(r.dueDay!)}';
+  return r.dueDay == null ? cycle : l.atcCadenceDay(cycle, ordinal(r.dueDay!));
 }
-
-const _mon = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
-];
 
 /// 1st, 2nd, 3rd, 4th … 11th, 12th, 13th, 21st.
 String ordinal(int n) {

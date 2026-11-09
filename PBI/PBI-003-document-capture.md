@@ -7,7 +7,7 @@
 | Story Points | 8 |
 | Spec refs | Features §1.1; UI flow §3.4 steps 1–2 |
 | Depends on | PBI-002 |
-| Status | Dev Complete — device QA pending (AC1, camera flow) |
+| Status | Done |
 
 ## User Story
 As a **user**, I want to scan any paper with my camera so it becomes a clean digital document.
@@ -102,3 +102,15 @@ Also built:
 **Not verified:**
 - The native scanner UI, file picker and share sheet. They're behind interfaces with fakes in tests; real runs need Android.
 - The blur threshold is calibrated on synthetic pages and should be re-checked on real phone scans.
+
+## Device QA (2026-11-09)
+Android emulator `sdk gphone64 x86 64`, Android 17 (API 37), Google Play services; debug APK; 2026-11-09.
+
+| AC | Result | Evidence |
+|---|---|---|
+| 1 | ✅ | ML Kit Document Scanner (native camera UI) captured a page from the emulator camera → confirm step → **Save → "Saved to Vault" in 3.3 s**, including ~1 s of measurement polling (limit 10 s). A PDF was written to the app's private `vault/<docId>/` folder and the document appeared in its folder. |
+| 4 | ✅ | Scanning and saving use no network: the module was already installed, and the Vault worked with airplane mode on. |
+
+Notes:
+- The first scan triggers a one-time Google Play services download of the scanner module, which needs a connection.
+- A scan with no text correctly falls back to "Unclassified".

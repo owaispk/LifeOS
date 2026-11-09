@@ -14,11 +14,16 @@ import 'features/vault/data/expiry_guard.dart';
 import 'features/capture/capture_providers.dart';
 import 'features/capture/ocr/document_analysis.dart';
 import 'features/capture/platform/capture_platform.dart';
+import 'features/onboarding/onboarding_screen.dart';
 import 'features/reminders/data/reminder_service.dart';
 import 'features/reminders/platform/local_notifications_gateway.dart';
 import 'features/reminders/reminder_providers.dart';
 import 'features/reminders/reminder_sync.dart';
 import 'features/score/data/score_service.dart';
+import 'features/security/crypto/vault_crypto.dart';
+import 'features/security/crypto/vault_files.dart';
+import 'features/security/lock_gate.dart';
+import 'features/security/security_providers.dart';
 import 'features/score/domain/life_score.dart';
 import 'features/score/score_providers.dart';
 
@@ -33,6 +38,14 @@ Future<void> main() async {
   final weights = ScoreWeights.fromJson(
     await rootBundle.loadString('assets/score_weights.json'),
   );
+
+  // Files at rest are AES-256-GCM (PBI-024); Sprint 1-5 files are
+  // encrypted in place once. The Master Key lives in the device keystore.
+  const keyStore = SecureKeyStore();
+  if (repos != null) {
+    await VaultFiles(repos, VaultCrypto(keyStore)).migrate();
+    await skipOnboardingForExistingData(repos);
+  }
 
   // Auto Task Creator (PBI-013): keep one next occurrence per rule — at
   // start and whenever the app comes back to the foreground.
@@ -82,6 +95,8 @@ Future<void> main() async {
           notificationGatewayProvider.overrideWithValue(gateway),
         if (vaultRoot != null) vaultRootProvider.overrideWithValue(vaultRoot),
         if (isPhone) ...[
+          keyStoreProvider.overrideWithValue(keyStore),
+          authenticatorProvider.overrideWithValue(LocalAuthenticator()),
           documentScannerProvider.overrideWithValue(
             const NativeDocumentScanner(),
           ),

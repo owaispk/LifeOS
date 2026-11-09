@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/l10n.dart';
 import '../../shared/widgets/empty_state.dart';
 import 'home_screen.dart' show attentionProvider;
 import 'ui/attention_tile.dart';
@@ -13,12 +14,12 @@ class AttentionScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final items = ref.watch(attentionProvider);
     return Scaffold(
-      appBar: AppBar(title: const Text('Needs attention')),
+      appBar: AppBar(title: Text(context.l10n.hmNeedsAttention)),
       body: items.isEmpty
-          ? const EmptyState(
+          ? EmptyState(
               emoji: '✅',
-              title: 'Nothing urgent',
-              message: 'Payments due soon and expiring documents show here.',
+              title: context.l10n.hmNothingUrgent,
+              message: context.l10n.hmNothingUrgentBody,
             )
           : ListView(
               key: const ValueKey('attention-list'),

@@ -1,5 +1,6 @@
 // Pure task logic for PBI-009 — no database, no Flutter. All "now" values
 // are local DateTimes; task timestamps are UTC epoch-ms.
+import '../../../core/l10n.dart';
 import '../../../data/db/app_database.dart';
 
 DateTime startOfDay(DateTime d) => DateTime(d.year, d.month, d.day);
@@ -193,14 +194,12 @@ class RepeatRule {
     return next;
   }
 
-  String describe() {
-    final unit = switch (freq) {
-      RepeatFreq.daily => interval == 1 ? 'day' : '$interval days',
-      RepeatFreq.weekly => interval == 1 ? 'week' : '$interval weeks',
-      RepeatFreq.monthly => interval == 1 ? 'month' : '$interval months',
-    };
-    return 'Every $unit';
-  }
+  /// "Every week", "Every 3 days" — in the app's language.
+  String describe() => switch (freq) {
+    RepeatFreq.daily => l10nNow.tkEveryDay(interval),
+    RepeatFreq.weekly => l10nNow.tkEveryWeek(interval),
+    RepeatFreq.monthly => l10nNow.tkEveryMonth(interval),
+  };
 
   // Calendar arithmetic (DST-safe: build from date parts, not Durations).
   static DateTime _addDays(DateTime d, int days) =>

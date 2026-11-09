@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/l10n.dart';
 import '../../core/money.dart';
 import '../../core/now_provider.dart';
 import '../../core/theme/tokens.dart';
@@ -31,19 +32,20 @@ class CaptureReviewScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final session = ref.watch(captureSessionProvider);
     final drafts = session.drafts;
+    final l = context.l10n;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
           drafts.length <= 1
-              ? 'Save to Vault'
-              : 'Save to Vault · 1 of ${drafts.length}',
+              ? l.cpSaveToVault
+              : l.cpSaveToVaultOf('${drafts.length}'),
           key: const ValueKey('review-title'),
         ),
         actions: [
           IconButton(
             key: const ValueKey('review-scan-another'),
-            tooltip: 'Scan another',
+            tooltip: l.cpScanAnother,
             icon: const Icon(Icons.add_a_photo_outlined),
             onPressed: () => startScan(
               context,
@@ -54,7 +56,7 @@ class CaptureReviewScreen extends ConsumerWidget {
           ),
           IconButton(
             key: const ValueKey('review-import'),
-            tooltip: 'Import a file',
+            tooltip: l.cpImportFile,
             icon: const Icon(Icons.upload_file_outlined),
             onPressed: () => importFiles(
               context,
@@ -65,7 +67,7 @@ class CaptureReviewScreen extends ConsumerWidget {
         ],
       ),
       body: drafts.isEmpty
-          ? const Center(child: Text('Nothing left to file'))
+          ? Center(child: Text(l.cpNothingLeft))
           : _DraftForm(
               // A fresh form for every draft.
               key: ObjectKey(drafts.first),
@@ -202,6 +204,7 @@ class _DraftFormState extends ConsumerState<_DraftForm> {
   Future<void> _save() async {
     if (_saving || _type == null) return;
     setState(() => _saving = true);
+    final l = context.l10n;
     final service = ref.read(captureServiceProvider);
     final values = _values();
     final analysis = _analysis ?? DocumentAnalysis.empty;
@@ -248,9 +251,9 @@ class _DraftFormState extends ConsumerState<_DraftForm> {
       _advance(
         saved: true,
         note: outcome.spike
-            ? 'Unusually high bill ⚠'
+            ? l.cpUnusualBill
             : outcome.upgradedTaskId != null
-            ? '⚡ Bill task updated'
+            ? l.cpBillTaskUpdated
             : null,
       );
     } finally {
@@ -260,6 +263,7 @@ class _DraftFormState extends ConsumerState<_DraftForm> {
 
   void _advance({required bool saved, String? note}) {
     final messenger = ScaffoldMessenger.of(context);
+    final l = context.l10n;
     final session = ref.read(captureSessionProvider.notifier);
     final last = ref.read(captureSessionProvider).drafts.length <= 1;
     session.next();
@@ -268,7 +272,9 @@ class _DraftFormState extends ConsumerState<_DraftForm> {
     messenger.showSnackBar(
       SnackBar(
         content: Text(
-          saved ? ['Saved to Vault', ?note].join(' · ') : 'Duplicate discarded',
+          saved
+              ? [l.cpSavedToVault, ?note].join(' · ')
+              : l.cpDuplicateDiscarded,
         ),
       ),
     );
@@ -296,6 +302,7 @@ class _DraftFormState extends ConsumerState<_DraftForm> {
     final persons = ref.watch(personsProvider).value ?? const <Person>[];
     final draft = widget.draft;
     final analysis = _analysis;
+    final l = context.l10n;
 
     return ListView(
       padding: const EdgeInsets.all(Tokens.spaceM),
@@ -303,17 +310,17 @@ class _DraftFormState extends ConsumerState<_DraftForm> {
         _PagesStrip(draft: draft),
         const SizedBox(height: Tokens.spaceM),
         if (analysis == null)
-          const Padding(
-            key: ValueKey('review-reading'),
-            padding: EdgeInsets.symmetric(vertical: Tokens.spaceS),
+          Padding(
+            key: const ValueKey('review-reading'),
+            padding: const EdgeInsets.symmetric(vertical: Tokens.spaceS),
             child: Row(
               children: [
-                SizedBox.square(
+                const SizedBox.square(
                   dimension: 18,
                   child: CircularProgressIndicator(strokeWidth: 2),
                 ),
-                SizedBox(width: Tokens.spaceS),
-                Text('Reading document…'),
+                const SizedBox(width: Tokens.spaceS),
+                Text(l.cpReading),
               ],
             ),
           )
@@ -328,9 +335,9 @@ class _DraftFormState extends ConsumerState<_DraftForm> {
           key: const ValueKey('review-name'),
           controller: _title,
           textCapitalization: TextCapitalization.sentences,
-          decoration: const InputDecoration(
-            labelText: 'Name',
-            border: OutlineInputBorder(),
+          decoration: InputDecoration(
+            labelText: l.name,
+            border: const OutlineInputBorder(),
           ),
         ),
         for (final e in _fieldCtrls.entries) ...[
@@ -345,7 +352,7 @@ class _DraftFormState extends ConsumerState<_DraftForm> {
                 : TextInputType.text,
             decoration: InputDecoration(
               labelText: Fields.labels[e.key],
-              prefixText: e.key == Fields.amount ? 'Rs ' : null,
+              prefixText: e.key == Fields.amount ? l.cpRsPrefix : null,
               suffixIcon: Fields.isDate(e.key) ? const Icon(Icons.event) : null,
               border: const OutlineInputBorder(),
             ),
@@ -355,12 +362,12 @@ class _DraftFormState extends ConsumerState<_DraftForm> {
         DropdownButtonFormField<String?>(
           key: ValueKey('review-folder-$_folderId'),
           initialValue: _folderId,
-          decoration: const InputDecoration(
-            labelText: 'Folder',
-            border: OutlineInputBorder(),
+          decoration: InputDecoration(
+            labelText: l.cpFolder,
+            border: const OutlineInputBorder(),
           ),
           items: [
-            const DropdownMenuItem(value: null, child: Text('📥 Unfiled')),
+            DropdownMenuItem(value: null, child: Text(l.cpUnfiled)),
             for (final f in folders)
               DropdownMenuItem(value: f.id, child: Text('${f.icon} ${f.name}')),
           ],
@@ -373,30 +380,30 @@ class _DraftFormState extends ConsumerState<_DraftForm> {
         DropdownButtonFormField<String?>(
           key: const ValueKey('review-person'),
           initialValue: _personId,
-          decoration: const InputDecoration(
-            labelText: 'Belongs to',
-            border: OutlineInputBorder(),
+          decoration: InputDecoration(
+            labelText: l.cpBelongsTo,
+            border: const OutlineInputBorder(),
           ),
           items: [
-            const DropdownMenuItem(value: null, child: Text('Nobody')),
+            DropdownMenuItem(value: null, child: Text(l.cpNobody)),
             for (final p in persons)
               DropdownMenuItem(
                 value: p.id,
-                child: Text('${p.avatar ?? '👤'} ${p.name}'),
+                child: Text([p.avatar ?? '👤', p.name].join(' ')),
               ),
           ],
           onChanged: (v) => setState(() => _personId = v),
         ),
         if (!draft.isPdfImport) ...[
           const SizedBox(height: Tokens.spaceM),
-          Text('Save as', style: theme.textTheme.labelLarge),
+          Text(l.cpSaveAs, style: theme.textTheme.labelLarge),
           const SizedBox(height: Tokens.spaceS),
           SegmentedButton<OutputFormat>(
             key: const ValueKey('review-format'),
             showSelectedIcon: false,
-            segments: const [
-              ButtonSegment(value: OutputFormat.pdf, label: Text('PDF')),
-              ButtonSegment(value: OutputFormat.jpeg, label: Text('JPEG')),
+            segments: [
+              ButtonSegment(value: OutputFormat.pdf, label: Text(l.cpPdf)),
+              ButtonSegment(value: OutputFormat.jpeg, label: Text(l.cpJpeg)),
             ],
             selected: {_format},
             onSelectionChanged: (s) => setState(() => _format = s.first),
@@ -416,13 +423,13 @@ class _DraftFormState extends ConsumerState<_DraftForm> {
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
               : const Icon(Icons.save_alt),
-          label: const Text('Save to Vault'),
+          label: Text(l.cpSaveToVault),
         ),
         const SizedBox(height: Tokens.spaceS),
         TextButton(
           key: const ValueKey('review-discard'),
           onPressed: _saving ? null : () => _advance(saved: false),
-          child: const Text('Discard this one'),
+          child: Text(l.cpDiscardThis),
         ),
       ],
     );
@@ -446,12 +453,12 @@ class _TypeRow extends StatelessWidget {
     final theme = Theme.of(context);
     final c = analysis.classification;
     final confident = !analysis.unreadable && c.isConfident;
+    final l = context.l10n;
     final message = analysis.unreadable
-        ? "Couldn't read any text — saved as Unclassified. Pick a type if "
-              'you like.'
+        ? l.cpUnreadable
         : confident
         ? null
-        : 'Not sure what this is — please pick a type.';
+        : l.cpNotSure;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -475,7 +482,10 @@ class _TypeRow extends StatelessWidget {
                 avatar: Text(docTypeIcon(type!)),
                 label: Text(
                   confident && type == c.type
-                      ? '${typeName(type!)} · ${(c.confidence * 100).round()}%'
+                      ? l.cpTypeConfidence(
+                          typeName(type!),
+                          '${(c.confidence * 100).round()}',
+                        )
                       : typeName(type!),
                 ),
               ),
@@ -484,7 +494,7 @@ class _TypeRow extends StatelessWidget {
               child: DropdownButtonFormField<String>(
                 key: const ValueKey('review-type-picker'),
                 initialValue: type,
-                hint: const Text('Pick a type'),
+                hint: Text(l.cpPickType),
                 isExpanded: true,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
@@ -514,20 +524,18 @@ Future<bool> _askDuplicate(BuildContext context, Document existing) async {
     context: context,
     builder: (context) => AlertDialog(
       key: const ValueKey('dialog-duplicate'),
-      title: const Text('Possible duplicate'),
-      content: Text(
-        'Looks like a duplicate of \'${existing.title}\'. Keep both?',
-      ),
+      title: Text(context.l10n.cpDuplicateTitle),
+      content: Text(context.l10n.cpDuplicateBody(existing.title)),
       actions: [
         TextButton(
           key: const ValueKey('duplicate-discard'),
           onPressed: () => Navigator.pop(context, false),
-          child: const Text('Discard new'),
+          child: Text(context.l10n.cpDiscardNew),
         ),
         FilledButton(
           key: const ValueKey('duplicate-keep'),
           onPressed: () => Navigator.pop(context, true),
-          child: const Text('Keep both'),
+          child: Text(context.l10n.cpKeepBoth),
         ),
       ],
     ),
@@ -575,7 +583,7 @@ class _PagesStrip extends StatelessWidget {
         ),
         const SizedBox(height: Tokens.spaceXs),
         Text(
-          count == 1 ? '1 page' : '$count pages',
+          context.l10n.cpPages(count),
           key: const ValueKey('review-pages'),
           style: Theme.of(context).textTheme.labelMedium,
         ),

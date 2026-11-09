@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 
+import '../../../core/l10n.dart';
 import '../../../data/db/app_database.dart';
 import '../../../data/repositories/repositories.dart';
 import '../domain/vault_rules.dart';
@@ -63,7 +64,7 @@ class VaultService {
   Future<void> deletePerson(String id) async {
     final p = await _requirePerson(id);
     if (p.relation == 'self') {
-      throw const ProtectedItemException('Your own profile can\'t be deleted');
+      throw ProtectedItemException(l10nNow.vtOwnProfileProtected);
     }
     await _db.transaction(() async {
       for (final d in await _repos.documents.getWhere(
@@ -106,7 +107,7 @@ class VaultService {
   }) async {
     final f = await _requireFolder(id);
     if (isSystemFolder(f)) {
-      throw const ProtectedItemException('System folders can\'t be renamed');
+      throw ProtectedItemException(l10nNow.vtSystemFolderNoRename);
     }
     return _repos.folders.update(
       id,
@@ -118,7 +119,7 @@ class VaultService {
   Future<void> deleteFolder(String id) async {
     final f = await _requireFolder(id);
     if (isSystemFolder(f)) {
-      throw const ProtectedItemException('System folders can\'t be deleted');
+      throw ProtectedItemException(l10nNow.vtSystemFolderNoDelete);
     }
     await _db.transaction(() async {
       for (final d in await _repos.documents.getWhere(

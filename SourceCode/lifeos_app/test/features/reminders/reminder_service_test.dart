@@ -34,7 +34,7 @@ void main() {
   tearDown(() => db.close());
 
   Future<String> payloadFor(String taskId) async {
-    final planned = await sync.resync();
+    final planned = withoutDigest(await sync.resync());
     return planned.firstWhere((p) => p.taskId == taskId).payload;
   }
 
@@ -109,18 +109,18 @@ void main() {
         due: DateTime(2026, 11, 8, 16),
         allDay: false,
       );
-      expect((await sync.resync()).map((p) => p.taskId), [t.id]);
-      expect(gateway.scheduled, hasLength(1));
+      expect((withoutDigest(await sync.resync())).map((p) => p.taskId), [t.id]);
+      expect(scheduledReminders(gateway), hasLength(1));
 
       final done = await tasks.complete(t.id);
-      expect(await sync.resync(), isEmpty);
-      expect(gateway.scheduled, isEmpty);
+      expect(withoutDigest(await sync.resync()), isEmpty);
+      expect(scheduledReminders(gateway), isEmpty);
 
       await tasks.undoComplete(done);
-      expect(await sync.resync(), hasLength(1));
+      expect(withoutDigest(await sync.resync()), hasLength(1));
 
       await tasks.delete(t.id);
-      expect(await sync.resync(), isEmpty);
+      expect(withoutDigest(await sync.resync()), isEmpty);
     });
 
     test('the sync reacts to writes on its own (debounced)', () async {
@@ -137,11 +137,11 @@ void main() {
         allDay: false,
       );
       await Future<void>.delayed(const Duration(milliseconds: 50));
-      expect(gateway.scheduled.map((p) => p.taskId), [t.id]);
+      expect(scheduledReminders(gateway).map((p) => p.taskId), [t.id]);
 
       await tasks.complete(t.id);
       await Future<void>.delayed(const Duration(milliseconds: 50));
-      expect(gateway.scheduled, isEmpty);
+      expect(scheduledReminders(gateway), isEmpty);
       await live.stop();
     });
 
@@ -168,7 +168,7 @@ void main() {
         ),
       );
       final payload = await payloadFor(t.id);
-      expect(gateway.scheduled.single.kind, ReminderKind.payment);
+      expect(scheduledReminders(gateway).single.kind, ReminderKind.payment);
 
       expect(
         await reminders.handleAction(ReminderActions.paid, payload),
@@ -178,7 +178,7 @@ void main() {
       final paid = (await repos.payments.getById(p.id))!;
       expect(paid.status, 'paid');
       expect(paid.paidAt, now.toUtc().millisecondsSinceEpoch);
-      expect(await sync.resync(), isEmpty);
+      expect(withoutDigest(await sync.resync()), isEmpty);
     });
 
     test('Done ✓ completes the task', () async {
@@ -227,14 +227,18 @@ void main() {
       );
       await reminders.add(t.id, DateTime(2026, 11, 8, 18));
       final payload = await payloadFor(t.id);
-      expect(gateway.scheduled.single.kind, ReminderKind.expiry);
+      expect(scheduledReminders(gateway).single.kind, ReminderKind.expiry);
 
       await reminders.handleAction(ReminderActions.renew, payload);
       final all = await repos.tasks.getAll();
       final renew = all.firstWhere((x) => x.title == 'Renew Passport (Ali)');
       expect((renew.priority, renew.domain), (2, 'vault'));
       expect(localDue(renew), DateTime(2026, 11, 9));
-      expect(await sync.resync(), isEmpty, reason: 'expiry reminder dismissed');
+      expect(
+        withoutDigest(await sync.resync()),
+        isEmpty,
+        reason: 'expiry reminder dismissed',
+      );
     });
 
     test('Dismiss marks the reminder fired', () async {
@@ -276,8 +280,16 @@ void main() {
       s.id,
       const UserSettingsCompanion(appLock: Value(true)),
     );
-    final planned = await sync.resync();
+    final planned = withoutDigest(await sync.resync());
     expect(planned.single.title, 'A task is due');
     expect(planned.single.body, isNot(contains('Ahmed')));
   });
 }
+
+/// What was scheduled apart from the morning digest (PBI-023), which every
+/// resync adds.
+List<PlannedNotification> scheduledReminders(FakeGateway g) =>
+    g.scheduled.where((p) => p.kind != ReminderKind.digest).toList();
+
+List<PlannedNotification> withoutDigest(List<PlannedNotification> l) =>
+    l.where((p) => p.kind != ReminderKind.digest).toList();

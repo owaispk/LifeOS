@@ -1,7 +1,9 @@
-// Daily Life Score v1 (PBI-020) — pure, no database, no Flutter.
+// Daily Life Score v1 (PBI-020) — pure, no database; words via l10nNow.
 import 'dart:convert';
 
+import '../../../core/l10n.dart';
 import '../../../data/db/app_database.dart';
+import '../../../shared/format.dart' show shortMonth;
 import '../../money/domain/money_rules.dart' show parseIsoDate;
 
 /// Score components (features spec §9.1).
@@ -211,7 +213,7 @@ LifeScore computeLifeScore({
             id: t.id,
             title: t.title,
             points: -_r1(taskWeight * weightOf(t) / total),
-            detail: 'Still open from yesterday',
+            detail: l10nNow.scStillOpen,
           ),
         );
       }
@@ -248,7 +250,7 @@ LifeScore computeLifeScore({
           id: p.id,
           title: p.title,
           points: -_r1(per),
-          detail: 'Was due ${d.day} ${_mon[d.month - 1]}',
+          detail: l10nNow.scWasDue('${d.day} ${shortMonth(d)}'),
         ),
       );
     }
@@ -290,10 +292,10 @@ LifeScore computeLifeScore({
           title: d.title,
           points: -_r1(per),
           detail: days < 0
-              ? 'Expired ${-days} ${-days == 1 ? 'day' : 'days'} ago'
+              ? l10nNow.scExpiredAgo(-days)
               : days == 0
-              ? 'Expires today'
-              : 'Expires in $days ${days == 1 ? 'day' : 'days'}',
+              ? l10nNow.scExpiresToday
+              : l10nNow.scExpiresIn(days),
         ),
       );
     }
@@ -320,34 +322,19 @@ double _perItem(double weight, int n) =>
 
 double _ratio(int n) => n >= itemsToEmpty ? 0 : 1 - n / itemsToEmpty;
 
-const _mon = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
-];
-
 /// The ring's status: red < 40, amber 40–69, green ≥ 70 — always paired
 /// with words, never colour alone.
 String scoreLabel(int score) => score < 40
-    ? 'Heavy week'
+    ? l10nNow.scHeavyWeek
     : score < 70
-    ? 'A few things need you'
-    : 'Doing well';
+    ? l10nNow.scFewThings
+    : l10nNow.scDoingWell;
 
 String componentLabel(ScoreComponent c) => switch (c) {
-  ScoreComponent.tasks => 'Tasks',
-  ScoreComponent.payments => 'Payments',
-  ScoreComponent.documents => 'Documents',
-  ScoreComponent.health => 'Health',
-  ScoreComponent.people => 'People',
-  ScoreComponent.balance => 'Balance',
+  ScoreComponent.tasks => l10nNow.scCompTasks,
+  ScoreComponent.payments => l10nNow.scCompPayments,
+  ScoreComponent.documents => l10nNow.scCompDocuments,
+  ScoreComponent.health => l10nNow.scCompHealth,
+  ScoreComponent.people => l10nNow.scCompPeople,
+  ScoreComponent.balance => l10nNow.scCompBalance,
 };

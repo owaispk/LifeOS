@@ -3161,6 +3161,33 @@ class $UserSettingsTable extends UserSettings
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _languageMeta = const VerificationMeta(
+    'language',
+  );
+  @override
+  late final GeneratedColumn<String> language = GeneratedColumn<String>(
+    'language',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('en'),
+  );
+  static const VerificationMeta _screenshotBlockMeta = const VerificationMeta(
+    'screenshotBlock',
+  );
+  @override
+  late final GeneratedColumn<bool> screenshotBlock = GeneratedColumn<bool>(
+    'screenshot_block',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("screenshot_block" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -3182,6 +3209,8 @@ class $UserSettingsTable extends UserSettings
     dayCapacityMin,
     salaryDay,
     salaryMinor,
+    language,
+    screenshotBlock,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3321,6 +3350,21 @@ class $UserSettingsTable extends UserSettings
         ),
       );
     }
+    if (data.containsKey('language')) {
+      context.handle(
+        _languageMeta,
+        language.isAcceptableOrUnknown(data['language']!, _languageMeta),
+      );
+    }
+    if (data.containsKey('screenshot_block')) {
+      context.handle(
+        _screenshotBlockMeta,
+        screenshotBlock.isAcceptableOrUnknown(
+          data['screenshot_block']!,
+          _screenshotBlockMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -3410,6 +3454,14 @@ class $UserSettingsTable extends UserSettings
         DriftSqlType.int,
         data['${effectivePrefix}salary_minor'],
       ),
+      language: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}language'],
+      )!,
+      screenshotBlock: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}screenshot_block'],
+      )!,
     );
   }
 
@@ -3443,6 +3495,12 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
   /// Salary-aware forecast (schema v4, PBI-019): day of month + amount.
   final int? salaryDay;
   final int? salaryMinor;
+
+  /// UI language, 'en' | 'ur' (schema v6, PBI-025).
+  final String language;
+
+  /// Block screenshots inside the Vault (schema v6, PBI-024).
+  final bool screenshotBlock;
   const UserSettingsRow({
     required this.id,
     required this.userId,
@@ -3463,6 +3521,8 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     required this.dayCapacityMin,
     this.salaryDay,
     this.salaryMinor,
+    required this.language,
+    required this.screenshotBlock,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -3492,6 +3552,8 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     if (!nullToAbsent || salaryMinor != null) {
       map['salary_minor'] = Variable<int>(salaryMinor);
     }
+    map['language'] = Variable<String>(language);
+    map['screenshot_block'] = Variable<bool>(screenshotBlock);
     return map;
   }
 
@@ -3522,6 +3584,8 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
       salaryMinor: salaryMinor == null && nullToAbsent
           ? const Value.absent()
           : Value(salaryMinor),
+      language: Value(language),
+      screenshotBlock: Value(screenshotBlock),
     );
   }
 
@@ -3550,6 +3614,8 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
       dayCapacityMin: serializer.fromJson<int>(json['dayCapacityMin']),
       salaryDay: serializer.fromJson<int?>(json['salaryDay']),
       salaryMinor: serializer.fromJson<int?>(json['salaryMinor']),
+      language: serializer.fromJson<String>(json['language']),
+      screenshotBlock: serializer.fromJson<bool>(json['screenshotBlock']),
     );
   }
   @override
@@ -3575,6 +3641,8 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
       'dayCapacityMin': serializer.toJson<int>(dayCapacityMin),
       'salaryDay': serializer.toJson<int?>(salaryDay),
       'salaryMinor': serializer.toJson<int?>(salaryMinor),
+      'language': serializer.toJson<String>(language),
+      'screenshotBlock': serializer.toJson<bool>(screenshotBlock),
     };
   }
 
@@ -3598,6 +3666,8 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     int? dayCapacityMin,
     Value<int?> salaryDay = const Value.absent(),
     Value<int?> salaryMinor = const Value.absent(),
+    String? language,
+    bool? screenshotBlock,
   }) => UserSettingsRow(
     id: id ?? this.id,
     userId: userId ?? this.userId,
@@ -3618,6 +3688,8 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     dayCapacityMin: dayCapacityMin ?? this.dayCapacityMin,
     salaryDay: salaryDay.present ? salaryDay.value : this.salaryDay,
     salaryMinor: salaryMinor.present ? salaryMinor.value : this.salaryMinor,
+    language: language ?? this.language,
+    screenshotBlock: screenshotBlock ?? this.screenshotBlock,
   );
   UserSettingsRow copyWithCompanion(UserSettingsCompanion data) {
     return UserSettingsRow(
@@ -3656,6 +3728,10 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
       salaryMinor: data.salaryMinor.present
           ? data.salaryMinor.value
           : this.salaryMinor,
+      language: data.language.present ? data.language.value : this.language,
+      screenshotBlock: data.screenshotBlock.present
+          ? data.screenshotBlock.value
+          : this.screenshotBlock,
     );
   }
 
@@ -3680,13 +3756,15 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
           ..write('backupMode: $backupMode, ')
           ..write('dayCapacityMin: $dayCapacityMin, ')
           ..write('salaryDay: $salaryDay, ')
-          ..write('salaryMinor: $salaryMinor')
+          ..write('salaryMinor: $salaryMinor, ')
+          ..write('language: $language, ')
+          ..write('screenshotBlock: $screenshotBlock')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     id,
     userId,
     updatedAt,
@@ -3706,7 +3784,9 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     dayCapacityMin,
     salaryDay,
     salaryMinor,
-  );
+    language,
+    screenshotBlock,
+  ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -3729,7 +3809,9 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
           other.backupMode == this.backupMode &&
           other.dayCapacityMin == this.dayCapacityMin &&
           other.salaryDay == this.salaryDay &&
-          other.salaryMinor == this.salaryMinor);
+          other.salaryMinor == this.salaryMinor &&
+          other.language == this.language &&
+          other.screenshotBlock == this.screenshotBlock);
 }
 
 class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
@@ -3752,6 +3834,8 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
   final Value<int> dayCapacityMin;
   final Value<int?> salaryDay;
   final Value<int?> salaryMinor;
+  final Value<String> language;
+  final Value<bool> screenshotBlock;
   final Value<int> rowid;
   const UserSettingsCompanion({
     this.id = const Value.absent(),
@@ -3773,6 +3857,8 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     this.dayCapacityMin = const Value.absent(),
     this.salaryDay = const Value.absent(),
     this.salaryMinor = const Value.absent(),
+    this.language = const Value.absent(),
+    this.screenshotBlock = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   UserSettingsCompanion.insert({
@@ -3795,6 +3881,8 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     this.dayCapacityMin = const Value.absent(),
     this.salaryDay = const Value.absent(),
     this.salaryMinor = const Value.absent(),
+    this.language = const Value.absent(),
+    this.screenshotBlock = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   static Insertable<UserSettingsRow> custom({
@@ -3817,6 +3905,8 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     Expression<int>? dayCapacityMin,
     Expression<int>? salaryDay,
     Expression<int>? salaryMinor,
+    Expression<String>? language,
+    Expression<bool>? screenshotBlock,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -3839,6 +3929,8 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
       if (dayCapacityMin != null) 'day_capacity_min': dayCapacityMin,
       if (salaryDay != null) 'salary_day': salaryDay,
       if (salaryMinor != null) 'salary_minor': salaryMinor,
+      if (language != null) 'language': language,
+      if (screenshotBlock != null) 'screenshot_block': screenshotBlock,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -3863,6 +3955,8 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     Value<int>? dayCapacityMin,
     Value<int?>? salaryDay,
     Value<int?>? salaryMinor,
+    Value<String>? language,
+    Value<bool>? screenshotBlock,
     Value<int>? rowid,
   }) {
     return UserSettingsCompanion(
@@ -3885,6 +3979,8 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
       dayCapacityMin: dayCapacityMin ?? this.dayCapacityMin,
       salaryDay: salaryDay ?? this.salaryDay,
       salaryMinor: salaryMinor ?? this.salaryMinor,
+      language: language ?? this.language,
+      screenshotBlock: screenshotBlock ?? this.screenshotBlock,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -3949,6 +4045,12 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     if (salaryMinor.present) {
       map['salary_minor'] = Variable<int>(salaryMinor.value);
     }
+    if (language.present) {
+      map['language'] = Variable<String>(language.value);
+    }
+    if (screenshotBlock.present) {
+      map['screenshot_block'] = Variable<bool>(screenshotBlock.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -3977,6 +4079,8 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
           ..write('dayCapacityMin: $dayCapacityMin, ')
           ..write('salaryDay: $salaryDay, ')
           ..write('salaryMinor: $salaryMinor, ')
+          ..write('language: $language, ')
+          ..write('screenshotBlock: $screenshotBlock, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -15514,6 +15618,8 @@ typedef $$UserSettingsTableCreateCompanionBuilder =
       Value<int> dayCapacityMin,
       Value<int?> salaryDay,
       Value<int?> salaryMinor,
+      Value<String> language,
+      Value<bool> screenshotBlock,
       Value<int> rowid,
     });
 typedef $$UserSettingsTableUpdateCompanionBuilder =
@@ -15537,6 +15643,8 @@ typedef $$UserSettingsTableUpdateCompanionBuilder =
       Value<int> dayCapacityMin,
       Value<int?> salaryDay,
       Value<int?> salaryMinor,
+      Value<String> language,
+      Value<bool> screenshotBlock,
       Value<int> rowid,
     });
 
@@ -15641,6 +15749,16 @@ class $$UserSettingsTableFilterComposer
 
   ColumnFilters<int> get salaryMinor => $composableBuilder(
     column: $table.salaryMinor,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get language => $composableBuilder(
+    column: $table.language,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get screenshotBlock => $composableBuilder(
+    column: $table.screenshotBlock,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -15748,6 +15866,16 @@ class $$UserSettingsTableOrderingComposer
     column: $table.salaryMinor,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get language => $composableBuilder(
+    column: $table.language,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get screenshotBlock => $composableBuilder(
+    column: $table.screenshotBlock,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$UserSettingsTableAnnotationComposer
@@ -15831,6 +15959,14 @@ class $$UserSettingsTableAnnotationComposer
     column: $table.salaryMinor,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get language =>
+      $composableBuilder(column: $table.language, builder: (column) => column);
+
+  GeneratedColumn<bool> get screenshotBlock => $composableBuilder(
+    column: $table.screenshotBlock,
+    builder: (column) => column,
+  );
 }
 
 class $$UserSettingsTableTableManager
@@ -15883,6 +16019,8 @@ class $$UserSettingsTableTableManager
                 Value<int> dayCapacityMin = const Value.absent(),
                 Value<int?> salaryDay = const Value.absent(),
                 Value<int?> salaryMinor = const Value.absent(),
+                Value<String> language = const Value.absent(),
+                Value<bool> screenshotBlock = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => UserSettingsCompanion(
                 id: id,
@@ -15904,6 +16042,8 @@ class $$UserSettingsTableTableManager
                 dayCapacityMin: dayCapacityMin,
                 salaryDay: salaryDay,
                 salaryMinor: salaryMinor,
+                language: language,
+                screenshotBlock: screenshotBlock,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -15927,6 +16067,8 @@ class $$UserSettingsTableTableManager
                 Value<int> dayCapacityMin = const Value.absent(),
                 Value<int?> salaryDay = const Value.absent(),
                 Value<int?> salaryMinor = const Value.absent(),
+                Value<String> language = const Value.absent(),
+                Value<bool> screenshotBlock = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => UserSettingsCompanion.insert(
                 id: id,
@@ -15948,6 +16090,8 @@ class $$UserSettingsTableTableManager
                 dayCapacityMin: dayCapacityMin,
                 salaryDay: salaryDay,
                 salaryMinor: salaryMinor,
+                language: language,
+                screenshotBlock: screenshotBlock,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

@@ -1,16 +1,16 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/l10n.dart';
 import '../../../core/now_provider.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../data/db/app_database.dart';
 import '../../../shared/format.dart';
 import '../domain/vault_rules.dart';
 import '../vault_providers.dart';
+import 'document_pages.dart' show fileBytesProvider;
 
 /// One document row: thumbnail · title · type chip · date · person · ★.
 class DocumentTile extends ConsumerWidget {
@@ -43,7 +43,7 @@ class DocumentTile extends ConsumerWidget {
               docTypeLabel(document.docType),
               relativeDay(createdAt(document), now),
               if (person != null) '${person.avatar ?? '👤'} ${person.name}',
-              if (document.archivedAt != null) 'Archived',
+              if (document.archivedAt != null) context.l10n.vtArchived,
             ].join(' · '),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -61,7 +61,7 @@ class DocumentTile extends ConsumerWidget {
           ? Icon(
               Icons.star,
               color: theme.colorScheme.primary,
-              semanticLabel: 'Favourite',
+              semanticLabel: context.l10n.vtFavourite,
             )
           : null,
     );
@@ -89,27 +89,34 @@ TextSpan _highlight(String snippet, ThemeData theme) {
   return TextSpan(style: theme.textTheme.bodySmall, children: spans);
 }
 
-class _Thumbnail extends StatelessWidget {
+class _Thumbnail extends ConsumerWidget {
   const _Thumbnail({required this.document, required this.page});
 
   final Document document;
   final DocumentFile? page;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final scheme = Theme.of(context).colorScheme;
-    final path = page?.localPath;
-    final isImage = page?.mime.startsWith('image/') ?? false;
+    final f = page;
+    final isImage = f?.mime.startsWith('image/') ?? false;
+    final icon = Center(
+      child: Text(
+        docTypeIcon(document.docType),
+        style: const TextStyle(fontSize: 24),
+      ),
+    );
     final Widget child;
-    if (!kIsWeb && isImage && path != null && File(path).existsSync()) {
-      child = Image.file(File(path), fit: BoxFit.cover, cacheWidth: 96);
+    if (!kIsWeb && isImage && f?.localPath != null) {
+      // Decrypted in memory (PBI-024); the type icon stands in meanwhile.
+      child = ref
+          .watch(fileBytesProvider(f!))
+          .maybeWhen(
+            data: (b) => Image.memory(b, fit: BoxFit.cover, cacheWidth: 96),
+            orElse: () => icon,
+          );
     } else {
-      child = Center(
-        child: Text(
-          docTypeIcon(document.docType),
-          style: const TextStyle(fontSize: 24),
-        ),
-      );
+      child = icon;
     }
     return ClipRRect(
       borderRadius: BorderRadius.circular(8),

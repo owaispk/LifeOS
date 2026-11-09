@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/l10n.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../data/db/app_database.dart';
 import '../../../shared/format.dart';
@@ -23,20 +24,18 @@ class TaskDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final task = ref.watch(taskByIdProvider(taskId));
+    final l = context.l10n;
     return Scaffold(
-      appBar: AppBar(title: const Text('Task')),
+      appBar: AppBar(title: Text(l.tkTask)),
       body: task.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => const EmptyState(
-          emoji: '⚠️',
-          title: "Can't open this task",
-          message: '',
-        ),
+        error: (e, _) =>
+            EmptyState(emoji: '⚠️', title: l.tkCantOpen, message: ''),
         data: (t) => t == null
-            ? const EmptyState(
+            ? EmptyState(
                 emoji: '🗑️',
-                title: 'This task is gone',
-                message: 'It was deleted or completed.',
+                title: l.tkGoneTitle,
+                message: l.tkGoneBody,
               )
             : _TaskDetailBody(key: ValueKey(t.id), task: t),
       ),
@@ -89,6 +88,7 @@ class _TaskDetailBodyState extends ConsumerState<_TaskDetailBody> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l = context.l10n;
     final now = ref.watch(nowProvider)();
     final persons = ref.watch(personsProvider).value ?? const <Person>[];
     final subtasks = ref.watch(subtasksProvider(task.id)).value ?? const [];
@@ -119,10 +119,10 @@ class _TaskDetailBodyState extends ConsumerState<_TaskDetailBody> {
         ListTile(
           contentPadding: EdgeInsets.zero,
           leading: const Icon(Icons.event),
-          title: const Text('Due'),
+          title: Text(l.tkDue),
           subtitle: Text(
             due == null
-                ? 'No date'
+                ? l.tkNoDate
                 : dueLabel(due, allDay: task.allDay, now: now),
           ),
           onTap: () async {
@@ -159,7 +159,7 @@ class _TaskDetailBodyState extends ConsumerState<_TaskDetailBody> {
           trailing: due == null
               ? null
               : IconButton(
-                  tooltip: 'Remove due date',
+                  tooltip: l.tkRemoveDueDate,
                   icon: const Icon(Icons.close),
                   onPressed: () => ref
                       .read(taskServiceProvider)
@@ -170,8 +170,8 @@ class _TaskDetailBodyState extends ConsumerState<_TaskDetailBody> {
           ListTile(
             contentPadding: EdgeInsets.zero,
             leading: const Icon(Icons.schedule),
-            title: const Text('Time'),
-            subtitle: Text(task.allDay ? 'All day' : formatTime(due)),
+            title: Text(l.tkTime),
+            subtitle: Text(task.allDay ? l.tkAllDay : formatTime(due)),
             onTap: () async {
               final picked = await showTimePicker(
                 context: context,
@@ -197,26 +197,26 @@ class _TaskDetailBodyState extends ConsumerState<_TaskDetailBody> {
                     onPressed: () => ref
                         .read(taskServiceProvider)
                         .reschedule(task.id, startOfDay(due), allDay: true),
-                    child: const Text('All day'),
+                    child: Text(l.tkAllDay),
                   ),
           ),
         _RemindersSection(task: task),
         const SizedBox(height: Tokens.spaceS),
 
-        const _Label('Priority'),
+        _Label(l.tkPriority),
         SegmentedButton<int>(
           showSelectedIcon: false,
-          segments: const [
-            ButtonSegment(value: 0, label: Text('Low')),
-            ButtonSegment(value: 1, label: Text('Medium')),
-            ButtonSegment(value: 2, label: Text('High')),
+          segments: [
+            ButtonSegment(value: 0, label: Text(l.tkLow)),
+            ButtonSegment(value: 1, label: Text(l.tkMedium)),
+            ButtonSegment(value: 2, label: Text(l.tkHigh)),
           ],
           selected: {task.priority},
           onSelectionChanged: (s) =>
               _update(TasksCompanion(priority: Value(s.first))),
         ),
 
-        const _Label('Life area'),
+        _Label(l.tkLifeArea),
         Wrap(
           spacing: Tokens.spaceS,
           children: [
@@ -234,13 +234,13 @@ class _TaskDetailBodyState extends ConsumerState<_TaskDetailBody> {
         ),
 
         if (persons.isNotEmpty) ...[
-          const _Label('For'),
+          _Label(l.tkFor),
           Wrap(
             spacing: Tokens.spaceS,
             children: [
               for (final p in persons)
                 ChoiceChip(
-                  label: Text('${p.avatar ?? '👤'} ${p.name}'),
+                  label: Text([p.avatar ?? '👤', p.name].join(' ')),
                   selected: task.personId == p.id,
                   onSelected: (on) => _update(
                     TasksCompanion(personId: Value(on ? p.id : null)),
@@ -250,12 +250,12 @@ class _TaskDetailBodyState extends ConsumerState<_TaskDetailBody> {
           ),
         ],
 
-        const _Label('Repeat'),
+        _Label(l.tkRepeat),
         Wrap(
           spacing: Tokens.spaceS,
           children: [
             ChoiceChip(
-              label: const Text('Never'),
+              label: Text(l.tkNever),
               selected: rule == null,
               onSelected: (_) =>
                   _update(const TasksCompanion(repeatRule: Value(null))),
@@ -275,14 +275,14 @@ class _TaskDetailBodyState extends ConsumerState<_TaskDetailBody> {
           ],
         ),
 
-        const _Label('Notes'),
+        _Label(l.tkNotes),
         TextField(
           key: const ValueKey('detail-notes'),
           controller: _notes,
           minLines: 2,
           maxLines: 6,
-          decoration: const InputDecoration(
-            hintText: 'Add notes',
+          decoration: InputDecoration(
+            hintText: l.tkAddNotes,
             border: OutlineInputBorder(),
           ),
           onTapOutside: (_) {
@@ -292,7 +292,10 @@ class _TaskDetailBodyState extends ConsumerState<_TaskDetailBody> {
         ),
 
         _Label(
-          'Sub-tasks (${subtasks.where((s) => s.done).length}/${subtasks.length})',
+          l.tkSubtasks(
+            '${subtasks.where((s) => s.done).length}',
+            '${subtasks.length}',
+          ),
         ),
         for (final s in subtasks)
           CheckboxListTile(
@@ -308,7 +311,7 @@ class _TaskDetailBodyState extends ConsumerState<_TaskDetailBody> {
             ),
             onChanged: (_) => ref.read(taskServiceProvider).toggleSubtask(s),
             secondary: IconButton(
-              tooltip: 'Remove sub-task',
+              tooltip: l.tkRemoveSubtask,
               icon: const Icon(Icons.close),
               onPressed: () =>
                   ref.read(taskServiceProvider).deleteSubtask(s.id),
@@ -317,9 +320,9 @@ class _TaskDetailBodyState extends ConsumerState<_TaskDetailBody> {
         TextField(
           key: const ValueKey('detail-add-subtask'),
           controller: _newSubtask,
-          decoration: const InputDecoration(
-            prefixIcon: Icon(Icons.add),
-            hintText: 'Add a sub-task',
+          decoration: InputDecoration(
+            prefixIcon: const Icon(Icons.add),
+            hintText: l.tkAddSubtask,
           ),
           textInputAction: TextInputAction.done,
           onSubmitted: (text) async {
@@ -338,7 +341,7 @@ class _TaskDetailBodyState extends ConsumerState<_TaskDetailBody> {
               OutlinedButton.icon(
                 key: const ValueKey('detail-skip'),
                 icon: const Icon(Icons.skip_next),
-                label: const Text('Skip this cycle'),
+                label: Text(l.tkSkipCycle),
                 onPressed: () async {
                   await ref.read(taskServiceProvider).skip(task.id);
                   if (context.mounted) context.go('/tasks');
@@ -347,15 +350,12 @@ class _TaskDetailBodyState extends ConsumerState<_TaskDetailBody> {
               OutlinedButton.icon(
                 key: const ValueKey('detail-mute'),
                 icon: const Icon(Icons.notifications_off_outlined),
-                label: const Text('Mute this rule'),
+                label: Text(l.tkMuteRule),
                 onPressed: () async {
                   await ref.read(taskServiceProvider).muteRule(task.atcRuleId!);
                   if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Rule paused — no new tasks from it'),
-                      ),
-                    );
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(SnackBar(content: Text(l.tkRulePaused)));
                   }
                 },
               ),
@@ -366,24 +366,22 @@ class _TaskDetailBodyState extends ConsumerState<_TaskDetailBody> {
                 foregroundColor: theme.colorScheme.error,
               ),
               icon: const Icon(Icons.delete_outline),
-              label: const Text('Delete'),
+              label: Text(l.tkDelete),
               onPressed: () async {
                 final ok = await showDialog<bool>(
                   context: context,
                   builder: (context) => AlertDialog(
-                    title: const Text('Delete this task?'),
-                    content: Text(
-                      '"${task.title}" and its sub-tasks will be removed.',
-                    ),
+                    title: Text(l.tkDeleteTitle),
+                    content: Text(l.tkDeleteBody(task.title)),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(context, false),
-                        child: const Text('Cancel'),
+                        child: Text(l.cancel),
                       ),
                       FilledButton(
                         key: const ValueKey('confirm-delete'),
                         onPressed: () => Navigator.pop(context, true),
-                        child: const Text('Delete'),
+                        child: Text(l.tkDelete),
                       ),
                     ],
                   ),
@@ -413,11 +411,12 @@ class _SourceLine extends ConsumerWidget {
     final rule = task.atcRuleId == null
         ? null
         : ref.watch(atcRuleProvider(task.atcRuleId!)).value;
+    final l = context.l10n;
     final text = doc != null
-        ? 'Created from: ${doc.title}'
+        ? l.tkCreatedFrom(doc.title)
         : rule != null
-        ? 'Created by rule: ${rule.name}'
-        : 'Created automatically';
+        ? l.tkCreatedByRule(rule.name)
+        : l.tkCreatedAuto;
 
     return ListTile(
       key: const ValueKey('detail-source'),
@@ -445,9 +444,9 @@ void _showDocumentSummary(BuildContext context, Document doc) {
           children: [
             Text(doc.title, style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: Tokens.spaceS),
-            Text('Type: ${doc.docType}'),
-            if (doc.issuer != null) Text('Issuer: ${doc.issuer}'),
-            if (doc.dueDate != null) Text('Due: ${doc.dueDate}'),
+            Text(context.l10n.tkDocType(doc.docType)),
+            if (doc.issuer != null) Text(context.l10n.tkDocIssuer(doc.issuer!)),
+            if (doc.dueDate != null) Text(context.l10n.tkDocDue(doc.dueDate!)),
           ],
         ),
       ),
@@ -474,6 +473,7 @@ class _RemindersSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = context.l10n;
     final now = ref.watch(nowProvider)();
     final reminders =
         ref.watch(taskRemindersProvider(task.id)).value ??
@@ -511,7 +511,7 @@ class _RemindersSection extends ConsumerWidget {
               ),
             ),
             trailing: IconButton(
-              tooltip: 'Remove reminder',
+              tooltip: l.tkRemoveReminder,
               icon: const Icon(Icons.close),
               onPressed: () => ref.read(reminderServiceProvider).remove(r.id),
             ),
@@ -520,7 +520,7 @@ class _RemindersSection extends ConsumerWidget {
           alignment: Alignment.centerLeft,
           child: PopupMenuButton<Object>(
             key: const ValueKey('add-reminder'),
-            tooltip: 'Add reminder',
+            tooltip: l.tkAddReminder,
             onSelected: (choice) async {
               if (choice is ReminderOffset && base != null) {
                 await add(applyOffset(base, choice));
@@ -540,16 +540,16 @@ class _RemindersSection extends ConsumerWidget {
                     value: o,
                     child: Text(offsetLabel(o)),
                   ),
-              const PopupMenuItem(value: 'custom', child: Text('Pick a time…')),
+              PopupMenuItem(value: 'custom', child: Text(l.tkPickTime)),
             ],
-            child: const Padding(
-              padding: EdgeInsets.symmetric(vertical: Tokens.spaceS),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: Tokens.spaceS),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.add_alert_outlined),
-                  SizedBox(width: Tokens.spaceS),
-                  Text('Add reminder'),
+                  const Icon(Icons.add_alert_outlined),
+                  const SizedBox(width: Tokens.spaceS),
+                  Text(l.tkAddReminder),
                 ],
               ),
             ),

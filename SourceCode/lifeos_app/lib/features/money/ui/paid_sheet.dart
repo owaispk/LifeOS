@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/l10n.dart';
 import '../../../core/money.dart';
 import '../../../core/now_provider.dart';
 import '../../../core/theme/tokens.dart';
@@ -38,6 +39,7 @@ Future<void> payWithChain(
   Payment p,
 ) async {
   final messenger = ScaffoldMessenger.of(context);
+  final l = context.l10n;
   final result = await showModalBottomSheet<(_ReceiptChoice, int?)>(
     context: context,
     useRootNavigator: true,
@@ -75,13 +77,13 @@ Future<void> payWithChain(
         duration: const Duration(seconds: 5),
         content: Text(
           [
-            '✓ Paid',
-            if (done.receiptDocumentId != null) 'Filed in Vault',
-            'Logged in Money',
+            l.mnPaidDone,
+            if (done.receiptDocumentId != null) l.mnFiledInVault,
+            l.mnLoggedInMoney,
           ].join(' · '),
         ),
         action: SnackBarAction(
-          label: 'Undo',
+          label: l.mnUndo,
           onPressed: () => service.undo(done),
         ),
       ),
@@ -109,6 +111,7 @@ class _PaidSheetState extends State<_PaidSheet> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final p = widget.payment;
+    final l = context.l10n;
     final needsAmount = p.amountMinor == null;
     final entered = Money.parseMinor(_amount.text);
     final ready = !needsAmount || (entered != null && entered > 0);
@@ -129,8 +132,8 @@ class _PaidSheetState extends State<_PaidSheet> {
         children: [
           Text(
             needsAmount
-                ? '✓ ${p.title} — how much did you pay?'
-                : '✓ ${p.title} — ${Money.format(p.amountMinor!)} paid',
+                ? l.mnPaidHowMuch(p.title)
+                : l.mnPaidAmountLine(p.title, Money.format(p.amountMinor!)),
             style: theme.textTheme.titleLarge,
           ),
           if (needsAmount) ...[
@@ -142,16 +145,16 @@ class _PaidSheetState extends State<_PaidSheet> {
               keyboardType: const TextInputType.numberWithOptions(
                 decimal: true,
               ),
-              decoration: const InputDecoration(
-                prefixText: 'Rs ',
-                labelText: 'Amount paid',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                prefixText: l.mnRsPrefix,
+                labelText: l.mnAmountPaid,
+                border: const OutlineInputBorder(),
               ),
               onChanged: (_) => setState(() {}),
             ),
           ],
           const SizedBox(height: Tokens.spaceM),
-          Text('📎 Attach receipt?', style: theme.textTheme.titleSmall),
+          Text(l.mnAttachReceipt, style: theme.textTheme.titleSmall),
           const SizedBox(height: Tokens.spaceS),
           Row(
             children: [
@@ -160,7 +163,7 @@ class _PaidSheetState extends State<_PaidSheet> {
                   key: const ValueKey('paid-scan'),
                   onPressed: ready ? () => pick(_ReceiptChoice.scan) : null,
                   icon: const Icon(Icons.document_scanner_outlined),
-                  label: const Text('Scan'),
+                  label: Text(l.mnScan),
                 ),
               ),
               const SizedBox(width: Tokens.spaceS),
@@ -169,7 +172,7 @@ class _PaidSheetState extends State<_PaidSheet> {
                   key: const ValueKey('paid-import'),
                   onPressed: ready ? () => pick(_ReceiptChoice.import) : null,
                   icon: const Icon(Icons.photo_library_outlined),
-                  label: const Text('Import'),
+                  label: Text(l.mnImport),
                 ),
               ),
               const SizedBox(width: Tokens.spaceS),
@@ -177,7 +180,7 @@ class _PaidSheetState extends State<_PaidSheet> {
                 child: FilledButton(
                   key: const ValueKey('paid-skip'),
                   onPressed: ready ? () => pick(_ReceiptChoice.skip) : null,
-                  child: const Text('Skip'),
+                  child: Text(l.skip),
                 ),
               ),
             ],

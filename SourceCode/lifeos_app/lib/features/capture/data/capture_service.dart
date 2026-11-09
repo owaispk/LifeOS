@@ -6,11 +6,13 @@ import 'package:drift/drift.dart';
 import 'package:image/image.dart' as img;
 import 'package:path/path.dart' as p;
 
+import '../../../core/l10n.dart';
 import '../../../data/db/app_database.dart';
 import '../../../data/repositories/repositories.dart';
 import '../../../shared/format.dart';
 import '../domain/image_checks.dart';
 import '../domain/pdf_builder.dart';
+import '../../security/crypto/vault_crypto.dart';
 
 enum OutputFormat { pdf, jpeg }
 
@@ -109,16 +111,23 @@ class PageCheck {
 /// Saves captures into the Vault (PBI-003). Files live under
 /// `<vaultRoot>/<documentId>/<fileId>.<ext>`.
 class CaptureService {
-  CaptureService(this._repos, this._vaultRoot, {DateTime Function()? now})
-    : _now = now ?? DateTime.now;
+  CaptureService(
+    this._repos,
+    this._vaultRoot, {
+    DateTime Function()? now,
+    this.crypto,
+  }) : _now = now ?? DateTime.now;
 
   final Repositories _repos;
   final Directory _vaultRoot;
   final DateTime Function() _now;
 
+  /// Encrypts files at rest (PBI-024). The app always provides it; only
+  /// low-level tests construct the service without it.
+  final VaultCrypto? crypto;
+
   String defaultTitle() =>
-      'Scan · ${formatDay(_now()).split(', ').last} '
-      '${_now().year}';
+      l10nNow.cpScanTitle(formatDay(_now()).split(', ').last, '${_now().year}');
 
   /// Sharpness + perceptual hash of one image page.
   static Future<PageCheck> checkPage(String path) async {
@@ -263,18 +272,24 @@ class CaptureService {
             .create(recursive: true);
         for (var i = 0; i < files.length; i++) {
           final f = files[i];
+          // AC1: what reaches the disk is AES-256-GCM ciphertext; the hash
+          // is of the ciphertext (integrity of what is stored).
+          final blob = await crypto?.encrypt(f.bytes);
+          final stored = blob?.bytes ?? f.bytes;
           final row = await _repos.documentFiles.insert(
             DocumentFilesCompanion.insert(
               documentId: doc.id,
               pageNo: Value(i + 1),
               byteSize: f.bytes.length,
               mime: Value(f.mime),
-              sha256: sha256.convert(f.bytes).toString(),
+              sha256: sha256.convert(stored).toString(),
               phash: Value(f.phash),
+              encIv: Value(blob?.iv),
+              encKeyWrapped: Value(blob?.wrappedKey),
             ),
           );
           final path = p.join(dir!.path, '${row.id}.${f.ext}');
-          await File(path).writeAsBytes(f.bytes, flush: true);
+          await File(path).writeAsBytes(stored, flush: true);
           await _repos.documentFiles.update(
             row.id,
             DocumentFilesCompanion(localPath: Value(path)),

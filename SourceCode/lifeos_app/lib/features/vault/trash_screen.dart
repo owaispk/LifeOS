@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/l10n.dart';
 import '../../core/now_provider.dart';
 import '../../data/data_providers.dart';
 import '../../data/db/app_database.dart';
@@ -31,23 +32,19 @@ class TrashScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final trashed = ref.watch(trashedDocumentsProvider);
     final service = ref.read(trashServiceProvider);
+    final l = context.l10n;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Trash')),
+      appBar: AppBar(title: Text(l.trash)),
       body: trashed.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => const EmptyState(
-          emoji: '⚠️',
-          title: "Trash isn't available",
-          message: '',
-        ),
+        error: (e, _) =>
+            EmptyState(emoji: '⚠️', title: l.vtTrashUnavailable, message: ''),
         data: (docs) => docs.isEmpty
-            ? const EmptyState(
+            ? EmptyState(
                 emoji: '🗑️',
-                title: 'Trash is empty',
-                message:
-                    'Deleted documents stay here for $trashDays days, then '
-                    'are removed for good.',
+                title: l.vtTrashEmpty,
+                message: l.vtTrashEmptyMessage('$trashDays'),
               )
             : ListView(
                 key: const ValueKey('trash-list'),
@@ -61,7 +58,7 @@ class TrashScreen extends ConsumerWidget {
                       ),
                       title: Text(d.title),
                       subtitle: Text(
-                        '${service.daysLeft(d)} days left',
+                        l.vtTrashDaysLeft('${service.daysLeft(d)}'),
                         key: ValueKey('trash-days-${d.id}'),
                       ),
                       trailing: Row(
@@ -70,33 +67,29 @@ class TrashScreen extends ConsumerWidget {
                           TextButton(
                             key: ValueKey('trash-restore-${d.id}'),
                             onPressed: () => service.restore(d.id),
-                            child: const Text('Restore'),
+                            child: Text(l.vtRestore),
                           ),
                           IconButton(
                             key: ValueKey('trash-forever-${d.id}'),
-                            tooltip: 'Delete forever',
+                            tooltip: l.deleteForever,
                             icon: const Icon(Icons.delete_forever_outlined),
                             onPressed: () async {
                               final ok = await showDialog<bool>(
                                 context: context,
                                 builder: (context) => AlertDialog(
-                                  title: const Text('Delete forever?'),
-                                  content: Text(
-                                    '"${d.title}" and its files will be '
-                                    'removed from this phone. This can\'t be '
-                                    'undone.',
-                                  ),
+                                  title: Text(l.vtDeleteForeverTitle),
+                                  content: Text(l.vtDeleteForeverBody(d.title)),
                                   actions: [
                                     TextButton(
                                       onPressed: () =>
                                           Navigator.pop(context, false),
-                                      child: const Text('Cancel'),
+                                      child: Text(l.cancel),
                                     ),
                                     FilledButton(
                                       key: const ValueKey('confirm-forever'),
                                       onPressed: () =>
                                           Navigator.pop(context, true),
-                                      child: const Text('Delete forever'),
+                                      child: Text(l.deleteForever),
                                     ),
                                   ],
                                 ),

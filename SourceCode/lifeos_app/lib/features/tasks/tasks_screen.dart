@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/l10n.dart';
 import '../../core/theme/tokens.dart';
 import '../../data/db/app_database.dart';
 import '../../shared/format.dart';
@@ -31,10 +32,11 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
     final now = ref.watch(nowProvider)();
     final capacity =
         ref.watch(dayCapacityProvider).value ?? defaultDayCapacityMin;
+    final l = context.l10n;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tasks'),
+        title: Text(l.tkTasks),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(56),
           child: Padding(
@@ -46,13 +48,16 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
             ),
             child: SegmentedButton<TasksView>(
               showSelectedIcon: false,
-              segments: const [
-                ButtonSegment(value: TasksView.today, label: Text('Today')),
+              segments: [
+                ButtonSegment(value: TasksView.today, label: Text(l.today)),
                 ButtonSegment(
                   value: TasksView.upcoming,
-                  label: Text('Upcoming'),
+                  label: Text(l.tkUpcoming),
                 ),
-                ButtonSegment(value: TasksView.domains, label: Text('Domains')),
+                ButtonSegment(
+                  value: TasksView.domains,
+                  label: Text(l.tkDomains),
+                ),
               ],
               selected: {_view},
               onSelectionChanged: (s) => setState(() => _view = s.first),
@@ -62,10 +67,10 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
       ),
       body: tasks.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => const EmptyState(
+        error: (e, _) => EmptyState(
           emoji: '⚠️',
-          title: "Tasks aren't available",
-          message: 'Local data could not be opened on this device.',
+          title: l.tkUnavailableTitle,
+          message: l.tkUnavailableBody,
         ),
         data: (list) => switch (_view) {
           TasksView.today => _TodayList(sections: todaySections(list, now)),
@@ -83,11 +88,11 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
 
 // ── Today ───────────────────────────────────────────────────────────────────
 
-const _sectionTitles = {
-  TodaySection.overdue: 'Overdue',
-  TodaySection.timed: 'Timed',
-  TodaySection.payments: 'Payments ⚡',
-  TodaySection.anytime: 'Anytime',
+String _sectionTitle(AppLocalizations l, TodaySection s) => switch (s) {
+  TodaySection.overdue => l.tkOverdue,
+  TodaySection.timed => l.tkTimed,
+  TodaySection.payments => l.tkPayments,
+  TodaySection.anytime => l.tkAnytime,
 };
 
 class _TodayList extends StatelessWidget {
@@ -96,11 +101,12 @@ class _TodayList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     if (sections.isEmpty) {
       return _AddTaskEmptyState(
         emoji: '✅',
-        title: 'Nothing on your plate',
-        message: "Add a task and it'll show up here for today.",
+        title: l.tkEmptyTodayTitle,
+        message: l.tkEmptyTodayBody,
       );
     }
     return ListView(
@@ -110,7 +116,7 @@ class _TodayList extends StatelessWidget {
         for (final entry in sections.entries) ...[
           _SectionHeader(
             key: ValueKey('section-${entry.key.name}'),
-            title: _sectionTitles[entry.key]!,
+            title: _sectionTitle(l, entry.key),
             count: entry.value.length,
             danger: entry.key == TodaySection.overdue,
           ),
@@ -137,11 +143,12 @@ class _UpcomingList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     if (days.isEmpty) {
       return _AddTaskEmptyState(
         emoji: '📅',
-        title: 'A clear week ahead',
-        message: 'Nothing is due in the next 7 days.',
+        title: l.tkEmptyWeekTitle,
+        message: l.tkEmptyWeekBody,
       );
     }
     return ListView(
@@ -151,8 +158,8 @@ class _UpcomingList extends StatelessWidget {
         LoadHeatmap(days: heat),
         for (final entry in days.entries) ...[
           _SectionHeader(
-            title: relativeDay(entry.key, now) == 'Tomorrow'
-                ? 'Tomorrow · ${formatDay(entry.key)}'
+            title: relativeDay(entry.key, now) == l.tomorrow
+                ? l.tkTomorrowOn(formatDay(entry.key))
                 : formatDay(entry.key, now: now),
             count: entry.value.length,
           ),
@@ -174,8 +181,8 @@ class _DomainList extends StatelessWidget {
     if (groups.isEmpty) {
       return _AddTaskEmptyState(
         emoji: '🗂️',
-        title: 'No open tasks',
-        message: 'Tasks are grouped by life area here.',
+        title: context.l10n.tkEmptyDomainsTitle,
+        message: context.l10n.tkEmptyDomainsBody,
       );
     }
     return ListView(
@@ -276,7 +283,7 @@ class _AddTaskEmptyState extends StatelessWidget {
       emoji: emoji,
       title: title,
       message: message,
-      actionLabel: '➕ Add task',
+      actionLabel: context.l10n.tkAddTaskAction,
       onAction: () => showNewTaskSheet(context),
     );
   }

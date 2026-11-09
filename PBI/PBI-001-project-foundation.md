@@ -7,7 +7,7 @@
 | Story Points | 5 |
 | Spec refs | README "Recommended tech stack"; UI flow §1.1, §5 |
 | Depends on | — |
-| Status | In Review — AC1 Android check pending (no Android SDK on dev machine) |
+| Status | Done |
 
 ## User Story
 As a **developer team**, we want a working Flutter app skeleton with navigation, theming and state management so every later feature has a consistent home.
@@ -48,3 +48,15 @@ Code: `SourceCode/lifeos_app` — Flutter 3.47.9 / Dart 3.13.7, flutter_riverpod
 | 7 | ✅ | Every tab uses the shared `EmptyState` widget. |
 
 Deviation: the FAB uses `centerFloat` (sits above the bar) rather than a notched `centerDocked` bar, because a notch splits the 5-tab bar unevenly. Bug found and fixed during testing: the quick-action menu was drawn behind the FAB; it now stacks above it.
+
+## Device QA (2026-11-09)
+Android emulator `sdk gphone64 x86 64`, Android 17 (API 37), Google Play services; debug APK; 2026-11-09.
+
+| AC | Result | Evidence |
+|---|---|---|
+| 1 | ✅ | Debug APK installed and launched: opens on Home with the Life Score ring, prompts, 5-tab bar and ➕. Material fonts and emoji render. |
+
+**Build fixes needed on this machine:**
+- `compileSdk = 37` in `android/app/build.gradle.kts`, because flutter_local_notifications, receive_sharing_intent and core-ktx 1.19 require API 37. `android.suppressUnsupportedCompileSdk=37` is in `gradle.properties`.
+- NDK 28.2.13676358 installed.
+- Gradle on this Windows profile needs `JAVA_TOOL_OPTIONS=-Djdk.net.unixdomain.tmpdir=C:\Temp\jdk`. The 8.3 short temp path (`OWAIS~1.AIZ`) breaks Java's loopback socket with "Unable to establish loopback connection".

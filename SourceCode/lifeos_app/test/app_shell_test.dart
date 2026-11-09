@@ -77,11 +77,11 @@ void main() {
       await tester.pumpAndSettle();
       // Task and Expense open their real sheets (PBI-009, PBI-018); Scan
       // opens the device scanner (PBI-003 — none in tests, so nothing
-      // opens); Voice is still a placeholder (PBI-010).
+      // opens); Voice opens the full-screen voice overlay (PBI-010).
       final opened = switch (action) {
         'task' => 'new-task-title',
         'expense' => 'expense-amount',
-        'voice' => 'quick-action-sheet-voice',
+        'voice' => 'voice-overlay',
         _ => null,
       };
       if (opened != null) {
@@ -93,8 +93,12 @@ void main() {
         reason: 'menu collapses once an action is chosen',
       );
 
-      // Dismiss the sheet.
-      await tester.tapAt(const Offset(20, 20));
+      // Dismiss the sheet (the voice overlay is a full screen: go back).
+      if (action == 'voice') {
+        await tester.tap(find.byType(CloseButton));
+      } else {
+        await tester.tapAt(const Offset(20, 20));
+      }
       await tester.pumpAndSettle();
     }
   });

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/l10n.dart';
 import '../../core/money.dart';
 import '../../core/now_provider.dart';
 import '../../core/theme/tokens.dart';
@@ -52,10 +53,10 @@ class DocumentViewerScreen extends ConsumerWidget {
     if (docs != null && doc == null) {
       return Scaffold(
         appBar: AppBar(),
-        body: const EmptyState(
+        body: EmptyState(
           emoji: '🗑️',
-          title: 'This document is gone',
-          message: 'It was deleted. Look in Vault → Trash to restore it.',
+          title: context.l10n.vtDocGoneTitle,
+          message: context.l10n.vtDocGoneMessage,
         ),
       );
     }
@@ -69,9 +70,9 @@ class DocumentViewerScreen extends ConsumerWidget {
         title: Text(doc.title, maxLines: 1, overflow: TextOverflow.ellipsis),
         actions: [
           if (doc.archivedAt != null)
-            const Padding(
-              padding: EdgeInsets.only(right: Tokens.spaceS),
-              child: Chip(label: Text('Archived')),
+            Padding(
+              padding: const EdgeInsets.only(right: Tokens.spaceS),
+              child: Chip(label: Text(context.l10n.vtArchived)),
             ),
         ],
       ),
@@ -90,7 +91,7 @@ class DocumentViewerScreen extends ConsumerWidget {
               _Action(
                 key: const ValueKey('viewer-share'),
                 icon: Icons.ios_share,
-                label: 'Share',
+                label: context.l10n.vtShare,
                 onTap: files.isEmpty
                     ? null
                     : () => ref.read(shareFilesProvider)(files),
@@ -98,7 +99,7 @@ class DocumentViewerScreen extends ConsumerWidget {
               _Action(
                 key: const ValueKey('viewer-edit'),
                 icon: Icons.edit_outlined,
-                label: 'Edit',
+                label: context.l10n.vtEdit,
                 onTap: () => showDocumentSheet(context, doc.id),
               ),
               _Action(
@@ -106,7 +107,9 @@ class DocumentViewerScreen extends ConsumerWidget {
                 icon: doc.archivedAt == null
                     ? Icons.archive_outlined
                     : Icons.unarchive_outlined,
-                label: doc.archivedAt == null ? 'Archive' : 'Unarchive',
+                label: doc.archivedAt == null
+                    ? context.l10n.vtArchive
+                    : context.l10n.vtUnarchive,
                 onTap: () async {
                   if (doc.archivedAt == null) {
                     await service.archive(doc.id);
@@ -118,17 +121,18 @@ class DocumentViewerScreen extends ConsumerWidget {
               _Action(
                 key: const ValueKey('viewer-delete'),
                 icon: Icons.delete_outline,
-                label: 'Delete',
+                label: context.l10n.vtDelete,
                 onTap: () async {
                   final messenger = ScaffoldMessenger.of(context);
+                  final l = context.l10n;
                   await service.deleteDocument(doc.id);
                   messenger
                     ..hideCurrentSnackBar()
                     ..showSnackBar(
                       SnackBar(
-                        content: const Text('Moved to Trash'),
+                        content: Text(l.vtMovedToTrash),
                         action: SnackBarAction(
-                          label: 'Undo',
+                          label: l.vtUndo,
                           onPressed: () => ref
                               .read(repositoriesProvider)
                               .documents
@@ -237,7 +241,7 @@ class _InfoPanel extends ConsumerWidget {
             ),
             const SizedBox(height: Tokens.spaceS),
             Text(
-              'Details',
+              context.l10n.vtDetails,
               key: const ValueKey('viewer-details'),
               style: theme.textTheme.titleMedium,
             ),
@@ -254,7 +258,7 @@ class _InfoPanel extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Does this document expire?'),
+                      Text(context.l10n.vtExpiryPrompt),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
@@ -267,7 +271,7 @@ class _InfoPanel extends ConsumerWidget {
                                 ),
                               ),
                             ),
-                            child: const Text('No'),
+                            child: Text(context.l10n.vtNo),
                           ),
                           FilledButton.tonal(
                             key: const ValueKey('expiry-prompt-yes'),
@@ -289,7 +293,7 @@ class _InfoPanel extends ConsumerWidget {
                                 ),
                               );
                             },
-                            child: const Text('Set date'),
+                            child: Text(context.l10n.vtSetDate),
                           ),
                         ],
                       ),
@@ -300,9 +304,9 @@ class _InfoPanel extends ConsumerWidget {
             DropdownButtonFormField<String>(
               key: const ValueKey('info-type'),
               initialValue: doc.docType,
-              decoration: const InputDecoration(
-                labelText: 'Type',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: context.l10n.vtType,
+                border: const OutlineInputBorder(),
               ),
               items: [
                 for (final t in docTypes)
@@ -318,21 +322,21 @@ class _InfoPanel extends ConsumerWidget {
             _TextDetail(
               key: ValueKey('info-issuer-${doc.version}'),
               field: 'issuer',
-              label: 'Issuer',
+              label: context.l10n.vtIssuer,
               value: doc.issuer,
               onSave: (v) => save(DocumentsCompanion(issuer: Value(v))),
             ),
             _TextDetail(
               key: ValueKey('info-ref-${doc.version}'),
               field: 'ref',
-              label: 'Reference / number',
+              label: context.l10n.vtRefNumber,
               value: doc.refNumber,
               onSave: (v) => save(DocumentsCompanion(refNumber: Value(v))),
             ),
             _TextDetail(
               key: ValueKey('info-amount-${doc.version}'),
               field: 'amount',
-              label: 'Amount',
+              label: context.l10n.vtAmount,
               value: doc.amountMinor == null
                   ? null
                   : Money.format(doc.amountMinor!).replaceFirst('Rs ', ''),
@@ -345,13 +349,13 @@ class _InfoPanel extends ConsumerWidget {
             ),
             _DateDetail(
               field: 'due',
-              label: 'Due date',
+              label: context.l10n.vtDueDate,
               value: doc.dueDate,
               onSave: (v) => save(DocumentsCompanion(dueDate: Value(v))),
             ),
             _DateDetail(
               field: 'expiry',
-              label: 'Expiry date',
+              label: context.l10n.vtExpiryDate,
               value: doc.expiryDate,
               onSave: (v) => save(DocumentsCompanion(expiryDate: Value(v))),
             ),
@@ -363,7 +367,7 @@ class _InfoPanel extends ConsumerWidget {
                   child: OutlinedButton.icon(
                     key: const ValueKey('viewer-renew'),
                     icon: const Icon(Icons.autorenew),
-                    label: const Text('Mark renewed → scan the new one'),
+                    label: Text(context.l10n.vtMarkRenewed),
                     onPressed: () => startScan(
                       context,
                       folderId: doc.folderId,
@@ -378,17 +382,19 @@ class _InfoPanel extends ConsumerWidget {
               contentPadding: EdgeInsets.zero,
               leading: const Icon(Icons.folder_outlined),
               title: Text(
-                folder == null ? 'Unfiled' : '${folder.icon} ${folder.name}',
+                folder == null
+                    ? context.l10n.vtUnfiled
+                    : '${folder.icon} ${folderLabel(folder)}',
               ),
               subtitle: Text(
                 person == null
-                    ? 'Nobody'
+                    ? context.l10n.vtNobody
                     : '${person.avatar ?? '👤'} ${person.name}',
               ),
               trailing: TextButton(
                 key: const ValueKey('info-move'),
                 onPressed: () => showDocumentSheet(context, doc.id),
-                child: const Text('Move'),
+                child: Text(context.l10n.vtMove),
               ),
             ),
             if (tags.isNotEmpty)
@@ -398,7 +404,10 @@ class _InfoPanel extends ConsumerWidget {
               ),
             if (tasks.isNotEmpty) ...[
               const SizedBox(height: Tokens.spaceM),
-              Text('Linked tasks', style: theme.textTheme.labelLarge),
+              Text(
+                context.l10n.vtLinkedTasks,
+                style: theme.textTheme.labelLarge,
+              ),
               for (final t in tasks)
                 ListTile(
                   key: ValueKey('linked-task-${t.id}'),
@@ -497,7 +506,7 @@ class _DateDetail extends ConsumerWidget {
       contentPadding: EdgeInsets.zero,
       leading: const Icon(Icons.event),
       title: Text(label),
-      subtitle: Text(value ?? 'Not set'),
+      subtitle: Text(value ?? context.l10n.vtNotSet),
       onTap: () async {
         final now = ref.read(nowProvider)();
         final picked = await showDatePicker(
@@ -511,7 +520,7 @@ class _DateDetail extends ConsumerWidget {
       trailing: value == null
           ? null
           : IconButton(
-              tooltip: 'Clear $label',
+              tooltip: context.l10n.vtClearField(label),
               icon: const Icon(Icons.close),
               onPressed: () => onSave(null),
             ),
@@ -531,21 +540,24 @@ class _ExpiryLadder extends ConsumerWidget {
     final ladder = ladderFor(document.docType, document.expiryAlerts);
     final expiry = DateTime.parse(document.expiryDate!);
     final upcoming = futureAlerts(expiry, ladder, now);
+    final l = context.l10n;
     final days = [
       for (final d in ladder)
         d < 0
-            ? '${-d} day after'
+            ? l.vtLadderDayAfter('${-d}')
             : d == 0
-            ? 'on the day'
-            : '$d days before',
+            ? l.vtLadderOnDay
+            : l.vtLadderDaysBefore('$d'),
     ];
     return Padding(
       padding: const EdgeInsets.only(left: 40, bottom: Tokens.spaceS),
       child: Text(
         upcoming.isEmpty
-            ? 'Expired — a weekly reminder until renewed'
-            : 'Alerts: ${days.join(', ')}\n'
-                  'Next: ${relativeDay(upcoming.first, now)}',
+            ? l.vtLadderExpired
+            : l.vtLadderAlerts(
+                days.join(', '),
+                relativeDay(upcoming.first, now),
+              ),
         key: const ValueKey('expiry-ladder'),
         style: theme.textTheme.bodySmall,
       ),

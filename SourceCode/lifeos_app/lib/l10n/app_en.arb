@@ -1,0 +1,1581 @@
+{
+  "@@locale": "en",
+  "amount": "Amount",
+  "appLock": "App lock",
+  "appLockSub": "Fingerprint, face or PIN to open LifeOS",
+  "atcAdd": "Add",
+  "atcAmountOptional": "Amount (optional)",
+  "atcCadenceDay": "{cycle} · {day}",
+  "@atcCadenceDay": {
+    "placeholders": {
+      "cycle": {
+        "type": "String"
+      },
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "atcCadenceWindow": "~{from}–{to} monthly",
+  "@atcCadenceWindow": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "atcCreateAuto": "Create tasks automatically",
+  "atcCreatedThisMonth": "⚡ ATC created {n, plural, =1{1 task} other{{n} tasks}} for you this month",
+  "@atcCreatedThisMonth": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "atcDays": "{n} days",
+  "@atcDays": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "atcDelete": "Delete",
+  "atcDeleteBody": "No new tasks will be created. Tasks it already made stay in your list.",
+  "atcDeleteRule": "Delete rule",
+  "atcDeleteTitle": "Delete \"{name}\"?",
+  "@atcDeleteTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "atcDueDates": "Due dates (optional — otherwise every 6 months)",
+  "atcDueDay": "Due day",
+  "atcEmptyAction": "➕ Add a payment",
+  "atcEmptyBody": "Tell it once what you pay regularly — rent, fees, bills — and it creates the reminders every month.",
+  "atcEmptyTitle": "Let LifeOS remember your payments",
+  "atcEnded": "Ended",
+  "atcEvery6Months": "Every 6 months",
+  "atcFeeChanged": "Fee changed",
+  "atcFeeDecreasedMsg": "Fee decreased from {oldAmount} → {newAmount}. Update future tasks?",
+  "@atcFeeDecreasedMsg": {
+    "placeholders": {
+      "oldAmount": {
+        "type": "String"
+      },
+      "newAmount": {
+        "type": "String"
+      }
+    }
+  },
+  "atcFeeIncreased": "Fee increased",
+  "atcFeeIncreasedMsg": "Fee increased from {oldAmount} → {newAmount}. Update future tasks?",
+  "@atcFeeIncreasedMsg": {
+    "placeholders": {
+      "oldAmount": {
+        "type": "String"
+      },
+      "newAmount": {
+        "type": "String"
+      }
+    }
+  },
+  "atcFewerDays": "Fewer days",
+  "atcFor": "For",
+  "atcFreeLimit": "Free plan includes {n} auto-rules — Premium removes the limit",
+  "@atcFreeLimit": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "atcGroupAppointments": "Appointments",
+  "atcGroupBills": "Bills",
+  "atcGroupFees": "Fees",
+  "atcGroupFixed": "Fixed",
+  "atcHistory": "Created {n, plural, =1{1 task} other{{n} tasks}} · {paid} paid on time",
+  "@atcHistory": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      },
+      "paid": {
+        "type": "String"
+      }
+    }
+  },
+  "atcHousehold": "Household",
+  "atcHowOften": "How often",
+  "atcIllScan": "I'll scan it",
+  "atcInstallments": "{done} of {total} paid",
+  "@atcInstallments": {
+    "placeholders": {
+      "done": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "atcInstallmentsTotal": "How many installments in total",
+  "atcKeepAsIs": "Keep as is",
+  "atcMissedBill": "No {label} bill this month — did you miss it, or should I pause this reminder?",
+  "@atcMissedBill": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "atcMonthly": "Monthly",
+  "atcMoreDays": "More days",
+  "atcNewPattern": "New pattern detected",
+  "atcNext": "Next {day}",
+  "@atcNext": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "atcNoThanks": "No thanks",
+  "atcNotNow": "Not now",
+  "atcOnSetDates": "On set dates · {dates}",
+  "@atcOnSetDates": {
+    "placeholders": {
+      "dates": {
+        "type": "String"
+      }
+    }
+  },
+  "atcOnce": "Once",
+  "atcPause": "Pause",
+  "atcPaused": "Paused",
+  "atcPickDates": "Pick dates",
+  "atcPresetCustom": "Custom",
+  "atcPresetFees": "School fee",
+  "atcPresetInstallment": "Installment / Committee",
+  "atcPresetInternet": "Internet",
+  "atcPresetMobile": "Mobile",
+  "atcPresetRent": "Rent",
+  "atcPresetSubscription": "Subscription",
+  "atcPresetUtility": "Utility bill",
+  "atcProposalBill": "Your {label} bill{when}. Create a monthly reminder?",
+  "@atcProposalBill": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      },
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "atcProposalDue": ", due {day}",
+  "@atcProposalDue": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "atcProposalFee": "Create a fee reminder{who}{amount}{day}?",
+  "@atcProposalFee": {
+    "placeholders": {
+      "who": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      },
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "atcProposalFor": " for {name}",
+  "@atcProposalFor": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "atcProposalWindow": " usually arrives the {from}–{to}",
+  "@atcProposalWindow": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "atcProposed": "Proposed",
+  "atcQuarterly": "Quarterly",
+  "atcRemindBefore": "Remind me before",
+  "atcReminderOn": "⚡ Auto-reminder is on",
+  "atcRsPrefix": "Rs ",
+  "atcRuleGone": "This rule is gone",
+  "atcRuleGoneBody": "It was deleted. Tasks it created are still in Tasks.",
+  "atcSaveChanges": "Save changes",
+  "atcSavedNewTasks": "Saved — applies to new tasks",
+  "atcSeePremium": "See Premium",
+  "atcSkipMonths": "Skip these months",
+  "atcStatusOn": "On",
+  "atcStatusPaused": "Paused — no new tasks",
+  "atcTitle": "Auto Tasks",
+  "atcTurnOn": "⚡ Turn on auto-reminder",
+  "atcUpdateFuture": "Update future tasks",
+  "atcUpgradeBody": "Free plan includes {n} auto-rules — Premium removes the limit.",
+  "@atcUpgradeBody": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "atcUpgradeTitle": "Upgrade to Premium",
+  "atcUtility": "utility",
+  "atcWaitingOk": "Waiting for your OK",
+  "atcWhatPay": "What do you pay regularly?",
+  "atcYearly": "Yearly",
+  "atcYesRemind": "Yes, remind me",
+  "autoLock": "Lock after time in the background",
+  "autoLockMinutes": "{n} min",
+  "@autoLockMinutes": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "autoReminderOn": "⚡ Auto-reminder on",
+  "cancel": "Cancel",
+  "continueLabel": "Continue",
+  "cpBelongsTo": "Belongs to",
+  "cpBillTaskUpdated": "⚡ Bill task updated",
+  "cpBlurryBody": "Image looks unclear — text may be hard to read later.",
+  "cpDiscardNew": "Discard new",
+  "cpDiscardThis": "Discard this one",
+  "cpDuplicateBody": "Looks like a duplicate of '{title}'. Keep both?",
+  "@cpDuplicateBody": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "cpDuplicateDiscarded": "Duplicate discarded",
+  "cpDuplicateTitle": "Possible duplicate",
+  "cpFieldBillingMonth": "Billing month",
+  "cpFieldDoctor": "Doctor",
+  "cpFieldDueDate": "Due date",
+  "cpFieldEndDate": "End date",
+  "cpFieldExpiryDate": "Expiry date",
+  "cpFieldInstitution": "Institution",
+  "cpFieldIssueDate": "Issue date",
+  "cpFieldIssuer": "Issuer",
+  "cpFieldNumber": "Number",
+  "cpFieldProduct": "Product",
+  "cpFieldRefNumber": "Reference no.",
+  "cpFieldStartDate": "Start date",
+  "cpFieldStudent": "Student",
+  "cpFolder": "Folder",
+  "cpImportFile": "Import a file",
+  "cpJpeg": "JPEG",
+  "cpKeepAnyway": "Keep anyway",
+  "cpKeepBoth": "Keep both",
+  "cpNobody": "Nobody",
+  "cpNotSure": "Not sure what this is — please pick a type.",
+  "cpNothingLeft": "Nothing left to file",
+  "cpPages": "{n, plural, =1{1 page} other{{n} pages}}",
+  "@cpPages": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "cpPdf": "PDF",
+  "cpPdfTitle": "LifeOS scan",
+  "cpPickType": "Pick a type",
+  "cpReading": "Reading document…",
+  "cpRetake": "Retake",
+  "cpRetakeTitle": "Retake?",
+  "cpRsPrefix": "Rs ",
+  "cpSaveAs": "Save as",
+  "cpSaveToVault": "Save to Vault",
+  "cpSaveToVaultOf": "Save to Vault · 1 of {total}",
+  "@cpSaveToVaultOf": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "cpSavedToVault": "Saved to Vault",
+  "cpScanAnother": "Scan another",
+  "cpScanAnyway": "Scan anyway",
+  "cpScanTitle": "Scan · {date} {year}",
+  "@cpScanTitle": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "year": {
+        "type": "String"
+      }
+    }
+  },
+  "cpStorageFullBody": "Only {mb} MB free. Scans may not save — free up some space first, or scan anyway.",
+  "@cpStorageFullBody": {
+    "placeholders": {
+      "mb": {
+        "type": "String"
+      }
+    }
+  },
+  "cpStorageFullTitle": "Storage is almost full",
+  "cpTypeAgreement": "Agreement",
+  "cpTypeBill": "Bill",
+  "cpTypeCertificate": "Certificate",
+  "cpTypeCnic": "CNIC",
+  "cpTypeConfidence": "{type} · {percent}%",
+  "@cpTypeConfidence": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "cpTypeDegree": "Degree",
+  "cpTypeFeeVoucher": "Fee voucher",
+  "cpTypeLicense": "Driving licence",
+  "cpTypeOther": "Document",
+  "cpTypePassport": "Passport",
+  "cpTypePolicy": "Insurance policy",
+  "cpTypePrescription": "Prescription",
+  "cpTypeReceipt": "Receipt",
+  "cpTypeReport": "Lab report",
+  "cpTypeVisa": "Visa",
+  "cpTypeWarranty": "Warranty",
+  "cpUnfiled": "📥 Unfiled",
+  "cpUnreadable": "Couldn't read any text — saved as Unclassified. Pick a type if you like.",
+  "cpUnusualBill": "Unusually high bill ⚠",
+  "create": "Create",
+  "dayOfMonth": "Day of month",
+  "deleteAll": "Delete all local data",
+  "deleteAllBody": "All documents, tasks, payments and keys on this phone will be deleted. This can't be undone.",
+  "deleteAllConfirmHint": "DELETE",
+  "deleteAllConfirmTitle": "Type DELETE to confirm",
+  "deleteAllSub": "Removes everything from this phone",
+  "deleteAllTitle": "Delete everything?",
+  "deleteForever": "Delete forever",
+  "digestBills": "{n, plural, =0{no bills due} =1{1 bill due} other{{n} bills due}}",
+  "@digestBills": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "digestBody": "Life Score {score} · {tasks} · {bills}",
+  "@digestBody": {
+    "placeholders": {
+      "score": {
+        "type": "String"
+      },
+      "tasks": {
+        "type": "String"
+      },
+      "bills": {
+        "type": "String"
+      }
+    }
+  },
+  "digestTasks": "{n, plural, =0{no tasks} =1{1 task} other{{n} tasks}}",
+  "@digestTasks": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "digestTime": "Morning summary",
+  "digestTitle": "Good morning",
+  "domainHealth": "Health",
+  "domainMind": "Tasks",
+  "domainMoney": "Money",
+  "domainPeople": "People",
+  "domainSoul": "Soul",
+  "domainVault": "Documents",
+  "domainWork": "Work",
+  "exportData": "Export everything",
+  "exportDataSub": "A ZIP of your documents and data",
+  "exportDone": "Export ready: {docs} documents",
+  "@exportDone": {
+    "placeholders": {
+      "docs": {
+        "type": "String"
+      }
+    }
+  },
+  "exporting": "Preparing your export…",
+  "freeLimitReached": "Free plan includes 3 auto-rules — Premium removes the limit",
+  "hmAddTask": "➕ Add a task",
+  "hmAllClear": "All clear today ✓",
+  "hmAttentionSection": "⚠ Needs attention",
+  "hmClearDay": "A clear day.",
+  "hmDueIn": "due in {n} days",
+  "@hmDueIn": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "hmDueToday": "due today",
+  "hmDueTomorrow": "due tomorrow",
+  "hmExpiredAgo": "{n, plural, =1{expired 1 day ago} other{expired {n} days ago}}",
+  "@hmExpiredAgo": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "hmExpiresIn": "expires in {n} days",
+  "@hmExpiresIn": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "hmExpiresToday": "expires today",
+  "hmExpiresTomorrow": "expires tomorrow",
+  "hmNeedsAttention": "Needs attention",
+  "hmNoPaymentsWeek": "No payments due this week",
+  "hmNothingUrgent": "Nothing urgent",
+  "hmNothingUrgentBody": "Payments due soon and expiring documents show here.",
+  "hmNothingUrgentNice": "Nothing urgent — nice ✓",
+  "hmPaid": "Paid",
+  "hmPaymentsWeek": "{amount} in payments this week",
+  "@hmPaymentsWeek": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "hmProfileMore": "Profile and more",
+  "hmPromptAtcBody": "Rent, fees, bills: reminded every month, automatically.",
+  "hmPromptAtcTitle": "Add what you pay regularly ⚡",
+  "hmPromptScanBody": "CNIC, passport, a bill — LifeOS files it and reminds you.",
+  "hmPromptScanTitle": "Scan your first document 📸",
+  "hmPromptTaskBody": "Anything on your mind, with a reminder.",
+  "hmPromptTaskTitle": "Add a task ➕",
+  "hmSalam": "Salam 👋",
+  "hmSalamName": "Salam, {name} 👋",
+  "@hmSalamName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "hmSeeAllCount": "See all ({n})",
+  "@hmSeeAllCount": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "hmSeeAllN": "See all {n}",
+  "@hmSeeAllN": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "hmSoon": "Soon",
+  "hmThingsNeedAttention": "{n, plural, =1{1 thing needs attention} other{{n} things need attention}}",
+  "@hmThingsNeedAttention": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "hmTodayTasks": "Today · {n, plural, =1{1 task} other{{n} tasks}}",
+  "@hmTodayTasks": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "hmUrgent": "Urgent",
+  "hmWasDueAgo": "{n, plural, =1{was due 1 day ago} other{was due {n} days ago}}",
+  "@hmWasDueAgo": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "languageEnglish": "English",
+  "languageUrdu": "اردو",
+  "lockUnavailable": "Set a screen lock on this phone to use this",
+  "lockedTitle": "LifeOS is locked",
+  "lookTemplate": "Look",
+  "mnAdd": "Add",
+  "mnAddExpense": "Add expense",
+  "mnAddExpenseAction": "💸 Add expense",
+  "mnAddSalary": "Add your salary to see the share",
+  "mnAmountError": "Enter an amount above 0",
+  "mnAmountPaid": "Amount paid",
+  "mnAmountPending": "amount pending",
+  "mnAttachReceipt": "📎 Attach receipt?",
+  "mnBreakdownItem": "{name} {amount}, {percent} percent",
+  "@mnBreakdownItem": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "mnBreakdownSemantics": "Spending by category: {items}",
+  "@mnBreakdownSemantics": {
+    "placeholders": {
+      "items": {
+        "type": "String"
+      }
+    }
+  },
+  "mnCatFees": "Fees & Tuition",
+  "mnCatInstallment": "Installments",
+  "mnCatInternet": "Internet",
+  "mnCatMobile": "Mobile",
+  "mnCatOther": "Other",
+  "mnCatRent": "Rent",
+  "mnCatSubscription": "Subscriptions",
+  "mnCatUtilities": "Utilities",
+  "mnCategory": "Category",
+  "mnChangeSalary": "Change salary",
+  "mnDate": "Date",
+  "mnDelete": "Delete",
+  "mnDeltaNew": "New · nothing in {month}",
+  "@mnDeltaNew": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "mnDeltaSame": "Same as {month}",
+  "@mnDeltaSame": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "mnDeltaVs": "{percent}% vs {month}",
+  "@mnDeltaVs": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      },
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "mnDigest": "{month} fixed payments: {total} across {n, plural, =1{1 item} other{{n} items}}",
+  "@mnDigest": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      },
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "mnEditExpense": "Edit expense",
+  "mnExpensesCount": "Expenses · {n}",
+  "@mnExpensesCount": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "mnFiledInVault": "Filed in Vault",
+  "mnForecast": "Forecast",
+  "mnImport": "Import",
+  "mnLinkedNote": "⚡ Logged from a payment",
+  "mnLoggedFromPayment": "Logged from a payment",
+  "mnLoggedInMoney": "Logged in Money",
+  "mnMarkPaid": "Mark paid",
+  "mnMonthlySalary": "Monthly salary",
+  "mnNextMonth": "Next month",
+  "mnNoExpensesBody": "Paid bills and quick expenses will add up here.",
+  "mnNoExpensesIn": "No expenses in {month}",
+  "@mnNoExpensesIn": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "mnNoFixedBody": "Add what you pay regularly in More → Auto Tasks and the forecast fills itself.",
+  "mnNoFixedTitle": "No fixed payments this month",
+  "mnNoteHint": "Note (optional)",
+  "mnOverview": "Overview",
+  "mnPaidAmountLine": "✓ {title} — {amount} paid",
+  "@mnPaidAmountLine": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "mnPaidDone": "✓ Paid",
+  "mnPaidHowMuch": "✓ {title} — how much did you pay?",
+  "@mnPaidHowMuch": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "mnPaidOnDay": "Paid on day",
+  "mnPrevMonth": "Previous month",
+  "mnReceiptAttached": "Receipt attached",
+  "mnReceiptTitle": "Receipt — {title}",
+  "@mnReceiptTitle": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "mnRsPrefix": "Rs ",
+  "mnSalaryShare": "{percent}% of income goes to fixed payments",
+  "@mnSalaryShare": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "mnSave": "Save",
+  "mnScan": "Scan",
+  "mnSpendingByCategory": "Spending by category",
+  "mnSpent": "Spent",
+  "mnStatusOverdue": "Overdue 🔴",
+  "mnStatusPaid": "Paid ✓",
+  "mnStatusUpcoming": "Upcoming",
+  "mnStatusUpcomingPlanned": "Upcoming · planned",
+  "mnTitle": "Money",
+  "mnTotals": "{total} total · {paid} paid · {remaining} remaining",
+  "@mnTotals": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      },
+      "paid": {
+        "type": "String"
+      },
+      "remaining": {
+        "type": "String"
+      }
+    }
+  },
+  "mnUnavailableBody": "Local data could not be opened on this device.",
+  "mnUnavailableTitle": "Money isn't available",
+  "mnUncategorised": "Uncategorised",
+  "mnUndo": "Undo",
+  "mnYourSalary": "Your salary",
+  "mon1": "Jan",
+  "mon10": "Oct",
+  "mon11": "Nov",
+  "mon12": "Dec",
+  "mon2": "Feb",
+  "mon3": "Mar",
+  "mon4": "Apr",
+  "mon5": "May",
+  "mon6": "Jun",
+  "mon7": "Jul",
+  "mon8": "Aug",
+  "mon9": "Sep",
+  "month1": "January",
+  "month10": "October",
+  "month11": "November",
+  "month12": "December",
+  "month2": "February",
+  "month3": "March",
+  "month4": "April",
+  "month5": "May",
+  "month6": "June",
+  "month7": "July",
+  "month8": "August",
+  "month9": "September",
+  "moreSettings": "Settings",
+  "moreSettingsSub": "Security, notifications, language, data",
+  "mrAutoTasks": "Auto Tasks",
+  "mrAutoTasksSub": "Rules that create payment tasks for you",
+  "mrTitle": "More",
+  "mrTrashSub": "Deleted documents, kept for 30 days",
+  "name": "Name",
+  "next": "Next",
+  "notifyAbout": "Notify me about",
+  "obDoneTitle": "You're set",
+  "obForecast": "{month} fixed payments: {total}",
+  "@obForecast": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "obForecastNone": "Add payments any time from More → Auto Tasks.",
+  "obNotifAsk": "We'll remind you before things are due.",
+  "obPayBody": "Tap one, add the amount and day. LifeOS reminds you every month.",
+  "obPayTitle": "What do you pay every month?",
+  "obRoleQ": "Who are you organising for?",
+  "obScanBody": "A CNIC, passport or bill. LifeOS reads it and files it for you.",
+  "obScanNow": "📸 Scan now",
+  "obScanTitle": "Scan your first document",
+  "obSeeDashboard": "See my dashboard",
+  "obWelcome": "Welcome to LifeOS",
+  "parseHigh": "High",
+  "payCustom": "Custom",
+  "payElectricity": "Electricity",
+  "payGas": "Gas",
+  "payInstallment": "Installment",
+  "payInternet": "Internet",
+  "payMobile": "Mobile",
+  "payRent": "Rent",
+  "paySchoolFee": "School fee",
+  "quietHours": "Quiet hours",
+  "quietHoursValue": "{from} – {to}",
+  "@quietHoursValue": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "removeChip": "Remove {what}",
+  "@removeChip": {
+    "placeholders": {
+      "what": {
+        "type": "String"
+      }
+    }
+  },
+  "roleBusiness": "Business owner",
+  "roleJustMe": "Just me",
+  "roleParent": "Parent",
+  "roleProfessional": "Professional",
+  "roleStudent": "Student",
+  "scCompBalance": "Balance",
+  "scCompDocuments": "Documents",
+  "scCompHealth": "Health",
+  "scCompPayments": "Payments",
+  "scCompPeople": "People",
+  "scCompTasks": "Tasks",
+  "scComponentSemantics": "{name}: {pct} percent, {weight} percent of the score",
+  "@scComponentSemantics": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "pct": {
+        "type": "String"
+      },
+      "weight": {
+        "type": "String"
+      }
+    }
+  },
+  "scComponentValue": "{pct}% · {weight} pts",
+  "@scComponentValue": {
+    "placeholders": {
+      "pct": {
+        "type": "String"
+      },
+      "weight": {
+        "type": "String"
+      }
+    }
+  },
+  "scDay1": "M",
+  "scDay2": "T",
+  "scDay3": "W",
+  "scDay4": "T",
+  "scDay5": "F",
+  "scDay6": "S",
+  "scDay7": "S",
+  "scDoingWell": "Doing well",
+  "scDownSince": "Down {n} since yesterday",
+  "@scDownSince": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "scExpiredAgo": "{n, plural, =1{Expired 1 day ago} other{Expired {n} days ago}}",
+  "@scExpiredAgo": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "scExpiresIn": "{n, plural, =1{Expires in 1 day} other{Expires in {n} days}}",
+  "@scExpiresIn": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "scExpiresToday": "Expires today",
+  "scFewThings": "A few things need you",
+  "scHeavyWeek": "Heavy week",
+  "scLast7": "Last 7 days",
+  "scLifeScore": "Life Score",
+  "scMoveToday": "Move to today",
+  "scMovedToday": "Moved to today",
+  "scNothingPulling": "Nothing is pulling your score down today ✓",
+  "scOpen": "Open",
+  "scRingSemantics": "Life Score {score}, {label}",
+  "@scRingSemantics": {
+    "placeholders": {
+      "score": {
+        "type": "String"
+      },
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "scSameYesterday": "Same as yesterday",
+  "scShowAll": "Show all {n}",
+  "@scShowAll": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "scSparkSemantics": "Last 7 days: {values}",
+  "@scSparkSemantics": {
+    "placeholders": {
+      "values": {
+        "type": "String"
+      }
+    }
+  },
+  "scStillOpen": "Still open from yesterday",
+  "scTriageTitle": "Heavy week? Here are the 3 highest-impact items",
+  "scUpSince": "Up {n} since yesterday",
+  "@scUpSince": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "scWasDue": "Was due {date}",
+  "@scWasDue": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "scWhatWouldLift": "What would lift it",
+  "scWhatsInIt": "What's in it",
+  "scWhenSorted": "+{pts} when sorted",
+  "@scWhenSorted": {
+    "placeholders": {
+      "pts": {
+        "type": "String"
+      }
+    }
+  },
+  "screenshotBlock": "Block screenshots in the Vault",
+  "settingsAppearance": "Appearance",
+  "settingsData": "Data",
+  "settingsLanguage": "Language",
+  "settingsNotifications": "Notifications",
+  "settingsPremium": "Premium",
+  "settingsPremiumSub": "Coming soon",
+  "settingsSecurity": "Security",
+  "settingsTitle": "Settings",
+  "skip": "Skip",
+  "speak": "Speak",
+  "templateClassic": "Classic · large text",
+  "templateFlagship": "Flagship",
+  "templateFunky": "Funky",
+  "themeDark": "Dark",
+  "themeLight": "Light",
+  "themeMode": "Theme",
+  "themeSystem": "System",
+  "tkActionDismiss": "Dismiss",
+  "tkActionDone": "Done ✓",
+  "tkActionPaid": "Paid ✓",
+  "tkActionRenew": "Set renewal task",
+  "tkAdd": "Add",
+  "tkAddAnyway": "Add anyway",
+  "tkAddNotes": "Add notes",
+  "tkAddReminder": "Add reminder",
+  "tkAddSubtask": "Add a sub-task",
+  "tkAddTaskAction": "➕ Add task",
+  "tkAllDay": "All day",
+  "tkAnytime": "Anytime",
+  "tkAutoCreated": "Auto-created",
+  "tkCantOpen": "Can't open this task",
+  "tkChannelDesc": "Task, payment and document reminders",
+  "tkChannelName": "Reminders",
+  "tkCloseQuickActions": "Close quick actions",
+  "tkComingSoon": "Coming soon ({pbi}).",
+  "@tkComingSoon": {
+    "placeholders": {
+      "pbi": {
+        "type": "String"
+      }
+    }
+  },
+  "tkCreatedAuto": "Created automatically",
+  "tkCreatedByRule": "Created by rule: {name}",
+  "@tkCreatedByRule": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "tkCreatedFrom": "Created from: {title}",
+  "@tkCreatedFrom": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "tkDayFull": "{day} is already full ({load} of {capacity})",
+  "@tkDayFull": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "load": {
+        "type": "String"
+      },
+      "capacity": {
+        "type": "String"
+      }
+    }
+  },
+  "tkDayLoad": "{day} {load}",
+  "@tkDayLoad": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "load": {
+        "type": "String"
+      }
+    }
+  },
+  "tkDayLoadOver": "{day} {load}, over capacity",
+  "@tkDayLoadOver": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "load": {
+        "type": "String"
+      }
+    }
+  },
+  "tkDelete": "Delete",
+  "tkDeleteBody": "\"{title}\" and its sub-tasks will be removed.",
+  "@tkDeleteBody": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "tkDeleteTitle": "Delete this task?",
+  "tkDocDue": "Due: {date}",
+  "@tkDocDue": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "tkDocIssuer": "Issuer: {issuer}",
+  "@tkDocIssuer": {
+    "placeholders": {
+      "issuer": {
+        "type": "String"
+      }
+    }
+  },
+  "tkDocType": "Type: {type}",
+  "@tkDocType": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "tkDomainMind": "Mind",
+  "tkDomainVault": "Vault",
+  "tkDomains": "Domains",
+  "tkDone": "Done",
+  "tkDoneNext": "Done — next one scheduled",
+  "tkDoneTitle": "Done: {title}",
+  "@tkDoneTitle": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "tkDue": "Due",
+  "tkEmptyDomainsBody": "Tasks are grouped by life area here.",
+  "tkEmptyDomainsTitle": "No open tasks",
+  "tkEmptyTodayBody": "Add a task and it'll show up here for today.",
+  "tkEmptyTodayTitle": "Nothing on your plate",
+  "tkEmptyWeekBody": "Nothing is due in the next 7 days.",
+  "tkEmptyWeekTitle": "A clear week ahead",
+  "tkEveryDay": "{n, plural, =1{Every day} other{Every {n} days}}",
+  "@tkEveryDay": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "tkEveryMonth": "{n, plural, =1{Every month} other{Every {n} months}}",
+  "@tkEveryMonth": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "tkEveryWeek": "{n, plural, =1{Every week} other{Every {n} weeks}}",
+  "@tkEveryWeek": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "tkFewerOptions": "Fewer options",
+  "tkFor": "For",
+  "tkFull": "⚠ Full",
+  "tkGoneBody": "It was deleted or completed.",
+  "tkGoneTitle": "This task is gone",
+  "tkHasRoom": "{day} has room.",
+  "@tkHasRoom": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "tkHeatDay": "{day}: {percent} percent",
+  "@tkHeatDay": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "tkHeatDayFull": "{day}: {percent} percent, full",
+  "@tkHeatDayFull": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "tkHigh": "High",
+  "tkHighChip": "‼ High",
+  "tkHours": "{n} h",
+  "@tkHours": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "tkLifeArea": "Life area",
+  "tkLow": "Low",
+  "tkMarkDone": "Mark \"{title}\" done",
+  "@tkMarkDone": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "tkMedium": "Medium",
+  "tkMinutes": "{n} min",
+  "@tkMinutes": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "tkMoreOptions": "More options",
+  "tkMoveTo": "Move to {day}",
+  "@tkMoveTo": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      }
+    }
+  },
+  "tkMuteRule": "Mute this rule",
+  "tkNever": "Never",
+  "tkNewTask": "New task",
+  "tkNoDate": "No date",
+  "tkNoLighterDay": "No lighter day in the next two weeks — pick a day, or add it anyway.",
+  "tkNotes": "Notes",
+  "tkNotifDue": "Due {date}",
+  "@tkNotifDue": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "tkNotifDueLower": "due {date}",
+  "@tkNotifDueLower": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "tkNotifExpiryBody": "Tap to see which one and renew it",
+  "tkNotifExpiryTitle": "A document expires soon",
+  "tkNotifHidden": "Open LifeOS to see details",
+  "tkNotifPaymentTitle": "A payment is due",
+  "tkNotifReminder": "Reminder",
+  "tkNotifTaskTitle": "A task is due",
+  "tkOffset10m": "10 minutes before",
+  "tkOffset1d": "1 day before",
+  "tkOffset1h": "1 hour before",
+  "tkOffsetAtDue": "At due time",
+  "tkOverdue": "Overdue",
+  "tkPayments": "Payments ⚡",
+  "tkPickDate": "Pick date",
+  "tkPickDateTime": "Pick a date & time",
+  "tkPickDay": "Pick a day",
+  "tkPickTime": "Pick a time…",
+  "tkPriority": "Priority",
+  "tkQaExpense": "Expense",
+  "tkQaExpenseTitle": "Log an expense",
+  "tkQaScan": "Scan",
+  "tkQaScanTitle": "Scan a document",
+  "tkQaTask": "Task",
+  "tkQaTaskTitle": "Add a task",
+  "tkQaVoice": "Voice",
+  "tkQaVoiceTitle": "Speak a task",
+  "tkQuickActions": "Quick actions",
+  "tkRemoveDueDate": "Remove due date",
+  "tkRemoveReminder": "Remove reminder",
+  "tkRemoveSubtask": "Remove sub-task",
+  "tkRenewDocument": "document",
+  "tkRenewTitle": "Renew {what}",
+  "@tkRenewTitle": {
+    "placeholders": {
+      "what": {
+        "type": "String"
+      }
+    }
+  },
+  "tkRepeat": "Repeat",
+  "tkRulePaused": "Rule paused — no new tasks from it",
+  "tkSkipCycle": "Skip this cycle",
+  "tkSnooze": "Snooze",
+  "tkSubtasks": "Sub-tasks ({done}/{total})",
+  "@tkSubtasks": {
+    "placeholders": {
+      "done": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "tkTabHome": "Home",
+  "tkTabMoney": "Money",
+  "tkTabMore": "More",
+  "tkTabVault": "Vault",
+  "tkTakesAbout": "Takes about",
+  "tkTask": "Task",
+  "tkTasks": "Tasks",
+  "tkTime": "Time",
+  "tkTimed": "Timed",
+  "tkTomorrowMorning": "Tomorrow morning",
+  "tkTomorrowOn": "Tomorrow · {date}",
+  "@tkTomorrowOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "tkTonight": "Tonight",
+  "tkUnavailableBody": "Local data could not be opened on this device.",
+  "tkUnavailableTitle": "Tasks aren't available",
+  "tkUndo": "Undo",
+  "tkUpcoming": "Upcoming",
+  "tkWeekLoad": "Week load: {days}",
+  "@tkWeekLoad": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "tkWeekday1": "Monday",
+  "tkWeekday2": "Tuesday",
+  "tkWeekday3": "Wednesday",
+  "tkWeekday4": "Thursday",
+  "tkWeekday5": "Friday",
+  "tkWeekday6": "Saturday",
+  "tkWeekday7": "Sunday",
+  "tkWhatNeedsDoing": "What needs doing?",
+  "today": "Today",
+  "tomorrow": "Tomorrow",
+  "trash": "Trash",
+  "turnOn": "Turn on",
+  "unlock": "Unlock",
+  "unlockReason": "Unlock LifeOS",
+  "unlockVaultReason": "Unlock your Vault",
+  "vaultLock": "Vault lock",
+  "vaultLockSub": "Ask again before opening the Vault",
+  "vaultLockedTitle": "The Vault is locked",
+  "voiceHint": "Try: \"Pay electricity bill Friday 5pm\"",
+  "voiceListening": "Listening…",
+  "voiceTitle": "Speak your task",
+  "voiceTryAgain": "Try again",
+  "voiceUnavailable": "Voice isn't available on this phone — type instead",
+  "vtAdd": "Add",
+  "vtAddFavourite": "Add to favourites",
+  "vtAddPerson": "Add person",
+  "vtAddTag": "Add tag",
+  "vtAddTagHint": "Add a tag",
+  "vtAdded": "Added",
+  "vtAmount": "Amount",
+  "vtAnyTime": "Any time",
+  "vtAnyType": "Any type",
+  "vtAnyone": "Anyone",
+  "vtArchive": "Archive",
+  "vtArchived": "Archived",
+  "vtBelongsTo": "Belongs to",
+  "vtClear": "Clear",
+  "vtClearField": "Clear {label}",
+  "@vtClearField": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "vtClearSearch": "Clear search",
+  "vtDaysLeftShort": "{n}d left",
+  "@vtDaysLeftShort": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "vtDelete": "Delete",
+  "vtDeleteDocBody": "\"{title}\" will be removed.",
+  "@vtDeleteDocBody": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "vtDeleteDocTitle": "Delete this document?",
+  "vtDeleteFolder": "Delete folder",
+  "vtDeleteFolderBody": "Its documents move to Unfiled — nothing is lost.",
+  "vtDeleteFolderTitle": "Delete \"{name}\"?",
+  "@vtDeleteFolderTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "vtDeleteForeverBody": "\"{title}\" and its files will be removed from this phone. This can't be undone.",
+  "@vtDeleteForeverBody": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "vtDeleteForeverTitle": "Delete forever?",
+  "vtDetails": "Details",
+  "vtDocCount": "{n, plural, =1{1 doc} other{{n} docs}}",
+  "@vtDocCount": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "vtDocGoneMessage": "It was deleted. Look in Vault → Trash to restore it.",
+  "vtDocGoneTitle": "This document is gone",
+  "vtDueDate": "Due date",
+  "vtEdit": "Edit",
+  "vtEditPerson": "Edit person",
+  "vtEmptyMessage": "Scan or import a document to file it here.",
+  "vtEmptyTitle": "Nothing here yet",
+  "vtExpiredAgo": "Expired {n}d ago",
+  "@vtExpiredAgo": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "vtExpiresToday": "Expires today",
+  "vtExpiringSoon": "Expiring soon",
+  "vtExpiringSoonCount": "⏰ Expiring soon ({n})",
+  "@vtExpiringSoonCount": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "vtExpiryDate": "Expiry date",
+  "vtExpiryPrompt": "Does this document expire?",
+  "vtFavourite": "Favourite",
+  "vtFolder": "Folder",
+  "vtFolderBills": "Bills & Receipts",
+  "vtFolderEducation": "Education",
+  "vtFolderIdentity": "Identity",
+  "vtFolderInsurance": "Insurance",
+  "vtFolderMedical": "Medical",
+  "vtFolderName": "Folder name",
+  "vtFolderOptions": "Folder options",
+  "vtFolderProperty": "Property",
+  "vtFolderVehicles": "Vehicles",
+  "vtFolderWork": "Work",
+  "vtFolders": "Folders",
+  "vtImportFiles": "Import from files",
+  "vtIssuer": "Issuer",
+  "vtLadderAlerts": "Alerts: {list}\nNext: {next}",
+  "@vtLadderAlerts": {
+    "placeholders": {
+      "list": {
+        "type": "String"
+      },
+      "next": {
+        "type": "String"
+      }
+    }
+  },
+  "vtLadderDayAfter": "{n} day after",
+  "@vtLadderDayAfter": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "vtLadderDaysBefore": "{n} days before",
+  "@vtLadderDaysBefore": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "vtLadderExpired": "Expired — a weekly reminder until renewed",
+  "vtLadderOnDay": "on the day",
+  "vtLast30Days": "Last 30 days",
+  "vtLinkedTasks": "Linked tasks",
+  "vtMarkRenewed": "Mark renewed → scan the new one",
+  "vtMove": "Move",
+  "vtMovedToTrash": "Moved to Trash",
+  "vtNewFolder": "New folder",
+  "vtNo": "No",
+  "vtNoMatches": "No matches",
+  "vtNoMatchesHint": "Try a title, an issuer like K-Electric, a word from the document, or a tag.",
+  "vtNoPages": "No pages stored for this document",
+  "vtNobody": "Nobody",
+  "vtNotSet": "Not set",
+  "vtNothingExpiring": "Nothing expiring",
+  "vtNothingExpiringMessage": "Documents due to expire in the next 90 days show here.",
+  "vtOwnProfileProtected": "Your own profile can't be deleted",
+  "vtPageOf": "Page {page} of {total}",
+  "@vtPageOf": {
+    "placeholders": {
+      "page": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "vtPeople": "People",
+  "vtPerson": "Person",
+  "vtPersonOptions": "Person options",
+  "vtRefNumber": "Reference / number",
+  "vtRelationChild": "Child",
+  "vtRelationOther": "Other",
+  "vtRelationParent": "Parent",
+  "vtRelationSpouse": "Spouse",
+  "vtRemoveFavourite": "Remove from favourites",
+  "vtRemovePerson": "Remove person",
+  "vtRemovePersonBody": "Their documents stay in the Vault, unassigned.",
+  "vtRemovePersonTitle": "Remove {name}?",
+  "@vtRemovePersonTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "vtRemoveTag": "Remove tag {tag}",
+  "@vtRemoveTag": {
+    "placeholders": {
+      "tag": {
+        "type": "String"
+      }
+    }
+  },
+  "vtRename": "Rename",
+  "vtRenameFolder": "Rename folder",
+  "vtRestore": "Restore",
+  "vtSave": "Save",
+  "vtScan": "Scan",
+  "vtScanAction": "📸 Scan",
+  "vtSearchHint": "Search documents…",
+  "vtSearchUnavailable": "Search isn't available",
+  "vtSeeAll": "See all",
+  "vtSetDate": "Set date",
+  "vtShare": "Share",
+  "vtSharedFrom": "Shared from LifeOS",
+  "vtSystemFolderNoDelete": "System folders can't be deleted",
+  "vtSystemFolderNoRename": "System folders can't be renamed",
+  "vtTags": "Tags",
+  "vtThisYear": "This year",
+  "vtTrashDaysLeft": "{n} days left",
+  "@vtTrashDaysLeft": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "vtTrashEmpty": "Trash is empty",
+  "vtTrashEmptyMessage": "Deleted documents stay here for {days} days, then are removed for good.",
+  "@vtTrashEmptyMessage": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      }
+    }
+  },
+  "vtTrashUnavailable": "Trash isn't available",
+  "vtTryAgain": "Please try again.",
+  "vtType": "Type",
+  "vtTypeAgreement": "Agreement",
+  "vtTypeBill": "Bill",
+  "vtTypeCertificate": "Certificate",
+  "vtTypeCnic": "CNIC",
+  "vtTypeDegree": "Degree",
+  "vtTypeFeeVoucher": "Fee voucher",
+  "vtTypeLicense": "License",
+  "vtTypeOther": "Document",
+  "vtTypePassport": "Passport",
+  "vtTypePolicy": "Policy",
+  "vtTypePrescription": "Prescription",
+  "vtTypeReceipt": "Receipt",
+  "vtTypeReport": "Report",
+  "vtTypeVisa": "Visa",
+  "vtTypeWarranty": "Warranty",
+  "vtUnarchive": "Unarchive",
+  "vtUnavailableMessage": "Local data could not be opened on this device.",
+  "vtUnavailableTitle": "The Vault isn't available",
+  "vtUndo": "Undo",
+  "vtUnfiled": "Unfiled",
+  "vtUnfiledTitle": "📥 Unfiled",
+  "vtVaultTitle": "Vault",
+  "wd1": "Mon",
+  "wd2": "Tue",
+  "wd3": "Wed",
+  "wd4": "Thu",
+  "wd5": "Fri",
+  "wd6": "Sat",
+  "wd7": "Sun",
+  "yesterday": "Yesterday"
+}

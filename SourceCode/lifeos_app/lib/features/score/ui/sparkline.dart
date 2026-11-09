@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/l10n.dart';
+
 /// 7-day score sparkline (PBI-020). One series, so no legend: the heading
 /// names it. A 2 px line on a fixed 0–100 scale with a recessive baseline,
 /// gaps for days without a snapshot, an 8 px marker on today and a single
@@ -25,7 +27,7 @@ class ScoreSparkline extends StatelessWidget {
         if (values[i] != null) '${dayLabels[i]} ${values[i]}',
     ];
     return Semantics(
-      label: 'Last 7 days: ${known.join(', ')}',
+      label: context.l10n.scSparkSemantics(known.join(', ')),
       excludeSemantics: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

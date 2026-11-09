@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/l10n.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../data/db/app_database.dart';
 import '../../../shared/format.dart';
@@ -14,8 +15,18 @@ Color domainColor(String domain) {
   return d == null ? Tokens.domain(LifeDomain.mind) : Tokens.domain(d);
 }
 
-String domainLabel(String domain) =>
-    domain.isEmpty ? domain : domain[0].toUpperCase() + domain.substring(1);
+/// A life area's name, in the app's language.
+String domainLabel(String domain) => switch (domain) {
+  'mind' => l10nNow.tkDomainMind,
+  'money' => l10nNow.domainMoney,
+  'health' => l10nNow.domainHealth,
+  'people' => l10nNow.domainPeople,
+  'work' => l10nNow.domainWork,
+  'soul' => l10nNow.domainSoul,
+  'vault' => l10nNow.tkDomainVault,
+  '' => domain,
+  _ => domain[0].toUpperCase() + domain.substring(1),
+};
 
 /// One task row: `○ checkbox · title · chips(⚡/domain/person) · due`.
 /// Swipe right completes, swipe left snoozes, tap opens the detail.
@@ -48,19 +59,20 @@ class _TaskTileState extends ConsumerState<TaskTile> {
     final persons = ref.watch(personsProvider).value ?? const <Person>[];
     final person = persons.where((p) => p.id == task.personId).firstOrNull;
     final overdue = isOverdue(task, now);
+    final l = context.l10n;
 
     return Dismissible(
       key: ValueKey('task-${task.id}'),
       background: _SwipeBackground(
         color: Tokens.scoreHigh,
         icon: Icons.check,
-        label: 'Done',
+        label: l.tkDone,
         alignment: Alignment.centerLeft,
       ),
       secondaryBackground: _SwipeBackground(
         color: theme.colorScheme.tertiary,
         icon: Icons.snooze,
-        label: 'Snooze',
+        label: l.tkSnooze,
         alignment: Alignment.centerRight,
       ),
       // Rows leave via the data stream, never by the Dismissible itself.
@@ -77,7 +89,7 @@ class _TaskTileState extends ConsumerState<TaskTile> {
         onTap: () => context.go('/tasks/task/${task.id}'),
         leading: IconButton(
           key: ValueKey('complete-${task.id}'),
-          tooltip: 'Mark "${task.title}" done',
+          tooltip: l.tkMarkDone(task.title),
           iconSize: 28,
           onPressed: _complete,
           icon: AnimatedSwitcher(
@@ -145,10 +157,10 @@ class _Chips extends StatelessWidget {
     final chips = <Widget>[
       if (atc)
         Semantics(
-          label: 'Auto-created',
+          label: context.l10n.tkAutoCreated,
           child: const Text('⚡', key: ValueKey('atc-chip')),
         ),
-      if (priority == 2) Text('‼ High', style: style),
+      if (priority == 2) Text(context.l10n.tkHighChip, style: style),
       if (domain != null)
         Row(
           mainAxisSize: MainAxisSize.min,
@@ -166,7 +178,7 @@ class _Chips extends StatelessWidget {
           ],
         ),
       if (person != null)
-        Text('${person!.avatar ?? '👤'} ${person!.name}', style: style),
+        Text([person!.avatar ?? '👤', person!.name].join(' '), style: style),
     ];
     if (chips.isEmpty) return const SizedBox.shrink();
     return Padding(

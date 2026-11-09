@@ -53,6 +53,14 @@ dependencies:
   google_mlkit_text_recognition: ^1.0.1
   pdfx: ^2.11.0
   share_plus: ^13.3.1
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.20.3
+  flutter_secure_storage: ^11.2.0
+  local_auth: ^3.0.2
+  cryptography: ^2.9.0
+  speech_to_text: ^7.5.0
+  archive: ^4.6.0
 
 dev_dependencies:
   flutter_test:
@@ -77,6 +85,7 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  generate: true
 
   # Life Score weights, version-pinned (PBI-020).
   assets:

@@ -6,6 +6,7 @@ import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
+import '../../../core/l10n.dart';
 import '../../../data/db/app_database.dart';
 import '../../../data/repositories/repositories.dart';
 import '../data/reminder_service.dart';
@@ -14,14 +15,14 @@ import '../reminder_sync.dart';
 import 'notification_gateway.dart';
 
 const _channelId = 'reminders';
-const _channelName = 'Reminders';
 
-const _actionTitles = {
-  ReminderActions.done: 'Done ✓',
-  ReminderActions.paid: 'Paid ✓',
-  ReminderActions.snooze: 'Snooze',
-  ReminderActions.renew: 'Set renewal task',
-  ReminderActions.dismiss: 'Dismiss',
+/// Notification action button text, in the app's language.
+String _actionTitle(String action) => switch (action) {
+  ReminderActions.done => l10nNow.tkActionDone,
+  ReminderActions.paid => l10nNow.tkActionPaid,
+  ReminderActions.snooze => l10nNow.tkSnooze,
+  ReminderActions.renew => l10nNow.tkActionRenew,
+  _ => l10nNow.tkActionDismiss,
 };
 
 /// `flutter_local_notifications` implementation of [NotificationGateway].
@@ -51,7 +52,7 @@ class LocalNotificationsGateway implements NotificationGateway {
                 kind.name,
                 actions: [
                   for (final a in ReminderActions.forKind(kind))
-                    DarwinNotificationAction.plain(a, _actionTitles[a]!),
+                    DarwinNotificationAction.plain(a, _actionTitle(a)),
                 ],
               ),
           ],
@@ -115,13 +116,13 @@ class LocalNotificationsGateway implements NotificationGateway {
         notificationDetails: NotificationDetails(
           android: AndroidNotificationDetails(
             _channelId,
-            _channelName,
-            channelDescription: 'Task, payment and document reminders',
+            l10nNow.tkChannelName,
+            channelDescription: l10nNow.tkChannelDesc,
             importance: Importance.high,
             priority: Priority.high,
             actions: [
               for (final a in n.actions)
-                AndroidNotificationAction(a, _actionTitles[a]!),
+                AndroidNotificationAction(a, _actionTitle(a)),
             ],
           ),
           iOS: DarwinNotificationDetails(categoryIdentifier: n.kind.name),

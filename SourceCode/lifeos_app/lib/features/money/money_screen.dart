@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/l10n.dart';
 import '../../core/money.dart';
 import '../../core/now_provider.dart';
 import '../../core/theme/tokens.dart';
@@ -33,6 +34,7 @@ class _MoneyScreenState extends ConsumerState<MoneyScreen> {
     final month = _month ?? current;
     final expenses = ref.watch(allExpensesProvider);
     final categories = ref.watch(categoriesProvider).value ?? const [];
+    final l = context.l10n;
 
     final switcher = _MonthSwitcher(
       month: month,
@@ -45,7 +47,7 @@ class _MoneyScreenState extends ConsumerState<MoneyScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Money'),
+        title: Text(l.mnTitle),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(56),
           child: Padding(
@@ -58,9 +60,9 @@ class _MoneyScreenState extends ConsumerState<MoneyScreen> {
             child: SegmentedButton<bool>(
               key: const ValueKey('money-view'),
               showSelectedIcon: false,
-              segments: const [
-                ButtonSegment(value: false, label: Text('Overview')),
-                ButtonSegment(value: true, label: Text('Forecast')),
+              segments: [
+                ButtonSegment(value: false, label: Text(l.mnOverview)),
+                ButtonSegment(value: true, label: Text(l.mnForecast)),
               ],
               selected: {_forecast},
               onSelectionChanged: (s) => setState(() {
@@ -75,10 +77,10 @@ class _MoneyScreenState extends ConsumerState<MoneyScreen> {
           ? ForecastView(month: month, header: switcher)
           : expenses.when(
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) => const EmptyState(
+              error: (e, _) => EmptyState(
                 emoji: '⚠️',
-                title: "Money isn't available",
-                message: 'Local data could not be opened on this device.',
+                title: l.mnUnavailableTitle,
+                message: l.mnUnavailableBody,
               ),
               data: (all) {
                 final summary = summarize(all, categories, month);
@@ -92,14 +94,13 @@ class _MoneyScreenState extends ConsumerState<MoneyScreen> {
                       EmptyState(
                         inList: true,
                         emoji: '💰',
-                        title: 'No expenses in ${formatMonth(month)}',
-                        message:
-                            'Paid bills and quick expenses will add up here.',
-                        actionLabel: '💸 Add expense',
+                        title: l.mnNoExpensesIn(formatMonth(month)),
+                        message: l.mnNoExpensesBody,
+                        actionLabel: l.mnAddExpenseAction,
                         onAction: () => showExpenseSheet(context),
                       )
                     else ...[
-                      const _SectionTitle('Spending by category'),
+                      _SectionTitle(l.mnSpendingByCategory),
                       Padding(
                         padding: const EdgeInsets.symmetric(
                           horizontal: Tokens.spaceM,
@@ -109,7 +110,9 @@ class _MoneyScreenState extends ConsumerState<MoneyScreen> {
                           totalMinor: summary.totalMinor,
                         ),
                       ),
-                      _SectionTitle('Expenses · ${summary.expenses.length}'),
+                      _SectionTitle(
+                        l.mnExpensesCount('${summary.expenses.length}'),
+                      ),
                       for (final e in summary.expenses)
                         _ExpenseRow(
                           expense: e,
@@ -146,7 +149,7 @@ class _MonthSwitcher extends StatelessWidget {
         children: [
           IconButton(
             key: const ValueKey('month-prev'),
-            tooltip: 'Previous month',
+            tooltip: context.l10n.mnPrevMonth,
             icon: const Icon(Icons.chevron_left),
             onPressed: () => onChanged(addMonths(month, -1)),
           ),
@@ -160,7 +163,7 @@ class _MonthSwitcher extends StatelessWidget {
           ),
           IconButton(
             key: const ValueKey('month-next'),
-            tooltip: 'Next month',
+            tooltip: context.l10n.mnNextMonth,
             icon: const Icon(Icons.chevron_right),
             onPressed: canGoNext ? () => onChanged(addMonths(month, 1)) : null,
           ),
@@ -181,15 +184,19 @@ class _Hero extends StatelessWidget {
     final theme = Theme.of(context);
     final prev = shortMonth(addMonths(summary.month, -1));
     final delta = summary.delta;
+    final l = context.l10n;
     final (IconData? icon, String? text) = switch (delta.kind) {
       DeltaKind.none => (null, null),
-      DeltaKind.newSpend => (
-        Icons.fiber_new_outlined,
-        'New · nothing in $prev',
+      DeltaKind.newSpend => (Icons.fiber_new_outlined, l.mnDeltaNew(prev)),
+      DeltaKind.same => (Icons.trending_flat, l.mnDeltaSame(prev)),
+      DeltaKind.up => (
+        Icons.arrow_upward,
+        l.mnDeltaVs('${delta.percent}', prev),
       ),
-      DeltaKind.same => (Icons.trending_flat, 'Same as $prev'),
-      DeltaKind.up => (Icons.arrow_upward, '${delta.percent}% vs $prev'),
-      DeltaKind.down => (Icons.arrow_downward, '${delta.percent}% vs $prev'),
+      DeltaKind.down => (
+        Icons.arrow_downward,
+        l.mnDeltaVs('${delta.percent}', prev),
+      ),
     };
     final muted = theme.colorScheme.onSurfaceVariant;
 
@@ -203,7 +210,7 @@ class _Hero extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            'Spent',
+            l.mnSpent,
             style: theme.textTheme.labelLarge?.copyWith(color: muted),
           ),
           Text(
@@ -246,7 +253,7 @@ class _ExpenseRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final title = category?.name ?? 'Uncategorised';
+    final title = categoryName(category);
     final when = relativeDay(parseIsoDate(expense.spentOn), now);
     return ListTile(
       key: ValueKey('expense-${expense.id}'),
@@ -269,17 +276,20 @@ class _ExpenseRow extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (expense.paymentId != null)
-            const Padding(
-              padding: EdgeInsets.only(right: Tokens.spaceXs),
-              child: Text('⚡', semanticsLabel: 'Logged from a payment'),
+            Padding(
+              padding: const EdgeInsets.only(right: Tokens.spaceXs),
+              child: Text(
+                '⚡',
+                semanticsLabel: context.l10n.mnLoggedFromPayment,
+              ),
             ),
           if (expense.receiptDocumentId != null)
-            const Padding(
-              padding: EdgeInsets.only(right: Tokens.spaceXs),
+            Padding(
+              padding: const EdgeInsets.only(right: Tokens.spaceXs),
               child: Icon(
                 Icons.attach_file,
                 size: 18,
-                semanticLabel: 'Receipt attached',
+                semanticLabel: context.l10n.mnReceiptAttached,
               ),
             ),
           Text(

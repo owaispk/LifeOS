@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/l10n.dart';
 import '../../data/db/app_database.dart';
 import '../../shared/widgets/empty_state.dart';
 import '../capture/capture_entry.dart';
@@ -41,6 +42,7 @@ class VaultListScreen extends ConsumerWidget {
     final docs = ref.watch(documentsProvider).value ?? const <Document>[];
     final folders = ref.watch(foldersProvider).value ?? const <Folder>[];
     final persons = ref.watch(personsProvider).value ?? const <Person>[];
+    final l = context.l10n;
 
     final (
       String title,
@@ -50,7 +52,7 @@ class VaultListScreen extends ConsumerWidget {
       FolderScope(:final folderId) => () {
         final f = folders.where((f) => f.id == folderId).firstOrNull;
         return (
-          f == null ? 'Folder' : '${f.icon} ${f.name}',
+          f == null ? l.vtFolder : '${f.icon} ${folderLabel(f)}',
           docs.where((d) => d.folderId == folderId),
           [if (f != null && !isSystemFolder(f)) _FolderMenu(folder: f)],
         );
@@ -58,13 +60,13 @@ class VaultListScreen extends ConsumerWidget {
       PersonScope(:final personId) => () {
         final p = persons.where((p) => p.id == personId).firstOrNull;
         return (
-          p == null ? 'Person' : '${p.avatar ?? '👤'} ${p.name}',
+          p == null ? l.vtPerson : '${p.avatar ?? '👤'} ${p.name}',
           docs.where((d) => d.personId == personId),
           [if (p != null) _PersonMenu(person: p)],
         );
       }(),
       UnfiledScope() => (
-        '📥 Unfiled',
+        l.vtUnfiledTitle,
         docs.where((d) => d.folderId == null),
         const <Widget>[],
       ),
@@ -77,9 +79,9 @@ class VaultListScreen extends ConsumerWidget {
       body: list.isEmpty
           ? EmptyState(
               emoji: '📂',
-              title: 'Nothing here yet',
-              message: 'Scan or import a document to file it here.',
-              actionLabel: '📸 Scan',
+              title: l.vtEmptyTitle,
+              message: l.vtEmptyMessage,
+              actionLabel: l.vtScanAction,
               onAction: () => startScan(
                 context,
                 folderId: switch (scope) {
@@ -107,9 +109,10 @@ class _FolderMenu extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l = context.l10n;
     return PopupMenuButton<String>(
       key: const ValueKey('folder-menu'),
-      tooltip: 'Folder options',
+      tooltip: l.vtFolderOptions,
       onSelected: (v) async {
         if (v == 'rename') {
           await showFolderSheet(context, folder: folder);
@@ -117,19 +120,19 @@ class _FolderMenu extends ConsumerWidget {
         }
         final ok = await _confirm(
           context,
-          title: 'Delete "${folder.name}"?',
-          body: 'Its documents move to Unfiled — nothing is lost.',
+          title: l.vtDeleteFolderTitle(folder.name),
+          body: l.vtDeleteFolderBody,
         );
         if (!ok) return;
         await ref.read(vaultServiceProvider).deleteFolder(folder.id);
         if (context.mounted) context.go('/vault');
       },
-      itemBuilder: (context) => const [
-        PopupMenuItem(value: 'rename', child: Text('Rename')),
+      itemBuilder: (context) => [
+        PopupMenuItem(value: 'rename', child: Text(l.vtRename)),
         PopupMenuItem(
-          key: ValueKey('folder-delete'),
+          key: const ValueKey('folder-delete'),
           value: 'delete',
-          child: Text('Delete folder'),
+          child: Text(l.vtDeleteFolder),
         ),
       ],
     );
@@ -143,9 +146,10 @@ class _PersonMenu extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isSelf = person.relation == 'self';
+    final l = context.l10n;
     return PopupMenuButton<String>(
       key: const ValueKey('person-menu'),
-      tooltip: 'Person options',
+      tooltip: l.vtPersonOptions,
       onSelected: (v) async {
         if (v == 'edit') {
           await showPersonSheet(context, person: person);
@@ -153,8 +157,8 @@ class _PersonMenu extends ConsumerWidget {
         }
         final ok = await _confirm(
           context,
-          title: 'Remove ${person.name}?',
-          body: 'Their documents stay in the Vault, unassigned.',
+          title: l.vtRemovePersonTitle(person.name),
+          body: l.vtRemovePersonBody,
         );
         if (!ok) return;
         try {
@@ -168,12 +172,12 @@ class _PersonMenu extends ConsumerWidget {
         }
       },
       itemBuilder: (context) => [
-        const PopupMenuItem(value: 'edit', child: Text('Edit')),
+        PopupMenuItem(value: 'edit', child: Text(l.vtEdit)),
         if (!isSelf)
-          const PopupMenuItem(
-            key: ValueKey('person-delete'),
+          PopupMenuItem(
+            key: const ValueKey('person-delete'),
             value: 'delete',
-            child: Text('Remove person'),
+            child: Text(l.vtRemovePerson),
           ),
       ],
     );
@@ -193,12 +197,12 @@ Future<bool> _confirm(
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context, false),
-          child: const Text('Cancel'),
+          child: Text(context.l10n.cancel),
         ),
         FilledButton(
           key: const ValueKey('confirm'),
           onPressed: () => Navigator.pop(context, true),
-          child: const Text('Delete'),
+          child: Text(context.l10n.vtDelete),
         ),
       ],
     ),

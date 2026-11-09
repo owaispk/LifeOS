@@ -57,6 +57,13 @@ class UserSettings extends Table with SyncColumns {
   IntColumn get salaryDay => integer().nullable()();
   IntColumn get salaryMinor => integer().nullable()();
 
+  /// UI language, 'en' | 'ur' (schema v6, PBI-025).
+  TextColumn get language => text().withDefault(const Constant('en'))();
+
+  /// Block screenshots inside the Vault (schema v6, PBI-024).
+  BoolColumn get screenshotBlock =>
+      boolean().withDefault(const Constant(false))();
+
   @override
   List<Set<Column<Object>>> get uniqueKeys => [
     {userId},

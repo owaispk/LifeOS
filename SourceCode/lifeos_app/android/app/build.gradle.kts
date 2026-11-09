@@ -6,7 +6,9 @@ plugins {
 
 android {
     namespace = "com.lifeos.lifeos_app"
-    compileSdk = flutter.compileSdkVersion
+    // Plugins (flutter_local_notifications, receive_sharing_intent,
+    // core-ktx 1.19) need API 37.
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -36,6 +38,10 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
         }
     }
 }

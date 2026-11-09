@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/l10n.dart';
 import '../../../data/data_providers.dart';
 import '../../../data/db/app_database.dart';
 import '../../money/ui/paid_sheet.dart';
@@ -24,6 +25,7 @@ Future<void> completeWithUndo(
   }
   if (!context.mounted) return;
   final messenger = ScaffoldMessenger.of(context);
+  final l = context.l10n;
   final service = ref.read(taskServiceProvider);
   await HapticFeedback.mediumImpact();
   final result = await service.complete(task.id);
@@ -33,13 +35,11 @@ Future<void> completeWithUndo(
       SnackBar(
         key: const ValueKey('undo-snackbar'),
         content: Text(
-          result.nextTaskId == null
-              ? 'Done: ${task.title}'
-              : 'Done — next one scheduled',
+          result.nextTaskId == null ? l.tkDoneTitle(task.title) : l.tkDoneNext,
         ),
         duration: const Duration(seconds: 5),
         action: SnackBarAction(
-          label: 'Undo',
+          label: l.tkUndo,
           onPressed: () => service.undoComplete(result),
         ),
       ),
@@ -60,19 +60,19 @@ Future<bool> snoozeTask(BuildContext context, WidgetRef ref, Task task) async {
           ListTile(
             key: const ValueKey('snooze-tonight'),
             leading: const Text('🌙', style: TextStyle(fontSize: 24)),
-            title: const Text('Tonight'),
+            title: Text(context.l10n.tkTonight),
             onTap: () => Navigator.pop(context, SnoozeOption.tonight),
           ),
           ListTile(
             key: const ValueKey('snooze-tomorrow'),
             leading: const Text('☀️', style: TextStyle(fontSize: 24)),
-            title: const Text('Tomorrow morning'),
+            title: Text(context.l10n.tkTomorrowMorning),
             onTap: () => Navigator.pop(context, SnoozeOption.tomorrow),
           ),
           ListTile(
             key: const ValueKey('snooze-pick'),
             leading: const Text('📅', style: TextStyle(fontSize: 24)),
-            title: const Text('Pick a date & time'),
+            title: Text(context.l10n.tkPickDateTime),
             onTap: () => Navigator.pop(context, 'pick'),
           ),
         ],

@@ -7,7 +7,7 @@
 | Story Points | 8 |
 | Spec refs | Features §12; UI flow §4; Data model §6.5 |
 | Depends on | PBI-009 |
-| Status | Dev Complete — device QA pending (AC1, AC4) |
+| Status | Done |
 
 ## User Story
 As a **user**, I want reminders that fire on time even without internet, and that I can act on without opening the app.
@@ -60,10 +60,10 @@ Code: `lib/features/reminders/` — `domain/reminder_planner.dart` (pure plan), 
 
 | AC | Result | Evidence |
 |---|---|---|
-| 1 | ⏳ Device QA | Local scheduling via `zonedSchedule` with exact alarms when allowed, else inexact. Needs an Android emulator in airplane mode. |
+| 1 | ✅ Device QA | Local scheduling via `zonedSchedule` with exact alarms when allowed, else inexact. Needs an Android emulator in airplane mode. |
 | 2 | ✅ (chain → PBI-016) | Service test: **Paid ✓** completes the task and marks the payment `paid` with `paid_at`, without UI, and the notification disappears. Receipt → Vault → expense hooks in with PBI-016 as groomed. |
 | 3 | ✅ | Service test: **Snooze** moves the reminder to now + 60 min and re-arms it (`snoozeMinutes`, setting in PBI-023). |
-| 4 | ⏳ Device QA | Boot receiver registered and schedule rebuilt on every start. Needs a reboot on an emulator. |
+| 4 | ✅ Device QA | Boot receiver registered and schedule rebuilt on every start. Needs a reboot on an emulator. |
 | 5 | ✅ | Service tests: complete → notification gone, Undo → back, delete → gone. Live sync reacts to writes on its own. |
 | 6 | ✅ | Planner + service tests: with app lock on, titles are generic and no name, amount or number appears. Expiry notifications are always generic. |
 
@@ -75,3 +75,15 @@ Code: `lib/features/reminders/` — `domain/reminder_planner.dart` (pure plan), 
   - the plugin calls
   - the background-isolate action handler
 - iOS background actions need extra AppDelegate registration, to be checked on a Mac.
+
+## Device QA (2026-11-09)
+Android emulator `sdk gphone64 x86 64`, Android 17 (API 37), Google Play services; debug APK; 2026-11-09.
+
+| AC | Result | Evidence |
+|---|---|---|
+| 1 | ✅ | Timed task "QA reminder offline" (10:16) created → in-context permission prompt → Allow. **Airplane mode on**, app in the background → notification posted at 10:16:47 with **Done ✓ / Snooze**. **Done ✓** completed the task in the background (Today then showed 0 tasks). |
+| 4 | ✅ | "QA after reboot" scheduled for 10:50 → `adb reboot` → the alarm was re-registered by 10:46:26 (~40 s after boot) and the notification fired at 10:52:52. |
+
+Notes:
+- With exact alarms not granted, Android's inexact window delivered it up to ~3 min late (by design: exact when allowed, else inexact).
+- The notification text was correct ("Due 10:16 AM"). The emulator's SystemUI dropped some characters when drawing it; its status-bar clock was garbled the same way. That's an emulator display quirk, not the app.

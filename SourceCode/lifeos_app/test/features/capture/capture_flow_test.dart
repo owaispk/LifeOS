@@ -3,11 +3,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image/image.dart' as img;
 import 'package:lifeos_app/data/db/app_database.dart';
 import 'package:lifeos_app/features/capture/domain/pdf_builder.dart';
 import 'package:lifeos_app/features/capture/platform/capture_platform.dart';
+import 'package:lifeos_app/features/security/security_providers.dart';
 import 'package:path/path.dart' as p;
 
 import '../../fakes.dart';
@@ -269,10 +271,16 @@ void main() {
     await saveAndWait(tester);
     final d = (await docs(app, tester)).single;
     expect(d.source, 'share_in');
-    expect(
-      File((await files(app, tester)).single.localPath!).readAsBytesSync(),
-      pdf,
+    // Stored encrypted (PBI-024); decrypting gives the shared PDF back.
+    final stored = (await files(app, tester)).single;
+    expect(File(stored.localPath!).readAsBytesSync(), isNot(pdf));
+    final container = ProviderScope.containerOf(
+      tester.element(find.byType(MaterialApp)),
     );
+    final plain = await tester.runAsync(
+      () => container.read(vaultFilesProvider).read(stored),
+    );
+    expect(plain, pdf);
   }, capture: makeFakes);
 
   appTest('import from files: images become one doc, each PDF its own', (

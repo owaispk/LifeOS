@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/l10n.dart';
 import '../../core/money.dart';
 import '../../core/theme/tokens.dart';
 import '../../data/db/app_database.dart';
@@ -27,10 +28,10 @@ class RuleDetailScreen extends ConsumerWidget {
     if (rules != null && rule == null) {
       return Scaffold(
         appBar: AppBar(),
-        body: const EmptyState(
+        body: EmptyState(
           emoji: '⚡',
-          title: 'This rule is gone',
-          message: 'It was deleted. Tasks it created are still in Tasks.',
+          title: context.l10n.atcRuleGone,
+          message: context.l10n.atcRuleGoneBody,
         ),
       );
     }
@@ -116,6 +117,11 @@ class _RuleFormState extends ConsumerState<_RuleForm> {
       ref.watch(nowProvider)(),
     );
 
+    final l = context.l10n;
+    final historyText = l.atcHistory(history.created, '${history.paidOnTime}');
+    final allPaidOnTime =
+        history.created > 0 && history.paidOnTime == history.created;
+
     return ListView(
       padding: const EdgeInsets.all(Tokens.spaceM),
       children: [
@@ -129,9 +135,7 @@ class _RuleFormState extends ConsumerState<_RuleForm> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'No ${billStatsOf(rule).label ?? 'utility'} bill this '
-                    'month — did you miss it, or should I pause this '
-                    'reminder?',
+                    l.atcMissedBill(billStatsOf(rule).label ?? l.atcUtility),
                   ),
                   const SizedBox(height: Tokens.spaceS),
                   Wrap(
@@ -140,12 +144,12 @@ class _RuleFormState extends ConsumerState<_RuleForm> {
                       FilledButton.tonal(
                         key: const ValueKey('missed-bill-scan'),
                         onPressed: () => startScan(context),
-                        child: const Text("I'll scan it"),
+                        child: Text(l.atcIllScan),
                       ),
                       TextButton(
                         key: const ValueKey('missed-bill-pause'),
                         onPressed: () => service.pause(rule.id),
-                        child: const Text('Pause'),
+                        child: Text(l.atcPause),
                       ),
                     ],
                   ),
@@ -164,16 +168,15 @@ class _RuleFormState extends ConsumerState<_RuleForm> {
                 Text(cadenceLabel(rule), style: theme.textTheme.titleMedium),
                 const SizedBox(height: Tokens.spaceXs),
                 Text(
-                  'Created ${history.created} '
-                  '${history.created == 1 ? 'task' : 'tasks'} · '
-                  '${history.paidOnTime} paid on time'
-                  '${history.created > 0 && history.paidOnTime == history.created ? ' ✓' : ''}',
+                  allPaidOnTime ? '$historyText ✓' : historyText,
                   key: const ValueKey('rule-history'),
                 ),
                 if (rule.installmentTotal != null)
                   Text(
-                    '${rule.installmentDone ?? 0} of '
-                    '${rule.installmentTotal} paid',
+                    l.atcInstallments(
+                      '${rule.installmentDone ?? 0}',
+                      '${rule.installmentTotal}',
+                    ),
                     key: const ValueKey('rule-installments'),
                   ),
               ],
@@ -183,12 +186,12 @@ class _RuleFormState extends ConsumerState<_RuleForm> {
         SwitchListTile(
           key: const ValueKey('rule-active'),
           contentPadding: EdgeInsets.zero,
-          title: const Text('Create tasks automatically'),
+          title: Text(l.atcCreateAuto),
           subtitle: Text(switch (rule.status) {
-            'active' => 'On',
-            'paused' => 'Paused — no new tasks',
-            'ended' => 'Ended',
-            _ => 'Waiting for your OK',
+            'active' => l.atcStatusOn,
+            'paused' => l.atcStatusPaused,
+            'ended' => l.atcEnded,
+            _ => l.atcWaitingOk,
           }),
           value: rule.status == 'active',
           onChanged: rule.status == 'ended'
@@ -207,9 +210,9 @@ class _RuleFormState extends ConsumerState<_RuleForm> {
         TextField(
           key: const ValueKey('detail-rule-name'),
           controller: _name,
-          decoration: const InputDecoration(
-            labelText: 'Name',
-            border: OutlineInputBorder(),
+          decoration: InputDecoration(
+            labelText: l.name,
+            border: const OutlineInputBorder(),
           ),
         ),
         const SizedBox(height: Tokens.spaceS),
@@ -222,10 +225,10 @@ class _RuleFormState extends ConsumerState<_RuleForm> {
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
                 ),
-                decoration: const InputDecoration(
-                  labelText: 'Amount',
-                  prefixText: 'Rs ',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l.amount,
+                  prefixText: l.atcRsPrefix,
+                  border: const OutlineInputBorder(),
                 ),
               ),
             ),
@@ -234,9 +237,9 @@ class _RuleFormState extends ConsumerState<_RuleForm> {
               width: 120,
               child: DropdownButtonFormField<int>(
                 initialValue: _dueDay,
-                decoration: const InputDecoration(
-                  labelText: 'Due day',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l.atcDueDay,
+                  border: const OutlineInputBorder(),
                 ),
                 items: [
                   for (var d = 1; d <= 31; d++)
@@ -256,15 +259,15 @@ class _RuleFormState extends ConsumerState<_RuleForm> {
         ),
         Row(
           children: [
-            const Expanded(child: Text('Remind me before')),
+            Expanded(child: Text(l.atcRemindBefore)),
             IconButton(
-              tooltip: 'Fewer days',
+              tooltip: l.atcFewerDays,
               onPressed: _remind > 0 ? () => setState(() => _remind--) : null,
               icon: const Icon(Icons.remove),
             ),
-            Text('$_remind days'),
+            Text(l.atcDays('$_remind')),
             IconButton(
-              tooltip: 'More days',
+              tooltip: l.atcMoreDays,
               onPressed: _remind < 15 ? () => setState(() => _remind++) : null,
               icon: const Icon(Icons.add),
             ),
@@ -283,37 +286,33 @@ class _RuleFormState extends ConsumerState<_RuleForm> {
               skipMonths: _skip.toList(),
             );
             if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Saved — applies to new tasks')),
-              );
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(l.atcSavedNewTasks)));
             }
           },
-          child: const Text('Save changes'),
+          child: Text(l.atcSaveChanges),
         ),
         const SizedBox(height: Tokens.spaceL),
         TextButton.icon(
           key: const ValueKey('detail-rule-delete'),
           style: TextButton.styleFrom(foregroundColor: theme.colorScheme.error),
           icon: const Icon(Icons.delete_outline),
-          label: const Text('Delete rule'),
+          label: Text(l.atcDeleteRule),
           onPressed: () async {
             final ok = await showDialog<bool>(
               context: context,
               builder: (context) => AlertDialog(
-                title: Text('Delete "${rule.name}"?'),
-                content: const Text(
-                  'No new tasks will be created. Tasks it already made stay '
-                  'in your list.',
-                ),
+                title: Text(context.l10n.atcDeleteTitle(rule.name)),
+                content: Text(context.l10n.atcDeleteBody),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(context, false),
-                    child: const Text('Cancel'),
+                    child: Text(context.l10n.cancel),
                   ),
                   FilledButton(
                     key: const ValueKey('confirm-rule-delete'),
                     onPressed: () => Navigator.pop(context, true),
-                    child: const Text('Delete'),
+                    child: Text(context.l10n.atcDelete),
                   ),
                 ],
               ),
