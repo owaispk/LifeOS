@@ -131,7 +131,12 @@ class _AiSettingsScreenState extends ConsumerState<AiSettingsScreen> {
         children: [
           Text(l.aiTitle, style: theme.textTheme.titleLarge),
           SizedBox(height: Tokens.spaceM),
-          Text(l.aiPrivacyNote, style: theme.textTheme.bodySmall),
+          Text(
+            settings?.mode == AiMode.managed
+                ? l.aiPrivacyNoteManaged
+                : l.aiPrivacyNote,
+            style: theme.textTheme.bodySmall,
+          ),
           SizedBox(height: Tokens.spaceL),
           if (!premium) ...[
             // Visible but locked: the pitch is deliberate (AC4).
@@ -150,6 +155,47 @@ class _AiSettingsScreenState extends ConsumerState<AiSettingsScreen> {
               child: Text(l.aiUpgrade),
             ),
           ] else ...[
+            // Managed is the default and needs nothing; the own-provider
+            // form below is the advanced override (PBI-027b).
+            ListTile(
+              key: const ValueKey('ai-mode'),
+              contentPadding: EdgeInsets.zero,
+              leading: Icon(
+                settings?.mode == AiMode.managed
+                    ? Icons.check_circle
+                    : Icons.cloud_outlined,
+              ),
+              title: Text(
+                settings?.mode == AiMode.managed
+                    ? l.aiModeManaged
+                    : l.aiModeOwn,
+              ),
+              subtitle: settings?.mode == AiMode.managed
+                  ? Text(l.aiModeManagedSub)
+                  : null,
+              trailing: settings?.mode == AiMode.byok
+                  ? TextButton(
+                      key: const ValueKey('ai-use-managed'),
+                      // Explicit, and the only way back: nothing ever
+                      // reroutes text between modes on its own (AC4).
+                      onPressed: () async {
+                        await ref
+                            .read(aiSettingsServiceProvider)
+                            .setProvider(
+                              baseUrl: null,
+                              model: null,
+                              apiKey: '',
+                            );
+                        _baseUrl.clear();
+                        _model.clear();
+                      },
+                      child: Text(l.aiUseManaged),
+                    )
+                  : null,
+            ),
+            SizedBox(height: Tokens.spaceM),
+            Text(l.aiAdvanced, style: theme.textTheme.labelLarge),
+            SizedBox(height: Tokens.spaceS),
             Text(l.aiPreset, style: theme.textTheme.labelLarge),
             SizedBox(height: Tokens.spaceS),
             Wrap(

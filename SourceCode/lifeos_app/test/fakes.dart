@@ -252,4 +252,10 @@ class FakeBilling implements BillingSource {
     if (reachable != true) return false;
     return owned;
   }
+
+  /// What the store would hand over as proof of purchase.
+  String token = 'play-purchase-token-xyz';
+
+  @override
+  Future<String?> entitlementToken() async => owned ? token : null;
 }

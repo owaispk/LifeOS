@@ -189,6 +189,12 @@ void main() {
           find.byKey(const ValueKey('set-diagnostics')),
           300,
         );
+        // scrollUntilVisible stops as soon as the row is built, which
+        // can still leave it below the fold on a longer list.
+        await tester.ensureVisible(
+          find.byKey(const ValueKey('set-diagnostics')),
+        );
+        await tester.pumpAndSettle();
         await tester.tap(find.byKey(const ValueKey('set-diagnostics')));
         await settle(tester);
 
@@ -242,6 +248,12 @@ void main() {
           find.byKey(const ValueKey('set-diagnostics')),
           300,
         );
+        // scrollUntilVisible stops as soon as the row is built, which
+        // can still leave it below the fold on a longer list.
+        await tester.ensureVisible(
+          find.byKey(const ValueKey('set-diagnostics')),
+        );
+        await tester.pumpAndSettle();
         await tester.tap(find.byKey(const ValueKey('set-diagnostics')));
         await settle(tester);
         await tester.tap(find.byKey(const ValueKey('diag-test-error')));

@@ -54,4 +54,27 @@ S = {
         "Kept what the phone read.",
         "فون نے جو پڑھا وہی رکھا گیا۔",
     ),
+    # -- Managed mode (PBI-027b) --
+    "aiModeManaged": ("LifeOS AI", "لائف او ایس اے آئی"),
+    "aiModeManagedSub": (
+        "No setup. Included with Premium.",
+        "کسی ترتیب کی ضرورت نہیں۔ پریمیم میں شامل۔",
+    ),
+    "aiModeOwn": ("Your own provider", "آپ کا اپنا فراہم کنندہ"),
+    "aiAdvanced": (
+        "Advanced: use my own provider",
+        "جدید: اپنا فراہم کنندہ استعمال کریں",
+    ),
+    "aiUseManaged": (
+        "Use LifeOS AI instead",
+        "اس کی جگہ لائف او ایس اے آئی استعمال کریں",
+    ),
+    "aiConsentBodyManaged": (
+        "Couldn't read this fully on the phone. Send the text - not the image - to LifeOS AI? Our servers forward it to the AI provider and store nothing.",
+        "یہ فون پر پوری طرح نہیں پڑھی جا سکی۔ متن - تصویر نہیں - لائف او ایس اے آئی کو بھیجیں؟ ہمارے سرور اسے آگے بھیجتے ہیں اور کچھ محفوظ نہیں کرتے۔",
+    ),
+    "aiPrivacyNoteManaged": (
+        "Your document text goes to LifeOS, which forwards it to the AI provider and stores nothing. The image is never sent.",
+        "آپ کی دستاویز کا متن لائف او ایس تک جاتا ہے، جو اسے اے آئی فراہم کنندہ کو بھیجتا ہے اور کچھ محفوظ نہیں کرتا۔ تصویر کبھی نہیں بھیجی جاتی۔",
+    ),
 }

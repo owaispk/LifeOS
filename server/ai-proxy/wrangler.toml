@@ -1,0 +1,24 @@
+name = "lifeos-ai-proxy"
+main = "src/index.ts"
+compatibility_date = "2026-11-10"
+
+# Counters only — integers keyed by a hash of the entitlement token,
+# with a two-day TTL. No document text, no results, no user content.
+[[kv_namespaces]]
+binding = "COUNTERS"
+id = "replace-with-your-kv-namespace-id"
+
+[vars]
+# Everything that tunes behaviour is config, not code (PBI-027b
+# grooming): the cap, the kill switch and the model can all change
+# without an app release.
+UPSTREAM_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai"
+UPSTREAM_MODEL = "gemini-2.0-flash-lite"
+PLAY_PACKAGE = "com.lifeos.app"
+PLAY_PRODUCT_ID = "lifeos_premium_monthly"
+DAILY_CAP = "40"
+KILL_SWITCH = "on"
+
+# Secrets are set with `wrangler secret put`, never written here:
+#   UPSTREAM_API_KEY    LifeOS's own model-provider key
+#   PLAY_ACCESS_TOKEN   minted from the Play service account

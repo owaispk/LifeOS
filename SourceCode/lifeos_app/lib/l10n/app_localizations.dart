@@ -98,6 +98,12 @@ abstract class AppLocalizations {
     Locale('ur'),
   ];
 
+  /// No description provided for @aiAdvanced.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced: use my own provider'**
+  String get aiAdvanced;
+
   /// No description provided for @aiAlways.
   ///
   /// In en, this message translates to:
@@ -133,6 +139,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Couldn\'t read this fully on the phone. Send the text — not the image — to your AI provider?'**
   String get aiConsentBody;
+
+  /// No description provided for @aiConsentBodyManaged.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t read this fully on the phone. Send the text - not the image - to LifeOS AI? Our servers forward it to the AI provider and store nothing.'**
+  String get aiConsentBodyManaged;
 
   /// No description provided for @aiConsentSetting.
   ///
@@ -182,6 +194,24 @@ abstract class AppLocalizations {
   /// **'Premium AI reads what the phone can\'t: damaged photos, Urdu documents, and billers it hasn\'t seen before.'**
   String get aiLockedPitch;
 
+  /// No description provided for @aiModeManaged.
+  ///
+  /// In en, this message translates to:
+  /// **'LifeOS AI'**
+  String get aiModeManaged;
+
+  /// No description provided for @aiModeManagedSub.
+  ///
+  /// In en, this message translates to:
+  /// **'No setup. Included with Premium.'**
+  String get aiModeManagedSub;
+
+  /// No description provided for @aiModeOwn.
+  ///
+  /// In en, this message translates to:
+  /// **'Your own provider'**
+  String get aiModeOwn;
+
   /// No description provided for @aiModel.
   ///
   /// In en, this message translates to:
@@ -217,6 +247,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your document text goes directly from this phone to your AI provider. LifeOS servers never see it, and the image is never sent.'**
   String get aiPrivacyNote;
+
+  /// No description provided for @aiPrivacyNoteManaged.
+  ///
+  /// In en, this message translates to:
+  /// **'Your document text goes to LifeOS, which forwards it to the AI provider and stores nothing. The image is never sent.'**
+  String get aiPrivacyNoteManaged;
 
   /// No description provided for @aiReadBadge.
   ///
@@ -277,6 +313,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Upgrade'**
   String get aiUpgrade;
+
+  /// No description provided for @aiUseManaged.
+  ///
+  /// In en, this message translates to:
+  /// **'Use LifeOS AI instead'**
+  String get aiUseManaged;
 
   /// No description provided for @amount.
   ///

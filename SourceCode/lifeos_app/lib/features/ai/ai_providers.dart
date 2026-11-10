@@ -13,6 +13,7 @@ import '../settings/settings_providers.dart';
 import 'domain/ai_gate.dart';
 import 'domain/extraction_contract.dart';
 import 'platform/llm_provider.dart';
+import 'platform/managed_provider.dart';
 import 'platform/secret_store.dart';
 
 export 'domain/ai_gate.dart' show AiConsent, AiGate;
@@ -23,17 +24,41 @@ final aiSecretStoreProvider = Provider<SecretStore>(
   (ref) => MemorySecretStore(),
 );
 
+/// Where the store's purchase token is kept between runs, so managed AI
+/// works without waiting for the store to answer again (PBI-027b).
+final entitlementStoreProvider = Provider<SecretStore>(
+  (ref) => MemorySecretStore(),
+);
+
+/// Which way premium AI goes.
+enum AiMode {
+  /// LifeOS's own key, through the proxy. The default for premium: a
+  /// user who will never create an API key still gets AI (AC1).
+  managed,
+
+  /// The user's own provider, straight from the phone (PBI-027a). The
+  /// advanced override — configuring it *is* the switch.
+  byok,
+}
+
 /// Builds the provider for the user's settings, or null when nothing is
 /// configured. Overridden in tests with a fake.
 final llmProviderFactoryProvider =
     Provider<LlmProvider? Function(AiSettings)>(
-      (ref) => (s) => s.isConfigured
-          ? OpenAiCompatProvider(
-              baseUrl: s.baseUrl!,
-              apiKey: s.apiKey,
-              model: s.model!,
-            )
-          : null,
+      (ref) => (s) => switch (s.mode) {
+        // Explicit, both ways: a BYOK failure never falls back to the
+        // managed proxy, because that would move the user's text
+        // somewhere they did not agree to (AC4).
+        AiMode.byok => OpenAiCompatProvider(
+          baseUrl: s.baseUrl!,
+          apiKey: s.apiKey,
+          model: s.model!,
+        ),
+        AiMode.managed when s.entitlementToken != null => ManagedProvider(
+          entitlementToken: s.entitlementToken!,
+        ),
+        AiMode.managed => null,
+      },
     );
 
 /// The user's AI configuration. The key is read from secure storage, so
@@ -44,6 +69,8 @@ class AiSettings {
     this.model,
     this.apiKey = '',
     this.consent = AiConsent.ask,
+    this.premium = false,
+    this.entitlementToken,
   });
 
   final String? baseUrl;
@@ -53,9 +80,25 @@ class AiSettings {
   final String apiKey;
   final AiConsent consent;
 
-  bool get isConfigured =>
+  /// PBI-029's entitlement — managed AI is premium-only.
+  final bool premium;
+
+  /// The store's proof of purchase, for the managed proxy. Null when
+  /// nothing is owned or the store has not answered yet.
+  final String? entitlementToken;
+
+  /// A base URL and model are both set: the user chose their own
+  /// provider, so that is the mode.
+  bool get hasOwnProvider =>
       (baseUrl?.trim().isNotEmpty ?? false) &&
       (model?.trim().isNotEmpty ?? false);
+
+  AiMode get mode => hasOwnProvider ? AiMode.byok : AiMode.managed;
+
+  /// Whether AI can run at all: own provider set up, or premium with a
+  /// usable entitlement. A premium user needs no setup (AC1).
+  bool get isConfigured =>
+      hasOwnProvider || (premium && entitlementToken != null);
 
   /// Whether a key has been stored, without handing the key around.
   bool get hasKey => apiKey.isNotEmpty;
@@ -64,11 +107,17 @@ class AiSettings {
 final aiSettingsProvider = FutureProvider<AiSettings>((ref) async {
   final s = ref.watch(settingsProvider).value;
   final key = await ref.watch(aiSecretStoreProvider).read();
+  final premium = ref.watch(premiumProvider);
   return AiSettings(
     baseUrl: s?.aiBaseUrl,
     model: s?.aiModel,
     apiKey: key ?? '',
     consent: AiConsent.parse(s?.aiConsent),
+    premium: premium,
+    // Only a premium user has one to send.
+    entitlementToken: premium
+        ? await ref.watch(entitlementStoreProvider).read()
+        : null,
   );
 });
 

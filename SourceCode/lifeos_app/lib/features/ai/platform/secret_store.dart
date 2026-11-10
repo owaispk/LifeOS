@@ -10,11 +10,18 @@ abstract interface class SecretStore {
   Future<void> clear();
 }
 
-/// Android Keystore / iOS Keychain.
+/// Android Keystore / iOS Keychain. One instance per secret.
 class SecureSecretStore implements SecretStore {
-  const SecureSecretStore();
+  const SecureSecretStore([this._name = aiApiKeySecret]);
 
-  static const _name = 'lifeos.ai_api_key.v1';
+  /// The user's own provider key (PBI-027a).
+  static const aiApiKeySecret = 'lifeos.ai_api_key.v1';
+
+  /// The store's purchase token, which the managed proxy checks
+  /// (PBI-027b). A credential, so it lives here and not in the database.
+  static const entitlementSecret = 'lifeos.entitlement_token.v1';
+
+  final String _name;
   static const _storage = FlutterSecureStorage();
 
   @override

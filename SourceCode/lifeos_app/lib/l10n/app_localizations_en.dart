@@ -10,6 +10,9 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get aiAdvanced => 'Advanced: use my own provider';
+
+  @override
   String get aiAlways => 'Always';
 
   @override
@@ -27,6 +30,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get aiConsentBody =>
       'Couldn\'t read this fully on the phone. Send the text — not the image — to your AI provider?';
+
+  @override
+  String get aiConsentBodyManaged =>
+      'Couldn\'t read this fully on the phone. Send the text - not the image - to LifeOS AI? Our servers forward it to the AI provider and store nothing.';
 
   @override
   String get aiConsentSetting => 'Send document text';
@@ -57,6 +64,15 @@ class AppLocalizationsEn extends AppLocalizations {
       'Premium AI reads what the phone can\'t: damaged photos, Urdu documents, and billers it hasn\'t seen before.';
 
   @override
+  String get aiModeManaged => 'LifeOS AI';
+
+  @override
+  String get aiModeManagedSub => 'No setup. Included with Premium.';
+
+  @override
+  String get aiModeOwn => 'Your own provider';
+
+  @override
   String get aiModel => 'Model';
 
   @override
@@ -75,6 +91,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get aiPrivacyNote =>
       'Your document text goes directly from this phone to your AI provider. LifeOS servers never see it, and the image is never sent.';
+
+  @override
+  String get aiPrivacyNoteManaged =>
+      'Your document text goes to LifeOS, which forwards it to the AI provider and stores nothing. The image is never sent.';
 
   @override
   String get aiReadBadge => 'AI-read';
@@ -105,6 +125,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aiUpgrade => 'Upgrade';
+
+  @override
+  String get aiUseManaged => 'Use LifeOS AI instead';
 
   @override
   String get amount => 'Amount';

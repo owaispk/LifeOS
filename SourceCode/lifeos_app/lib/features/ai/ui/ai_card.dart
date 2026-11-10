@@ -67,7 +67,15 @@ class AiCard extends ConsumerWidget {
           children: [
             Text(l.aiConsentTitle, style: theme.textTheme.titleSmall),
             SizedBox(height: Tokens.spaceXs),
-            Text(l.aiConsentBody, style: theme.textTheme.bodySmall),
+            // The destination is named accurately for the mode in use
+            // (PBI-027b AC6): LifeOS as a pass-through, or the user's
+            // own provider.
+            Text(
+              ref.watch(aiSettingsProvider).value?.mode == AiMode.managed
+                  ? l.aiConsentBodyManaged
+                  : l.aiConsentBody,
+              style: theme.textTheme.bodySmall,
+            ),
             SizedBox(height: Tokens.spaceS),
             Wrap(
               spacing: Tokens.spaceS,

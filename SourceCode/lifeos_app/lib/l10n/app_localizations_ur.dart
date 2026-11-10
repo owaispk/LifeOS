@@ -10,6 +10,9 @@ class AppLocalizationsUr extends AppLocalizations {
   AppLocalizationsUr([String locale = 'ur']) : super(locale);
 
   @override
+  String get aiAdvanced => 'جدید: اپنا فراہم کنندہ استعمال کریں';
+
+  @override
   String get aiAlways => 'ہمیشہ';
 
   @override
@@ -27,6 +30,10 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get aiConsentBody =>
       'یہ فون پر پوری طرح نہیں پڑھی جا سکی۔ متن — تصویر نہیں — آپ کے اے آئی فراہم کنندہ کو بھیجیں؟';
+
+  @override
+  String get aiConsentBodyManaged =>
+      'یہ فون پر پوری طرح نہیں پڑھی جا سکی۔ متن - تصویر نہیں - لائف او ایس اے آئی کو بھیجیں؟ ہمارے سرور اسے آگے بھیجتے ہیں اور کچھ محفوظ نہیں کرتے۔';
 
   @override
   String get aiConsentSetting => 'دستاویز کا متن بھیجیں';
@@ -57,6 +64,15 @@ class AppLocalizationsUr extends AppLocalizations {
       'پریمیم اے آئی وہ پڑھتا ہے جو فون نہیں پڑھ پاتا: خراب تصاویر، اردو دستاویزات، اور نئے بل بھیجنے والے۔';
 
   @override
+  String get aiModeManaged => 'لائف او ایس اے آئی';
+
+  @override
+  String get aiModeManagedSub => 'کسی ترتیب کی ضرورت نہیں۔ پریمیم میں شامل۔';
+
+  @override
+  String get aiModeOwn => 'آپ کا اپنا فراہم کنندہ';
+
+  @override
   String get aiModel => 'ماڈل';
 
   @override
@@ -75,6 +91,10 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String get aiPrivacyNote =>
       'آپ کی دستاویز کا متن اسی فون سے سیدھا آپ کے اے آئی فراہم کنندہ تک جاتا ہے۔ لائف او ایس کے سرور اسے کبھی نہیں دیکھتے، اور تصویر کبھی نہیں بھیجی جاتی۔';
+
+  @override
+  String get aiPrivacyNoteManaged =>
+      'آپ کی دستاویز کا متن لائف او ایس تک جاتا ہے، جو اسے اے آئی فراہم کنندہ کو بھیجتا ہے اور کچھ محفوظ نہیں کرتا۔ تصویر کبھی نہیں بھیجی جاتی۔';
 
   @override
   String get aiReadBadge => 'اے آئی نے پڑھا';
@@ -105,6 +125,9 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get aiUpgrade => 'اپ گریڈ کریں';
+
+  @override
+  String get aiUseManaged => 'اس کی جگہ لائف او ایس اے آئی استعمال کریں';
 
   @override
   String get amount => 'رقم';

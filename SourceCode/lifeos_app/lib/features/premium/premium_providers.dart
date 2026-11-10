@@ -5,6 +5,7 @@ import '../../core/log/app_log.dart';
 import '../../core/now_provider.dart';
 import '../../data/data_providers.dart';
 import '../../data/db/app_database.dart';
+import '../ai/ai_providers.dart' show entitlementStoreProvider;
 import '../settings/settings_providers.dart';
 import 'domain/limits.dart';
 import 'platform/billing_source.dart';
@@ -89,14 +90,22 @@ class PremiumService {
     return ok;
   }
 
-  Future<void> _write(bool owned) => _ref
-      .read(settingsServiceProvider)
-      .update(
-        UserSettingsCompanion(
-          premiumUntil: Value(owned ? trustedUntil(_now) : null),
-          premiumCheckedAt: Value(_now.millisecondsSinceEpoch),
-        ),
-      );
+  Future<void> _write(bool owned) async {
+    await _ref
+        .read(settingsServiceProvider)
+        .update(
+          UserSettingsCompanion(
+            premiumUntil: Value(owned ? trustedUntil(_now) : null),
+            premiumCheckedAt: Value(_now.millisecondsSinceEpoch),
+          ),
+        );
+    // The store's proof of purchase, kept for the managed AI proxy to
+    // check (PBI-027b). A credential, so secure storage — never the
+    // database, and never a log line.
+    final tokens = _ref.read(entitlementStoreProvider);
+    final token = owned ? await _store.entitlementToken() : null;
+    token == null ? await tokens.clear() : await tokens.write(token);
+  }
 }
 
 final premiumServiceProvider = Provider<PremiumService>(PremiumService.new);

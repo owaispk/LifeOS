@@ -40,6 +40,10 @@ abstract interface class BillingSource {
 
   /// Restores purchases for the signed-in store account (AC6).
   Future<bool> restore();
+
+  /// The store's proof of purchase, for the managed AI proxy to check
+  /// (PBI-027b). Null when nothing is owned or the store never answered.
+  Future<String?> entitlementToken();
 }
 
 /// The real store.
@@ -57,6 +61,9 @@ class StoreBilling implements BillingSource {
 
   /// Set once the store has reported an owned subscription in this run.
   bool _owned = false;
+
+  /// The purchase token from that report. Never logged.
+  String? _token;
   Completer<bool>? _pending;
 
   void dispose() {
@@ -71,6 +78,7 @@ class StoreBilling implements BillingSource {
         case PurchaseStatus.purchased:
         case PurchaseStatus.restored:
           _owned = true;
+          _token = p.verificationData.serverVerificationData;
         // Not a downgrade: a failed or abandoned attempt says nothing
         // about what the account already owns.
         case PurchaseStatus.error:
@@ -175,6 +183,9 @@ class StoreBilling implements BillingSource {
 
   @override
   Future<bool> restore() async => await isSubscribed() ?? false;
+
+  @override
+  Future<String?> entitlementToken() async => _token;
 }
 
 /// No store: the default everywhere until `main()` wires the real one,
@@ -196,4 +207,7 @@ class NoBilling implements BillingSource {
 
   @override
   Future<bool> restore() async => false;
+
+  @override
+  Future<String?> entitlementToken() async => null;
 }

@@ -158,7 +158,12 @@ Future<void> main() async {
           billingSourceProvider.overrideWithValue(StoreBilling()),
           // The AI key lives in the Keystore/Keychain, never in the
           // database or the export (PBI-027a AC6).
-          aiSecretStoreProvider.overrideWithValue(const SecureSecretStore()),
+          aiSecretStoreProvider.overrideWithValue(
+            const SecureSecretStore(SecureSecretStore.aiApiKeySecret),
+          ),
+          entitlementStoreProvider.overrideWithValue(
+            const SecureSecretStore(SecureSecretStore.entitlementSecret),
+          ),
         ],
       ],
       child: const LifeOsApp(),
