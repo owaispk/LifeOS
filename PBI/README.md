@@ -46,6 +46,7 @@
 |---|---|---|---|---|---|
 | 27a | [PBI-027a Premium AI: Bring-Your-Own-Key (no backend)](PBI-027a-premium-ai-byok.md) | E3 ATC / E1 Vault | 5 | 004, 024, 029 | Ready (blocked by 029) |
 | 27b | [PBI-027b Premium AI: Managed Mode + Lightweight Proxy](PBI-027b-premium-ai-managed.md) | E3 ATC / E1 Vault | 5 | 027a, 029 | Ready (blocked by 027a, 029) |
+| 29 | [PBI-029 Premium Subscription & Free-Tier Limits](PBI-029-premium-free-tier.md) | E5 Platform | 8 | 002, 013, 003 | Ready |
 | 30 | [PBI-030 Diagnostics Log & Share](PBI-030-diagnostics-log.md) | E5 Platform | 3 | 025, 007 | Done |
 | 31 | [PBI-031 Flagship: Compact, Professional Layout](PBI-031-flagship-compact-layout.md) | E5 Platform / Design | 5 | 001, 025 | Done |
 | 32 | [PBI-032 Device Calendar in Today View (read-only)](PBI-032-device-calendar-today.md) | E2 Mind | 5 | 009, 021 | Done |
@@ -79,6 +80,5 @@
 ## Not yet groomed (post-MVP, will become PBIs before development)
 - PBI-026 Supabase backend + offline sync (push/pull, conflict rules) + E2E encrypted cloud backup (premium)
 - PBI-028 Share-safe expiring links, watermark, bundles
-- PBI-029 Premium/subscription & free-tier limits (25 docs / 3 rules)
 - V2 (P1): Health, People, Work/Study, Soul, Goals, full Money, Emergency Card, appointments OCR
 - V3 (P2): Family sharing, AI weekly plan, HealthKit/steps, multi-currency, Arabic
