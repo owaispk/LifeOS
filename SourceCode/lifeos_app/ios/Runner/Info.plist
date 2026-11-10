@@ -70,5 +70,9 @@
 	<string>LifeOS uses the microphone when you tap the mic to add a task by voice.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>LifeOS turns what you say into a task. Speech is recognised on your phone.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>LifeOS shows your calendar events alongside your tasks. It only reads them and never changes your calendar.</string>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>LifeOS shows your calendar events alongside your tasks. It only reads them and never changes your calendar.</string>
 </dict>
 </plist>

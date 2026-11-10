@@ -11,6 +11,8 @@ import 'app.dart';
 import 'core/log/app_log.dart';
 import 'core/log/diagnostics.dart';
 import 'data/data_providers.dart';
+import 'features/calendar/calendar_providers.dart';
+import 'features/calendar/platform/calendar_source.dart';
 import 'features/atc/data/atc_service.dart';
 import 'features/vault/data/expiry_guard.dart';
 import 'features/capture/capture_providers.dart';
@@ -144,6 +146,9 @@ Future<void> main() async {
           // Voice capture (PBI-010): without this the overlay gets
           // NoSpeechInput and always says "Voice isn't available".
           speechInputProvider.overrideWithValue(DeviceSpeechInput()),
+          // Device calendar (PBI-032). Inert elsewhere, and this one asks
+          // for nothing until the user turns events on in Settings.
+          calendarSourceProvider.overrideWithValue(DeviceCalendarSource()),
         ],
       ],
       child: const LifeOsApp(),

@@ -259,6 +259,33 @@
     }
   },
   "autoReminderOn": "⚡ Auto-reminder on",
+  "calAllDay": "All day",
+  "calCount": "{n, plural, =1{1 event} other{{n} events}}",
+  "@calCount": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "calDenied": "LifeOS needs calendar access to show your events.",
+  "calEventsHeader": "Events",
+  "calFromCalendar": "In {name}",
+  "@calFromCalendar": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "calLocation": "Location",
+  "calNoCalendars": "No calendars found on this phone.",
+  "calOpenSettings": "Open settings",
+  "calReadOnly": "From your phone's calendar. Change it there.",
+  "calSection": "Calendar",
+  "calShowEvents": "Show calendar events",
+  "calShowEventsHint": "Your phone's events appear in Today and Upcoming. LifeOS only reads them — it never adds, changes or deletes anything.",
+  "calWhichCalendars": "Calendars to show",
   "cancel": "Cancel",
   "continueLabel": "Continue",
   "cpAllDocuments": "All documents",
@@ -701,6 +728,17 @@
     "placeholders": {
       "n": {
         "type": "int"
+      }
+    }
+  },
+  "hmTodayTasksEvents": "Today · {tasks} · {events}",
+  "@hmTodayTasksEvents": {
+    "placeholders": {
+      "tasks": {
+        "type": "String"
+      },
+      "events": {
+        "type": "String"
       }
     }
   },

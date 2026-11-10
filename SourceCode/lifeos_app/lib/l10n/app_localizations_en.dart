@@ -332,6 +332,56 @@ class AppLocalizationsEn extends AppLocalizations {
   String get autoReminderOn => '⚡ Auto-reminder on';
 
   @override
+  String get calAllDay => 'All day';
+
+  @override
+  String calCount(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n events',
+      one: '1 event',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get calDenied => 'LifeOS needs calendar access to show your events.';
+
+  @override
+  String get calEventsHeader => 'Events';
+
+  @override
+  String calFromCalendar(String name) {
+    return 'In $name';
+  }
+
+  @override
+  String get calLocation => 'Location';
+
+  @override
+  String get calNoCalendars => 'No calendars found on this phone.';
+
+  @override
+  String get calOpenSettings => 'Open settings';
+
+  @override
+  String get calReadOnly => 'From your phone\'s calendar. Change it there.';
+
+  @override
+  String get calSection => 'Calendar';
+
+  @override
+  String get calShowEvents => 'Show calendar events';
+
+  @override
+  String get calShowEventsHint =>
+      'Your phone\'s events appear in Today and Upcoming. LifeOS only reads them — it never adds, changes or deletes anything.';
+
+  @override
+  String get calWhichCalendars => 'Calendars to show';
+
+  @override
   String get cancel => 'Cancel';
 
   @override
@@ -982,6 +1032,11 @@ class AppLocalizationsEn extends AppLocalizations {
       one: '1 task',
     );
     return 'Today · $_temp0';
+  }
+
+  @override
+  String hmTodayTasksEvents(String tasks, String events) {
+    return 'Today · $tasks · $events';
   }
 
   @override

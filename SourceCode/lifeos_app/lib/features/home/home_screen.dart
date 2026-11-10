@@ -10,6 +10,7 @@ import '../../data/data_providers.dart' show personsProvider;
 import '../../data/db/app_database.dart';
 import '../atc/atc_providers.dart' show allPaymentsProvider, atcRulesProvider;
 import '../atc/ui/rule_form.dart' show showAddRuleSheet;
+import '../calendar/calendar_providers.dart';
 import '../capture/capture_entry.dart';
 import '../score/score_providers.dart';
 import '../score/ui/score_ring.dart';
@@ -69,6 +70,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final docs = ref.watch(documentsProvider).value ?? const <Document>[];
     final rules = ref.watch(atcRulesProvider).value ?? const <AtcRule>[];
     final today = todaySections(tasks, now).values.expand((l) => l).toList();
+    // Device-calendar events count towards the one morning check
+    // (PBI-032); they are never tasks.
+    final events = ref.watch(todayEventsProvider);
     final week = weekPaymentsMinor(payments, now);
     final isNew = tasks.isEmpty && docs.isEmpty && rules.isEmpty;
     final l = context.l10n;
@@ -144,7 +148,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ],
               _SectionTitle(
                 key: const ValueKey('home-today'),
-                l.hmTodayTasks(today.length),
+                events.isEmpty
+                    ? l.hmTodayTasks(today.length)
+                    : l.hmTodayTasksEvents(
+                        l.digestTasks(today.length),
+                        l.calCount(events.length),
+                      ),
                 action: today.length > homeTaskCap
                     ? _SeeAll(
                         key: const ValueKey('today-see-all'),

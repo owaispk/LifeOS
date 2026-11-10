@@ -332,6 +332,57 @@ class AppLocalizationsUr extends AppLocalizations {
   String get autoReminderOn => '⚡ خودکار یاد دہانی آن';
 
   @override
+  String get calAllDay => 'سارا دن';
+
+  @override
+  String calCount(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n ایونٹ',
+      one: '1 ایونٹ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get calDenied =>
+      'ایونٹ دکھانے کے لیے لائف او ایس کو کیلنڈر تک رسائی چاہیے۔';
+
+  @override
+  String get calEventsHeader => 'ایونٹ';
+
+  @override
+  String calFromCalendar(String name) {
+    return '$name میں';
+  }
+
+  @override
+  String get calLocation => 'مقام';
+
+  @override
+  String get calNoCalendars => 'اس فون پر کوئی کیلنڈر نہیں ملا۔';
+
+  @override
+  String get calOpenSettings => 'ترتیبات کھولیں';
+
+  @override
+  String get calReadOnly => 'آپ کے فون کے کیلنڈر سے۔ تبدیلی وہیں کریں۔';
+
+  @override
+  String get calSection => 'کیلنڈر';
+
+  @override
+  String get calShowEvents => 'کیلنڈر کے ایونٹ دکھائیں';
+
+  @override
+  String get calShowEventsHint =>
+      'آپ کے فون کے ایونٹ آج اور آنے والے میں نظر آئیں گے۔ لائف او ایس صرف پڑھتا ہے — کچھ شامل، تبدیل یا حذف نہیں کرتا۔';
+
+  @override
+  String get calWhichCalendars => 'کون سے کیلنڈر دکھائیں';
+
+  @override
   String get cancel => 'منسوخ';
 
   @override
@@ -981,6 +1032,11 @@ class AppLocalizationsUr extends AppLocalizations {
       one: '1 کام',
     );
     return 'آج · $_temp0';
+  }
+
+  @override
+  String hmTodayTasksEvents(String tasks, String events) {
+    return 'آج · $tasks · $events';
   }
 
   @override

@@ -6,6 +6,10 @@
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <!-- PBI-032: read the phone's calendar to show events in Today.
+         Read-only — LifeOS never writes, so no WRITE_CALENDAR. Asked for
+         in context, the first time the user turns events on. -->
+    <uses-permission android:name="android.permission.READ_CALENDAR"/>
     <application
         android:label="LifeOS"
         android:name="${applicationName}"

@@ -632,6 +632,84 @@ abstract class AppLocalizations {
   /// **'⚡ Auto-reminder on'**
   String get autoReminderOn;
 
+  /// No description provided for @calAllDay.
+  ///
+  /// In en, this message translates to:
+  /// **'All day'**
+  String get calAllDay;
+
+  /// No description provided for @calCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{n, plural, =1{1 event} other{{n} events}}'**
+  String calCount(int n);
+
+  /// No description provided for @calDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'LifeOS needs calendar access to show your events.'**
+  String get calDenied;
+
+  /// No description provided for @calEventsHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Events'**
+  String get calEventsHeader;
+
+  /// No description provided for @calFromCalendar.
+  ///
+  /// In en, this message translates to:
+  /// **'In {name}'**
+  String calFromCalendar(String name);
+
+  /// No description provided for @calLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get calLocation;
+
+  /// No description provided for @calNoCalendars.
+  ///
+  /// In en, this message translates to:
+  /// **'No calendars found on this phone.'**
+  String get calNoCalendars;
+
+  /// No description provided for @calOpenSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open settings'**
+  String get calOpenSettings;
+
+  /// No description provided for @calReadOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'From your phone\'s calendar. Change it there.'**
+  String get calReadOnly;
+
+  /// No description provided for @calSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar'**
+  String get calSection;
+
+  /// No description provided for @calShowEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'Show calendar events'**
+  String get calShowEvents;
+
+  /// No description provided for @calShowEventsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Your phone\'s events appear in Today and Upcoming. LifeOS only reads them — it never adds, changes or deletes anything.'**
+  String get calShowEventsHint;
+
+  /// No description provided for @calWhichCalendars.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendars to show'**
+  String get calWhichCalendars;
+
   /// No description provided for @cancel.
   ///
   /// In en, this message translates to:
@@ -1621,6 +1699,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Today · {n, plural, =1{1 task} other{{n} tasks}}'**
   String hmTodayTasks(int n);
+
+  /// No description provided for @hmTodayTasksEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'Today · {tasks} · {events}'**
+  String hmTodayTasksEvents(String tasks, String events);
 
   /// No description provided for @hmUrgent.
   ///

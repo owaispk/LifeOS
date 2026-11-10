@@ -45,7 +45,7 @@ class AppDatabase extends _$AppDatabase {
   );
 
   @override
-  int get schemaVersion => 9;
+  int get schemaVersion => 10;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -106,6 +106,12 @@ class AppDatabase extends _$AppDatabase {
       // v9 (PBI-033): home-screen widget detail visibility.
       if (from < 9) {
         await m.addColumn(userSettings, userSettings.widgetDetails);
+      }
+      // v10 (PBI-032): device calendar in Today. Off on upgrade as well as
+      // on a new install — turning it on is what asks for the permission.
+      if (from < 10) {
+        await m.addColumn(userSettings, userSettings.calendarOn);
+        await m.addColumn(userSettings, userSettings.calendarsOff);
       }
     },
     beforeOpen: (details) async {

@@ -6,12 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:app_settings/app_settings.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../core/l10n.dart';
 import '../../core/theme/tokens.dart';
 import '../../data/data_providers.dart';
 import '../../data/db/app_database.dart';
+import '../calendar/calendar_providers.dart';
 import '../../shared/format.dart';
 import '../../shared/widgets/section_header.dart';
 import '../capture/capture_providers.dart' show vaultRootProvider;
@@ -138,6 +140,8 @@ class SettingsScreen extends ConsumerWidget {
             onChanged: (v) =>
                 set(UserSettingsCompanion(screenshotBlock: Value(v))),
           ),
+          SectionHeader(l.calSection),
+          const _CalendarSettings(),
           SectionHeader(l.settingsNotifications),
           ListTile(
             key: const ValueKey('set-digest'),
@@ -456,4 +460,85 @@ Future<String?> _pickTime(BuildContext context, String current) async {
   if (t == null) return null;
   return '${t.hour.toString().padLeft(2, '0')}:'
       '${t.minute.toString().padLeft(2, '0')}';
+}
+
+/// Device calendar (PBI-032): the master toggle, then which calendars to
+/// show. Nothing calendar-related runs until the toggle goes on, and the
+/// permission is asked for there and nowhere else (AC3, AC5).
+class _CalendarSettings extends ConsumerWidget {
+  const _CalendarSettings();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = context.l10n;
+    final on = ref.watch(calendarOnProvider);
+    final off = ref.watch(calendarsOffProvider);
+    final settings = ref.read(calendarSettingsProvider);
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SwitchListTile(
+          key: const ValueKey('set-calendar'),
+          title: Text(l.calShowEvents),
+          subtitle: Text(l.calShowEventsHint),
+          value: on,
+          onChanged: (want) async {
+            if (!want) return settings.disable();
+            // The switch only moves if the user allows it (AC3).
+            if (await settings.enable()) return;
+            if (!context.mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                key: const ValueKey('calendar-denied'),
+                content: Text(l.calDenied),
+                action: SnackBarAction(
+                  label: l.calOpenSettings,
+                  onPressed: AppSettings.openAppSettings,
+                ),
+              ),
+            );
+          },
+        ),
+        if (on)
+          ref
+              .watch(deviceCalendarsProvider)
+              .when(
+                loading: () => const SizedBox.shrink(),
+                error: (_, _) => const SizedBox.shrink(),
+                data: (cals) => cals.isEmpty
+                    ? ListTile(
+                        key: const ValueKey('calendar-none'),
+                        subtitle: Text(l.calNoCalendars),
+                      )
+                    : Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ListTile(
+                            key: const ValueKey('calendar-which'),
+                            title: Text(l.calWhichCalendars),
+                          ),
+                          for (final c in cals)
+                            CheckboxListTile(
+                              key: ValueKey('calendar-${c.id}'),
+                              title: Text(c.name),
+                              subtitle: c.account.isEmpty
+                                  ? null
+                                  : Text(c.account),
+                              secondary: c.colorValue == null
+                                  ? null
+                                  : CircleAvatar(
+                                      radius: Tokens.spaceS,
+                                      backgroundColor: Color(c.colorValue!),
+                                    ),
+                              value: !off.contains(c.id),
+                              onChanged: (v) =>
+                                  settings.setCalendar(c.id, on: v ?? false),
+                            ),
+                        ],
+                      ),
+              ),
+      ],
+    );
+  }
 }

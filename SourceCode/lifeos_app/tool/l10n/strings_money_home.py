@@ -80,6 +80,7 @@ S = {
     "hmNothingUrgentNice": ("Nothing urgent — nice ✓", "کچھ فوری نہیں — زبردست ✓"),
     "hmSeeAllCount": ("See all ({n})", "سب دیکھیں ({n})"),
     "hmTodayTasks": ("Today · {n, plural, =1{1 task} other{{n} tasks}}", "آج · {n, plural, =1{1 کام} other{{n} کام}}"),
+    "hmTodayTasksEvents": ("Today · {tasks} · {events}", "آج · {tasks} · {events}"),
     "hmClearDay": ("A clear day.", "آج کا دن خالی ہے۔"),
     "hmAddTask": ("➕ Add a task", "➕ کام شامل کریں"),
     "hmSeeAllN": ("See all {n}", "تمام {n} دیکھیں"),

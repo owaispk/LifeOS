@@ -6,6 +6,9 @@ import '../../core/theme/tokens.dart';
 import '../../data/db/app_database.dart';
 import '../../shared/format.dart';
 import '../../shared/widgets/empty_state.dart';
+import '../calendar/calendar_providers.dart';
+import '../calendar/platform/calendar_source.dart';
+import '../calendar/ui/event_tile.dart';
 import 'domain/overload.dart';
 import 'domain/task_rules.dart';
 import 'tasks_providers.dart';
@@ -90,9 +93,13 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
           message: l.tkUnavailableBody,
         ),
         data: (list) => switch (_view) {
-          TasksView.today => _TodayList(sections: todaySections(list, now)),
+          TasksView.today => _TodayList(
+            sections: todaySections(list, now),
+            events: ref.watch(todayEventsProvider),
+          ),
           TasksView.upcoming => _UpcomingList(
             days: upcomingByDay(list, now),
+            events: ref.watch(upcomingEventsProvider),
             now: now,
             heat: loadsFrom(list, now, 7, capacity),
           ),
@@ -113,13 +120,16 @@ String _sectionTitle(AppLocalizations l, TodaySection s) => switch (s) {
 };
 
 class _TodayList extends StatelessWidget {
-  const _TodayList({required this.sections});
+  const _TodayList({required this.sections, this.events = const []});
   final Map<TodaySection, List<Task>> sections;
+
+  /// Today's device-calendar events (PBI-032), shown above the tasks.
+  final List<CalEvent> events;
 
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
-    if (sections.isEmpty) {
+    if (sections.isEmpty && events.isEmpty) {
       return _AddTaskEmptyState(
         emoji: '✅',
         title: l.tkEmptyTodayTitle,
@@ -130,6 +140,14 @@ class _TodayList extends StatelessWidget {
       key: const ValueKey('today-list'),
       padding: EdgeInsets.only(bottom: Tokens.listEnd),
       children: [
+        if (events.isNotEmpty) ...[
+          _SectionHeader(
+            key: const ValueKey('section-events'),
+            title: l.calEventsHeader,
+            count: events.length,
+          ),
+          for (final e in events) EventTile(event: e),
+        ],
         for (final entry in sections.entries) ...[
           _SectionHeader(
             key: ValueKey('section-${entry.key.name}'),
@@ -151,8 +169,12 @@ class _UpcomingList extends StatelessWidget {
     required this.days,
     required this.now,
     required this.heat,
+    this.events = const {},
   });
   final Map<DateTime, List<Task>> days;
+
+  /// Events by day for the same 7-day window (PBI-032 AC2).
+  final Map<DateTime, List<CalEvent>> events;
   final DateTime now;
 
   /// Today … +6 load for the Overload Shield heatmap (PBI-011).
@@ -161,7 +183,9 @@ class _UpcomingList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
-    if (days.isEmpty) {
+    // Days with tasks, events or both — in date order.
+    final allDays = ({...days.keys, ...events.keys}.toList()..sort());
+    if (allDays.isEmpty) {
       return _AddTaskEmptyState(
         emoji: '📅',
         title: l.tkEmptyWeekTitle,
@@ -173,14 +197,18 @@ class _UpcomingList extends StatelessWidget {
       padding: EdgeInsets.only(bottom: Tokens.listEnd),
       children: [
         LoadHeatmap(days: heat),
-        for (final entry in days.entries) ...[
+        for (final day in allDays) ...[
           _SectionHeader(
-            title: relativeDay(entry.key, now) == l.tomorrow
-                ? l.tkTomorrowOn(formatDay(entry.key))
-                : formatDay(entry.key, now: now),
-            count: entry.value.length,
+            title: relativeDay(day, now) == l.tomorrow
+                ? l.tkTomorrowOn(formatDay(day))
+                : formatDay(day, now: now),
+            count:
+                (days[day]?.length ?? 0) + (events[day]?.length ?? 0),
           ),
-          for (final t in entry.value) TaskTile(task: t),
+          // Events first: they are fixed points the tasks fit around.
+          for (final e in events[day] ?? const <CalEvent>[])
+            EventTile(event: e),
+          for (final t in days[day] ?? const <Task>[]) TaskTile(task: t),
         ],
       ],
     );

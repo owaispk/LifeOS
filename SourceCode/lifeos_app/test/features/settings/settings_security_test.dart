@@ -92,6 +92,10 @@ void main() {
       find.byKey(const ValueKey('set-delete-all')),
       300,
     );
+    // scrollUntilVisible stops as soon as the row is built, which can
+    // still leave it below the fold on a longer list.
+    await tester.ensureVisible(find.byKey(const ValueKey('set-delete-all')));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('set-delete-all')));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const ValueKey('delete-all-continue')));

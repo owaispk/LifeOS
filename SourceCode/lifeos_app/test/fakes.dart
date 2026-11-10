@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:lifeos_app/features/calendar/platform/calendar_source.dart';
 import 'package:lifeos_app/features/capture/ocr/document_analysis.dart';
 import 'package:lifeos_app/features/capture/platform/capture_platform.dart';
 import 'package:lifeos_app/features/reminders/domain/reminder_planner.dart';
@@ -122,5 +123,71 @@ class FakeAuthenticator implements Authenticator {
   Future<bool> authenticate(String reason) async {
     asks++;
     return pass;
+  }
+}
+
+/// A device calendar that is not a device (PBI-032). Counts every call,
+/// so a test can prove nothing touches the calendar while the feature is
+/// off (AC5).
+class FakeCalendar implements CalendarSource {
+  FakeCalendar({this.permission = false, this.grants = true});
+
+  /// Whether the permission is already granted.
+  bool permission;
+
+  /// What the in-context prompt answers.
+  bool grants;
+
+  /// Calendars this "phone" has.
+  List<DeviceCal> cals = const [];
+
+  /// Events the calendars hold; filtered by range and calendar on read.
+  List<CalEvent> events = const [];
+
+  /// Makes the next read throw, like a calendar store that is unavailable.
+  Object? failWith;
+
+  int asks = 0;
+  int reads = 0;
+  int permissionChecks = 0;
+
+  /// Every call that would reach the platform.
+  int get calls => asks + reads + permissionChecks;
+
+  @override
+  Future<bool> hasPermission() async {
+    permissionChecks++;
+    return permission;
+  }
+
+  @override
+  Future<bool> requestPermission() async {
+    asks++;
+    return permission = grants;
+  }
+
+  @override
+  Future<List<DeviceCal>> calendars() async {
+    reads++;
+    return permission ? cals : const [];
+  }
+
+  @override
+  Future<List<CalEvent>> eventsBetween(
+    DateTime from,
+    DateTime to, {
+    required List<DeviceCal> calendars,
+  }) async {
+    reads++;
+    final error = failWith;
+    if (error != null) throw error;
+    final ids = {for (final c in calendars) c.id};
+    return [
+      for (final e in events)
+        if (ids.contains(e.calendarId) &&
+            e.start.isBefore(to) &&
+            !e.end.isBefore(from))
+          e,
+    ];
   }
 }

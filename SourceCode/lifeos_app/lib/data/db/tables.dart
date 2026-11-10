@@ -85,6 +85,18 @@ class UserSettings extends Table with SyncColumns {
   /// PBI-033). When off, the widget shows only the score ring and counts.
   BoolColumn get widgetDetails => boolean().withDefault(const Constant(true))();
 
+  /// Show device-calendar events in Today and Upcoming (schema v10,
+  /// PBI-032). Off until the user turns it on, so the calendar permission
+  /// is never asked for unprompted and nothing touches the platform
+  /// channel before then.
+  BoolColumn get calendarOn => boolean().withDefault(const Constant(false))();
+
+  /// Device calendar ids the user has unticked, comma-separated (schema
+  /// v10, PBI-032). Empty means every calendar shows. Keeping the
+  /// *exclusions* means a calendar added on the phone later appears
+  /// without the user having to go and tick it.
+  TextColumn get calendarsOff => text().withDefault(const Constant(''))();
+
   @override
   List<Set<Column<Object>>> get uniqueKeys => [
     {userId},
