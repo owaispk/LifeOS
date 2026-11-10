@@ -50,6 +50,26 @@ class DataService {
     _db.scoreSnapshots,
   ];
 
+  /// [_tables] with every row deleted before the rows it references, so
+  /// the enforced foreign keys never block "Delete everything" (an ATC rule
+  /// points at a category, a payment at a task, a task at a document…).
+  List<TableInfo<Table, Object?>> get _deleteOrder => [
+    _db.expenses,
+    _db.payments,
+    _db.taskReminders,
+    _db.subtasks,
+    _db.tasks,
+    _db.atcRules,
+    _db.extractedFields,
+    _db.documentFiles,
+    _db.documents,
+    _db.categories,
+    _db.folders,
+    _db.persons,
+    _db.scoreSnapshots,
+    _db.userSettings,
+  ];
+
   /// A ZIP of every live document (decrypted) under
   /// `documents/<Folder>/<title>.<ext>`, plus `data/<table>.csv` for every
   /// table and `data/export.json` with everything.
@@ -111,7 +131,7 @@ class DataService {
   /// again and onboarding shows next.
   Future<void> deleteAll(VaultCrypto crypto) async {
     await _db.transaction(() async {
-      for (final t in [..._tables.reversed]) {
+      for (final t in _deleteOrder) {
         await _db.delete(t).go();
       }
       await _db.delete(_db.pendingOps).go();

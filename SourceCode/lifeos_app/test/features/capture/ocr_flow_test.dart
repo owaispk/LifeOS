@@ -191,6 +191,22 @@ void main() {
     expect(doc.ocrText, isNull);
   }, capture: makeFakes);
 
+  // Device log 2026-11-09: ML Kit threw a native NullPointerException and
+  // the confirm screen stayed on "Reading…" for good.
+  appTest('a failing text reader ends as Unclassified, never stuck', (
+    tester,
+    app,
+  ) async {
+    await useTallScreen(tester);
+    fakes.reader.failWith = Exception('PlatformException(error, NPE)');
+    await scanWithText(tester, '');
+    expect(reading, findsNothing);
+    expect(find.textContaining("Couldn't read any text"), findsOneWidget);
+    await save(tester);
+    final doc = (await tester.runAsync(app.repos.documents.getAll))!.single;
+    expect(doc.docType, 'other');
+  }, capture: makeFakes);
+
   test('AC6: a correction saved for an issuer drives the next scan', () async {
     final db = memoryDb();
     final dir = await Directory.systemTemp.createTemp('lifeos_learn_');

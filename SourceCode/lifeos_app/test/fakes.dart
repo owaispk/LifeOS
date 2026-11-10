@@ -77,9 +77,15 @@ class FakeShareInbox implements ShareInbox {
 class FakeTextReader implements TextReader {
   final texts = <String>[];
 
+  /// Makes the next read throw, like ML Kit's native failure on device.
+  Object? failWith;
+
   @override
-  Future<String> read(List<String> imagePaths) async =>
-      texts.isEmpty ? '' : texts.removeAt(0);
+  Future<String> read(List<String> imagePaths) async {
+    final error = failWith;
+    if (error != null) throw error;
+    return texts.isEmpty ? '' : texts.removeAt(0);
+  }
 }
 
 /// All capture fakes plus a real temp folder for Vault files.

@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/l10n.dart';
+import '../../core/log/app_log.dart';
 import '../../core/money.dart';
 import '../../core/now_provider.dart';
 import '../../core/theme/tokens.dart';
@@ -125,11 +126,19 @@ class _DraftFormState extends ConsumerState<_DraftForm> {
   }
 
   Future<void> _analyze() async {
-    final analysis = await analyzeDraft(
-      widget.draft,
-      ref.read(textReaderProvider),
-      ref.read(repositoriesProvider),
-    );
+    DocumentAnalysis analysis;
+    try {
+      analysis = await analyzeDraft(
+        widget.draft,
+        ref.read(textReaderProvider),
+        ref.read(repositoriesProvider),
+      );
+    } on Object catch (e, st) {
+      // A failing recogniser must not leave "Reading…" up forever: the
+      // document is filed like an unreadable one (PBI-004 AC5).
+      AppLog.e('ocr', 'reading failed: ${e.runtimeType}', st);
+      analysis = DocumentAnalysis.empty;
+    }
     if (!mounted) return;
     setState(() {
       _analysis = analysis;
