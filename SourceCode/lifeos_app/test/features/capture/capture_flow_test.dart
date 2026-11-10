@@ -391,9 +391,7 @@ void main() {
     final shared = File(p.join(tmp.path, 'statement.pdf'))
       ..writeAsBytesSync(pdf!);
 
-    fakes.inbox.controller.add([
-      IncomingFile(shared.path, mime: 'application/pdf'),
-    ]);
+    fakes.inbox.share([IncomingFile(shared.path, mime: 'application/pdf')]);
     await pumpUntilFound(tester, reviewSave);
     expect(find.text('1 page'), findsOneWidget);
     expect(find.byKey(const ValueKey('review-format')), findsNothing);

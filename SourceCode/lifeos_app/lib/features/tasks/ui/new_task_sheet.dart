@@ -9,22 +9,28 @@ import '../tasks_providers.dart';
 import 'task_actions.dart';
 import '../../../core/l10n.dart';
 import '../domain/nl_parser.dart';
+import '../domain/task_title.dart';
 import 'quick_parse.dart';
 import 'task_tile.dart';
 
 /// 2.4 New Task — a bottom sheet with one field; the full form lives under
 /// "More options" (UI flow §2.4).
-Future<void> showNewTaskSheet(BuildContext context) {
+/// [initialText] pre-fills the sheet from text shared in by another app
+/// (PBI-034); nothing is created until the user taps Add.
+Future<void> showNewTaskSheet(BuildContext context, {String? initialText}) {
   return showModalBottomSheet<void>(
     context: context,
     useRootNavigator: true, // above the tab bar and its ➕ button
     isScrollControlled: true,
-    builder: (context) => const NewTaskSheet(),
+    builder: (context) => NewTaskSheet(initialText: initialText),
   );
 }
 
 class NewTaskSheet extends ConsumerStatefulWidget {
-  const NewTaskSheet({super.key});
+  const NewTaskSheet({super.key, this.initialText});
+
+  /// Text shared in from another app, parsed and pre-filled.
+  final String? initialText;
 
   @override
   ConsumerState<NewTaskSheet> createState() => _NewTaskSheetState();
@@ -50,6 +56,21 @@ class _NewTaskSheetState extends ConsumerState<NewTaskSheet> {
   bool _manualDate = false;
   bool _manualPriority = false;
   bool _manualDomain = false;
+
+  /// The whole of what was shared in, kept for the notes (PBI-034 AC3).
+  String? _sharedText;
+
+  @override
+  void initState() {
+    super.initState();
+    final shared = widget.initialText?.trim();
+    if (shared == null || shared.isEmpty) return;
+    _sharedText = shared;
+    // Parse the whole text — a date or amount is often mid-message — but
+    // title it from the first line only.
+    _parse = quickParse(shared, ref.read(nowProvider)());
+    _title.text = sharedTaskTitle(shared, _parse.parsed);
+  }
 
   @override
   void dispose() {
@@ -86,15 +107,21 @@ class _NewTaskSheetState extends ConsumerState<NewTaskSheet> {
       return;
     }
     final due = resolved.due;
+    final title = _parse.input == _title.text ? _parse.title : _title.text;
     await ref
         .read(taskServiceProvider)
         .create(
-          title: _parse.input == _title.text ? _parse.title : _title.text,
+          title: title,
           due: due,
           allDay: time == null,
           priority: !_manualPriority && p.highPriority ? 2 : _priority,
           domain: !_manualDomain && p.domain != null ? p.domain! : _domain,
           personId: _personId,
+          notes: taskNotes(
+            title: title,
+            sharedText: _sharedText,
+            amount: p.amount,
+          ),
           durationMin: _duration,
           repeat: _repeat,
         );

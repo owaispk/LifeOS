@@ -7,7 +7,7 @@
 | Story Points | 3 |
 | Spec refs | Features §3.1 (quick add), §2.1 (ATC principles — propose, never silently create) |
 | Depends on | PBI-010 (NL parser + preview chips), PBI-003 (share-in plumbing) |
-| Status | Ready |
+| Status | Done (Android). iOS share extension split out — see below. Device QA pending |
 
 ## User Story
 As a **user**, when a bill or plan arrives as a WhatsApp/SMS message, I want to share that text straight to LifeOS and get a ready-made task, so I never retype what's already on my phone.
@@ -38,3 +38,29 @@ As a **user**, when a bill or plan arrives as a WhatsApp/SMS message, I want to 
 - The router listener that today sends shared files to capture gains a text branch → new-task sheet with `initialText`. The sheet and chips need no changes beyond accepting pre-filled text (PBI-010's live parse already handles typing).
 - Amount chip: a small `Rs|PKR|₨ [\d,]+` matcher in the parser's span model, same pattern as the existing priority/domain matchers; test alongside the 44 existing parser cases.
 - Smallest PBI of the three — good sprint filler, and a good first PBI for validating the new-PBI workflow post-MVP.
+
+## Dev & QA Notes (2026-11-10)
+
+Code:
+- `features/capture/platform/capture_platform.dart`: a share now arrives as one `SharedIn` — files **or** text, never both. `mapSharedMedia` does the arbitration in one place (AC5) and is unit-tested directly, so the rule is not hidden behind the plugin.
+- `features/capture/share_in_listener.dart`: the text branch. The listener wraps `MaterialApp`'s builder and so sits *above* the Navigator; the sheet is opened on the router's navigator instead, from a microtask rather than a post-frame callback (nothing schedules a frame when the app is idle).
+- `features/tasks/domain/task_title.dart` (new, pure Dart): `titleFrom` — the one place words recognised by the parser are taken out of a title, now shared by the live preview and by shared text; `sharedTaskTitle` (first meaningful line, clipped at a word boundary, 80 chars); `taskNotes`.
+- `features/tasks/domain/nl_parser.dart`: `ParsedPart.amount`. `Rs|Rs.|PKR|INR|₨`, optional `/-`, thousands separators. An amount means the money domain on its own, since "PKR 4520" carries no hint word. "due", "due on" and "due by" join the glue words a recognised date takes with it.
+- `features/tasks/ui/new_task_sheet.dart`: `initialText`. Parsing runs over the whole message, the title comes from the first line.
+- `AndroidManifest.xml`: `ACTION_SEND` + `text/plain` on the existing share activity.
+
+| AC | Result | Evidence |
+|---|---|---|
+| 1 | ✅ | Widget: sharing "Electricity bill Rs 4,520 due 15 Nov" opens the sheet titled "Electricity bill" with 📅, 💰 Rs 4,520 and a money chip. The task table is empty until **Add** is tapped; after it, one task due 15 Nov, domain money, amount in notes. |
+| 2 | ⚠️ Android only | Widget: both paths — a share while the app runs, and `initial()` on a cold start (app restarted on the same database). The Dart flow is platform-agnostic: it reads `SharedIn`, not an Android intent. **iOS is not done** — see below. |
+| 3 | ✅ | Unit + widget: a 3-line forwarded school message titles from line 1 ("Reminder from school"), keeps all 3 lines in notes, and takes its due date (20 Nov) and amount (Rs 12,000) from line 2. A long single line clips at a word boundary with "…". |
+| 4 | ✅ | Widget: App Lock on, a failing authenticator keeps the lock screen up; a share arriving then shows no sheet. After **Unlock** passes, the sheet appears with "Pay the school fee" intact. |
+| 5 | ✅ | Unit on `mapSharedMedia`: text alone → text; text + image → one file and no text; a shared link → text. The existing PBI-003 PDF share test still goes to capture. |
+| 6 | ✅ | Widget: dismissing the sheet leaves the task table empty. The text is held in one `String?` field in the listener and dropped as soon as the sheet opens; nothing on this path writes to the log. |
+| 7 | ✅ | The 101 existing task tests pass untouched, including the 44 parser cases. A bare number is still not an amount ("buy 6 eggs", "call at 5"), and text with no amount parses exactly as before. |
+
+`flutter analyze`: no issues · full suite `flutter test`: **577/577 passed** (20 new).
+
+**iOS split out (AC2).** The Dart side is ready — only the native share extension target is missing, which is the heavy part AC2 anticipated. It needs its own PBI: an iOS share extension, the App Group the plugin wants, and a device pass on a Mac. Nothing in the Dart flow has to change for it.
+
+**Not verified:** no device pass yet. The Android manifest filter, the real share sheet, and a cold start from a WhatsApp share all need a phone — they belong in the next device QA session alongside PBI-033 and the PBI-003/004 scanning rework.

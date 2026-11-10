@@ -47,6 +47,12 @@
                 <category android:name="android.intent.category.DEFAULT"/>
                 <data android:mimeType="image/*"/>
             </intent-filter>
+            <!-- PBI-034: share a WhatsApp/SMS message straight to a task -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="text/plain"/>
+            </intent-filter>
         </activity>
         <!-- PBI-033: the home-screen widget + the plugin's scheduled
              midnight re-render (survives reboot via BOOT_COMPLETED). -->

@@ -59,15 +59,24 @@ class FakeStorage implements StorageInfo {
 }
 
 class FakeShareInbox implements ShareInbox {
-  final controller = StreamController<List<IncomingFile>>.broadcast();
-  List<IncomingFile> atLaunch = const [];
+  final controller = StreamController<SharedIn>.broadcast();
+
+  /// What the share that launched the app carried.
+  SharedIn atLaunch = SharedIn.none;
   int resets = 0;
 
-  @override
-  Stream<List<IncomingFile>> get incoming => controller.stream;
+  /// Shares a list of files, as another app would.
+  void share(List<IncomingFile> files) =>
+      controller.add(SharedIn(files: files));
+
+  /// Shares plain text, as WhatsApp or Messages would (PBI-034).
+  void shareText(String text) => controller.add(SharedIn(text: text));
 
   @override
-  Future<List<IncomingFile>> initial() async => atLaunch;
+  Stream<SharedIn> get incoming => controller.stream;
+
+  @override
+  Future<SharedIn> initial() async => atLaunch;
 
   @override
   Future<void> reset() async => resets++;

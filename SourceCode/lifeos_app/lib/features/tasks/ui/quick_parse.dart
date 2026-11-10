@@ -10,6 +10,7 @@ import '../../../shared/format.dart';
 import '../../reminders/reminder_providers.dart';
 import '../../settings/settings_providers.dart';
 import '../domain/nl_parser.dart';
+import '../domain/task_title.dart';
 import '../tasks_providers.dart';
 import 'task_tile.dart' show domainColor, domainLabel;
 
@@ -31,26 +32,8 @@ class QuickParse {
 
   /// The title: the input minus the words of the parts still applied.
   /// Dropping a chip puts its words back ("Meet Friday" the person).
-  String get title {
-    var t = ' $input ';
-    for (final e in parsed.matched.entries) {
-      if (dropped.contains(e.key) || e.key == ParsedPart.domain) continue;
-      final i = t.toLowerCase().indexOf(e.value.toLowerCase());
-      if (i >= 0) t = '${t.substring(0, i)} ${t.substring(i + e.value.length)}';
-    }
-    t = t
-        .replaceAll(RegExp(r'\s+'), ' ')
-        .replaceAll(
-          RegExp(
-            r'^\s*(to|on|at|by)\s+|\s+(on|at|by|ko)\s*$',
-            caseSensitive: false,
-          ),
-          ' ',
-        )
-        .trim();
-    if (t.isEmpty) t = input.trim();
-    return t.isEmpty ? t : t[0].toUpperCase() + t.substring(1);
-  }
+  String get title =>
+      titleFrom(input, matchedWords(parsed, dropped: dropped));
 
   QuickParse drop(ParsedPart p) => QuickParse(input, parsed, {...dropped, p});
 }
@@ -73,6 +56,7 @@ Future<void> createFromParse(WidgetRef ref, QuickParse q) async {
         allDay: due != null && !p.hasTime,
         priority: p.highPriority ? 2 : 1,
         domain: p.domain ?? 'mind',
+        notes: taskNotes(title: q.title, amount: p.amount),
       );
   if (p.hasTime) {
     await ref.read(notificationGatewayProvider).requestPermission();
@@ -105,6 +89,8 @@ class ParseChips extends StatelessWidget {
           formatTime(DateTime(0, 1, 1, p.hour!, p.minute)),
         ),
       if (p.highPriority) (ParsedPart.priority, const Text('‼'), l.parseHigh),
+      if (p.amount != null)
+        (ParsedPart.amount, const Text('💰'), p.amount!),
       if (p.domain != null)
         (
           ParsedPart.domain,

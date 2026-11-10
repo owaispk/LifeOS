@@ -14,6 +14,7 @@ class ParsedTask {
     this.minute = 0,
     this.highPriority = false,
     this.domain,
+    this.amount,
     this.matched = const {},
   });
 
@@ -28,6 +29,9 @@ class ParsedTask {
 
   /// money | health | people | vault, when a hint word was found.
   final String? domain;
+
+  /// The amount as written ("Rs 4,520"), when the text carried one.
+  final String? amount;
 
   /// Which pieces were recognised, keyed by [ParsedPart], with the words
   /// they came from (for the preview chips).
@@ -57,11 +61,12 @@ class ParsedTask {
     minute: part == ParsedPart.time ? 0 : minute,
     highPriority: part == ParsedPart.priority ? false : highPriority,
     domain: part == ParsedPart.domain ? null : domain,
+    amount: part == ParsedPart.amount ? null : amount,
     matched: {...matched}..remove(part),
   );
 }
 
-enum ParsedPart { date, time, priority, domain }
+enum ParsedPart { date, time, priority, domain, amount }
 
 const _weekdays = {
   // English
@@ -178,7 +183,7 @@ ParsedTask _parse(String input, DateTime now, RegionFormats region) {
   String cut(Match m) {
     final before = text.substring(0, m.start);
     final glue = RegExp(
-      r'\b(on|at|by|ko|this|ko)\s+$',
+      r'\b(due\s+(on|by)\s+|due\s+|on|at|by|ko|this)\s*$',
       caseSensitive: false,
     ).firstMatch(before);
     final from = glue?.start ?? m.start;
@@ -195,6 +200,17 @@ ParsedTask _parse(String input, DateTime now, RegionFormats region) {
   if (pri != null) {
     high = true;
     matched[ParsedPart.priority] = cut(pri);
+  }
+
+  // ── Amount (PBI-034): "Rs 4,520", "PKR 4520/-", "₨ 900" ──
+  String? amount;
+  final amt = find(
+    r'\b(rs\.?|pkr|inr)\s*([\d][\d,]*)(?:/-)?'
+    r'|₨\s*([\d][\d,]*)(?:/-)?',
+  );
+  if (amt != null) {
+    amount = cut(amt);
+    matched[ParsedPart.amount] = amount;
   }
 
   // ── Time ──
@@ -325,10 +341,16 @@ ParsedTask _parse(String input, DateTime now, RegionFormats region) {
     }
   }
 
+  // An amount is a money signal in itself ("PKR 4520" carries no hint word).
+  if (domain == null && amount != null) domain = 'money';
+
   var title = text.replaceAll(RegExp(r'\s+'), ' ').trim();
   title = title
       .replaceAll(
-        RegExp(r'^(to|on|at|by)\s+|\s+(on|at|by|ko)$', caseSensitive: false),
+        RegExp(
+          r'^(to|on|at|by)\s+|\s+(on|at|by|ko|due|due\s+(on|by))$',
+          caseSensitive: false,
+        ),
         '',
       )
       .trim();
@@ -342,6 +364,7 @@ ParsedTask _parse(String input, DateTime now, RegionFormats region) {
     minute: hour == null ? 0 : minute,
     highPriority: high,
     domain: domain,
+    amount: amount,
     matched: matched,
   );
 }

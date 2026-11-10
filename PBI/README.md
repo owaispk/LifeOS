@@ -50,7 +50,7 @@
 | 31 | [PBI-031 Flagship: Compact, Professional Layout](PBI-031-flagship-compact-layout.md) | E5 Platform / Design | 5 | 001, 025 | Done |
 | 32 | [PBI-032 Device Calendar in Today View (read-only)](PBI-032-device-calendar-today.md) | E2 Mind | 5 | 009, 021 | Ready |
 | 33 | [PBI-033 Home-Screen Widget](PBI-033-home-screen-widget.md) | E6 Engagement | 8 | 009, 013, 020, 021 | Dev complete (Android) — device QA pending; iOS split to follow-up |
-| 34 | [PBI-034 Share Text to Task](PBI-034-share-text-to-task.md) | E3 ATC / E2 Mind | 3 | 010, 003 | Ready |
+| 34 | [PBI-034 Share Text to Task](PBI-034-share-text-to-task.md) | E3 ATC / E2 Mind | 3 | 010, 003 | Done (Android) |
 | 35 | [PBI-035 Profile & Personalization (neutral defaults)](PBI-035-profile-personalization.md) | E5 Platform / E6 Engagement | 5 | 021, 025 | Done |
 
 ## Suggested sprint plan (2 devs, 2-week sprints, ~27 SP/sprint → 6 sprints ≈ 3 months)
