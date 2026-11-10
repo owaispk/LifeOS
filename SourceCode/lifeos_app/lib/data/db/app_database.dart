@@ -45,7 +45,7 @@ class AppDatabase extends _$AppDatabase {
   );
 
   @override
-  int get schemaVersion => 11;
+  int get schemaVersion => 12;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -119,6 +119,13 @@ class AppDatabase extends _$AppDatabase {
       if (from < 11) {
         await m.addColumn(userSettings, userSettings.premiumUntil);
         await m.addColumn(userSettings, userSettings.premiumCheckedAt);
+      }
+      // v12 (PBI-027a): the user's own AI provider. Nothing is set, so
+      // nothing is sent anywhere until the user configures it.
+      if (from < 12) {
+        await m.addColumn(userSettings, userSettings.aiBaseUrl);
+        await m.addColumn(userSettings, userSettings.aiModel);
+        await m.addColumn(userSettings, userSettings.aiConsent);
       }
     },
     beforeOpen: (details) async {

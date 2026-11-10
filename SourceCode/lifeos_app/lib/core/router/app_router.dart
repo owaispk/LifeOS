@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../log/app_log.dart';
 
+import '../../features/ai/ui/ai_settings_screen.dart';
 import '../../features/atc/atc_rules_screen.dart';
 import '../../features/atc/rule_detail_screen.dart';
 import '../../features/capture/capture_entry.dart';
@@ -156,6 +157,10 @@ final routerProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     path: 'diagnostics',
                     builder: (context, state) => const DiagnosticsScreen(),
+                  ),
+                  GoRoute(
+                    path: 'ai',
+                    builder: (context, state) => const AiSettingsScreen(),
                   ),
                 ],
               ),

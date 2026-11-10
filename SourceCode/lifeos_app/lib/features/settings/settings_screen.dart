@@ -13,6 +13,8 @@ import '../../core/l10n.dart';
 import '../../core/theme/tokens.dart';
 import '../../data/data_providers.dart';
 import '../../data/db/app_database.dart';
+import '../ai/ai_providers.dart';
+import '../ai/ui/ai_settings_screen.dart' show aiSettingsRoute;
 import '../calendar/calendar_providers.dart';
 import '../premium/premium_providers.dart';
 import '../premium/ui/upgrade_prompt.dart' show premiumRoute;
@@ -283,6 +285,30 @@ class SettingsScreen extends ConsumerWidget {
             title: Text(l.deleteAll),
             subtitle: Text(l.deleteAllSub),
             onTap: () => _deleteAll(context, ref),
+          ),
+          SectionHeader(l.aiSection),
+          ListTile(
+            key: const ValueKey('set-ai'),
+            leading: const Icon(Icons.auto_awesome_outlined),
+            title: Text(l.aiTitle),
+            subtitle: Text(
+              ref.watch(aiSettingsProvider).value?.isConfigured ?? false
+                  ? l.aiApiKeyStored
+                  : l.aiNotConfigured,
+            ),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () async {
+              // Re-auth before the provider settings can even be seen:
+              // pointing the app at a hostile endpoint is an
+              // exfiltration path (PBI-027a AC6).
+              if (s?.appLock ?? false) {
+                final ok = await ref
+                    .read(authenticatorProvider)
+                    .authenticate(l.aiReauth);
+                if (!ok) return;
+              }
+              if (context.mounted) context.go(aiSettingsRoute);
+            },
           ),
           SectionHeader(l.settingsPremium),
           ListTile(

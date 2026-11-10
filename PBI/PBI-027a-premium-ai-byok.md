@@ -7,7 +7,7 @@
 | Story Points | 5 |
 | Spec refs | Features §1.2 (classification), §15 (free/premium split), §14 (privacy) |
 | Depends on | PBI-004 (OCR pipeline + confidence), PBI-024 (secure storage, app lock), PBI-029 (premium gating) — **no backend, no PBI-026** |
-| Status | Ready |
+| Status | Done — device QA and a real provider run pending |
 
 Ships first. Carries the shared AI pipeline (gate, consent, cache, provider interface) that PBI-027b later plugs into. Zero LifeOS infrastructure and zero LifeOS API cost: calls go directly from the device to the user's own AI provider.
 
@@ -57,3 +57,38 @@ As a **premium user**, when on-device OCR can't read a document (bad photo, Urdu
 - Confidence gate lives where PBI-004 computes classification confidence; threshold is a constant with a hidden testing override.
 - One system prompt + few-shot examples, versioned in-repo like `score_weights.json`; strict JSON schema requested, response parsed defensively (first JSON block, every field validated). Document text in a delimited block; extracted fields are *proposals* through the existing ATC review UI — nothing auto-executes from AI output (prompt-injection containment, ATC principle).
 - Out of scope: managed mode (027b), AI weekly plan, cloud *image* OCR for Urdu (follow-up PBI — this is text-in/JSON-out), expense categorisation.
+
+## Dev & QA Notes (2026-11-10)
+
+New dependency: `http`. Schema v12 adds `ai_base_url`, `ai_model`, `ai_consent` — and deliberately **no** column for the key.
+
+Code, under `lib/features/ai/`:
+- `domain/ai_gate.dart` (pure): `aiGate()` is the one decision point. Every condition — confident, no text, not premium, not configured, refused, ask, send — is answered there, and `gateAllowsCall` is true for exactly one of them. A test asserts that, so a later edit cannot quietly open a second route to the network.
+- `domain/extraction_contract.dart` (pure): the prompt (built from the type and field lists, so it cannot drift from what the parser accepts), the request body, and a defensive reader for the reply.
+- `platform/llm_provider.dart`: `LlmProvider` with `OpenAiCompatProvider`. 027b plugs `ManagedProvider` in behind the same interface.
+- `platform/secret_store.dart`: the key, in the Keystore/Keychain only.
+- `ai_providers.dart`: settings, the enrichment service and its cache, and `mergeAiFields`.
+- `ui/ai_settings_screen.dart`, `ui/ai_card.dart`.
+
+| AC | Result | Evidence |
+|---|---|---|
+| 1 | ✅ | Unit: a confident classification returns `AiGate.confident` for premium and free alike, and even with consent already given and a provider configured. The gate is checked before anything else. |
+| 2 | ✅ | Unit: the request carries the document text and the body contains none of image / image_url / base64 / jpeg / png / pdf / `data:`. The call goes to the configured host and path, with the key as a bearer token; a provider with no key sends no `authorization` header at all. |
+| 3 | ✅ | Unit on the cache key: the same text hashes the same (whitespace-insensitive), different text does not. The key includes the prompt version, so changing the prompt does not serve stale answers. |
+| 4 | ✅ | Unit: free tier returns `AiGate.notPremium` and `gateAllowsCall` is false. The teaser is a card in the confirm step with a dismiss button; nothing in this feature schedules a notification of any kind. |
+| 5 | ✅ | Unit: the provider's own message is passed through unchanged ("You exceeded your current quota.", with its 429); a non-JSON error body still yields something useful; premium with no provider configured returns `AiGate.notConfigured`, which permits no call. |
+| 6 | ✅ | A real storage test writes a key through the service, then reads **every** value in `user_settings`, `app_meta` and `documents` and asserts the key appears in none — while also asserting the base URL and model *did* save, so it cannot pass by writing nothing. Plus: no settings column is named like a secret, and the scrubber masks `sk-…`, `AIza…`, `Bearer …` and long mixed-case tokens. |
+| 7 | ✅ | Unit: `never` returns `AiGate.refused`. "Just this once" calls `runAi` without writing consent; "Always" writes it first. |
+| 8 | ✅ | Unit over malformed replies: empty, prose, `{`, `[]`, `null`, wrong types, nested objects — none throw, none produce fields. An unknown type falls back to `other`; fields we did not ask for are dropped; a wrongly shaped value ("Rs 4,850" as an amount, "14/11/2026" as a date, "2026-02-31") is dropped rather than stored. Prompt-injection text lands as a plain string in a form field and executes nothing. |
+| 9 | ✅ | All strings EN/UR. With no connectivity the call throws, the card shows the provider's message, and the document keeps its on-device result — the same outcome as free tier. |
+
+`flutter analyze`: no issues · full suite `flutter test`: **648/648 passed** (29 new).
+
+**Design notes:**
+- **AI values are proposals that fill gaps only.** `mergeAiFields` never overwrites a value the phone read or the user typed. Combined with every value being shape-checked on the way in, a hostile document cannot change a field that was already known.
+- **The badge cannot be faked.** An AI-filled field carries a sentinel confidence of `-1`, distinct from any on-device score, so "AI-read" means exactly that.
+- **The key is write-only in the UI.** The stored key is never put back into the field; the form says "Saved on this phone only" instead.
+
+**One deviation:** the free-tier teaser lives in the **confirm step**, not the document detail screen, because that is where a low-confidence read actually happens — the document does not exist yet at that point. Dismissal therefore lasts for that capture, not forever for a saved document. Moving it to document detail (and persisting the dismissal per document id) is a small follow-up if the original placement is wanted.
+
+**Not verified:** no call has been made to a real provider. Every test uses a fake HTTP client, so the request shape, the error passthrough and the parser are proven, but a live round-trip against OpenAI, Groq or a local Ollama has not happened. That plus the re-auth prompt and the Keystore write need a phone, and should join the device QA session.

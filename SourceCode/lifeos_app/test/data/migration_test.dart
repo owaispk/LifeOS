@@ -17,8 +17,8 @@ void main() {
   // The current database can only migrate to the current version; every
   // older starting point is checked against it.
   for (final (from, to) in [
-    (1, 11), (2, 11), (3, 11), (4, 11), (5, 11), (6, 11), //
-    (7, 11), (8, 11), (9, 11), (10, 11), //
+    (1, 12), (2, 12), (3, 12), (4, 12), (5, 12), (6, 12), //
+    (7, 12), (8, 12), (9, 12), (10, 12), (11, 12), //
   ]) {
     test('v$from → v$to produces exactly the v$to schema', () async {
       final connection = await verifier.startAt(from);

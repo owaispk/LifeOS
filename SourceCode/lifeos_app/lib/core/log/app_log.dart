@@ -52,6 +52,26 @@ class LogEntry {
 /// last line of defence.
 String scrubLogText(String s) {
   var out = s;
+  // API keys (PBI-027a AC6). Known prefixes first, then any long
+  // unbroken token that looks like a secret. Done before the digit-run
+  // rule, so a key is never half-masked into something still guessable.
+  out = out.replaceAll(
+    RegExp(r'\b(sk|rk|pk)-[A-Za-z0-9_-]{8,}|\bAIza[A-Za-z0-9_-]{10,}'),
+    '<key>',
+  );
+  out = out.replaceAll(
+    RegExp(r'\bBearer\s+[A-Za-z0-9._-]{8,}', caseSensitive: false),
+    'Bearer <key>',
+  );
+  // A long unbroken token that mixes letters and digits is a secret,
+  // not prose. Both are required: a long run of plain letters is
+  // ordinary text, and masking that would eat real log lines.
+  out = out.replaceAllMapped(RegExp(r'[A-Za-z0-9+/_-]{40,}={0,2}'), (m) {
+    final token = m[0]!;
+    final mixed =
+        RegExp(r'[A-Za-z]').hasMatch(token) && RegExp(r'\d').hasMatch(token);
+    return mixed ? '<key>' : token;
+  });
   // Emails. Only when there is an "@", and bounded: an unbounded pattern
   // backtracks quadratically on long text (found by the 1 MB test).
   if (out.contains('@')) {

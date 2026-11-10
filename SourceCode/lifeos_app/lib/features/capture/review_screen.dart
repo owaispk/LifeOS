@@ -20,6 +20,8 @@ import '../vault/vault_providers.dart';
 import 'capture_entry.dart';
 import 'capture_providers.dart';
 import '../premium/premium_providers.dart';
+import '../ai/ai_providers.dart' show isAiRead;
+import '../ai/ui/ai_card.dart';
 import '../premium/ui/upgrade_prompt.dart';
 import 'data/capture_service.dart';
 import 'ocr/doc_classifier.dart';
@@ -831,6 +833,8 @@ class _DraftFormState extends ConsumerState<_DraftForm> {
             ),
           )
         else ...[
+          // Cloud AI: consent, teaser, spinner or error (PBI-027a).
+          AiCard(entryId: widget.entryId),
           _TypeRow(analysis: analysis, type: edits.type, onPick: _pickType),
           SizedBox(height: Tokens.spaceM),
           TextField(
@@ -857,6 +861,11 @@ class _DraftFormState extends ConsumerState<_DraftForm> {
                 prefixText: e.key == Fields.amount ? Money.prefix : null,
                 suffixIcon: Fields.isDate(e.key)
                     ? const Icon(Icons.event)
+                    : null,
+                // Says where the value came from, so a field the phone
+                // could not read is not mistaken for one it did (AC2).
+                suffix: isAiRead(analysis.fields[e.key])
+                    ? const AiBadge()
                     : null,
                 border: const OutlineInputBorder(),
               ),

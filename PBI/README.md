@@ -44,8 +44,8 @@
 
 | # | PBI | Epic | SP | Depends on | Status |
 |---|---|---|---|---|---|
-| 27a | [PBI-027a Premium AI: Bring-Your-Own-Key (no backend)](PBI-027a-premium-ai-byok.md) | E3 ATC / E1 Vault | 5 | 004, 024, 029 | Ready |
-| 27b | [PBI-027b Premium AI: Managed Mode + Lightweight Proxy](PBI-027b-premium-ai-managed.md) | E3 ATC / E1 Vault | 5 | 027a, 029 | Ready (blocked by 027a) |
+| 27a | [PBI-027a Premium AI: Bring-Your-Own-Key (no backend)](PBI-027a-premium-ai-byok.md) | E3 ATC / E1 Vault | 5 | 004, 024, 029 | Done |
+| 27b | [PBI-027b Premium AI: Managed Mode + Lightweight Proxy](PBI-027b-premium-ai-managed.md) | E3 ATC / E1 Vault | 5 | 027a, 029 | Ready |
 | 29 | [PBI-029 Premium Subscription & Free-Tier Limits](PBI-029-premium-free-tier.md) | E5 Platform | 8 | 002, 013, 003 | Done (store setup pending) |
 | 30 | [PBI-030 Diagnostics Log & Share](PBI-030-diagnostics-log.md) | E5 Platform | 3 | 025, 007 | Done |
 | 31 | [PBI-031 Flagship: Compact, Professional Layout](PBI-031-flagship-compact-layout.md) | E5 Platform / Design | 5 | 001, 025 | Done |

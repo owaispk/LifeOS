@@ -98,6 +98,186 @@ abstract class AppLocalizations {
     Locale('ur'),
   ];
 
+  /// No description provided for @aiAlways.
+  ///
+  /// In en, this message translates to:
+  /// **'Always'**
+  String get aiAlways;
+
+  /// No description provided for @aiApiKey.
+  ///
+  /// In en, this message translates to:
+  /// **'API key'**
+  String get aiApiKey;
+
+  /// No description provided for @aiApiKeyStored.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved on this phone only'**
+  String get aiApiKeyStored;
+
+  /// No description provided for @aiBaseUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Base URL'**
+  String get aiBaseUrl;
+
+  /// No description provided for @aiConsentAsk.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask each time'**
+  String get aiConsentAsk;
+
+  /// No description provided for @aiConsentBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t read this fully on the phone. Send the text — not the image — to your AI provider?'**
+  String get aiConsentBody;
+
+  /// No description provided for @aiConsentSetting.
+  ///
+  /// In en, this message translates to:
+  /// **'Send document text'**
+  String get aiConsentSetting;
+
+  /// No description provided for @aiConsentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Send this document\'s text?'**
+  String get aiConsentTitle;
+
+  /// No description provided for @aiDismiss.
+  ///
+  /// In en, this message translates to:
+  /// **'Dismiss'**
+  String get aiDismiss;
+
+  /// No description provided for @aiFailedPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Your AI provider said: {message}'**
+  String aiFailedPrefix(String message);
+
+  /// No description provided for @aiJustOnce.
+  ///
+  /// In en, this message translates to:
+  /// **'Just this once'**
+  String get aiJustOnce;
+
+  /// No description provided for @aiKeptLocal.
+  ///
+  /// In en, this message translates to:
+  /// **'Kept what the phone read.'**
+  String get aiKeptLocal;
+
+  /// No description provided for @aiKeyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'A local provider on your own machine may need no key.'**
+  String get aiKeyHint;
+
+  /// No description provided for @aiLockedPitch.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium AI reads what the phone can\'t: damaged photos, Urdu documents, and billers it hasn\'t seen before.'**
+  String get aiLockedPitch;
+
+  /// No description provided for @aiModel.
+  ///
+  /// In en, this message translates to:
+  /// **'Model'**
+  String get aiModel;
+
+  /// No description provided for @aiNever.
+  ///
+  /// In en, this message translates to:
+  /// **'Never'**
+  String get aiNever;
+
+  /// No description provided for @aiNotConfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'Not set up — LifeOS reads documents on the phone only.'**
+  String get aiNotConfigured;
+
+  /// No description provided for @aiPreset.
+  ///
+  /// In en, this message translates to:
+  /// **'Provider'**
+  String get aiPreset;
+
+  /// No description provided for @aiPresetCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom or local'**
+  String get aiPresetCustom;
+
+  /// No description provided for @aiPrivacyNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Your document text goes directly from this phone to your AI provider. LifeOS servers never see it, and the image is never sent.'**
+  String get aiPrivacyNote;
+
+  /// No description provided for @aiReadBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'AI-read'**
+  String get aiReadBadge;
+
+  /// No description provided for @aiReading.
+  ///
+  /// In en, this message translates to:
+  /// **'Asking your AI provider…'**
+  String get aiReading;
+
+  /// No description provided for @aiReauth.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm it\'s you to change AI settings'**
+  String get aiReauth;
+
+  /// No description provided for @aiSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get aiSave;
+
+  /// No description provided for @aiSection.
+  ///
+  /// In en, this message translates to:
+  /// **'AI'**
+  String get aiSection;
+
+  /// No description provided for @aiTeaser.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium AI could read this document.'**
+  String get aiTeaser;
+
+  /// No description provided for @aiTest.
+  ///
+  /// In en, this message translates to:
+  /// **'Test connection'**
+  String get aiTest;
+
+  /// No description provided for @aiTestOk.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected.'**
+  String get aiTestOk;
+
+  /// No description provided for @aiTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Use my own AI provider'**
+  String get aiTitle;
+
+  /// No description provided for @aiUpgrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade'**
+  String get aiUpgrade;
+
   /// No description provided for @amount.
   ///
   /// In en, this message translates to:

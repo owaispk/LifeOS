@@ -12,6 +12,8 @@ import 'core/log/app_log.dart';
 import 'core/log/diagnostics.dart';
 import 'data/data_providers.dart';
 import 'features/calendar/calendar_providers.dart';
+import 'features/ai/ai_providers.dart';
+import 'features/ai/platform/secret_store.dart';
 import 'features/premium/premium_providers.dart';
 import 'features/premium/platform/billing_source.dart';
 import 'features/calendar/platform/calendar_source.dart';
@@ -154,6 +156,9 @@ Future<void> main() async {
           // Store billing (PBI-029). The plugin wants to be listened to
           // from launch or purchases made outside the app are missed.
           billingSourceProvider.overrideWithValue(StoreBilling()),
+          // The AI key lives in the Keystore/Keychain, never in the
+          // database or the export (PBI-027a AC6).
+          aiSecretStoreProvider.overrideWithValue(const SecureSecretStore()),
         ],
       ],
       child: const LifeOsApp(),

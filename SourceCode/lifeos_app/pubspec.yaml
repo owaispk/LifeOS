@@ -67,6 +67,7 @@ dependencies:
   device_calendar: ^3.9.0
   app_settings: ^9.0.1
   in_app_purchase: ^3.3.1
+  http: ^1.6.0
 
 dev_dependencies:
   flutter_test:

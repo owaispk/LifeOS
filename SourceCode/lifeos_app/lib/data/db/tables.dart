@@ -105,6 +105,18 @@ class UserSettings extends Table with SyncColumns {
   /// When the store was last asked, epoch ms (schema v11, PBI-029).
   IntColumn get premiumCheckedAt => integer().nullable()();
 
+  /// Premium AI (schema v12, PBI-027a). The user's own provider: base
+  /// URL and model. Null means not configured — premium then behaves
+  /// exactly like free. The API key is **not** here: it lives only in
+  /// secure storage, so it is absent from this file and from the export.
+  TextColumn get aiBaseUrl => text().nullable()();
+
+  TextColumn get aiModel => text().nullable()();
+
+  /// Consent for sending document text to that provider: 'ask' (the
+  /// default), 'always' or 'never'.
+  TextColumn get aiConsent => text().withDefault(const Constant('ask'))();
+
   @override
   List<Set<Column<Object>>> get uniqueKeys => [
     {userId},

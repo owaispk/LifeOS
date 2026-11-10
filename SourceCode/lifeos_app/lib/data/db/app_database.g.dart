@@ -3309,6 +3309,40 @@ class $UserSettingsTable extends UserSettings
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _aiBaseUrlMeta = const VerificationMeta(
+    'aiBaseUrl',
+  );
+  @override
+  late final GeneratedColumn<String> aiBaseUrl = GeneratedColumn<String>(
+    'ai_base_url',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _aiModelMeta = const VerificationMeta(
+    'aiModel',
+  );
+  @override
+  late final GeneratedColumn<String> aiModel = GeneratedColumn<String>(
+    'ai_model',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _aiConsentMeta = const VerificationMeta(
+    'aiConsent',
+  );
+  @override
+  late final GeneratedColumn<String> aiConsent = GeneratedColumn<String>(
+    'ai_consent',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('ask'),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -3342,6 +3376,9 @@ class $UserSettingsTable extends UserSettings
     calendarsOff,
     premiumUntil,
     premiumCheckedAt,
+    aiBaseUrl,
+    aiModel,
+    aiConsent,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3574,6 +3611,24 @@ class $UserSettingsTable extends UserSettings
         ),
       );
     }
+    if (data.containsKey('ai_base_url')) {
+      context.handle(
+        _aiBaseUrlMeta,
+        aiBaseUrl.isAcceptableOrUnknown(data['ai_base_url']!, _aiBaseUrlMeta),
+      );
+    }
+    if (data.containsKey('ai_model')) {
+      context.handle(
+        _aiModelMeta,
+        aiModel.isAcceptableOrUnknown(data['ai_model']!, _aiModelMeta),
+      );
+    }
+    if (data.containsKey('ai_consent')) {
+      context.handle(
+        _aiConsentMeta,
+        aiConsent.isAcceptableOrUnknown(data['ai_consent']!, _aiConsentMeta),
+      );
+    }
     return context;
   }
 
@@ -3711,6 +3766,18 @@ class $UserSettingsTable extends UserSettings
         DriftSqlType.int,
         data['${effectivePrefix}premium_checked_at'],
       ),
+      aiBaseUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}ai_base_url'],
+      ),
+      aiModel: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}ai_model'],
+      ),
+      aiConsent: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}ai_consent'],
+      )!,
     );
   }
 
@@ -3791,6 +3858,17 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
 
   /// When the store was last asked, epoch ms (schema v11, PBI-029).
   final int? premiumCheckedAt;
+
+  /// Premium AI (schema v12, PBI-027a). The user's own provider: base
+  /// URL and model. Null means not configured — premium then behaves
+  /// exactly like free. The API key is **not** here: it lives only in
+  /// secure storage, so it is absent from this file and from the export.
+  final String? aiBaseUrl;
+  final String? aiModel;
+
+  /// Consent for sending document text to that provider: 'ask' (the
+  /// default), 'always' or 'never'.
+  final String aiConsent;
   const UserSettingsRow({
     required this.id,
     required this.userId,
@@ -3823,6 +3901,9 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     required this.calendarsOff,
     this.premiumUntil,
     this.premiumCheckedAt,
+    this.aiBaseUrl,
+    this.aiModel,
+    required this.aiConsent,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -3874,6 +3955,13 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     if (!nullToAbsent || premiumCheckedAt != null) {
       map['premium_checked_at'] = Variable<int>(premiumCheckedAt);
     }
+    if (!nullToAbsent || aiBaseUrl != null) {
+      map['ai_base_url'] = Variable<String>(aiBaseUrl);
+    }
+    if (!nullToAbsent || aiModel != null) {
+      map['ai_model'] = Variable<String>(aiModel);
+    }
+    map['ai_consent'] = Variable<String>(aiConsent);
     return map;
   }
 
@@ -3926,6 +4014,13 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
       premiumCheckedAt: premiumCheckedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(premiumCheckedAt),
+      aiBaseUrl: aiBaseUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(aiBaseUrl),
+      aiModel: aiModel == null && nullToAbsent
+          ? const Value.absent()
+          : Value(aiModel),
+      aiConsent: Value(aiConsent),
     );
   }
 
@@ -3966,6 +4061,9 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
       calendarsOff: serializer.fromJson<String>(json['calendarsOff']),
       premiumUntil: serializer.fromJson<int?>(json['premiumUntil']),
       premiumCheckedAt: serializer.fromJson<int?>(json['premiumCheckedAt']),
+      aiBaseUrl: serializer.fromJson<String?>(json['aiBaseUrl']),
+      aiModel: serializer.fromJson<String?>(json['aiModel']),
+      aiConsent: serializer.fromJson<String>(json['aiConsent']),
     );
   }
   @override
@@ -4003,6 +4101,9 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
       'calendarsOff': serializer.toJson<String>(calendarsOff),
       'premiumUntil': serializer.toJson<int?>(premiumUntil),
       'premiumCheckedAt': serializer.toJson<int?>(premiumCheckedAt),
+      'aiBaseUrl': serializer.toJson<String?>(aiBaseUrl),
+      'aiModel': serializer.toJson<String?>(aiModel),
+      'aiConsent': serializer.toJson<String>(aiConsent),
     };
   }
 
@@ -4038,6 +4139,9 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     String? calendarsOff,
     Value<int?> premiumUntil = const Value.absent(),
     Value<int?> premiumCheckedAt = const Value.absent(),
+    Value<String?> aiBaseUrl = const Value.absent(),
+    Value<String?> aiModel = const Value.absent(),
+    String? aiConsent,
   }) => UserSettingsRow(
     id: id ?? this.id,
     userId: userId ?? this.userId,
@@ -4074,6 +4178,9 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     premiumCheckedAt: premiumCheckedAt.present
         ? premiumCheckedAt.value
         : this.premiumCheckedAt,
+    aiBaseUrl: aiBaseUrl.present ? aiBaseUrl.value : this.aiBaseUrl,
+    aiModel: aiModel.present ? aiModel.value : this.aiModel,
+    aiConsent: aiConsent ?? this.aiConsent,
   );
   UserSettingsRow copyWithCompanion(UserSettingsCompanion data) {
     return UserSettingsRow(
@@ -4142,6 +4249,9 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
       premiumCheckedAt: data.premiumCheckedAt.present
           ? data.premiumCheckedAt.value
           : this.premiumCheckedAt,
+      aiBaseUrl: data.aiBaseUrl.present ? data.aiBaseUrl.value : this.aiBaseUrl,
+      aiModel: data.aiModel.present ? data.aiModel.value : this.aiModel,
+      aiConsent: data.aiConsent.present ? data.aiConsent.value : this.aiConsent,
     );
   }
 
@@ -4178,7 +4288,10 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
           ..write('calendarOn: $calendarOn, ')
           ..write('calendarsOff: $calendarsOff, ')
           ..write('premiumUntil: $premiumUntil, ')
-          ..write('premiumCheckedAt: $premiumCheckedAt')
+          ..write('premiumCheckedAt: $premiumCheckedAt, ')
+          ..write('aiBaseUrl: $aiBaseUrl, ')
+          ..write('aiModel: $aiModel, ')
+          ..write('aiConsent: $aiConsent')
           ..write(')'))
         .toString();
   }
@@ -4216,6 +4329,9 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     calendarsOff,
     premiumUntil,
     premiumCheckedAt,
+    aiBaseUrl,
+    aiModel,
+    aiConsent,
   ]);
   @override
   bool operator ==(Object other) =>
@@ -4251,7 +4367,10 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
           other.calendarOn == this.calendarOn &&
           other.calendarsOff == this.calendarsOff &&
           other.premiumUntil == this.premiumUntil &&
-          other.premiumCheckedAt == this.premiumCheckedAt);
+          other.premiumCheckedAt == this.premiumCheckedAt &&
+          other.aiBaseUrl == this.aiBaseUrl &&
+          other.aiModel == this.aiModel &&
+          other.aiConsent == this.aiConsent);
 }
 
 class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
@@ -4286,6 +4405,9 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
   final Value<String> calendarsOff;
   final Value<int?> premiumUntil;
   final Value<int?> premiumCheckedAt;
+  final Value<String?> aiBaseUrl;
+  final Value<String?> aiModel;
+  final Value<String> aiConsent;
   final Value<int> rowid;
   const UserSettingsCompanion({
     this.id = const Value.absent(),
@@ -4319,6 +4441,9 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     this.calendarsOff = const Value.absent(),
     this.premiumUntil = const Value.absent(),
     this.premiumCheckedAt = const Value.absent(),
+    this.aiBaseUrl = const Value.absent(),
+    this.aiModel = const Value.absent(),
+    this.aiConsent = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   UserSettingsCompanion.insert({
@@ -4353,6 +4478,9 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     this.calendarsOff = const Value.absent(),
     this.premiumUntil = const Value.absent(),
     this.premiumCheckedAt = const Value.absent(),
+    this.aiBaseUrl = const Value.absent(),
+    this.aiModel = const Value.absent(),
+    this.aiConsent = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   static Insertable<UserSettingsRow> custom({
@@ -4387,6 +4515,9 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     Expression<String>? calendarsOff,
     Expression<int>? premiumUntil,
     Expression<int>? premiumCheckedAt,
+    Expression<String>? aiBaseUrl,
+    Expression<String>? aiModel,
+    Expression<String>? aiConsent,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -4421,6 +4552,9 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
       if (calendarsOff != null) 'calendars_off': calendarsOff,
       if (premiumUntil != null) 'premium_until': premiumUntil,
       if (premiumCheckedAt != null) 'premium_checked_at': premiumCheckedAt,
+      if (aiBaseUrl != null) 'ai_base_url': aiBaseUrl,
+      if (aiModel != null) 'ai_model': aiModel,
+      if (aiConsent != null) 'ai_consent': aiConsent,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -4457,6 +4591,9 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     Value<String>? calendarsOff,
     Value<int?>? premiumUntil,
     Value<int?>? premiumCheckedAt,
+    Value<String?>? aiBaseUrl,
+    Value<String?>? aiModel,
+    Value<String>? aiConsent,
     Value<int>? rowid,
   }) {
     return UserSettingsCompanion(
@@ -4491,6 +4628,9 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
       calendarsOff: calendarsOff ?? this.calendarsOff,
       premiumUntil: premiumUntil ?? this.premiumUntil,
       premiumCheckedAt: premiumCheckedAt ?? this.premiumCheckedAt,
+      aiBaseUrl: aiBaseUrl ?? this.aiBaseUrl,
+      aiModel: aiModel ?? this.aiModel,
+      aiConsent: aiConsent ?? this.aiConsent,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -4591,6 +4731,15 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     if (premiumCheckedAt.present) {
       map['premium_checked_at'] = Variable<int>(premiumCheckedAt.value);
     }
+    if (aiBaseUrl.present) {
+      map['ai_base_url'] = Variable<String>(aiBaseUrl.value);
+    }
+    if (aiModel.present) {
+      map['ai_model'] = Variable<String>(aiModel.value);
+    }
+    if (aiConsent.present) {
+      map['ai_consent'] = Variable<String>(aiConsent.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -4631,6 +4780,9 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
           ..write('calendarsOff: $calendarsOff, ')
           ..write('premiumUntil: $premiumUntil, ')
           ..write('premiumCheckedAt: $premiumCheckedAt, ')
+          ..write('aiBaseUrl: $aiBaseUrl, ')
+          ..write('aiModel: $aiModel, ')
+          ..write('aiConsent: $aiConsent, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -16180,6 +16332,9 @@ typedef $$UserSettingsTableCreateCompanionBuilder =
       Value<String> calendarsOff,
       Value<int?> premiumUntil,
       Value<int?> premiumCheckedAt,
+      Value<String?> aiBaseUrl,
+      Value<String?> aiModel,
+      Value<String> aiConsent,
       Value<int> rowid,
     });
 typedef $$UserSettingsTableUpdateCompanionBuilder =
@@ -16215,6 +16370,9 @@ typedef $$UserSettingsTableUpdateCompanionBuilder =
       Value<String> calendarsOff,
       Value<int?> premiumUntil,
       Value<int?> premiumCheckedAt,
+      Value<String?> aiBaseUrl,
+      Value<String?> aiModel,
+      Value<String> aiConsent,
       Value<int> rowid,
     });
 
@@ -16379,6 +16537,21 @@ class $$UserSettingsTableFilterComposer
 
   ColumnFilters<int> get premiumCheckedAt => $composableBuilder(
     column: $table.premiumCheckedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get aiBaseUrl => $composableBuilder(
+    column: $table.aiBaseUrl,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get aiModel => $composableBuilder(
+    column: $table.aiModel,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get aiConsent => $composableBuilder(
+    column: $table.aiConsent,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -16546,6 +16719,21 @@ class $$UserSettingsTableOrderingComposer
     column: $table.premiumCheckedAt,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get aiBaseUrl => $composableBuilder(
+    column: $table.aiBaseUrl,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get aiModel => $composableBuilder(
+    column: $table.aiModel,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get aiConsent => $composableBuilder(
+    column: $table.aiConsent,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$UserSettingsTableAnnotationComposer
@@ -16683,6 +16871,15 @@ class $$UserSettingsTableAnnotationComposer
     column: $table.premiumCheckedAt,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get aiBaseUrl =>
+      $composableBuilder(column: $table.aiBaseUrl, builder: (column) => column);
+
+  GeneratedColumn<String> get aiModel =>
+      $composableBuilder(column: $table.aiModel, builder: (column) => column);
+
+  GeneratedColumn<String> get aiConsent =>
+      $composableBuilder(column: $table.aiConsent, builder: (column) => column);
 }
 
 class $$UserSettingsTableTableManager
@@ -16747,6 +16944,9 @@ class $$UserSettingsTableTableManager
                 Value<String> calendarsOff = const Value.absent(),
                 Value<int?> premiumUntil = const Value.absent(),
                 Value<int?> premiumCheckedAt = const Value.absent(),
+                Value<String?> aiBaseUrl = const Value.absent(),
+                Value<String?> aiModel = const Value.absent(),
+                Value<String> aiConsent = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => UserSettingsCompanion(
                 id: id,
@@ -16780,6 +16980,9 @@ class $$UserSettingsTableTableManager
                 calendarsOff: calendarsOff,
                 premiumUntil: premiumUntil,
                 premiumCheckedAt: premiumCheckedAt,
+                aiBaseUrl: aiBaseUrl,
+                aiModel: aiModel,
+                aiConsent: aiConsent,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -16815,6 +17018,9 @@ class $$UserSettingsTableTableManager
                 Value<String> calendarsOff = const Value.absent(),
                 Value<int?> premiumUntil = const Value.absent(),
                 Value<int?> premiumCheckedAt = const Value.absent(),
+                Value<String?> aiBaseUrl = const Value.absent(),
+                Value<String?> aiModel = const Value.absent(),
+                Value<String> aiConsent = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => UserSettingsCompanion.insert(
                 id: id,
@@ -16848,6 +17054,9 @@ class $$UserSettingsTableTableManager
                 calendarsOff: calendarsOff,
                 premiumUntil: premiumUntil,
                 premiumCheckedAt: premiumCheckedAt,
+                aiBaseUrl: aiBaseUrl,
+                aiModel: aiModel,
+                aiConsent: aiConsent,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

@@ -10,6 +10,103 @@ class AppLocalizationsUr extends AppLocalizations {
   AppLocalizationsUr([String locale = 'ur']) : super(locale);
 
   @override
+  String get aiAlways => 'ہمیشہ';
+
+  @override
+  String get aiApiKey => 'اے پی آئی کی';
+
+  @override
+  String get aiApiKeyStored => 'صرف اسی فون پر محفوظ';
+
+  @override
+  String get aiBaseUrl => 'بیس یو آر ایل';
+
+  @override
+  String get aiConsentAsk => 'ہر بار پوچھیں';
+
+  @override
+  String get aiConsentBody =>
+      'یہ فون پر پوری طرح نہیں پڑھی جا سکی۔ متن — تصویر نہیں — آپ کے اے آئی فراہم کنندہ کو بھیجیں؟';
+
+  @override
+  String get aiConsentSetting => 'دستاویز کا متن بھیجیں';
+
+  @override
+  String get aiConsentTitle => 'اس دستاویز کا متن بھیجیں؟';
+
+  @override
+  String get aiDismiss => 'ہٹائیں';
+
+  @override
+  String aiFailedPrefix(String message) {
+    return 'آپ کے اے آئی فراہم کنندہ نے کہا: $message';
+  }
+
+  @override
+  String get aiJustOnce => 'صرف اس بار';
+
+  @override
+  String get aiKeptLocal => 'فون نے جو پڑھا وہی رکھا گیا۔';
+
+  @override
+  String get aiKeyHint =>
+      'آپ کی اپنی مشین پر چلنے والے فراہم کنندہ کو شاید کسی کی کی ضرورت نہ ہو۔';
+
+  @override
+  String get aiLockedPitch =>
+      'پریمیم اے آئی وہ پڑھتا ہے جو فون نہیں پڑھ پاتا: خراب تصاویر، اردو دستاویزات، اور نئے بل بھیجنے والے۔';
+
+  @override
+  String get aiModel => 'ماڈل';
+
+  @override
+  String get aiNever => 'کبھی نہیں';
+
+  @override
+  String get aiNotConfigured =>
+      'ترتیب نہیں دیا گیا — لائف او ایس صرف فون پر دستاویزات پڑھتا ہے۔';
+
+  @override
+  String get aiPreset => 'فراہم کنندہ';
+
+  @override
+  String get aiPresetCustom => 'اپنی مرضی یا مقامی';
+
+  @override
+  String get aiPrivacyNote =>
+      'آپ کی دستاویز کا متن اسی فون سے سیدھا آپ کے اے آئی فراہم کنندہ تک جاتا ہے۔ لائف او ایس کے سرور اسے کبھی نہیں دیکھتے، اور تصویر کبھی نہیں بھیجی جاتی۔';
+
+  @override
+  String get aiReadBadge => 'اے آئی نے پڑھا';
+
+  @override
+  String get aiReading => 'آپ کے اے آئی فراہم کنندہ سے پوچھا جا رہا ہے…';
+
+  @override
+  String get aiReauth => 'اے آئی ترتیبات بدلنے کے لیے تصدیق کریں';
+
+  @override
+  String get aiSave => 'محفوظ کریں';
+
+  @override
+  String get aiSection => 'اے آئی';
+
+  @override
+  String get aiTeaser => 'پریمیم اے آئی یہ دستاویز پڑھ سکتا ہے۔';
+
+  @override
+  String get aiTest => 'کنکشن جانچیں';
+
+  @override
+  String get aiTestOk => 'کنکشن ہو گیا۔';
+
+  @override
+  String get aiTitle => 'اپنا اے آئی فراہم کنندہ استعمال کریں';
+
+  @override
+  String get aiUpgrade => 'اپ گریڈ کریں';
+
+  @override
   String get amount => 'رقم';
 
   @override

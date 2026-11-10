@@ -1,5 +1,42 @@
 {
   "@@locale": "en",
+  "aiAlways": "Always",
+  "aiApiKey": "API key",
+  "aiApiKeyStored": "Saved on this phone only",
+  "aiBaseUrl": "Base URL",
+  "aiConsentAsk": "Ask each time",
+  "aiConsentBody": "Couldn't read this fully on the phone. Send the text — not the image — to your AI provider?",
+  "aiConsentSetting": "Send document text",
+  "aiConsentTitle": "Send this document's text?",
+  "aiDismiss": "Dismiss",
+  "aiFailedPrefix": "Your AI provider said: {message}",
+  "@aiFailedPrefix": {
+    "placeholders": {
+      "message": {
+        "type": "String"
+      }
+    }
+  },
+  "aiJustOnce": "Just this once",
+  "aiKeptLocal": "Kept what the phone read.",
+  "aiKeyHint": "A local provider on your own machine may need no key.",
+  "aiLockedPitch": "Premium AI reads what the phone can't: damaged photos, Urdu documents, and billers it hasn't seen before.",
+  "aiModel": "Model",
+  "aiNever": "Never",
+  "aiNotConfigured": "Not set up — LifeOS reads documents on the phone only.",
+  "aiPreset": "Provider",
+  "aiPresetCustom": "Custom or local",
+  "aiPrivacyNote": "Your document text goes directly from this phone to your AI provider. LifeOS servers never see it, and the image is never sent.",
+  "aiReadBadge": "AI-read",
+  "aiReading": "Asking your AI provider…",
+  "aiReauth": "Confirm it's you to change AI settings",
+  "aiSave": "Save",
+  "aiSection": "AI",
+  "aiTeaser": "Premium AI could read this document.",
+  "aiTest": "Test connection",
+  "aiTestOk": "Connected.",
+  "aiTitle": "Use my own AI provider",
+  "aiUpgrade": "Upgrade",
   "amount": "Amount",
   "appLock": "App lock",
   "appLockSub": "Fingerprint, face or PIN to open LifeOS",

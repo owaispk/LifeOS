@@ -11,6 +11,7 @@ import '../security/security_providers.dart';
 import 'data/capture_service.dart';
 import 'ocr/document_analysis.dart';
 import 'ocr/field_extractor.dart';
+import '../ai/ai_providers.dart';
 import 'platform/capture_platform.dart';
 
 // Device services — inert by default (web preview, tests); `main()`
@@ -163,6 +164,10 @@ class DraftEntry {
     this.edits,
     this.renewsDocumentId,
     this.duplicateOf,
+    this.aiGate,
+    this.aiBusy = false,
+    this.aiError,
+    this.aiDismissed = false,
   });
 
   /// Stable within the session (widget keys, undo).
@@ -182,6 +187,19 @@ class DraftEntry {
   /// Set when "Save all" held this one back as a possible duplicate.
   final Document? duplicateOf;
 
+  /// Why cloud AI did or did not run for this document (PBI-027a).
+  /// Null while it is still being read.
+  final AiGate? aiGate;
+
+  /// A provider call is in flight.
+  final bool aiBusy;
+
+  /// The provider's own words, when a call failed (AC5).
+  final String? aiError;
+
+  /// The free-tier teaser was dismissed for this document (AC4).
+  final bool aiDismissed;
+
   bool get reading => analysis == null;
 
   /// Can be filed without opening it: read, typed, not a possible
@@ -193,6 +211,11 @@ class DraftEntry {
     DraftEdits? edits,
     Document? duplicateOf,
     bool clearDuplicate = false,
+    AiGate? aiGate,
+    bool? aiBusy,
+    String? aiError,
+    bool clearAiError = false,
+    bool? aiDismissed,
   }) => DraftEntry(
     id: id,
     draft: draft,
@@ -200,6 +223,10 @@ class DraftEntry {
     edits: edits ?? this.edits,
     renewsDocumentId: renewsDocumentId,
     duplicateOf: clearDuplicate ? null : duplicateOf ?? this.duplicateOf,
+    aiGate: aiGate ?? this.aiGate,
+    aiBusy: aiBusy ?? this.aiBusy,
+    aiError: clearAiError ? null : aiError ?? this.aiError,
+    aiDismissed: aiDismissed ?? this.aiDismissed,
   );
 }
 
@@ -305,7 +332,81 @@ class CaptureSessionNotifier extends Notifier<CaptureSession> {
       );
     }
     _update(entry.id, (e) => e.copyWith(analysis: analysis, edits: edits));
+
+    // Cloud AI, when everything allows it (PBI-027a). The gate is the
+    // only thing that decides; it is stored so the form can show the
+    // consent question, the free-tier teaser, or nothing at all.
+    final gate = await ref
+        .read(aiEnrichmentProvider)
+        .gateFor(analysis.classification, analysis.ocrText);
+    if (!ref.mounted || state.byId(entry.id) == null) return;
+    _update(entry.id, (e) => e.copyWith(aiGate: gate));
+    if (gate == AiGate.send) await runAi(entry.id);
   }
+
+  /// Sends this document's text to the user's provider and merges what
+  /// comes back. Never throws: a failure leaves the on-device result
+  /// exactly as it was, with the provider's message to show (AC5, AC8).
+  Future<void> runAi(int id, {AiConsent? remember}) async {
+    final entry = state.byId(id);
+    final analysis = entry?.analysis;
+    final folders = await ref.read(repositoriesProvider).folders.getAll();
+    if (entry == null || analysis == null || entry.aiBusy) return;
+    if (remember != null) {
+      await ref.read(aiSettingsServiceProvider).setConsent(remember);
+    }
+    _update(id, (e) => e.copyWith(aiBusy: true, clearAiError: true));
+    String? error;
+    AiResult? result;
+    try {
+      result = await ref
+          .read(aiEnrichmentProvider)
+          .enrich(analysis.ocrText, hints: [for (final h in analysis.hints) h.label]);
+    } on AiFailure catch (e) {
+      error = e.message;
+    } on Object catch (e, st) {
+      AppLog.e('ai', 'enrichment failed: ${e.runtimeType}', st);
+      error = null;
+    }
+    if (!ref.mounted || state.byId(id) == null) return;
+    if (result == null) {
+      _update(id, (e) => e.copyWith(aiBusy: false, aiError: error));
+      return;
+    }
+
+    // AI values are proposals: they fill gaps, never overwrite what the
+    // phone read or the user typed (prompt-injection containment).
+    final merged = mergeAiFields(analysis.fields, result.fields);
+    final now = ref.read(nowProvider)();
+    final fallback = defaultScanTitle(now);
+    final current = entry.edits;
+    final type = current?.type ?? result.type;
+    final edits = (current ?? DraftEdits(title: fallback)).withType(
+      type,
+      merged,
+      folders: folders,
+      now: now,
+      fallbackTitle: fallback,
+    );
+    _update(
+      id,
+      (e) => e.copyWith(
+        analysis: DocumentAnalysis(
+          ocrText: analysis.ocrText,
+          classification: analysis.classification,
+          fields: merged,
+          hints: analysis.hints,
+        ),
+        edits: edits,
+        aiBusy: false,
+        clearAiError: true,
+      ),
+    );
+  }
+
+  /// Hides the free-tier teaser for this document, for good (AC4).
+  void dismissAiTeaser(int id) =>
+      _update(id, (e) => e.copyWith(aiDismissed: true));
 
   void updateEdits(int id, DraftEdits edits) =>
       _update(id, (e) => e.copyWith(edits: edits));

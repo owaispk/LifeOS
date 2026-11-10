@@ -10,6 +10,103 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get aiAlways => 'Always';
+
+  @override
+  String get aiApiKey => 'API key';
+
+  @override
+  String get aiApiKeyStored => 'Saved on this phone only';
+
+  @override
+  String get aiBaseUrl => 'Base URL';
+
+  @override
+  String get aiConsentAsk => 'Ask each time';
+
+  @override
+  String get aiConsentBody =>
+      'Couldn\'t read this fully on the phone. Send the text — not the image — to your AI provider?';
+
+  @override
+  String get aiConsentSetting => 'Send document text';
+
+  @override
+  String get aiConsentTitle => 'Send this document\'s text?';
+
+  @override
+  String get aiDismiss => 'Dismiss';
+
+  @override
+  String aiFailedPrefix(String message) {
+    return 'Your AI provider said: $message';
+  }
+
+  @override
+  String get aiJustOnce => 'Just this once';
+
+  @override
+  String get aiKeptLocal => 'Kept what the phone read.';
+
+  @override
+  String get aiKeyHint =>
+      'A local provider on your own machine may need no key.';
+
+  @override
+  String get aiLockedPitch =>
+      'Premium AI reads what the phone can\'t: damaged photos, Urdu documents, and billers it hasn\'t seen before.';
+
+  @override
+  String get aiModel => 'Model';
+
+  @override
+  String get aiNever => 'Never';
+
+  @override
+  String get aiNotConfigured =>
+      'Not set up — LifeOS reads documents on the phone only.';
+
+  @override
+  String get aiPreset => 'Provider';
+
+  @override
+  String get aiPresetCustom => 'Custom or local';
+
+  @override
+  String get aiPrivacyNote =>
+      'Your document text goes directly from this phone to your AI provider. LifeOS servers never see it, and the image is never sent.';
+
+  @override
+  String get aiReadBadge => 'AI-read';
+
+  @override
+  String get aiReading => 'Asking your AI provider…';
+
+  @override
+  String get aiReauth => 'Confirm it\'s you to change AI settings';
+
+  @override
+  String get aiSave => 'Save';
+
+  @override
+  String get aiSection => 'AI';
+
+  @override
+  String get aiTeaser => 'Premium AI could read this document.';
+
+  @override
+  String get aiTest => 'Test connection';
+
+  @override
+  String get aiTestOk => 'Connected.';
+
+  @override
+  String get aiTitle => 'Use my own AI provider';
+
+  @override
+  String get aiUpgrade => 'Upgrade';
+
+  @override
   String get amount => 'Amount';
 
   @override

@@ -7,7 +7,7 @@
 | Story Points | 5 |
 | Spec refs | Features §1.2, §15; §14 (privacy) |
 | Depends on | PBI-027a (shared pipeline + provider interface), PBI-029 (premium verification) — **not PBI-026** |
-| Status | Ready (blocked by 027a) |
+| Status | Ready |
 
 Makes premium AI zero-setup for mainstream users: LifeOS's own API key pays for the calls, so the key must live server-side. This PBI includes a deliberately tiny, **stateless** proxy — it is *not* the PBI-026 backend (no auth system, no sync, no stored data) and must not grow into one.
 
