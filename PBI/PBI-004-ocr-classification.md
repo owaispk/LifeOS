@@ -128,3 +128,17 @@ Result: type 8/8, and every expected amount, date and number matched. Each image
 **Device QA finding, fixed:** LESCO's reference "08 11111 2233445 U" was read as just "11111", the subdivision code shared by neighbouring meters. Two LESCO meters would have merged into one learned rule (PBI-014 AC4), and duplicate detection could misfire. The new `refAfter` keeps space-separated groups whole, without swallowing a following word. 3 new unit tests; re-verified on the device.
 
 Still open: accuracy on photos of real paper documents (needs physical documents, ideally on a phone). The pipeline is now proven on the device.
+
+## Change (2026-11-10): row-aware OCR, reading in the background
+
+**Printed rows are rebuilt before extraction.** ML Kit returns text in blocks, so on a bill the label "Due Date" and its value "14/11/2026" often sit in two different blocks. `result.text` then puts them lines apart, and the field extractor — which reads the rest of the line, or the next line — missed the value. Line boxes are now sorted back into printed rows first: two boxes join the same row when their vertical centres are within half the smaller line height and they do not overlap horizontally; each row is then read left to right, top to bottom.
+
+Code: `ocr/ocr_rows.dart` — pure Dart, 4 unit tests. `MlKitTextReader` feeds it `block.lines` and falls back to `result.text` when a page yields no boxes.
+
+**Reading starts at capture, not at the confirm step.** Analysis used to begin when the confirm step opened. It now starts as soon as a draft joins the session, so a document is usually already typed and filled by the time the user looks at it. A recogniser that throws no longer leaves "Reading…" on screen for good: the failure is logged and the document is filed as unreadable, per AC5.
+
+Code: `capture_providers.dart` (`_analyze`).
+
+`flutter analyze`: no issues · full suite `flutter test`: **557/557 passed**.
+
+**Not verified:** row rebuilding is tested against synthetic boxes only. It should be re-checked against real ML Kit output on a device — the same 8 images used in the 2026-11-09 pass would do, since the fix is meant to help exactly the label/value pairs they cover.

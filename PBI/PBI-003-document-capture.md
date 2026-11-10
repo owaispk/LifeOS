@@ -114,3 +114,34 @@ Android emulator `sdk gphone64 x86 64`, Android 17 (API 37), Google Play service
 Notes:
 - The first scan triggers a one-time Google Play services download of the scanner module, which needs a connection.
 - A scan with no text correctly falls back to "Unclassified".
+
+## Change (2026-11-10): stricter duplicates, batch review
+
+Device scanning showed the AC7 check firing on documents that were not duplicates, and the batch flow ("1 of 2") made a multi-document session hard to steer. Both were reworked in `329b72c`.
+
+**Duplicates (AC7).** A near page-1 image hash on its own was too coarse: a mostly white page shrinks to its layout, so this month's bill and last month's bill from the same company hashed within the 6-bit threshold and were offered as duplicates of each other. The check is now:
+- Both documents read by OCR → the hashes must be near (≤ 6 bits) **and** the texts must agree. Of the number tokens — amounts, dates, reference and meter readings, the things that change between two documents built from one template — at least 80% shared, and of the words at least 60%. A page with fewer than 3 numbers is judged on words alone, at 85%.
+- Either side unread → the hash must be nearly identical (≤ 2 bits).
+- Same issuer + reference + period still matches, unchanged.
+
+The dialog now also says when the older document was saved: "Looks like a duplicate of 'Electricity Bill Oct', saved 12 Oct. Keep both?"
+
+Code: `domain/duplicate_check.dart` — pure Dart, 5 unit tests.
+
+**Batch review.** Two or more documents in a session now show as a list, newest first and marked New, each card carrying its own status; a single document still opens its form directly.
+- Every scan is read in the background as soon as it is added, so a card is usually ready by the time it is opened.
+- **Save ready documents** files everything that is read and typed, in one tap.
+- A possible duplicate is held back and flagged "May be a duplicate of '<title>'" instead of being filed or discarded. The user opens it and decides.
+- Edits live in the session, so opening a card and going back keeps them.
+- Discarding can be undone.
+- Scan another / Import are labelled buttons; tapping a page opens it full screen.
+
+Code: `capture_providers.dart` (`DraftEntry`, `DraftEdits`), `review_screen.dart`.
+
+**Blurry pages (AC5).** The warning now names the page ("Page 2 looks unclear — text may be hard to read later"), and in a multi-page scan the unclear pages can be removed while the rest are kept.
+
+**Scope note:** the batch list, the per-card status, held-back duplicates and undo go beyond this PBI's Description, which asks only to "scan several documents in one session and file them afterwards". They are recorded here rather than in a PBI of their own; if the backlog wants them tracked separately they are a candidate for PBI-036.
+
+`flutter analyze`: no issues · full suite `flutter test`: **557/557 passed**.
+
+**Not verified:** the stricter duplicate rule and the batch list have not been through a device pass. Both are exercised only against fake scanner output, so they belong in the next device QA session alongside PBI-033.
