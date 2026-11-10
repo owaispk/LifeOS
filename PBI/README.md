@@ -54,6 +54,7 @@
 | 34 | [PBI-034 Share Text to Task](PBI-034-share-text-to-task.md) | E3 ATC / E2 Mind | 3 | 010, 003 | Done (Android) |
 | 35 | [PBI-035 Profile & Personalization (neutral defaults)](PBI-035-profile-personalization.md) | E5 Platform / E6 Engagement | 5 | 021, 025 | Done |
 | 36 | [PBI-036 iOS Share Extension](PBI-036-ios-share-extension.md) | E5 Platform | 5 | 003, 034 | Ready (blocked: needs a Mac) |
+| 37 | [PBI-037 iOS Home-Screen Widget (WidgetKit)](PBI-037-ios-home-screen-widget.md) | E6 Engagement | 8 | 033 | Ready (blocked: needs a Mac) |
 
 ## Suggested sprint plan (2 devs, 2-week sprints, ~27 SP/sprint → 6 sprints ≈ 3 months)
 
