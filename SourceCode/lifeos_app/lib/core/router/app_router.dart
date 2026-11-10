@@ -13,6 +13,7 @@ import '../../features/home/home_screen.dart';
 import '../../features/money/money_screen.dart';
 import '../../features/more/more_screen.dart';
 import '../../features/onboarding/onboarding_screen.dart';
+import '../../features/premium/ui/premium_screen.dart';
 import '../../features/profile/profile_screen.dart';
 import '../../features/score/score_screen.dart';
 import '../../features/settings/diagnostics_screen.dart';
@@ -143,6 +144,10 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'profile',
                 builder: (context, state) => const ProfileScreen(),
+              ),
+              GoRoute(
+                path: 'premium',
+                builder: (context, state) => const PremiumScreen(),
               ),
               GoRoute(
                 path: 'settings',

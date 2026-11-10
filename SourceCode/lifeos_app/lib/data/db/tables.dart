@@ -97,6 +97,14 @@ class UserSettings extends Table with SyncColumns {
   /// without the user having to go and tick it.
   TextColumn get calendarsOff => text().withDefault(const Constant(''))();
 
+  /// Premium paid up to this moment, epoch ms (schema v11, PBI-029).
+  /// Null means never subscribed. Cached from the store so the app knows
+  /// what the user paid for before the store answers, and while offline.
+  IntColumn get premiumUntil => integer().nullable()();
+
+  /// When the store was last asked, epoch ms (schema v11, PBI-029).
+  IntColumn get premiumCheckedAt => integer().nullable()();
+
   @override
   List<Set<Column<Object>>> get uniqueKeys => [
     {userId},

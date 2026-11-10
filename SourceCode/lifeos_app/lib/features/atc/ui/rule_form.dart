@@ -10,7 +10,9 @@ import '../../../data/db/app_database.dart';
 import '../../../shared/format.dart';
 import '../atc_providers.dart';
 import '../data/atc_service.dart';
-import '../domain/atc_schedule.dart' show freeTierRuleLimit;
+import '../../premium/ui/upgrade_prompt.dart';
+
+export '../../premium/ui/upgrade_prompt.dart' show showUpgradePrompt;
 
 /// "What do you pay regularly?" presets (PBI-013 grooming).
 class PaymentPreset {
@@ -62,27 +64,6 @@ Future<void> showAddRuleSheet(BuildContext context) {
     useRootNavigator: true, // above the tab bar and its ➕ button
     isScrollControlled: true,
     builder: (context) => const AddRuleSheet(),
-  );
-}
-
-Future<void> showUpgradePrompt(BuildContext context) {
-  return showDialog<void>(
-    context: context,
-    builder: (context) => AlertDialog(
-      key: const ValueKey('upgrade-prompt'),
-      title: Text(context.l10n.atcUpgradeTitle),
-      content: Text(context.l10n.atcUpgradeBody('$freeTierRuleLimit')),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(context.l10n.atcNotNow),
-        ),
-        FilledButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(context.l10n.atcSeePremium),
-        ),
-      ],
-    ),
   );
 }
 

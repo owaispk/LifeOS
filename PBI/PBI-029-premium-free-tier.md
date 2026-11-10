@@ -7,7 +7,7 @@
 | Story Points | 8 |
 | Spec refs | Features §15 (free vs premium split); §2.5 (ATC rule limit); §1.1 (Vault) |
 | Depends on | PBI-002 (settings store), PBI-013 (the 3-rule stub), PBI-003 (capture, where the document limit bites) |
-| Status | Ready |
+| Status | Done — store configuration and device QA pending |
 
 ## User Story
 As a **user**, I want to pay for Premium from inside the app and have the limits lift immediately, so I can keep scanning past 25 documents and adding auto-rules past 3 — and as a **free user**, I want to know where the limit is before I hit it, not after.
@@ -80,3 +80,40 @@ Settings → Premium is a disabled "Coming soon" row today (`settingsPremiumSub`
 - Store configuration (a Play Console subscription product, licence testers) is the part that cannot be done from the repo and will gate device QA — treat it as a prerequisite, not a task.
 - Price formatting comes from `ProductDetails.price`, which is already localised; do not route it through `Money` (PBI-035 region formats are for the user's own money, not the store's).
 - Worth deciding at planning: whether iOS ships here or splits, as PBI-034 split its share extension. The Dart flow is one plugin for both stores, so the split would be about App Store Connect setup and a Mac to test on, not about code.
+
+## Dev & QA Notes (2026-11-10)
+
+New dependency: `in_app_purchase` (one plugin, both stores).
+
+Code, under `lib/features/premium/`:
+- `platform/billing_source.dart`: `BillingSource` with `StoreBilling` and an inert `NoBilling`, the default until `main()` swaps the real one in. The plugin's `purchaseStream` is subscribed from launch, as it requires, and every purchase it hands back is completed.
+- `domain/limits.dart` (pure Dart): `freeTierDocumentLimit = 25` beside the existing `freeTierRuleLimit = 3`, plus the entitlement-cache rules.
+- `premium_providers.dart`: `premiumProvider` — now the single read point — and `PremiumService` (subscribe, restore, refresh).
+- `ui/premium_screen.dart`, `ui/upgrade_prompt.dart` (shared by ATC and capture), `ui/premium_refresher.dart`.
+
+`premiumProvider` moved out of `features/atc/atc_providers.dart`, which re-exports it so ATC's callers are untouched. Schema v11 adds `premium_until` and `premium_checked_at`.
+
+| AC | Result | Evidence |
+|---|---|---|
+| 1 | ✅ | Widget: with 25 documents, saving a 26th shows the upgrade prompt, the Vault still holds 25, and **Not now** leaves the review step up with the scan intact. |
+| 2 | ✅ | Widget: a premium user with 25 documents saves the 26th with no prompt. Unit: the limit passes at 25, 10 000 and anything else once premium. The ATC rule limit lifts through the same flag. |
+| 3 | ✅ | Widget: one setting change makes the Vault drop its warning and Settings say "You're on Premium." in the same session, no restart. |
+| 4 | ✅ | Widget: a free user with 30 documents keeps all 30, still free. Unit: adding is blocked and no warning line is shown — someone already over the limit is not nagged about it. |
+| 5 | ✅ | Widget: a store that answers "could not ask" leaves `premium_until` exactly as it was. `refresh()` returns early on a null answer and logs one line; only a real reply ever writes. |
+| 6 | ✅ | Widget: Restore on an account that owns the subscription turns Premium on with `purchases == 0` — restoring is not buying. |
+| 7 | ✅ | Widget: the screen shows the store's own formatted price. A loop asserts the rendered screen contains none of backup / sync / AI / family / link, so an unbuilt feature cannot quietly reappear in the copy. |
+| 8 | ✅ | Widget: at 20 of 25 the Vault shows the line; at 5 of 25 it does not; a premium user never sees it. It is a `ListTile` in the Vault, never a notification. |
+| 9 | ⚠️ Partly | The behaviour rests on the store reporting ownership until the paid period ends, and on `PremiumRefresher` re-checking on resume. Testable only against a real store — see below. |
+| 10 | ✅ | Widget: a free user who opens the Vault and Home makes **0** store calls. The fake counts every method. |
+
+`flutter analyze`: no issues · full suite `flutter test`: **612/612 passed** (17 new).
+
+**Two honest deviations from the Description above:**
+
+1. **The screen cannot show "Premium ending on <date>".** `in_app_purchase` gives no expiry date client-side; a real one needs server-side receipt validation, which this PBI rules out ("There is no server, by design"). The screen instead says Premium is managed in the store and that cancelling keeps it until the paid period ends. Revisit if PBI-026 ever brings a backend.
+
+2. **`premium_until` is a trust horizon, not the subscription's real end date.** A confirmed purchase is trusted for 60 days without the store being reachable. This is what makes AC5 work: a paying user keeps what they paid for on a plane, and only a store that actually answers can take Premium away. The cost is that someone who cancels and then stays offline keeps Premium for up to 60 days — the right way round for a paid feature.
+
+**How AC9 and AC10 coexist:** `PremiumRefresher` re-checks on resume, but only when `premium_until` is non-null. A user who has never subscribed is never checked, so nothing reaches the billing SDK unless they open the Premium screen or hit a limit.
+
+**Not verified:** no device pass, and it cannot happen until the store side exists — a subscription product `lifeos_premium_monthly` in Play Console (and App Store Connect) plus licence testers. Until then the real purchase flow, restore on a fresh install, and AC9's lapse behaviour are all untested against anything but a fake. That configuration is a prerequisite, not a task in this PBI.

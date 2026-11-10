@@ -8,6 +8,8 @@ import '../../core/theme/tokens.dart';
 import '../../data/db/app_database.dart';
 import '../../shared/widgets/empty_state.dart';
 import '../capture/capture_entry.dart';
+import '../premium/premium_providers.dart';
+import '../premium/ui/upgrade_prompt.dart' show premiumRoute;
 import '../capture/ocr/doc_classifier.dart' show docTypes;
 import '../capture/ocr/field_extractor.dart' show typeName;
 import 'data/search_service.dart';
@@ -154,10 +156,26 @@ class _VaultHome extends ConsumerWidget {
     final unfiled = counts[null] ?? 0;
     final l = context.l10n;
 
+    // How much room is left on the free plan, once it is close (PBI-029
+    // AC8). One quiet line in the Vault, never a notification.
+    final left = ref.watch(documentsLeftProvider);
+
     return ListView(
       key: const ValueKey('vault-home'),
       padding: EdgeInsets.only(bottom: Tokens.listEnd),
       children: [
+        if (left != null)
+          ListTile(
+            key: const ValueKey('vault-docs-left'),
+            dense: true,
+            leading: const Text('⭐'),
+            title: Text(l.pmDocsLeft(left)),
+            trailing: TextButton(
+              key: const ValueKey('vault-see-premium'),
+              onPressed: () => context.go(premiumRoute),
+              child: Text(l.pmSeePremium),
+            ),
+          ),
         VaultSectionTitle(l.vtPeople),
         SizedBox(
           height: 56,

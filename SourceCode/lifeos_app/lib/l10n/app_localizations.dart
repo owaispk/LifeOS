@@ -2480,6 +2480,96 @@ abstract class AppLocalizations {
   /// **'School fee'**
   String get paySchoolFee;
 
+  /// No description provided for @pmDocLimitBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The free plan holds {n} documents. Premium removes the limit — your documents stay where they are either way.'**
+  String pmDocLimitBody(String n);
+
+  /// No description provided for @pmDocsLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'{n, plural, =0{No documents left on the free plan} =1{1 document left on the free plan} other{{n} documents left on the free plan}}'**
+  String pmDocsLeft(int n);
+
+  /// No description provided for @pmHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium removes the free plan\'s limits.'**
+  String get pmHeadline;
+
+  /// No description provided for @pmManageInStore.
+  ///
+  /// In en, this message translates to:
+  /// **'Change or cancel in the store you bought it from. Cancelling keeps Premium until the period you paid for ends.'**
+  String get pmManageInStore;
+
+  /// No description provided for @pmNoAccountNote.
+  ///
+  /// In en, this message translates to:
+  /// **'LifeOS has no account to sign in to. Premium follows the store account that bought it, and your documents never leave this phone.'**
+  String get pmNoAccountNote;
+
+  /// No description provided for @pmNothingToRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'No subscription found on this store account.'**
+  String get pmNothingToRestore;
+
+  /// No description provided for @pmPerkDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited documents — the free plan holds {n}.'**
+  String pmPerkDocuments(String n);
+
+  /// No description provided for @pmPerkRules.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited auto-rules — the free plan allows {n}.'**
+  String pmPerkRules(String n);
+
+  /// No description provided for @pmPricePerMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'{price} a month'**
+  String pmPricePerMonth(String price);
+
+  /// No description provided for @pmPriceUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'The store isn\'t reachable right now, so the price can\'t be shown.'**
+  String get pmPriceUnavailable;
+
+  /// No description provided for @pmPurchaseFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The purchase didn\'t go through. Nothing was charged.'**
+  String get pmPurchaseFailed;
+
+  /// No description provided for @pmRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore purchases'**
+  String get pmRestore;
+
+  /// No description provided for @pmSeePremium.
+  ///
+  /// In en, this message translates to:
+  /// **'See Premium'**
+  String get pmSeePremium;
+
+  /// No description provided for @pmSubscribe.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscribe'**
+  String get pmSubscribe;
+
+  /// No description provided for @pmYourePremium.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re on Premium.'**
+  String get pmYourePremium;
+
   /// No description provided for @profileAboutYou.
   ///
   /// In en, this message translates to:

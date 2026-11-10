@@ -1003,6 +1003,56 @@
   "payMobile": "Mobile",
   "payRent": "Rent",
   "paySchoolFee": "School fee",
+  "pmDocLimitBody": "The free plan holds {n} documents. Premium removes the limit — your documents stay where they are either way.",
+  "@pmDocLimitBody": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "pmDocsLeft": "{n, plural, =0{No documents left on the free plan} =1{1 document left on the free plan} other{{n} documents left on the free plan}}",
+  "@pmDocsLeft": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "pmHeadline": "Premium removes the free plan's limits.",
+  "pmManageInStore": "Change or cancel in the store you bought it from. Cancelling keeps Premium until the period you paid for ends.",
+  "pmNoAccountNote": "LifeOS has no account to sign in to. Premium follows the store account that bought it, and your documents never leave this phone.",
+  "pmNothingToRestore": "No subscription found on this store account.",
+  "pmPerkDocuments": "Unlimited documents — the free plan holds {n}.",
+  "@pmPerkDocuments": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "pmPerkRules": "Unlimited auto-rules — the free plan allows {n}.",
+  "@pmPerkRules": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "pmPricePerMonth": "{price} a month",
+  "@pmPricePerMonth": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "pmPriceUnavailable": "The store isn't reachable right now, so the price can't be shown.",
+  "pmPurchaseFailed": "The purchase didn't go through. Nothing was charged.",
+  "pmRestore": "Restore purchases",
+  "pmSeePremium": "See Premium",
+  "pmSubscribe": "Subscribe",
+  "pmYourePremium": "You're on Premium.",
   "profileAboutYou": "About you",
   "profileAuto": "Auto",
   "profileAutoValue": "Auto ({value})",

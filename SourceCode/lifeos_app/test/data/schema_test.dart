@@ -30,7 +30,7 @@ void main() {
       'documents_fts', 'documents_fts_data', 'documents_fts_idx',
       'documents_fts_docsize', 'documents_fts_config',
     });
-    expect(db.schemaVersion, 10);
+    expect(db.schemaVersion, 11);
   });
 
   test('every synced table carries sync metadata columns', () async {

@@ -12,6 +12,8 @@ import 'core/log/app_log.dart';
 import 'core/log/diagnostics.dart';
 import 'data/data_providers.dart';
 import 'features/calendar/calendar_providers.dart';
+import 'features/premium/premium_providers.dart';
+import 'features/premium/platform/billing_source.dart';
 import 'features/calendar/platform/calendar_source.dart';
 import 'features/atc/data/atc_service.dart';
 import 'features/vault/data/expiry_guard.dart';
@@ -149,6 +151,9 @@ Future<void> main() async {
           // Device calendar (PBI-032). Inert elsewhere, and this one asks
           // for nothing until the user turns events on in Settings.
           calendarSourceProvider.overrideWithValue(DeviceCalendarSource()),
+          // Store billing (PBI-029). The plugin wants to be listened to
+          // from launch or purchases made outside the app are missed.
+          billingSourceProvider.overrideWithValue(StoreBilling()),
         ],
       ],
       child: const LifeOsApp(),

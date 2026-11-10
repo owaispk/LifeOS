@@ -3287,6 +3287,28 @@ class $UserSettingsTable extends UserSettings
     requiredDuringInsert: false,
     defaultValue: const Constant(''),
   );
+  static const VerificationMeta _premiumUntilMeta = const VerificationMeta(
+    'premiumUntil',
+  );
+  @override
+  late final GeneratedColumn<int> premiumUntil = GeneratedColumn<int>(
+    'premium_until',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _premiumCheckedAtMeta = const VerificationMeta(
+    'premiumCheckedAt',
+  );
+  @override
+  late final GeneratedColumn<int> premiumCheckedAt = GeneratedColumn<int>(
+    'premium_checked_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -3318,6 +3340,8 @@ class $UserSettingsTable extends UserSettings
     widgetDetails,
     calendarOn,
     calendarsOff,
+    premiumUntil,
+    premiumCheckedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3532,6 +3556,24 @@ class $UserSettingsTable extends UserSettings
         ),
       );
     }
+    if (data.containsKey('premium_until')) {
+      context.handle(
+        _premiumUntilMeta,
+        premiumUntil.isAcceptableOrUnknown(
+          data['premium_until']!,
+          _premiumUntilMeta,
+        ),
+      );
+    }
+    if (data.containsKey('premium_checked_at')) {
+      context.handle(
+        _premiumCheckedAtMeta,
+        premiumCheckedAt.isAcceptableOrUnknown(
+          data['premium_checked_at']!,
+          _premiumCheckedAtMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -3661,6 +3703,14 @@ class $UserSettingsTable extends UserSettings
         DriftSqlType.string,
         data['${effectivePrefix}calendars_off'],
       )!,
+      premiumUntil: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}premium_until'],
+      ),
+      premiumCheckedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}premium_checked_at'],
+      ),
     );
   }
 
@@ -3733,6 +3783,14 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
   /// *exclusions* means a calendar added on the phone later appears
   /// without the user having to go and tick it.
   final String calendarsOff;
+
+  /// Premium paid up to this moment, epoch ms (schema v11, PBI-029).
+  /// Null means never subscribed. Cached from the store so the app knows
+  /// what the user paid for before the store answers, and while offline.
+  final int? premiumUntil;
+
+  /// When the store was last asked, epoch ms (schema v11, PBI-029).
+  final int? premiumCheckedAt;
   const UserSettingsRow({
     required this.id,
     required this.userId,
@@ -3763,6 +3821,8 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     required this.widgetDetails,
     required this.calendarOn,
     required this.calendarsOff,
+    this.premiumUntil,
+    this.premiumCheckedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -3808,6 +3868,12 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     map['widget_details'] = Variable<bool>(widgetDetails);
     map['calendar_on'] = Variable<bool>(calendarOn);
     map['calendars_off'] = Variable<String>(calendarsOff);
+    if (!nullToAbsent || premiumUntil != null) {
+      map['premium_until'] = Variable<int>(premiumUntil);
+    }
+    if (!nullToAbsent || premiumCheckedAt != null) {
+      map['premium_checked_at'] = Variable<int>(premiumCheckedAt);
+    }
     return map;
   }
 
@@ -3854,6 +3920,12 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
       widgetDetails: Value(widgetDetails),
       calendarOn: Value(calendarOn),
       calendarsOff: Value(calendarsOff),
+      premiumUntil: premiumUntil == null && nullToAbsent
+          ? const Value.absent()
+          : Value(premiumUntil),
+      premiumCheckedAt: premiumCheckedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(premiumCheckedAt),
     );
   }
 
@@ -3892,6 +3964,8 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
       widgetDetails: serializer.fromJson<bool>(json['widgetDetails']),
       calendarOn: serializer.fromJson<bool>(json['calendarOn']),
       calendarsOff: serializer.fromJson<String>(json['calendarsOff']),
+      premiumUntil: serializer.fromJson<int?>(json['premiumUntil']),
+      premiumCheckedAt: serializer.fromJson<int?>(json['premiumCheckedAt']),
     );
   }
   @override
@@ -3927,6 +4001,8 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
       'widgetDetails': serializer.toJson<bool>(widgetDetails),
       'calendarOn': serializer.toJson<bool>(calendarOn),
       'calendarsOff': serializer.toJson<String>(calendarsOff),
+      'premiumUntil': serializer.toJson<int?>(premiumUntil),
+      'premiumCheckedAt': serializer.toJson<int?>(premiumCheckedAt),
     };
   }
 
@@ -3960,6 +4036,8 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     bool? widgetDetails,
     bool? calendarOn,
     String? calendarsOff,
+    Value<int?> premiumUntil = const Value.absent(),
+    Value<int?> premiumCheckedAt = const Value.absent(),
   }) => UserSettingsRow(
     id: id ?? this.id,
     userId: userId ?? this.userId,
@@ -3992,6 +4070,10 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     widgetDetails: widgetDetails ?? this.widgetDetails,
     calendarOn: calendarOn ?? this.calendarOn,
     calendarsOff: calendarsOff ?? this.calendarsOff,
+    premiumUntil: premiumUntil.present ? premiumUntil.value : this.premiumUntil,
+    premiumCheckedAt: premiumCheckedAt.present
+        ? premiumCheckedAt.value
+        : this.premiumCheckedAt,
   );
   UserSettingsRow copyWithCompanion(UserSettingsCompanion data) {
     return UserSettingsRow(
@@ -4054,6 +4136,12 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
       calendarsOff: data.calendarsOff.present
           ? data.calendarsOff.value
           : this.calendarsOff,
+      premiumUntil: data.premiumUntil.present
+          ? data.premiumUntil.value
+          : this.premiumUntil,
+      premiumCheckedAt: data.premiumCheckedAt.present
+          ? data.premiumCheckedAt.value
+          : this.premiumCheckedAt,
     );
   }
 
@@ -4088,7 +4176,9 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
           ..write('dateOrder: $dateOrder, ')
           ..write('widgetDetails: $widgetDetails, ')
           ..write('calendarOn: $calendarOn, ')
-          ..write('calendarsOff: $calendarsOff')
+          ..write('calendarsOff: $calendarsOff, ')
+          ..write('premiumUntil: $premiumUntil, ')
+          ..write('premiumCheckedAt: $premiumCheckedAt')
           ..write(')'))
         .toString();
   }
@@ -4124,6 +4214,8 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     widgetDetails,
     calendarOn,
     calendarsOff,
+    premiumUntil,
+    premiumCheckedAt,
   ]);
   @override
   bool operator ==(Object other) =>
@@ -4157,7 +4249,9 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
           other.dateOrder == this.dateOrder &&
           other.widgetDetails == this.widgetDetails &&
           other.calendarOn == this.calendarOn &&
-          other.calendarsOff == this.calendarsOff);
+          other.calendarsOff == this.calendarsOff &&
+          other.premiumUntil == this.premiumUntil &&
+          other.premiumCheckedAt == this.premiumCheckedAt);
 }
 
 class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
@@ -4190,6 +4284,8 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
   final Value<bool> widgetDetails;
   final Value<bool> calendarOn;
   final Value<String> calendarsOff;
+  final Value<int?> premiumUntil;
+  final Value<int?> premiumCheckedAt;
   final Value<int> rowid;
   const UserSettingsCompanion({
     this.id = const Value.absent(),
@@ -4221,6 +4317,8 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     this.widgetDetails = const Value.absent(),
     this.calendarOn = const Value.absent(),
     this.calendarsOff = const Value.absent(),
+    this.premiumUntil = const Value.absent(),
+    this.premiumCheckedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   UserSettingsCompanion.insert({
@@ -4253,6 +4351,8 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     this.widgetDetails = const Value.absent(),
     this.calendarOn = const Value.absent(),
     this.calendarsOff = const Value.absent(),
+    this.premiumUntil = const Value.absent(),
+    this.premiumCheckedAt = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   static Insertable<UserSettingsRow> custom({
@@ -4285,6 +4385,8 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     Expression<bool>? widgetDetails,
     Expression<bool>? calendarOn,
     Expression<String>? calendarsOff,
+    Expression<int>? premiumUntil,
+    Expression<int>? premiumCheckedAt,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -4317,6 +4419,8 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
       if (widgetDetails != null) 'widget_details': widgetDetails,
       if (calendarOn != null) 'calendar_on': calendarOn,
       if (calendarsOff != null) 'calendars_off': calendarsOff,
+      if (premiumUntil != null) 'premium_until': premiumUntil,
+      if (premiumCheckedAt != null) 'premium_checked_at': premiumCheckedAt,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -4351,6 +4455,8 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     Value<bool>? widgetDetails,
     Value<bool>? calendarOn,
     Value<String>? calendarsOff,
+    Value<int?>? premiumUntil,
+    Value<int?>? premiumCheckedAt,
     Value<int>? rowid,
   }) {
     return UserSettingsCompanion(
@@ -4383,6 +4489,8 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
       widgetDetails: widgetDetails ?? this.widgetDetails,
       calendarOn: calendarOn ?? this.calendarOn,
       calendarsOff: calendarsOff ?? this.calendarsOff,
+      premiumUntil: premiumUntil ?? this.premiumUntil,
+      premiumCheckedAt: premiumCheckedAt ?? this.premiumCheckedAt,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -4477,6 +4585,12 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     if (calendarsOff.present) {
       map['calendars_off'] = Variable<String>(calendarsOff.value);
     }
+    if (premiumUntil.present) {
+      map['premium_until'] = Variable<int>(premiumUntil.value);
+    }
+    if (premiumCheckedAt.present) {
+      map['premium_checked_at'] = Variable<int>(premiumCheckedAt.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -4515,6 +4629,8 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
           ..write('widgetDetails: $widgetDetails, ')
           ..write('calendarOn: $calendarOn, ')
           ..write('calendarsOff: $calendarsOff, ')
+          ..write('premiumUntil: $premiumUntil, ')
+          ..write('premiumCheckedAt: $premiumCheckedAt, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -16062,6 +16178,8 @@ typedef $$UserSettingsTableCreateCompanionBuilder =
       Value<bool> widgetDetails,
       Value<bool> calendarOn,
       Value<String> calendarsOff,
+      Value<int?> premiumUntil,
+      Value<int?> premiumCheckedAt,
       Value<int> rowid,
     });
 typedef $$UserSettingsTableUpdateCompanionBuilder =
@@ -16095,6 +16213,8 @@ typedef $$UserSettingsTableUpdateCompanionBuilder =
       Value<bool> widgetDetails,
       Value<bool> calendarOn,
       Value<String> calendarsOff,
+      Value<int?> premiumUntil,
+      Value<int?> premiumCheckedAt,
       Value<int> rowid,
     });
 
@@ -16249,6 +16369,16 @@ class $$UserSettingsTableFilterComposer
 
   ColumnFilters<String> get calendarsOff => $composableBuilder(
     column: $table.calendarsOff,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get premiumUntil => $composableBuilder(
+    column: $table.premiumUntil,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get premiumCheckedAt => $composableBuilder(
+    column: $table.premiumCheckedAt,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -16406,6 +16536,16 @@ class $$UserSettingsTableOrderingComposer
     column: $table.calendarsOff,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<int> get premiumUntil => $composableBuilder(
+    column: $table.premiumUntil,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get premiumCheckedAt => $composableBuilder(
+    column: $table.premiumCheckedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$UserSettingsTableAnnotationComposer
@@ -16533,6 +16673,16 @@ class $$UserSettingsTableAnnotationComposer
     column: $table.calendarsOff,
     builder: (column) => column,
   );
+
+  GeneratedColumn<int> get premiumUntil => $composableBuilder(
+    column: $table.premiumUntil,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get premiumCheckedAt => $composableBuilder(
+    column: $table.premiumCheckedAt,
+    builder: (column) => column,
+  );
 }
 
 class $$UserSettingsTableTableManager
@@ -16595,6 +16745,8 @@ class $$UserSettingsTableTableManager
                 Value<bool> widgetDetails = const Value.absent(),
                 Value<bool> calendarOn = const Value.absent(),
                 Value<String> calendarsOff = const Value.absent(),
+                Value<int?> premiumUntil = const Value.absent(),
+                Value<int?> premiumCheckedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => UserSettingsCompanion(
                 id: id,
@@ -16626,6 +16778,8 @@ class $$UserSettingsTableTableManager
                 widgetDetails: widgetDetails,
                 calendarOn: calendarOn,
                 calendarsOff: calendarsOff,
+                premiumUntil: premiumUntil,
+                premiumCheckedAt: premiumCheckedAt,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -16659,6 +16813,8 @@ class $$UserSettingsTableTableManager
                 Value<bool> widgetDetails = const Value.absent(),
                 Value<bool> calendarOn = const Value.absent(),
                 Value<String> calendarsOff = const Value.absent(),
+                Value<int?> premiumUntil = const Value.absent(),
+                Value<int?> premiumCheckedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => UserSettingsCompanion.insert(
                 id: id,
@@ -16690,6 +16846,8 @@ class $$UserSettingsTableTableManager
                 widgetDetails: widgetDetails,
                 calendarOn: calendarOn,
                 calendarsOff: calendarsOff,
+                premiumUntil: premiumUntil,
+                premiumCheckedAt: premiumCheckedAt,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

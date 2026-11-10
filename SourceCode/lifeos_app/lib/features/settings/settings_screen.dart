@@ -14,6 +14,8 @@ import '../../core/theme/tokens.dart';
 import '../../data/data_providers.dart';
 import '../../data/db/app_database.dart';
 import '../calendar/calendar_providers.dart';
+import '../premium/premium_providers.dart';
+import '../premium/ui/upgrade_prompt.dart' show premiumRoute;
 import '../../shared/format.dart';
 import '../../shared/widgets/section_header.dart';
 import '../capture/capture_providers.dart' show vaultRootProvider;
@@ -284,10 +286,14 @@ class SettingsScreen extends ConsumerWidget {
           ),
           SectionHeader(l.settingsPremium),
           ListTile(
-            enabled: false,
+            key: const ValueKey('set-premium'),
             leading: const Text('⭐', style: TextStyle(fontSize: 22)),
             title: Text(l.settingsPremium),
-            subtitle: Text(l.settingsPremiumSub),
+            subtitle: Text(
+              ref.watch(premiumProvider) ? l.pmYourePremium : l.pmHeadline,
+            ),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => context.go(premiumRoute),
           ),
         ],
       ),

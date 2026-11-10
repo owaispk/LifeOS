@@ -3,11 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/now_provider.dart';
 import '../../data/data_providers.dart';
 import '../../data/db/app_database.dart';
+import '../premium/premium_providers.dart';
 import 'data/atc_learning.dart';
 import 'data/atc_service.dart';
 
-/// Premium entitlement — always false until subscriptions (PBI-029).
-final premiumProvider = Provider<bool>((ref) => false);
+// Premium entitlement lives in features/premium now (PBI-029); ATC was
+// only ever its first caller.
+export '../premium/premium_providers.dart' show premiumProvider;
 
 final atcServiceProvider = Provider<AtcService>(
   (ref) => AtcService(

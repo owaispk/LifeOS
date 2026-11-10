@@ -19,6 +19,8 @@ import '../vault/domain/vault_rules.dart' show docTypeIcon;
 import '../vault/vault_providers.dart';
 import 'capture_entry.dart';
 import 'capture_providers.dart';
+import '../premium/premium_providers.dart';
+import '../premium/ui/upgrade_prompt.dart';
 import 'data/capture_service.dart';
 import 'ocr/doc_classifier.dart';
 import 'ocr/document_analysis.dart';
@@ -140,6 +142,7 @@ class _CaptureReviewScreenState extends ConsumerState<CaptureReviewScreen> {
     final messenger = ScaffoldMessenger.of(context);
     final l = context.l10n;
     var saved = 0, held = 0;
+    var limitHit = false;
     final notes = <String>{};
     try {
       final ready = ref
@@ -158,7 +161,12 @@ class _CaptureReviewScreenState extends ConsumerState<CaptureReviewScreen> {
             held++;
           case FileDiscarded():
             break;
+          case FileLimitReached():
+            // The free plan is full: the rest would hit the same wall,
+            // and the prompt has already been shown once.
+            limitHit = true;
         }
+        if (limitHit) break;
       }
     } finally {
       if (mounted) setState(() => _savingAll = false);
@@ -202,6 +210,12 @@ class FileHeldBack extends FileResult {
   const FileHeldBack();
 }
 
+/// The free plan is full (PBI-029 AC1). The capture stays in the session
+/// so "Not now" never throws away a scan the user has already taken.
+class FileLimitReached extends FileResult {
+  const FileLimitReached();
+}
+
 FilingDetails _detailsFor(DraftEntry entry) {
   final e = entry.edits!;
   final a = entry.analysis ?? DocumentAnalysis.empty;
@@ -239,6 +253,12 @@ Future<FileResult> fileEntry(
   final atc = ref.read(atcLearningProvider);
   final now = ref.read(nowProvider)();
   final details = _detailsFor(entry);
+
+  // Free plan full? Ask before saving, and keep the capture (AC1).
+  if (!ref.read(canSaveDocumentProvider)) {
+    if (context.mounted) await showUpgradePrompt(context, reason: UpgradeReason.documents);
+    return const FileLimitReached();
+  }
 
   final duplicate = await service.findDuplicate(entry.draft, details: details);
   if (duplicate != null) {
@@ -706,14 +726,18 @@ class _DraftFormState extends ConsumerState<_DraftForm> {
     try {
       final result = await fileEntry(context, ref, entry, askDuplicate: true);
       messenger.hideCurrentSnackBar();
-      messenger.showSnackBar(
-        SnackBar(
-          content: Text(switch (result) {
-            FileSaved(:final note) => [l.cpSavedToVault, ?note].join(' · '),
-            _ => l.cpDuplicateDiscarded,
-          }),
-        ),
-      );
+      // The limit prompt has already said its piece; a snackbar on top
+      // of it would just repeat the bad news.
+      if (result is! FileLimitReached) {
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text(switch (result) {
+              FileSaved(:final note) => [l.cpSavedToVault, ?note].join(' · '),
+              _ => l.cpDuplicateDiscarded,
+            }),
+          ),
+        );
+      }
     } finally {
       if (mounted) setState(() => _saving = false);
     }

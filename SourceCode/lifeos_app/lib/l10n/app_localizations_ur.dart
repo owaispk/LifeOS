@@ -1474,6 +1474,71 @@ class AppLocalizationsUr extends AppLocalizations {
   String get paySchoolFee => 'اسکول فیس';
 
   @override
+  String pmDocLimitBody(String n) {
+    return 'مفت پلان میں $n دستاویزات رکھی جا سکتی ہیں۔ پریمیم یہ حد ہٹا دیتا ہے — آپ کی دستاویزات بہرحال محفوظ رہتی ہیں۔';
+  }
+
+  @override
+  String pmDocsLeft(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'مفت پلان میں $n دستاویزات کی گنجائش باقی',
+      one: 'مفت پلان میں 1 دستاویز کی گنجائش باقی',
+      zero: 'مفت پلان میں مزید گنجائش نہیں',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get pmHeadline => 'پریمیم مفت پلان کی حدیں ہٹا دیتا ہے۔';
+
+  @override
+  String get pmManageInStore =>
+      'جہاں سے خریدا وہیں سے تبدیل یا منسوخ کریں۔ منسوخی کے بعد بھی ادا شدہ مدت ختم ہونے تک پریمیم چلتا رہے گا۔';
+
+  @override
+  String get pmNoAccountNote =>
+      'لائف او ایس میں کوئی اکاؤنٹ نہیں۔ پریمیم اسی اسٹور اکاؤنٹ کے ساتھ رہتا ہے جس نے خریدا، اور آپ کی دستاویزات اسی فون پر رہتی ہیں۔';
+
+  @override
+  String get pmNothingToRestore => 'اس اسٹور اکاؤنٹ پر کوئی سبسکرپشن نہیں ملی۔';
+
+  @override
+  String pmPerkDocuments(String n) {
+    return 'لامحدود دستاویزات — مفت پلان میں $n ہیں۔';
+  }
+
+  @override
+  String pmPerkRules(String n) {
+    return 'لامحدود خودکار اصول — مفت پلان میں $n کی اجازت ہے۔';
+  }
+
+  @override
+  String pmPricePerMonth(String price) {
+    return '$price ماہانہ';
+  }
+
+  @override
+  String get pmPriceUnavailable =>
+      'ابھی اسٹور تک رسائی نہیں، اس لیے قیمت نہیں دکھائی جا سکتی۔';
+
+  @override
+  String get pmPurchaseFailed => 'خریداری مکمل نہیں ہوئی۔ کوئی رقم نہیں کٹی۔';
+
+  @override
+  String get pmRestore => 'خریداری بحال کریں';
+
+  @override
+  String get pmSeePremium => 'پریمیم دیکھیں';
+
+  @override
+  String get pmSubscribe => 'سبسکرائب کریں';
+
+  @override
+  String get pmYourePremium => 'آپ پریمیم پر ہیں۔';
+
+  @override
   String get profileAboutYou => 'آپ کے بارے میں';
 
   @override

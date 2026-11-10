@@ -7,7 +7,7 @@
 | Story Points | 5 |
 | Spec refs | Features §1.2 (classification), §15 (free/premium split), §14 (privacy) |
 | Depends on | PBI-004 (OCR pipeline + confidence), PBI-024 (secure storage, app lock), PBI-029 (premium gating) — **no backend, no PBI-026** |
-| Status | Ready (blocked by 029) |
+| Status | Ready |
 
 Ships first. Carries the shared AI pipeline (gate, consent, cache, provider interface) that PBI-027b later plugs into. Zero LifeOS infrastructure and zero LifeOS API cost: calls go directly from the device to the user's own AI provider.
 

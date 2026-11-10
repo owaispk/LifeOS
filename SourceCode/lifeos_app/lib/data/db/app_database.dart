@@ -45,7 +45,7 @@ class AppDatabase extends _$AppDatabase {
   );
 
   @override
-  int get schemaVersion => 10;
+  int get schemaVersion => 11;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -112,6 +112,13 @@ class AppDatabase extends _$AppDatabase {
       if (from < 10) {
         await m.addColumn(userSettings, userSettings.calendarOn);
         await m.addColumn(userSettings, userSettings.calendarsOff);
+      }
+      // v11 (PBI-029): the cached premium entitlement. Null on upgrade —
+      // everyone is free until the store says otherwise, and a cached
+      // answer is only ever written by a real store reply.
+      if (from < 11) {
+        await m.addColumn(userSettings, userSettings.premiumUntil);
+        await m.addColumn(userSettings, userSettings.premiumCheckedAt);
       }
     },
     beforeOpen: (details) async {

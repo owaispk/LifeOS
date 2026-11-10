@@ -7,6 +7,7 @@ import 'core/region.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/tokens.dart';
+import 'features/premium/ui/premium_refresher.dart';
 import 'features/capture/share_in_listener.dart';
 import 'features/security/lock_gate.dart';
 import 'features/settings/settings_providers.dart';
@@ -73,7 +74,11 @@ class LifeOsApp extends ConsumerWidget {
           // arrive at any time (PBI-003), and so can a widget tap
           // (PBI-033) — the target shows after unlock.
           child: LockGate(
-            child: ShareInListener(child: WidgetClickListener(child: child!)),
+            child: PremiumRefresher(
+              child: ShareInListener(
+                child: WidgetClickListener(child: child!),
+              ),
+            ),
           ),
         );
       },

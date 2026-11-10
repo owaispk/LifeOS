@@ -1474,6 +1474,73 @@ class AppLocalizationsEn extends AppLocalizations {
   String get paySchoolFee => 'School fee';
 
   @override
+  String pmDocLimitBody(String n) {
+    return 'The free plan holds $n documents. Premium removes the limit — your documents stay where they are either way.';
+  }
+
+  @override
+  String pmDocsLeft(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n documents left on the free plan',
+      one: '1 document left on the free plan',
+      zero: 'No documents left on the free plan',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get pmHeadline => 'Premium removes the free plan\'s limits.';
+
+  @override
+  String get pmManageInStore =>
+      'Change or cancel in the store you bought it from. Cancelling keeps Premium until the period you paid for ends.';
+
+  @override
+  String get pmNoAccountNote =>
+      'LifeOS has no account to sign in to. Premium follows the store account that bought it, and your documents never leave this phone.';
+
+  @override
+  String get pmNothingToRestore =>
+      'No subscription found on this store account.';
+
+  @override
+  String pmPerkDocuments(String n) {
+    return 'Unlimited documents — the free plan holds $n.';
+  }
+
+  @override
+  String pmPerkRules(String n) {
+    return 'Unlimited auto-rules — the free plan allows $n.';
+  }
+
+  @override
+  String pmPricePerMonth(String price) {
+    return '$price a month';
+  }
+
+  @override
+  String get pmPriceUnavailable =>
+      'The store isn\'t reachable right now, so the price can\'t be shown.';
+
+  @override
+  String get pmPurchaseFailed =>
+      'The purchase didn\'t go through. Nothing was charged.';
+
+  @override
+  String get pmRestore => 'Restore purchases';
+
+  @override
+  String get pmSeePremium => 'See Premium';
+
+  @override
+  String get pmSubscribe => 'Subscribe';
+
+  @override
+  String get pmYourePremium => 'You\'re on Premium.';
+
+  @override
   String get profileAboutYou => 'About you';
 
   @override

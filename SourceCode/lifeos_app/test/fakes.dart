@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:lifeos_app/features/calendar/platform/calendar_source.dart';
 import 'package:lifeos_app/features/capture/ocr/document_analysis.dart';
+import 'package:lifeos_app/features/premium/platform/billing_source.dart';
 import 'package:lifeos_app/features/capture/platform/capture_platform.dart';
 import 'package:lifeos_app/features/reminders/domain/reminder_planner.dart';
 import 'package:lifeos_app/features/reminders/platform/notification_gateway.dart';
@@ -189,5 +190,66 @@ class FakeCalendar implements CalendarSource {
             !e.end.isBefore(from))
           e,
     ];
+  }
+}
+
+/// A store that is not a store (PBI-029). Counts every call, so a test
+/// can prove nothing reaches billing unless the user asked for it (AC10).
+class FakeBilling implements BillingSource {
+  FakeBilling({this.owned = false, this.available = true});
+
+  /// Does the store account own the subscription?
+  bool owned;
+  bool available;
+
+  /// Null makes [isSubscribed] answer "could not ask" (AC5).
+  bool? reachable = true;
+
+  /// What the store charges, already formatted as a store would.
+  PremiumProduct? offer = const PremiumProduct(
+    id: premiumProductId,
+    price: 'Rs 450.00',
+    title: 'LifeOS Premium',
+  );
+
+  /// Whether the next purchase attempt succeeds.
+  bool purchaseSucceeds = true;
+
+  int asks = 0;
+  int purchases = 0;
+  int restores = 0;
+  int productLookups = 0;
+
+  /// Every call that would reach the billing SDK.
+  int get calls => asks + purchases + restores + productLookups;
+
+  @override
+  Future<bool> isAvailable() async => available;
+
+  @override
+  Future<PremiumProduct?> product() async {
+    productLookups++;
+    return available ? offer : null;
+  }
+
+  @override
+  Future<bool?> isSubscribed() async {
+    asks++;
+    if (reachable != true) return null;
+    return owned;
+  }
+
+  @override
+  Future<bool> subscribe() async {
+    purchases++;
+    if (!purchaseSucceeds) return false;
+    return owned = true;
+  }
+
+  @override
+  Future<bool> restore() async {
+    restores++;
+    if (reachable != true) return false;
+    return owned;
   }
 }
