@@ -173,6 +173,32 @@ void main() {
       expect(await service.findDuplicate(other), isNull);
     });
 
+    test('a look-alike page with different text is not a duplicate', () async {
+      // Two bills from one company: same layout (same image), other month.
+      await service.save(
+        CaptureDraft.scan([await writePage('s1.jpg', fakeDocument(seed: 4))]),
+        const FilingDetails(
+          title: 'SSGC Nov',
+          ocrText: 'SSGC Bill Month NOV-26 Due 20/11/2026 Amount 1,860 '
+              'Consumer 11223344 Meter 5567',
+        ),
+      );
+      final next = CaptureDraft.scan([
+        await writePage('s2.jpg', fakeDocument(seed: 4)),
+      ]);
+      expect(
+        await service.findDuplicate(
+          next,
+          details: const FilingDetails(
+            title: 'SSGC Dec',
+            ocrText: 'SSGC Bill Month DEC-26 Due 20/12/2026 Amount 2,140 '
+                'Consumer 11223344 Meter 5568',
+          ),
+        ),
+        isNull,
+      );
+    });
+
     test('same issuer + reference + period is a duplicate', () async {
       await service.save(
         CaptureDraft.scan([await writePage('k1.jpg', fakeDocument(seed: 1))]),

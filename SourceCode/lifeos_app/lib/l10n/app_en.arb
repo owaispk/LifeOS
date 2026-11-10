@@ -261,15 +261,45 @@
   "autoReminderOn": "⚡ Auto-reminder on",
   "cancel": "Cancel",
   "continueLabel": "Continue",
+  "cpAllDocuments": "All documents",
+  "cpBatchHint": "Tap a document to check or change it.",
+  "cpBatchTitle": "{n, plural, =1{File 1 document} other{File {n} documents}}",
+  "@cpBatchTitle": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
   "cpBelongsTo": "Belongs to",
   "cpBillTaskUpdated": "⚡ Bill task updated",
   "cpBlurryBody": "Image looks unclear — text may be hard to read later.",
+  "cpBlurryPageBody": "Page {pages} looks unclear — text may be hard to read later.",
+  "@cpBlurryPageBody": {
+    "placeholders": {
+      "pages": {
+        "type": "String"
+      }
+    }
+  },
   "cpDiscardNew": "Discard new",
   "cpDiscardThis": "Discard this one",
-  "cpDuplicateBody": "Looks like a duplicate of '{title}'. Keep both?",
+  "cpDiscarded": "Discarded",
+  "cpDropPage": "Remove page {pages}",
+  "@cpDropPage": {
+    "placeholders": {
+      "pages": {
+        "type": "String"
+      }
+    }
+  },
+  "cpDuplicateBody": "Looks like a duplicate of '{title}', saved {date}. Keep both?",
   "@cpDuplicateBody": {
     "placeholders": {
       "title": {
+        "type": "String"
+      },
+      "date": {
         "type": "String"
       }
     }
@@ -290,13 +320,40 @@
   "cpFieldStartDate": "Start date",
   "cpFieldStudent": "Student",
   "cpFolder": "Folder",
+  "cpHeldBack": "{n, plural, =1{1 needs a check} other{{n} need a check}}",
+  "@cpHeldBack": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
   "cpImportFile": "Import a file",
   "cpJpeg": "JPEG",
   "cpKeepAnyway": "Keep anyway",
   "cpKeepBoth": "Keep both",
+  "cpMaybeDuplicate": "May be a duplicate of '{title}'",
+  "@cpMaybeDuplicate": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
   "cpNobody": "Nobody",
   "cpNotSure": "Not sure what this is — please pick a type.",
   "cpNothingLeft": "Nothing left to file",
+  "cpPageOf": "Page {n} of {total}",
+  "@cpPageOf": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
   "cpPages": "{n, plural, =1{1 page} other{{n} pages}}",
   "@cpPages": {
     "placeholders": {
@@ -312,12 +369,28 @@
   "cpRetake": "Retake",
   "cpRetakeTitle": "Retake?",
   "cpSaveAs": "Save as",
+  "cpSaveReady": "{n, plural, =0{Nothing ready yet} =1{Save 1 ready document} other{Save {n} ready documents}}",
+  "@cpSaveReady": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
   "cpSaveToVault": "Save to Vault",
   "cpSaveToVaultOf": "Save to Vault · 1 of {total}",
   "@cpSaveToVaultOf": {
     "placeholders": {
       "total": {
         "type": "String"
+      }
+    }
+  },
+  "cpSavedCount": "{n, plural, =1{1 document saved to Vault} other{{n} documents saved to Vault}}",
+  "@cpSavedCount": {
+    "placeholders": {
+      "n": {
+        "type": "int"
       }
     }
   },
@@ -335,6 +408,10 @@
       }
     }
   },
+  "cpStatusCheck": "Check",
+  "cpStatusNew": "New",
+  "cpStatusReading": "Reading…",
+  "cpStatusReady": "Ready",
   "cpStorageFullBody": "Only {mb} MB free. Scans may not save — free up some space first, or scan anyway.",
   "@cpStorageFullBody": {
     "placeholders": {
@@ -370,6 +447,7 @@
   "cpTypeReport": "Lab report",
   "cpTypeVisa": "Visa",
   "cpTypeWarranty": "Warranty",
+  "cpUndo": "Undo",
   "cpUnfiled": "📥 Unfiled",
   "cpUnreadable": "Couldn't read any text — saved as Unclassified. Pick a type if you like.",
   "cpUnusualBill": "Unusually high bill ⚠",

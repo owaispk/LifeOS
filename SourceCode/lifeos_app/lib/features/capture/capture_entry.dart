@@ -41,21 +41,25 @@ Future<void> startScan(
 
   final scanner = container.read(documentScannerProvider);
   while (true) {
-    final pages = await scanner.scan();
+    var pages = await scanner.scan();
     if (pages == null || pages.isEmpty) return; // cancelled
 
     final checks = await Future.wait(pages.map(CaptureService.checkPage));
-    if (checks.any((c) => c.isBlurry)) {
+    final blurry = [
+      for (var i = 0; i < checks.length; i++)
+        if (checks[i].isBlurry) i,
+    ];
+    if (blurry.isNotEmpty) {
       if (!context.mounted) return;
-      final retake = await _ask(
-        context,
-        key: 'blurry',
-        title: context.l10n.cpRetakeTitle,
-        body: context.l10n.cpBlurryBody,
-        yes: context.l10n.cpRetake,
-        no: context.l10n.cpKeepAnyway,
-      );
-      if (retake) continue;
+      // Dismissing the dialog keeps the scan, as before.
+      final choice = await _askBlurry(context, blurry, pages.length);
+      if (choice == _BlurChoice.retake) continue;
+      if (choice == _BlurChoice.drop) {
+        pages = [
+          for (var i = 0; i < pages.length; i++)
+            if (!blurry.contains(i)) pages[i],
+        ];
+      }
     }
 
     container
@@ -124,6 +128,48 @@ void _openReview(BuildContext context) {
   if (router.state.matchedLocation != captureRoute) {
     router.push(captureRoute);
   }
+}
+
+enum _BlurChoice { retake, keep, drop }
+
+/// "Retake?" naming the unclear pages (AC5). In a multi-page scan the
+/// sharp pages can be kept and only the unclear ones removed.
+Future<_BlurChoice?> _askBlurry(
+  BuildContext context,
+  List<int> blurry,
+  int pageCount,
+) {
+  final l = context.l10n;
+  final names = blurry.map((i) => '${i + 1}').join(', ');
+  final canDrop = blurry.length < pageCount;
+  return showDialog<_BlurChoice>(
+    context: context,
+    builder: (context) => AlertDialog(
+      key: const ValueKey('dialog-blurry'),
+      title: Text(l.cpRetakeTitle),
+      content: Text(
+        pageCount == 1 ? l.cpBlurryBody : l.cpBlurryPageBody(names),
+      ),
+      actions: [
+        TextButton(
+          key: const ValueKey('blurry-no'),
+          onPressed: () => Navigator.pop(context, _BlurChoice.keep),
+          child: Text(l.cpKeepAnyway),
+        ),
+        if (canDrop)
+          TextButton(
+            key: const ValueKey('blurry-drop'),
+            onPressed: () => Navigator.pop(context, _BlurChoice.drop),
+            child: Text(l.cpDropPage(names)),
+          ),
+        FilledButton(
+          key: const ValueKey('blurry-yes'),
+          onPressed: () => Navigator.pop(context, _BlurChoice.retake),
+          child: Text(l.cpRetake),
+        ),
+      ],
+    ),
+  );
 }
 
 Future<bool> _ask(

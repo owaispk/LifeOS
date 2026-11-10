@@ -48,6 +48,7 @@ Future<List<DocumentFile>> files(TestApp app, WidgetTester tester) async =>
     (await tester.runAsync(app.repos.documentFiles.getAll))!;
 
 final reviewSave = find.byKey(const ValueKey('review-save'));
+final saveAll = find.byKey(const ValueKey('batch-save-all'));
 
 Future<void> tapScanInVault(WidgetTester tester) async {
   await openTab(tester, 'Vault');
@@ -196,8 +197,11 @@ void main() {
       tester,
       find.byKey(const ValueKey('dialog-duplicate')),
     );
+    // The dialog names the old document and when it was saved.
     expect(
-      find.text("Looks like a duplicate of 'Electricity Bill Oct'. Keep both?"),
+      find.textContaining(
+        "Looks like a duplicate of 'Electricity Bill Oct', saved ",
+      ),
       findsOneWidget,
     );
     await tester.tap(find.byKey(const ValueKey('duplicate-discard')));
@@ -205,7 +209,10 @@ void main() {
     expect(await docs(app, tester), hasLength(1));
   }, capture: makeFakes);
 
-  appTest('batch: scan another, then file both', (tester, app) async {
+  appTest('batch: scan another shows both, newest on top; Save all', (
+    tester,
+    app,
+  ) async {
     await useTallScreen(tester);
     fakes.scanner.results
       ..add([page('one.jpg', seed: 1)])
@@ -214,17 +221,141 @@ void main() {
     await pumpUntilFound(tester, reviewSave);
 
     await tester.tap(find.byKey(const ValueKey('review-scan-another')));
-    await pumpUntilFound(tester, find.text('Save to Vault · 1 of 2'));
-
-    await saveAndWait(tester);
-    expect(
-      tester.widget<Text>(find.byKey(const ValueKey('review-title'))).data,
-      'Save to Vault',
-      reason: 'now on the second (last) one',
+    await pumpUntilFound(tester, find.text('File 2 documents'));
+    await pumpUntilFound(tester, find.text('Save 2 ready documents'));
+    // The new scan is the first card and marked New.
+    final cards = find.byWidgetPredicate(
+      (w) => w is Card && '${w.key}'.contains('batch-card-'),
     );
-    await saveAndWait(tester);
+    expect(cards, findsNWidgets(2));
+    expect(tester.widget<Card>(cards.first).key, const ValueKey('batch-card-1'));
+    expect(
+      find.descendant(of: cards.first, matching: find.text('New')),
+      findsOneWidget,
+    );
+
+    await tester.tap(saveAll);
+    await pumpUntilFound(tester, find.text('2 documents saved to Vault'));
+    await tester.pumpAndSettle();
     expect(await docs(app, tester), hasLength(2));
     expect(find.byKey(const ValueKey('vault-home')), findsOneWidget);
+  }, capture: makeFakes);
+
+  appTest('batch: an edit made in one document survives going back', (
+    tester,
+    app,
+  ) async {
+    await useTallScreen(tester);
+    fakes.scanner.results
+      ..add([page('one.jpg', seed: 1)])
+      ..add([page('two.jpg', seed: 2)]);
+    await tapScanInVault(tester);
+    await pumpUntilFound(tester, reviewSave);
+    await tester.tap(find.byKey(const ValueKey('review-scan-another')));
+    await pumpUntilFound(tester, find.text('Save 2 ready documents'));
+
+    await tester.tap(find.byKey(const ValueKey('batch-card-0')));
+    await pumpUntilFound(tester, reviewSave);
+    await tester.enterText(
+      find.byKey(const ValueKey('review-name')),
+      'Water bill',
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('review-back-to-list')));
+    await tester.pumpAndSettle();
+    expect(find.text('Water bill'), findsOneWidget, reason: 'card title');
+
+    await tester.tap(saveAll);
+    await pumpUntilFound(tester, find.text('2 documents saved to Vault'));
+    await tester.pumpAndSettle();
+    expect(
+      (await docs(app, tester)).map((d) => d.title),
+      contains('Water bill'),
+    );
+  }, capture: makeFakes);
+
+  appTest('batch: Save all holds back a possible duplicate', (
+    tester,
+    app,
+  ) async {
+    await useTallScreen(tester);
+    fakes.scanner.results
+      ..add([page('old.jpg', seed: 5)])
+      ..add([page('again.jpg', seed: 5)])
+      ..add([page('other.jpg', seed: 7)]);
+    await tapScanInVault(tester);
+    await pumpUntilFound(tester, reviewSave);
+    await tester.enterText(
+      find.byKey(const ValueKey('review-name')),
+      'Electricity Bill Oct',
+    );
+    await saveAndWait(tester);
+
+    await tester.tap(find.byKey(const ValueKey('vault-scan')));
+    await pumpUntilFound(tester, reviewSave);
+    await tester.tap(find.byKey(const ValueKey('review-scan-another')));
+    await pumpUntilFound(tester, find.text('Save 2 ready documents'));
+    await tester.tap(saveAll);
+    await pumpUntilFound(
+      tester,
+      find.text('1 document saved to Vault · 1 needs a check'),
+    );
+    await tester.pumpAndSettle();
+    // The look-alike stays, flagged; nothing was thrown away.
+    expect(
+      find.text("May be a duplicate of 'Electricity Bill Oct'"),
+      findsOneWidget,
+    );
+    expect(await docs(app, tester), hasLength(2));
+  }, capture: makeFakes);
+
+  appTest('discarding can be undone', (tester, app) async {
+    await useTallScreen(tester);
+    fakes.scanner.results.add([page('a.jpg')]);
+    await tapScanInVault(tester);
+    await pumpUntilFound(tester, reviewSave);
+    await tester.tap(find.byKey(const ValueKey('review-discard')));
+    await pumpUntilFound(tester, find.text('Discarded'));
+    await tester.pumpAndSettle();
+    expect(reviewSave, findsNothing, reason: 'the screen closed');
+
+    await tester.tap(find.byKey(const ValueKey('discard-undo')));
+    await pumpUntilFound(tester, reviewSave);
+    await saveAndWait(tester);
+    expect(await docs(app, tester), hasLength(1));
+  }, capture: makeFakes);
+
+  appTest('a blurry page in a longer scan can be removed alone', (
+    tester,
+    app,
+  ) async {
+    await useTallScreen(tester);
+    fakes.scanner.results.add([
+      page('p1.jpg'),
+      page('p2.jpg', seed: 2, blurry: true),
+      page('p3.jpg', seed: 3),
+    ]);
+    await tapScanInVault(tester);
+    await pumpUntilFound(tester, find.byKey(const ValueKey('dialog-blurry')));
+    expect(
+      find.text('Page 2 looks unclear — text may be hard to read later.'),
+      findsOneWidget,
+    );
+    await tester.tap(find.byKey(const ValueKey('blurry-drop')));
+    await pumpUntilFound(tester, reviewSave);
+    expect(find.text('2 pages'), findsOneWidget);
+    expect(fakes.scanner.calls, 1);
+  }, capture: makeFakes);
+
+  appTest('tapping a page opens it full screen', (tester, app) async {
+    await useTallScreen(tester);
+    fakes.scanner.results.add([page('a.jpg'), page('b.jpg', seed: 2)]);
+    await tapScanInVault(tester);
+    await pumpUntilFound(tester, reviewSave);
+    await tester.tap(find.byKey(const ValueKey('review-page-1')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('page-viewer')), findsOneWidget);
+    expect(find.text('Page 2 of 2'), findsOneWidget);
   }, capture: makeFakes);
 
   appTest('cancelling the scanner changes nothing', (tester, app) async {
@@ -299,12 +430,14 @@ void main() {
     ];
     await openTab(tester, 'Vault');
     await tester.tap(find.byKey(const ValueKey('vault-import')));
-    await pumpUntilFound(tester, find.text('Save to Vault · 1 of 2'));
-    // The PDF is first, then both images as one document.
-    expect(find.byKey(const ValueKey('review-format')), findsNothing);
-    await saveAndWait(tester);
-    expect(find.text('2 pages'), findsOneWidget);
-    await saveAndWait(tester);
+    await pumpUntilFound(tester, find.text('File 2 documents'));
+    // The PDF is one document, both images another.
+    expect(find.textContaining('2 pages'), findsOneWidget);
+    expect(find.textContaining('1 page'), findsOneWidget);
+    await pumpUntilFound(tester, find.text('Save 2 ready documents'));
+    await tester.tap(saveAll);
+    await pumpUntilFound(tester, find.text('2 documents saved to Vault'));
+    await tester.pumpAndSettle();
     final all = await docs(app, tester);
     expect(all.map((d) => d.source), ['import', 'import']);
     expect(await files(app, tester), hasLength(2));

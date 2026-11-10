@@ -338,6 +338,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get continueLabel => 'Continue';
 
   @override
+  String get cpAllDocuments => 'All documents';
+
+  @override
+  String get cpBatchHint => 'Tap a document to check or change it.';
+
+  @override
+  String cpBatchTitle(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'File $n documents',
+      one: 'File 1 document',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get cpBelongsTo => 'Belongs to';
 
   @override
@@ -348,14 +365,27 @@ class AppLocalizationsEn extends AppLocalizations {
       'Image looks unclear — text may be hard to read later.';
 
   @override
+  String cpBlurryPageBody(String pages) {
+    return 'Page $pages looks unclear — text may be hard to read later.';
+  }
+
+  @override
   String get cpDiscardNew => 'Discard new';
 
   @override
   String get cpDiscardThis => 'Discard this one';
 
   @override
-  String cpDuplicateBody(String title) {
-    return 'Looks like a duplicate of \'$title\'. Keep both?';
+  String get cpDiscarded => 'Discarded';
+
+  @override
+  String cpDropPage(String pages) {
+    return 'Remove page $pages';
+  }
+
+  @override
+  String cpDuplicateBody(String title, String date) {
+    return 'Looks like a duplicate of \'$title\', saved $date. Keep both?';
   }
 
   @override
@@ -407,6 +437,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cpFolder => 'Folder';
 
   @override
+  String cpHeldBack(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n need a check',
+      one: '1 needs a check',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get cpImportFile => 'Import a file';
 
   @override
@@ -419,6 +460,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cpKeepBoth => 'Keep both';
 
   @override
+  String cpMaybeDuplicate(String title) {
+    return 'May be a duplicate of \'$title\'';
+  }
+
+  @override
   String get cpNobody => 'Nobody';
 
   @override
@@ -426,6 +472,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cpNothingLeft => 'Nothing left to file';
+
+  @override
+  String cpPageOf(String n, String total) {
+    return 'Page $n of $total';
+  }
 
   @override
   String cpPages(int n) {
@@ -460,11 +511,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cpSaveAs => 'Save as';
 
   @override
+  String cpSaveReady(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Save $n ready documents',
+      one: 'Save 1 ready document',
+      zero: 'Nothing ready yet',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get cpSaveToVault => 'Save to Vault';
 
   @override
   String cpSaveToVaultOf(String total) {
     return 'Save to Vault · 1 of $total';
+  }
+
+  @override
+  String cpSavedCount(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n documents saved to Vault',
+      one: '1 document saved to Vault',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -480,6 +554,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String cpScanTitle(String date, String year) {
     return 'Scan · $date $year';
   }
+
+  @override
+  String get cpStatusCheck => 'Check';
+
+  @override
+  String get cpStatusNew => 'New';
+
+  @override
+  String get cpStatusReading => 'Reading…';
+
+  @override
+  String get cpStatusReady => 'Ready';
 
   @override
   String cpStorageFullBody(String mb) {
@@ -538,6 +624,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cpTypeWarranty => 'Warranty';
+
+  @override
+  String get cpUndo => 'Undo';
 
   @override
   String get cpUnfiled => '📥 Unfiled';

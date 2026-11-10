@@ -6,6 +6,7 @@ import '../../../data/repositories/repositories.dart';
 import '../data/capture_service.dart';
 import 'doc_classifier.dart';
 import 'field_extractor.dart';
+import 'ocr_rows.dart';
 import '../../../core/log/app_log.dart';
 
 /// Reads text from page images, on-device (PBI-004).
@@ -28,7 +29,19 @@ class MlKitTextReader implements TextReader {
         final result = await recognizer.processImage(
           mlkit.InputImage.fromFilePath(path),
         );
-        pages.add(result.text);
+        // Labels and values on one printed row back on one line.
+        final boxes = [
+          for (final block in result.blocks)
+            for (final line in block.lines)
+              OcrBox(
+                line.text,
+                line.boundingBox.left,
+                line.boundingBox.top,
+                line.boundingBox.right,
+                line.boundingBox.bottom,
+              ),
+        ];
+        pages.add(boxes.isEmpty ? result.text : rowsToText(boxes));
       }
       return pages.join('\n');
     } finally {

@@ -2,6 +2,23 @@
 # Placeholders use {name}; plurals {n, plural, ...} take an int.
 S = {
     # ── Capture: review screen ──
+    # ── Capture: batch review (scan several documents) ──
+    "cpBatchTitle": ("{n, plural, =1{File 1 document} other{File {n} documents}}", "{n, plural, =1{1 دستاویز محفوظ کریں} other{{n} دستاویزات محفوظ کریں}}"),
+    "cpBatchHint": ("Tap a document to check or change it.", "جانچنے یا بدلنے کے لیے دستاویز پر ٹیپ کریں۔"),
+    "cpSaveReady": ("{n, plural, =0{Nothing ready yet} =1{Save 1 ready document} other{Save {n} ready documents}}", "{n, plural, =0{ابھی کچھ تیار نہیں} =1{1 تیار دستاویز محفوظ کریں} other{{n} تیار دستاویزات محفوظ کریں}}"),
+    "cpStatusReading": ("Reading…", "پڑھ رہے ہیں…"),
+    "cpStatusReady": ("Ready", "تیار"),
+    "cpStatusCheck": ("Check", "جانچیں"),
+    "cpStatusNew": ("New", "نیا"),
+    "cpMaybeDuplicate": ("May be a duplicate of '{title}'", "شاید '{title}' کی دہری کاپی ہے"),
+    "cpSavedCount": ("{n, plural, =1{1 document saved to Vault} other{{n} documents saved to Vault}}", "{n, plural, =1{1 دستاویز والٹ میں محفوظ ہو گئی} other{{n} دستاویزات والٹ میں محفوظ ہو گئیں}}"),
+    "cpHeldBack": ("{n, plural, =1{1 needs a check} other{{n} need a check}}", "{n, plural, =1{1 کو جانچنا ہے} other{{n} کو جانچنا ہے}}"),
+    "cpDiscarded": ("Discarded", "ہٹا دیا گیا"),
+    "cpUndo": ("Undo", "واپس کریں"),
+    "cpAllDocuments": ("All documents", "تمام دستاویزات"),
+    "cpPageOf": ("Page {n} of {total}", "صفحہ {n} از {total}"),
+    "cpBlurryPageBody": ("Page {pages} looks unclear — text may be hard to read later.", "صفحہ {pages} واضح نہیں — بعد میں متن پڑھنا مشکل ہو سکتا ہے۔"),
+    "cpDropPage": ("Remove page {pages}", "صفحہ {pages} ہٹائیں"),
     "cpSaveToVault": ("Save to Vault", "والٹ میں محفوظ کریں"),
     "cpSaveToVaultOf": ("Save to Vault · 1 of {total}", "والٹ میں محفوظ کریں · {total} میں سے 1"),
     "cpScanAnother": ("Scan another", "ایک اور اسکین کریں"),
@@ -28,7 +45,7 @@ S = {
     "cpTypeConfidence": ("{type} · {percent}%", "{type} · {percent}%"),
     "cpPickType": ("Pick a type", "قسم منتخب کریں"),
     "cpDuplicateTitle": ("Possible duplicate", "ممکنہ دہری کاپی"),
-    "cpDuplicateBody": ("Looks like a duplicate of '{title}'. Keep both?", "یہ '{title}' کی دہری کاپی لگتی ہے۔ دونوں رکھیں؟"),
+    "cpDuplicateBody": ("Looks like a duplicate of '{title}', saved {date}. Keep both?", "یہ '{title}' کی دہری کاپی لگتی ہے، جو {date} کو محفوظ ہوئی۔ دونوں رکھیں؟"),
     "cpDiscardNew": ("Discard new", "نئی ہٹا دیں"),
     "cpKeepBoth": ("Keep both", "دونوں رکھیں"),
     "cpPages": ("{n, plural, =1{1 page} other{{n} pages}}", "{n, plural, =1{1 صفحہ} other{{n} صفحات}}"),

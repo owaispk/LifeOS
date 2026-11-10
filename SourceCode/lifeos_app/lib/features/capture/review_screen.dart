@@ -6,13 +6,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/l10n.dart';
-import '../../core/log/app_log.dart';
 import '../../core/money.dart';
 import '../../core/now_provider.dart';
 import '../../core/theme/tokens.dart';
-import '../../data/data_providers.dart';
 import '../../data/db/app_database.dart';
+import '../../shared/format.dart';
 import '../atc/atc_providers.dart';
+import '../atc/data/atc_learning.dart' show LearningOutcome;
 import '../atc/ui/proposal_dialog.dart';
 import '../money/domain/money_rules.dart' show isoDate;
 import '../vault/domain/vault_rules.dart' show docTypeIcon;
@@ -24,23 +24,51 @@ import 'ocr/doc_classifier.dart';
 import 'ocr/document_analysis.dart';
 import 'ocr/field_extractor.dart';
 
-/// 3.4 Scan Flow — confirm step ("Review & file"), one draft at a time.
-/// PBI-004 adds type detection and extracted fields to this screen.
-class CaptureReviewScreen extends ConsumerWidget {
+/// 3.4 Scan Flow — confirm step ("Review & file").
+///
+/// One document: its form straight away. Several: a list with one card
+/// per document (newest first), each read in the background; ready ones
+/// are filed together with "Save all", the rest opened and checked.
+class CaptureReviewScreen extends ConsumerStatefulWidget {
   const CaptureReviewScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CaptureReviewScreen> createState() =>
+      _CaptureReviewScreenState();
+}
+
+class _CaptureReviewScreenState extends ConsumerState<CaptureReviewScreen> {
+  /// The document opened from the batch list, if any.
+  int? _openId;
+  bool _savingAll = false;
+
+  @override
+  Widget build(BuildContext context) {
     final session = ref.watch(captureSessionProvider);
-    final drafts = session.drafts;
+    final entries = session.entries;
     final l = context.l10n;
+
+    final opened = entries.length == 1
+        ? entries.single
+        : _openId == null
+        ? null
+        : session.byId(_openId!);
+    final inBatch = entries.length > 1;
 
     return Scaffold(
       appBar: AppBar(
+        leading: inBatch && opened != null
+            ? IconButton(
+                key: const ValueKey('review-back-to-list'),
+                tooltip: l.cpAllDocuments,
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => setState(() => _openId = null),
+              )
+            : null,
         title: Text(
-          drafts.length <= 1
+          opened != null || entries.isEmpty
               ? l.cpSaveToVault
-              : l.cpSaveToVaultOf('${drafts.length}'),
+              : l.cpBatchTitle(entries.length),
           key: const ValueKey('review-title'),
         ),
         actions: [
@@ -48,162 +76,621 @@ class CaptureReviewScreen extends ConsumerWidget {
             key: const ValueKey('review-scan-another'),
             tooltip: l.cpScanAnother,
             icon: const Icon(Icons.add_a_photo_outlined),
-            onPressed: () => startScan(
-              context,
-              folderId: session.folderId,
-              personId: session.personId,
-              renewsDocumentId: session.renewsDocumentId,
-            ),
+            onPressed: _scanAnother,
           ),
           IconButton(
             key: const ValueKey('review-import'),
             tooltip: l.cpImportFile,
             icon: const Icon(Icons.upload_file_outlined),
-            onPressed: () => importFiles(
-              context,
-              folderId: session.folderId,
-              personId: session.personId,
-            ),
+            onPressed: _import,
           ),
         ],
       ),
-      body: drafts.isEmpty
+      body: entries.isEmpty
           ? Center(child: Text(l.cpNothingLeft))
-          : _DraftForm(
-              // A fresh form for every draft.
-              key: ObjectKey(drafts.first),
-              draft: drafts.first,
-              folderId: session.folderId,
-              personId: session.personId,
-              renewsDocumentId: session.renewsDocumentId,
+          : opened != null
+          ? _DraftForm(
+              // One form per document; edits live in the session.
+              key: ValueKey('draft-${opened.id}'),
+              entryId: opened.id,
+              onDone: _afterFiling,
+              onScanAnother: _scanAnother,
+              onImport: _import,
+            )
+          : _BatchList(
+              entries: entries,
+              saving: _savingAll,
+              onOpen: (id) => setState(() => _openId = id),
+              onSaveAll: _saveAll,
+              onScanAnother: _scanAnother,
+              onImport: _import,
             ),
+    );
+  }
+
+  void _scanAnother() {
+    final s = ref.read(captureSessionProvider);
+    // The new scan shows on top of the list, not hidden behind this one.
+    setState(() => _openId = null);
+    startScan(
+      context,
+      folderId: s.folderId,
+      personId: s.personId,
+      renewsDocumentId: s.renewsDocumentId,
+    );
+  }
+
+  void _import() {
+    final s = ref.read(captureSessionProvider);
+    setState(() => _openId = null);
+    importFiles(context, folderId: s.folderId, personId: s.personId);
+  }
+
+  /// Back to the list after a document was filed or discarded; closes the
+  /// screen when nothing is left.
+  void _afterFiling() {
+    if (!mounted) return;
+    setState(() => _openId = null);
+    if (ref.read(captureSessionProvider).entries.isEmpty) context.pop();
+  }
+
+  Future<void> _saveAll() async {
+    if (_savingAll) return;
+    setState(() => _savingAll = true);
+    final messenger = ScaffoldMessenger.of(context);
+    final l = context.l10n;
+    var saved = 0, held = 0;
+    final notes = <String>{};
+    try {
+      final ready = ref
+          .read(captureSessionProvider)
+          .entries
+          .where((e) => e.ready)
+          .toList();
+      for (final e in ready) {
+        if (!mounted) break;
+        final result = await fileEntry(context, ref, e, askDuplicate: false);
+        switch (result) {
+          case FileSaved(:final note):
+            saved++;
+            if (note != null) notes.add(note);
+          case FileHeldBack():
+            held++;
+          case FileDiscarded():
+            break;
+        }
+      }
+    } finally {
+      if (mounted) setState(() => _savingAll = false);
+    }
+    messenger.hideCurrentSnackBar();
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(
+          [
+            l.cpSavedCount(saved),
+            if (held > 0) l.cpHeldBack(held),
+            ...notes,
+          ].join(' · '),
+        ),
+      ),
+    );
+    _afterFiling();
+  }
+}
+
+// ───────────────────────────── Filing ─────────────────────────────
+
+sealed class FileResult {
+  const FileResult();
+}
+
+class FileSaved extends FileResult {
+  const FileSaved(this.note);
+
+  /// "Unusually high bill" / "Bill task updated", if any.
+  final String? note;
+}
+
+/// The user chose "Discard new" on the duplicate question.
+class FileDiscarded extends FileResult {
+  const FileDiscarded();
+}
+
+/// A possible duplicate kept back for the user to check ("Save all").
+class FileHeldBack extends FileResult {
+  const FileHeldBack();
+}
+
+FilingDetails _detailsFor(DraftEntry entry) {
+  final e = entry.edits!;
+  final a = entry.analysis ?? DocumentAnalysis.empty;
+  return FilingDetails(
+    title: e.title,
+    folderId: e.folderId,
+    personId: e.personId,
+    format: e.format,
+    renewsDocumentId: entry.renewsDocumentId,
+    docType: e.type!,
+    confidence: a.unreadable
+        ? null
+        : a.classification.scores.isEmpty
+        ? 0
+        : a.classification.confidence,
+    ocrText: a.unreadable ? null : a.ocrText,
+    fields: e.storedFields,
+    corrected: e.corrected,
+  );
+}
+
+/// Saves one document to the Vault and takes it out of the session. A
+/// possible duplicate is asked about ([askDuplicate]) or held back.
+Future<FileResult> fileEntry(
+  BuildContext context,
+  WidgetRef ref,
+  DraftEntry entry, {
+  required bool askDuplicate,
+}) async {
+  // Everything from `ref` is read up front: the form that called this may
+  // be gone by the end (its document leaves the session).
+  final l = context.l10n;
+  final service = ref.read(captureServiceProvider);
+  final session = ref.read(captureSessionProvider.notifier);
+  final atc = ref.read(atcLearningProvider);
+  final now = ref.read(nowProvider)();
+  final details = _detailsFor(entry);
+
+  final duplicate = await service.findDuplicate(entry.draft, details: details);
+  if (duplicate != null) {
+    if (!askDuplicate || !context.mounted) {
+      session.markDuplicate(entry.id, duplicate);
+      return const FileHeldBack();
+    }
+    final keep = await _askDuplicate(context, duplicate, now);
+    if (!keep) {
+      session.remove(entry.id);
+      return const FileDiscarded();
+    }
+  }
+
+  final doc = await service.save(entry.draft, details);
+  final LearningOutcome outcome;
+  try {
+    // Bills and fee vouchers teach the Auto Task Creator (PBI-014/015).
+    outcome = await atc.onDocumentSaved(doc);
+    final change = outcome.feeChange;
+    if (change != null && context.mounted) {
+      final update = await showFeeChangeDialog(context, change);
+      if (update) await atc.applyFeeChange(change);
+    }
+  } finally {
+    // Saved: it must never be offered for saving again.
+    session.remove(entry.id);
+  }
+  return FileSaved(
+    outcome.spike
+        ? l.cpUnusualBill
+        : outcome.upgradedTaskId != null
+        ? l.cpBillTaskUpdated
+        : null,
+  );
+}
+
+Future<bool> _askDuplicate(
+  BuildContext context,
+  Document existing,
+  DateTime now,
+) async {
+  final saved = formatDay(
+    DateTime.fromMillisecondsSinceEpoch(existing.updatedAt),
+    now: now,
+  );
+  final keep = await showDialog<bool>(
+    context: context,
+    builder: (context) => AlertDialog(
+      key: const ValueKey('dialog-duplicate'),
+      title: Text(context.l10n.cpDuplicateTitle),
+      content: Text(context.l10n.cpDuplicateBody(existing.title, saved)),
+      actions: [
+        TextButton(
+          key: const ValueKey('duplicate-discard'),
+          onPressed: () => Navigator.pop(context, false),
+          child: Text(context.l10n.cpDiscardNew),
+        ),
+        FilledButton(
+          key: const ValueKey('duplicate-keep'),
+          onPressed: () => Navigator.pop(context, true),
+          child: Text(context.l10n.cpKeepBoth),
+        ),
+      ],
+    ),
+  );
+  return keep == true;
+}
+
+// ───────────────────────────── Batch list ─────────────────────────────
+
+class _BatchList extends ConsumerWidget {
+  const _BatchList({
+    required this.entries,
+    required this.saving,
+    required this.onOpen,
+    required this.onSaveAll,
+    required this.onScanAnother,
+    required this.onImport,
+  });
+
+  final List<DraftEntry> entries;
+  final bool saving;
+  final ValueChanged<int> onOpen;
+  final VoidCallback onSaveAll;
+  final VoidCallback onScanAnother;
+  final VoidCallback onImport;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = context.l10n;
+    final ready = entries.where((e) => e.ready).length;
+    final newestId = entries.last.id;
+    return Column(
+      children: [
+        Expanded(
+          child: ListView(
+            padding: EdgeInsets.all(Tokens.spaceM),
+            children: [
+              Text(
+                l.cpBatchHint,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+              SizedBox(height: Tokens.spaceS),
+              for (final e in entries.reversed)
+                _DraftCard(
+                  entry: e,
+                  isNew: e.id == newestId,
+                  onTap: saving ? null : () => onOpen(e.id),
+                ),
+            ],
+          ),
+        ),
+        SafeArea(
+          top: false,
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(
+              Tokens.spaceM,
+              Tokens.spaceS,
+              Tokens.spaceM,
+              Tokens.spaceM,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FilledButton.icon(
+                  key: const ValueKey('batch-save-all'),
+                  style: FilledButton.styleFrom(
+                    minimumSize: const Size.fromHeight(
+                      Tokens.minTouchTarget + 4,
+                    ),
+                  ),
+                  onPressed: saving || ready == 0 ? null : onSaveAll,
+                  icon: saving
+                      ? const SizedBox.square(
+                          dimension: 18,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.save_alt),
+                  label: Text(l.cpSaveReady(ready)),
+                ),
+                SizedBox(height: Tokens.spaceS),
+                _AddMoreRow(
+                  scanKey: 'batch-scan-another',
+                  importKey: 'batch-import',
+                  onScanAnother: saving ? null : onScanAnother,
+                  onImport: saving ? null : onImport,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
 
+class _DraftCard extends ConsumerWidget {
+  const _DraftCard({
+    required this.entry,
+    required this.isNew,
+    required this.onTap,
+  });
+
+  final DraftEntry entry;
+  final bool isNew;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = context.l10n;
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final e = entry.edits;
+    final draft = entry.draft;
+    final now = ref.watch(nowProvider)();
+
+    final amount = e?.fields[Fields.amount] ?? '';
+    final pages = draft.isPdfImport ? 1 : draft.pagePaths.length;
+    final subtitle = entry.duplicateOf != null
+        ? l.cpMaybeDuplicate(entry.duplicateOf!.title)
+        : [
+            if (e?.type != null) typeName(e!.type!) else if (!entry.reading)
+              l.cpPickType,
+            if (amount.isNotEmpty) '${Money.prefix}$amount',
+            l.cpPages(pages),
+          ].join(' · ');
+
+    final (IconData icon, String status, Color color) = entry.reading
+        ? (Icons.hourglass_top, l.cpStatusReading, scheme.onSurfaceVariant)
+        : entry.ready
+        ? (Icons.check_circle, l.cpStatusReady, scheme.primary)
+        : (Icons.error_outline, l.cpStatusCheck, scheme.error);
+
+    return Card(
+      key: ValueKey('batch-card-${entry.id}'),
+      margin: EdgeInsets.only(bottom: Tokens.spaceS),
+      clipBehavior: Clip.antiAlias,
+      shape: isNew
+          ? RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(color: scheme.primary, width: 1.5),
+            )
+          : null,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: EdgeInsets.all(Tokens.spaceS),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 48,
+                height: 64,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: ColoredBox(
+                    color: scheme.surfaceContainerHighest,
+                    child: draft.isPdfImport || kIsWeb
+                        ? Icon(
+                            Icons.picture_as_pdf_outlined,
+                            color: scheme.primary,
+                          )
+                        : Image.file(
+                            File(draft.pagePaths.first),
+                            fit: BoxFit.cover,
+                            cacheWidth: 96,
+                          ),
+                  ),
+                ),
+              ),
+              SizedBox(width: Tokens.spaceM),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        if (e?.type != null) ...[
+                          Text(docTypeIcon(e!.type!)),
+                          SizedBox(width: Tokens.spaceXs),
+                        ],
+                        Expanded(
+                          child: Text(
+                            e?.title ?? defaultScanTitle(now),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.titleSmall,
+                          ),
+                        ),
+                        if (isNew)
+                          Padding(
+                            padding: EdgeInsets.only(left: Tokens.spaceXs),
+                            child: Text(
+                              l.cpStatusNew,
+                              key: const ValueKey('batch-new'),
+                              style: theme.textTheme.labelSmall?.copyWith(
+                                color: scheme.primary,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                    SizedBox(height: Tokens.spaceXxs),
+                    Text(
+                      subtitle,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: entry.duplicateOf != null
+                            ? scheme.error
+                            : scheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(width: Tokens.spaceS),
+              Column(
+                key: ValueKey('batch-status-${entry.id}'),
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (entry.reading)
+                    const SizedBox.square(
+                      dimension: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  else
+                    Icon(icon, color: color, size: 20),
+                  SizedBox(height: Tokens.spaceXxs),
+                  Text(
+                    status,
+                    style: theme.textTheme.labelSmall?.copyWith(color: color),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AddMoreRow extends StatelessWidget {
+  const _AddMoreRow({
+    required this.scanKey,
+    required this.importKey,
+    required this.onScanAnother,
+    required this.onImport,
+  });
+
+  final String scanKey;
+  final String importKey;
+  final VoidCallback? onScanAnother;
+  final VoidCallback? onImport;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    return Row(
+      children: [
+        Expanded(
+          child: OutlinedButton.icon(
+            key: ValueKey(scanKey),
+            style: OutlinedButton.styleFrom(
+              minimumSize: const Size.fromHeight(Tokens.minTouchTarget),
+            ),
+            onPressed: onScanAnother,
+            icon: const Icon(Icons.add_a_photo_outlined),
+            label: Text(l.cpScanAnother, overflow: TextOverflow.ellipsis),
+          ),
+        ),
+        SizedBox(width: Tokens.spaceS),
+        Expanded(
+          child: OutlinedButton.icon(
+            key: ValueKey(importKey),
+            style: OutlinedButton.styleFrom(
+              minimumSize: const Size.fromHeight(Tokens.minTouchTarget),
+            ),
+            onPressed: onImport,
+            icon: const Icon(Icons.upload_file_outlined),
+            label: Text(l.cpImportFile, overflow: TextOverflow.ellipsis),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ───────────────────────────── One document ─────────────────────────────
+
 class _DraftForm extends ConsumerStatefulWidget {
   const _DraftForm({
     super.key,
-    required this.draft,
-    required this.folderId,
-    required this.personId,
-    this.renewsDocumentId,
+    required this.entryId,
+    required this.onDone,
+    required this.onScanAnother,
+    required this.onImport,
   });
 
-  final CaptureDraft draft;
-  final String? folderId;
-  final String? personId;
-  final String? renewsDocumentId;
+  final int entryId;
+  final VoidCallback onDone;
+  final VoidCallback onScanAnother;
+  final VoidCallback onImport;
 
   @override
   ConsumerState<_DraftForm> createState() => _DraftFormState();
 }
 
 class _DraftFormState extends ConsumerState<_DraftForm> {
-  final _title = TextEditingController();
-  late String? _folderId = widget.folderId;
-  late String? _personId = widget.personId;
-  OutputFormat _format = OutputFormat.pdf;
+  TextEditingController? _title;
+  final _fieldCtrls = <String, TextEditingController>{};
   bool _saving = false;
 
-  // PBI-004: OCR + classification.
-  DocumentAnalysis? _analysis;
-  String? _type; // null = user must pick (low confidence)
-  final _fieldCtrls = <String, TextEditingController>{};
-  final _extracted = <String, String>{};
-  bool _titleEdited = false;
-  bool _folderChosen = false;
+  DraftEntry? get _entry =>
+      ref.read(captureSessionProvider).byId(widget.entryId);
 
-  @override
-  void initState() {
-    super.initState();
-    _folderChosen = widget.folderId != null;
-    _title.text = ref.read(captureServiceProvider).defaultTitle();
-    _title.addListener(() {
-      if (_title.text != _autoTitle()) _titleEdited = true;
-    });
-    _analyze();
+  DateTime get _now => ref.read(nowProvider)();
+
+  /// Controllers start from the session's edits once the document is read.
+  void _ensureControllers(DraftEdits edits) {
+    if (_title != null) return;
+    _title = TextEditingController(text: edits.title)
+      ..addListener(_onTitle);
+    _resetFieldControllers(edits);
   }
 
-  Future<void> _analyze() async {
-    DocumentAnalysis analysis;
-    try {
-      analysis = await analyzeDraft(
-        widget.draft,
-        ref.read(textReaderProvider),
-        ref.read(repositoriesProvider),
-      );
-    } on Object catch (e, st) {
-      // A failing recogniser must not leave "Reading…" up forever: the
-      // document is filed like an unreadable one (PBI-004 AC5).
-      AppLog.e('ocr', 'reading failed: ${e.runtimeType}', st);
-      analysis = DocumentAnalysis.empty;
-    }
-    if (!mounted) return;
-    setState(() {
-      _analysis = analysis;
-      final c = analysis.classification;
-      // AC1: below the threshold nothing is preselected — the user picks.
-      // AC5: unreadable documents are simply "other" (Unclassified).
-      _type = analysis.unreadable || c.isConfident ? c.type : null;
-      if (_type != null) _applyType(_type!, analysis.fields);
-    });
-  }
-
-  void _applyType(String type, Map<String, Extracted> fields) {
-    _type = type;
+  void _resetFieldControllers(DraftEdits edits) {
     for (final c in _fieldCtrls.values) {
       c.dispose();
     }
-    _fieldCtrls.clear();
-    _extracted.clear();
-    for (final key in Fields.forType[type] ?? const <String>[]) {
-      final raw = fields[key]?.value ?? '';
-      final shown = key == Fields.amount && raw.isNotEmpty
-          ? Money.formatPlain(int.parse(raw))
-          : raw;
-      _extracted[key] = shown;
-      _fieldCtrls[key] = TextEditingController(text: shown)
-        ..addListener(_refreshTitle);
-    }
-    if (!_folderChosen) {
-      final kind = folderKindFor(type);
-      final folders = ref.read(foldersProvider).value ?? const <Folder>[];
-      _folderId = folders.where((f) => f.kind == kind).firstOrNull?.id;
-    }
-    _refreshTitle();
+    _fieldCtrls
+      ..clear()
+      ..addAll({
+        for (final e in edits.fields.entries)
+          e.key: TextEditingController(text: e.value)
+            ..addListener(_onFields),
+      });
   }
 
-  Map<String, String> _values() => {
-    for (final e in _fieldCtrls.entries)
-      e.key: e.key == Fields.amount
-          ? (Money.parseMinor(e.value.text)?.toString() ?? '')
-          : e.value.text.trim(),
-  };
+  void _put(DraftEdits edits) => ref
+      .read(captureSessionProvider.notifier)
+      .updateEdits(widget.entryId, edits);
 
-  String _autoTitle() {
-    final type = _type;
-    if (type == null || _analysis == null) {
-      return ref.read(captureServiceProvider).defaultTitle();
-    }
-    return autoTitle(type, {
-      for (final e in _values().entries)
-        if (e.value.isNotEmpty) e.key: e.value,
-    }, ref.read(nowProvider)());
+  void _onTitle() {
+    final e = _entry?.edits;
+    final text = _title!.text;
+    if (e == null || text == e.title) return;
+    final auto = e.autoTitleFor(_now, defaultScanTitle(_now));
+    _put(e.copyWith(title: text, titleEdited: text != auto));
   }
 
-  void _refreshTitle() {
-    if (_titleEdited) return;
-    final next = _autoTitle();
-    if (_title.text != next) {
-      _title.value = TextEditingValue(text: next);
-      _titleEdited = false;
+  void _onFields() {
+    final e = _entry?.edits;
+    if (e == null) return;
+    var next = e.copyWith(
+      fields: {for (final c in _fieldCtrls.entries) c.key: c.value.text},
+    );
+    if (!e.titleEdited) {
+      next = next.copyWith(
+        title: next.autoTitleFor(_now, defaultScanTitle(_now)),
+      );
+    }
+    _put(next);
+    if (_title!.text != next.title) {
+      _title!.value = TextEditingValue(text: next.title);
+    }
+  }
+
+  void _pickType(String type) {
+    final entry = _entry;
+    final e = entry?.edits;
+    if (e == null) return;
+    final next = e.withType(
+      type,
+      entry!.analysis!.fieldsFor(type),
+      folders: ref.read(foldersProvider).value ?? const <Folder>[],
+      now: _now,
+      fallbackTitle: defaultScanTitle(_now),
+    );
+    setState(() => _resetFieldControllers(next));
+    _put(next);
+    if (_title!.text != next.title) {
+      _title!.value = TextEditingValue(text: next.title);
     }
   }
 
   @override
   void dispose() {
-    _title.dispose();
+    _title?.dispose();
     for (final c in _fieldCtrls.values) {
       c.dispose();
     }
@@ -211,106 +698,81 @@ class _DraftFormState extends ConsumerState<_DraftForm> {
   }
 
   Future<void> _save() async {
-    if (_saving || _type == null) return;
+    final entry = _entry;
+    if (_saving || entry == null || entry.edits?.type == null) return;
     setState(() => _saving = true);
+    final messenger = ScaffoldMessenger.of(context);
     final l = context.l10n;
-    final service = ref.read(captureServiceProvider);
-    final values = _values();
-    final analysis = _analysis ?? DocumentAnalysis.empty;
-    final details = FilingDetails(
-      title: _title.text,
-      folderId: _folderId,
-      personId: _personId,
-      format: _format,
-      renewsDocumentId: widget.renewsDocumentId,
-      docType: _type!,
-      confidence: analysis.unreadable
-          ? null
-          : analysis.classification.scores.isEmpty
-          ? 0
-          : analysis.classification.confidence,
-      ocrText: analysis.unreadable ? null : analysis.ocrText,
-      fields: values,
-      corrected: {
-        for (final e in _fieldCtrls.entries)
-          if (e.value.text.trim() != (_extracted[e.key] ?? '')) e.key,
-      },
-    );
     try {
-      final duplicate = await service.findDuplicate(
-        widget.draft,
-        details: details,
-      );
-      if (duplicate != null) {
-        if (!mounted) return;
-        final keep = await _askDuplicate(context, duplicate);
-        if (!keep) {
-          _advance(saved: false);
-          return;
-        }
-      }
-      final doc = await service.save(widget.draft, details);
-      // Bills and fee vouchers teach the Auto Task Creator (PBI-014/015).
-      final outcome = await ref.read(atcLearningProvider).onDocumentSaved(doc);
-      final change = outcome.feeChange;
-      if (change != null && mounted) {
-        final update = await showFeeChangeDialog(context, change);
-        if (update) await ref.read(atcLearningProvider).applyFeeChange(change);
-      }
-      _advance(
-        saved: true,
-        note: outcome.spike
-            ? l.cpUnusualBill
-            : outcome.upgradedTaskId != null
-            ? l.cpBillTaskUpdated
-            : null,
+      final result = await fileEntry(context, ref, entry, askDuplicate: true);
+      messenger.hideCurrentSnackBar();
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(switch (result) {
+            FileSaved(:final note) => [l.cpSavedToVault, ?note].join(' · '),
+            _ => l.cpDuplicateDiscarded,
+          }),
+        ),
       );
     } finally {
       if (mounted) setState(() => _saving = false);
     }
+    widget.onDone();
   }
 
-  void _advance({required bool saved, String? note}) {
+  void _discard() {
     final messenger = ScaffoldMessenger.of(context);
+    final router = GoRouter.of(context);
     final l = context.l10n;
     final session = ref.read(captureSessionProvider.notifier);
-    final last = ref.read(captureSessionProvider).drafts.length <= 1;
-    session.next();
-    // The newest outcome replaces any message still showing.
+    final removed = session.remove(widget.entryId);
+    if (removed == null) return;
+    final (entry, index) = removed;
     messenger.hideCurrentSnackBar();
     messenger.showSnackBar(
       SnackBar(
-        content: Text(
-          saved
-              ? [l.cpSavedToVault, ?note].join(' · ')
-              : l.cpDuplicateDiscarded,
+        content: Text(l.cpDiscarded),
+        action: SnackBarAction(
+          key: const ValueKey('discard-undo'),
+          label: l.cpUndo,
+          onPressed: () {
+            session.restore(entry, index);
+            // The screen closed if this was the last one: open it again.
+            if (router.state.matchedLocation != captureRoute) {
+              router.push(captureRoute);
+            }
+          },
         ),
       ),
     );
-    if (last && mounted) context.pop();
+    widget.onDone();
   }
 
   Future<void> _pickDate(String key) async {
     final ctrl = _fieldCtrls[key]!;
-    final current = DateTime.tryParse(ctrl.text) ?? ref.read(nowProvider)();
+    final current = DateTime.tryParse(ctrl.text) ?? _now;
     final picked = await showDatePicker(
       context: context,
       initialDate: current,
       firstDate: DateTime(1950),
       lastDate: DateTime(2100),
     );
-    if (picked != null) {
-      ctrl.text = isoDate(picked);
-    }
+    if (picked != null) ctrl.text = isoDate(picked);
   }
 
   @override
   Widget build(BuildContext context) {
+    final entry = ref.watch(
+      captureSessionProvider.select((s) => s.byId(widget.entryId)),
+    );
+    if (entry == null) return const SizedBox.shrink();
     final theme = Theme.of(context);
     final folders = ref.watch(foldersProvider).value ?? const <Folder>[];
     final persons = ref.watch(personsProvider).value ?? const <Person>[];
-    final draft = widget.draft;
-    final analysis = _analysis;
+    final draft = entry.draft;
+    final analysis = entry.analysis;
+    final edits = entry.edits;
+    if (edits != null) _ensureControllers(edits);
     final l = context.l10n;
 
     return ListView(
@@ -318,7 +780,18 @@ class _DraftFormState extends ConsumerState<_DraftForm> {
       children: [
         _PagesStrip(draft: draft),
         SizedBox(height: Tokens.spaceM),
-        if (analysis == null)
+        if (entry.duplicateOf != null)
+          Padding(
+            padding: EdgeInsets.only(bottom: Tokens.spaceS),
+            child: Text(
+              l.cpMaybeDuplicate(entry.duplicateOf!.title),
+              key: const ValueKey('review-duplicate-note'),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.error,
+              ),
+            ),
+          ),
+        if (analysis == null || edits == null)
           Padding(
             key: const ValueKey('review-reading'),
             padding: EdgeInsets.symmetric(vertical: Tokens.spaceS),
@@ -333,90 +806,96 @@ class _DraftFormState extends ConsumerState<_DraftForm> {
               ],
             ),
           )
-        else
-          _TypeRow(
-            analysis: analysis,
-            type: _type,
-            onPick: (t) => setState(() => _applyType(t, analysis.fieldsFor(t))),
-          ),
-        SizedBox(height: Tokens.spaceM),
-        TextField(
-          key: const ValueKey('review-name'),
-          controller: _title,
-          textCapitalization: TextCapitalization.sentences,
-          decoration: InputDecoration(
-            labelText: l.name,
-            border: const OutlineInputBorder(),
-          ),
-        ),
-        for (final e in _fieldCtrls.entries) ...[
-          SizedBox(height: Tokens.spaceS),
+        else ...[
+          _TypeRow(analysis: analysis, type: edits.type, onPick: _pickType),
+          SizedBox(height: Tokens.spaceM),
           TextField(
-            key: ValueKey('review-field-${e.key}'),
-            controller: e.value,
-            readOnly: Fields.isDate(e.key),
-            onTap: Fields.isDate(e.key) ? () => _pickDate(e.key) : null,
-            keyboardType: e.key == Fields.amount
-                ? const TextInputType.numberWithOptions(decimal: true)
-                : TextInputType.text,
+            key: const ValueKey('review-name'),
+            controller: _title,
+            textCapitalization: TextCapitalization.sentences,
             decoration: InputDecoration(
-              labelText: Fields.labels[e.key],
-              prefixText: e.key == Fields.amount ? Money.prefix : null,
-              suffixIcon: Fields.isDate(e.key) ? const Icon(Icons.event) : null,
+              labelText: l.name,
               border: const OutlineInputBorder(),
             ),
           ),
-        ],
-        SizedBox(height: Tokens.spaceM),
-        DropdownButtonFormField<String?>(
-          key: ValueKey('review-folder-$_folderId'),
-          initialValue: _folderId,
-          decoration: InputDecoration(
-            labelText: l.cpFolder,
-            border: const OutlineInputBorder(),
-          ),
-          items: [
-            DropdownMenuItem(value: null, child: Text(l.cpUnfiled)),
-            for (final f in folders)
-              DropdownMenuItem(value: f.id, child: Text('${f.icon} ${f.name}')),
-          ],
-          onChanged: (v) => setState(() {
-            _folderId = v;
-            _folderChosen = true;
-          }),
-        ),
-        SizedBox(height: Tokens.spaceM),
-        DropdownButtonFormField<String?>(
-          key: const ValueKey('review-person'),
-          initialValue: _personId,
-          decoration: InputDecoration(
-            labelText: l.cpBelongsTo,
-            border: const OutlineInputBorder(),
-          ),
-          items: [
-            DropdownMenuItem(value: null, child: Text(l.cpNobody)),
-            for (final p in persons)
-              DropdownMenuItem(
-                value: p.id,
-                child: Text([p.avatar ?? '👤', p.name].join(' ')),
+          for (final e in _fieldCtrls.entries) ...[
+            SizedBox(height: Tokens.spaceS),
+            TextField(
+              key: ValueKey('review-field-${e.key}'),
+              controller: e.value,
+              readOnly: Fields.isDate(e.key),
+              onTap: Fields.isDate(e.key) ? () => _pickDate(e.key) : null,
+              keyboardType: e.key == Fields.amount
+                  ? const TextInputType.numberWithOptions(decimal: true)
+                  : TextInputType.text,
+              decoration: InputDecoration(
+                labelText: Fields.labels[e.key],
+                prefixText: e.key == Fields.amount ? Money.prefix : null,
+                suffixIcon: Fields.isDate(e.key)
+                    ? const Icon(Icons.event)
+                    : null,
+                border: const OutlineInputBorder(),
               ),
+            ),
           ],
-          onChanged: (v) => setState(() => _personId = v),
-        ),
-        if (!draft.isPdfImport) ...[
           SizedBox(height: Tokens.spaceM),
-          Text(l.cpSaveAs, style: theme.textTheme.labelLarge),
-          SizedBox(height: Tokens.spaceS),
-          SegmentedButton<OutputFormat>(
-            key: const ValueKey('review-format'),
-            showSelectedIcon: false,
-            segments: [
-              ButtonSegment(value: OutputFormat.pdf, label: Text(l.cpPdf)),
-              ButtonSegment(value: OutputFormat.jpeg, label: Text(l.cpJpeg)),
+          DropdownButtonFormField<String?>(
+            key: ValueKey('review-folder-${edits.folderId}'),
+            initialValue: edits.folderId,
+            decoration: InputDecoration(
+              labelText: l.cpFolder,
+              border: const OutlineInputBorder(),
+            ),
+            items: [
+              DropdownMenuItem(value: null, child: Text(l.cpUnfiled)),
+              for (final f in folders)
+                DropdownMenuItem(
+                  value: f.id,
+                  child: Text('${f.icon} ${f.name}'),
+                ),
             ],
-            selected: {_format},
-            onSelectionChanged: (s) => setState(() => _format = s.first),
+            onChanged: (v) => _put(
+              edits.copyWith(
+                folderId: v,
+                clearFolder: v == null,
+                folderChosen: true,
+              ),
+            ),
           ),
+          SizedBox(height: Tokens.spaceM),
+          DropdownButtonFormField<String?>(
+            key: const ValueKey('review-person'),
+            initialValue: edits.personId,
+            decoration: InputDecoration(
+              labelText: l.cpBelongsTo,
+              border: const OutlineInputBorder(),
+            ),
+            items: [
+              DropdownMenuItem(value: null, child: Text(l.cpNobody)),
+              for (final p in persons)
+                DropdownMenuItem(
+                  value: p.id,
+                  child: Text([p.avatar ?? '👤', p.name].join(' ')),
+                ),
+            ],
+            onChanged: (v) =>
+                _put(edits.copyWith(personId: v, clearPerson: v == null)),
+          ),
+          if (!draft.isPdfImport) ...[
+            SizedBox(height: Tokens.spaceM),
+            Text(l.cpSaveAs, style: theme.textTheme.labelLarge),
+            SizedBox(height: Tokens.spaceS),
+            SegmentedButton<OutputFormat>(
+              key: const ValueKey('review-format'),
+              showSelectedIcon: false,
+              segments: [
+                ButtonSegment(value: OutputFormat.pdf, label: Text(l.cpPdf)),
+                ButtonSegment(value: OutputFormat.jpeg, label: Text(l.cpJpeg)),
+              ],
+              selected: {edits.format},
+              onSelectionChanged: (s) => _put(edits.copyWith(format: s.first)),
+            ),
+          ],
         ],
         SizedBox(height: Tokens.spaceL),
         FilledButton.icon(
@@ -425,7 +904,7 @@ class _DraftFormState extends ConsumerState<_DraftForm> {
             minimumSize: const Size.fromHeight(Tokens.minTouchTarget + 4),
           ),
           // AC2: nothing is saved before this tap; a type is required.
-          onPressed: _saving || _type == null ? null : _save,
+          onPressed: _saving || edits?.type == null ? null : _save,
           icon: _saving
               ? const SizedBox.square(
                   dimension: 18,
@@ -437,8 +916,15 @@ class _DraftFormState extends ConsumerState<_DraftForm> {
         SizedBox(height: Tokens.spaceS),
         TextButton(
           key: const ValueKey('review-discard'),
-          onPressed: _saving ? null : () => _advance(saved: false),
+          onPressed: _saving ? null : _discard,
           child: Text(l.cpDiscardThis),
+        ),
+        SizedBox(height: Tokens.spaceS),
+        _AddMoreRow(
+          scanKey: 'review-scan-another-button',
+          importKey: 'review-import-button',
+          onScanAnother: _saving ? null : widget.onScanAnother,
+          onImport: _saving ? null : widget.onImport,
         ),
       ],
     );
@@ -528,29 +1014,7 @@ class _TypeRow extends StatelessWidget {
   }
 }
 
-Future<bool> _askDuplicate(BuildContext context, Document existing) async {
-  final keep = await showDialog<bool>(
-    context: context,
-    builder: (context) => AlertDialog(
-      key: const ValueKey('dialog-duplicate'),
-      title: Text(context.l10n.cpDuplicateTitle),
-      content: Text(context.l10n.cpDuplicateBody(existing.title)),
-      actions: [
-        TextButton(
-          key: const ValueKey('duplicate-discard'),
-          onPressed: () => Navigator.pop(context, false),
-          child: Text(context.l10n.cpDiscardNew),
-        ),
-        FilledButton(
-          key: const ValueKey('duplicate-keep'),
-          onPressed: () => Navigator.pop(context, true),
-          child: Text(context.l10n.cpKeepBoth),
-        ),
-      ],
-    ),
-  );
-  return keep == true;
-}
+// ───────────────────────────── Pages ─────────────────────────────
 
 class _PagesStrip extends StatelessWidget {
   const _PagesStrip({required this.draft});
@@ -577,12 +1041,17 @@ class _PagesStrip extends StatelessWidget {
                   ),
                 )
               else
-                for (final path in draft.pagePaths)
+                for (var i = 0; i < draft.pagePaths.length; i++)
                   _PageBox(
+                    key: ValueKey('review-page-$i'),
+                    // Tap to check the page full screen, pinch to zoom.
+                    onTap: kIsWeb
+                        ? null
+                        : () => _showPages(context, draft.pagePaths, i),
                     child: kIsWeb
                         ? const Icon(Icons.image_outlined)
                         : Image.file(
-                            File(path),
+                            File(draft.pagePaths[i]),
                             fit: BoxFit.cover,
                             cacheWidth: 240,
                           ),
@@ -601,9 +1070,13 @@ class _PagesStrip extends StatelessWidget {
   }
 }
 
+/// Width of a page thumbnail on the confirm step.
+const _thumbWidth = 120.0;
+
 class _PageBox extends StatelessWidget {
-  const _PageBox({required this.child});
+  const _PageBox({super.key, required this.child, this.onTap});
   final Widget child;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -611,12 +1084,65 @@ class _PageBox extends StatelessWidget {
       padding: EdgeInsets.only(right: Tokens.spaceS),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8),
-        child: Container(
-          width: 120,
+        child: Material(
           color: Theme.of(context).colorScheme.surfaceContainerHighest,
-          alignment: Alignment.center,
-          child: child,
+          child: InkWell(
+            onTap: onTap,
+            child: SizedBox(width: _thumbWidth, child: Center(child: child)),
+          ),
         ),
+      ),
+    );
+  }
+}
+
+Future<void> _showPages(BuildContext context, List<String> paths, int start) {
+  return Navigator.of(context).push(
+    MaterialPageRoute<void>(
+      fullscreenDialog: true,
+      builder: (_) => _PageViewer(paths: paths, start: start),
+    ),
+  );
+}
+
+class _PageViewer extends StatefulWidget {
+  const _PageViewer({required this.paths, required this.start});
+  final List<String> paths;
+  final int start;
+
+  @override
+  State<_PageViewer> createState() => _PageViewerState();
+}
+
+class _PageViewerState extends State<_PageViewer> {
+  late final _controller = PageController(initialPage: widget.start);
+  late int _page = widget.start;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      key: const ValueKey('page-viewer'),
+      appBar: AppBar(
+        title: Text(
+          context.l10n.cpPageOf('${_page + 1}', '${widget.paths.length}'),
+        ),
+      ),
+      body: PageView(
+        controller: _controller,
+        onPageChanged: (i) => setState(() => _page = i),
+        children: [
+          for (final path in widget.paths)
+            InteractiveViewer(
+              maxScale: 5,
+              child: Center(child: Image.file(File(path))),
+            ),
+        ],
       ),
     );
   }

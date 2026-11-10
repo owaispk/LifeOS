@@ -10,6 +10,7 @@ import '../../../core/l10n.dart';
 import '../../../data/db/app_database.dart';
 import '../../../data/repositories/repositories.dart';
 import '../../../shared/format.dart';
+import '../domain/duplicate_check.dart';
 import '../domain/image_checks.dart';
 import '../domain/pdf_builder.dart';
 import '../../security/crypto/vault_crypto.dart';
@@ -127,8 +128,7 @@ class CaptureService {
   /// low-level tests construct the service without it.
   final VaultCrypto? crypto;
 
-  String defaultTitle() =>
-      l10nNow.cpScanTitle(dayMonth(_now()), '${_now().year}');
+  String defaultTitle() => defaultScanTitle(_now());
 
   /// Sharpness + perceptual hash of one image page.
   static Future<PageCheck> checkPage(String path) async {
@@ -144,8 +144,10 @@ class CaptureService {
   }
 
   /// An existing live document this capture duplicates, if any: same
-  /// first-page image hash (near match), or same issuer + reference +
-  /// period (PBI-003 AC7).
+  /// issuer + reference + period, or the same paper scanned again — a near
+  /// first-page image hash *and*, when both were read, matching OCR text
+  /// (PBI-003 AC7). The hash alone mistakes two bills from one company for
+  /// each other.
   Future<Document?> findDuplicate(
     CaptureDraft draft, {
     FilingDetails? details,
@@ -167,10 +169,19 @@ class CaptureService {
     if (draft.pagePaths.isEmpty) return null;
     final hash = (await checkPage(draft.pagePaths.first)).hash;
     if (hash.isEmpty) return null;
+    final text = details?.ocrText ?? '';
     for (final f in await _repos.documentFiles.getAll()) {
       if (f.pageNo != 1 || f.phash == null) continue;
       final doc = docs[f.documentId];
-      if (doc != null && isNearDuplicate(hash, f.phash!)) return doc;
+      if (doc != null &&
+          isDuplicateCapture(
+            newHash: hash,
+            oldHash: f.phash!,
+            newText: text,
+            oldText: doc.ocrText ?? '',
+          )) {
+        return doc;
+      }
     }
     return null;
   }
@@ -313,6 +324,10 @@ class CaptureService {
     }
   }
 }
+
+/// "Scan · 8 Nov 2026" — the name a capture gets before anything is known.
+String defaultScanTitle(DateTime now) =>
+    l10nNow.cpScanTitle(dayMonth(now), '${now.year}');
 
 class _PreparedFile {
   const _PreparedFile(this.bytes, this.mime, this.ext, this.phash);

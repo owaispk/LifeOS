@@ -338,6 +338,23 @@ class AppLocalizationsUr extends AppLocalizations {
   String get continueLabel => 'جاری رکھیں';
 
   @override
+  String get cpAllDocuments => 'تمام دستاویزات';
+
+  @override
+  String get cpBatchHint => 'جانچنے یا بدلنے کے لیے دستاویز پر ٹیپ کریں۔';
+
+  @override
+  String cpBatchTitle(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n دستاویزات محفوظ کریں',
+      one: '1 دستاویز محفوظ کریں',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get cpBelongsTo => 'کس کا ہے';
 
   @override
@@ -348,14 +365,27 @@ class AppLocalizationsUr extends AppLocalizations {
       'تصویر واضح نہیں — بعد میں متن پڑھنا مشکل ہو سکتا ہے۔';
 
   @override
+  String cpBlurryPageBody(String pages) {
+    return 'صفحہ $pages واضح نہیں — بعد میں متن پڑھنا مشکل ہو سکتا ہے۔';
+  }
+
+  @override
   String get cpDiscardNew => 'نئی ہٹا دیں';
 
   @override
   String get cpDiscardThis => 'اسے ہٹا دیں';
 
   @override
-  String cpDuplicateBody(String title) {
-    return 'یہ \'$title\' کی دہری کاپی لگتی ہے۔ دونوں رکھیں؟';
+  String get cpDiscarded => 'ہٹا دیا گیا';
+
+  @override
+  String cpDropPage(String pages) {
+    return 'صفحہ $pages ہٹائیں';
+  }
+
+  @override
+  String cpDuplicateBody(String title, String date) {
+    return 'یہ \'$title\' کی دہری کاپی لگتی ہے، جو $date کو محفوظ ہوئی۔ دونوں رکھیں؟';
   }
 
   @override
@@ -407,6 +437,17 @@ class AppLocalizationsUr extends AppLocalizations {
   String get cpFolder => 'فولڈر';
 
   @override
+  String cpHeldBack(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n کو جانچنا ہے',
+      one: '1 کو جانچنا ہے',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get cpImportFile => 'فائل شامل کریں';
 
   @override
@@ -419,6 +460,11 @@ class AppLocalizationsUr extends AppLocalizations {
   String get cpKeepBoth => 'دونوں رکھیں';
 
   @override
+  String cpMaybeDuplicate(String title) {
+    return 'شاید \'$title\' کی دہری کاپی ہے';
+  }
+
+  @override
   String get cpNobody => 'کسی کا نہیں';
 
   @override
@@ -426,6 +472,11 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get cpNothingLeft => 'محفوظ کرنے کو کچھ باقی نہیں';
+
+  @override
+  String cpPageOf(String n, String total) {
+    return 'صفحہ $n از $total';
+  }
 
   @override
   String cpPages(int n) {
@@ -460,11 +511,34 @@ class AppLocalizationsUr extends AppLocalizations {
   String get cpSaveAs => 'اس طرح محفوظ کریں';
 
   @override
+  String cpSaveReady(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n تیار دستاویزات محفوظ کریں',
+      one: '1 تیار دستاویز محفوظ کریں',
+      zero: 'ابھی کچھ تیار نہیں',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get cpSaveToVault => 'والٹ میں محفوظ کریں';
 
   @override
   String cpSaveToVaultOf(String total) {
     return 'والٹ میں محفوظ کریں · $total میں سے 1';
+  }
+
+  @override
+  String cpSavedCount(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n دستاویزات والٹ میں محفوظ ہو گئیں',
+      one: '1 دستاویز والٹ میں محفوظ ہو گئی',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -480,6 +554,18 @@ class AppLocalizationsUr extends AppLocalizations {
   String cpScanTitle(String date, String year) {
     return 'اسکین · $date $year';
   }
+
+  @override
+  String get cpStatusCheck => 'جانچیں';
+
+  @override
+  String get cpStatusNew => 'نیا';
+
+  @override
+  String get cpStatusReading => 'پڑھ رہے ہیں…';
+
+  @override
+  String get cpStatusReady => 'تیار';
 
   @override
   String cpStorageFullBody(String mb) {
@@ -538,6 +624,9 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get cpTypeWarranty => 'وارنٹی';
+
+  @override
+  String get cpUndo => 'واپس کریں';
 
   @override
   String get cpUnfiled => '📥 بغیر فولڈر';

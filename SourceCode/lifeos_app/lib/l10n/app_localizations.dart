@@ -644,6 +644,24 @@ abstract class AppLocalizations {
   /// **'Continue'**
   String get continueLabel;
 
+  /// No description provided for @cpAllDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'All documents'**
+  String get cpAllDocuments;
+
+  /// No description provided for @cpBatchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a document to check or change it.'**
+  String get cpBatchHint;
+
+  /// No description provided for @cpBatchTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{n, plural, =1{File 1 document} other{File {n} documents}}'**
+  String cpBatchTitle(int n);
+
   /// No description provided for @cpBelongsTo.
   ///
   /// In en, this message translates to:
@@ -662,6 +680,12 @@ abstract class AppLocalizations {
   /// **'Image looks unclear — text may be hard to read later.'**
   String get cpBlurryBody;
 
+  /// No description provided for @cpBlurryPageBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Page {pages} looks unclear — text may be hard to read later.'**
+  String cpBlurryPageBody(String pages);
+
   /// No description provided for @cpDiscardNew.
   ///
   /// In en, this message translates to:
@@ -674,11 +698,23 @@ abstract class AppLocalizations {
   /// **'Discard this one'**
   String get cpDiscardThis;
 
+  /// No description provided for @cpDiscarded.
+  ///
+  /// In en, this message translates to:
+  /// **'Discarded'**
+  String get cpDiscarded;
+
+  /// No description provided for @cpDropPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove page {pages}'**
+  String cpDropPage(String pages);
+
   /// No description provided for @cpDuplicateBody.
   ///
   /// In en, this message translates to:
-  /// **'Looks like a duplicate of \'{title}\'. Keep both?'**
-  String cpDuplicateBody(String title);
+  /// **'Looks like a duplicate of \'{title}\', saved {date}. Keep both?'**
+  String cpDuplicateBody(String title, String date);
 
   /// No description provided for @cpDuplicateDiscarded.
   ///
@@ -776,6 +812,12 @@ abstract class AppLocalizations {
   /// **'Folder'**
   String get cpFolder;
 
+  /// No description provided for @cpHeldBack.
+  ///
+  /// In en, this message translates to:
+  /// **'{n, plural, =1{1 needs a check} other{{n} need a check}}'**
+  String cpHeldBack(int n);
+
   /// No description provided for @cpImportFile.
   ///
   /// In en, this message translates to:
@@ -800,6 +842,12 @@ abstract class AppLocalizations {
   /// **'Keep both'**
   String get cpKeepBoth;
 
+  /// No description provided for @cpMaybeDuplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'May be a duplicate of \'{title}\''**
+  String cpMaybeDuplicate(String title);
+
   /// No description provided for @cpNobody.
   ///
   /// In en, this message translates to:
@@ -817,6 +865,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Nothing left to file'**
   String get cpNothingLeft;
+
+  /// No description provided for @cpPageOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Page {n} of {total}'**
+  String cpPageOf(String n, String total);
 
   /// No description provided for @cpPages.
   ///
@@ -866,6 +920,12 @@ abstract class AppLocalizations {
   /// **'Save as'**
   String get cpSaveAs;
 
+  /// No description provided for @cpSaveReady.
+  ///
+  /// In en, this message translates to:
+  /// **'{n, plural, =0{Nothing ready yet} =1{Save 1 ready document} other{Save {n} ready documents}}'**
+  String cpSaveReady(int n);
+
   /// No description provided for @cpSaveToVault.
   ///
   /// In en, this message translates to:
@@ -877,6 +937,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save to Vault · 1 of {total}'**
   String cpSaveToVaultOf(String total);
+
+  /// No description provided for @cpSavedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{n, plural, =1{1 document saved to Vault} other{{n} documents saved to Vault}}'**
+  String cpSavedCount(int n);
 
   /// No description provided for @cpSavedToVault.
   ///
@@ -901,6 +967,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Scan · {date} {year}'**
   String cpScanTitle(String date, String year);
+
+  /// No description provided for @cpStatusCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'Check'**
+  String get cpStatusCheck;
+
+  /// No description provided for @cpStatusNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get cpStatusNew;
+
+  /// No description provided for @cpStatusReading.
+  ///
+  /// In en, this message translates to:
+  /// **'Reading…'**
+  String get cpStatusReading;
+
+  /// No description provided for @cpStatusReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready'**
+  String get cpStatusReady;
 
   /// No description provided for @cpStorageFullBody.
   ///
@@ -1009,6 +1099,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Warranty'**
   String get cpTypeWarranty;
+
+  /// No description provided for @cpUndo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get cpUndo;
 
   /// No description provided for @cpUnfiled.
   ///
