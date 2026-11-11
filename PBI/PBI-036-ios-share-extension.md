@@ -7,7 +7,7 @@
 | Story Points | 5 |
 | Spec refs | Features §1.1 (import), §3.1 (quick add); UI flow §3.4 |
 | Depends on | PBI-003 (share-in plumbing), PBI-034 (the text branch) — **a Mac with Xcode** |
-| Status | Ready (blocked: no iOS toolchain on the dev machine) |
+| Status | In progress — config files written (2026-11-11); Xcode target, signing and device QA still need a Mac |
 
 ## User Story
 As an **iPhone user**, I want "LifeOS" to appear in the iOS share sheet so I can send a bill photo, a PDF or a WhatsApp message straight into LifeOS, exactly as Android users already can.
@@ -57,3 +57,30 @@ This PBI is **native plumbing only**. No Dart behaviour changes, no new screens,
 - Two App Group ids may be needed if build flavours are ever added; one is enough today.
 - **The honest blocker:** none of this can be written, built or tested without a Mac with Xcode. The file edits could be typed blind, but an Xcode target is project-file surgery that is unreviewable and unbuildable here, and a half-made target is worse than none. This PBI should be picked up on a Mac, in one sitting, and verified on a real iPhone — the simulator's share sheet does not exercise the App Group the way a device does.
 - Sequence it with PBI-033's iOS widget PBI and the outstanding iOS device QA, so the Mac is only borrowed once.
+
+## Dev Notes (2026-11-11) — files only, written on Windows
+
+Written by hand without Xcode, at the user's request, so the Mac session starts from reviewed files instead of a blank target. **Nothing here has been built or run.** `ios/Runner.xcodeproj/project.pbxproj` is deliberately untouched: the target is created in Xcode, not hand-edited.
+
+| File | What it holds |
+|---|---|
+| `ios/Share Extension/ShareViewController.swift` | `RSIShareViewController`, `shouldAutoRedirect = true` — straight to LifeOS, whose capture step and task sheet are the confirm UI. |
+| `ios/Share Extension/Info.plist` | `AppGroupId`, display name "LifeOS", `com.apple.share-services`, `MainInterface`. Activation is a **predicate**, not the dictionary keys: every attachment must be an image, PDF, plain text or URL, at most 20. The dictionary's `…SupportsFileWithMaxCount` would let videos through (AC1). |
+| `ios/Share Extension/Share Extension.entitlements` | App Group `group.com.lifeos.lifeosApp`. |
+| `ios/Share Extension/Base.lproj/MainInterface.storyboard` | The plugin example's transparent scene, `customClass = ShareViewController`. |
+| `ios/Runner/Runner.entitlements` | The same App Group (new file; Runner had none). |
+| `ios/Runner/Info.plist` | Added only: `AppGroupId`, `CFBundleURLTypes` (`ShareMedia-$(PRODUCT_BUNDLE_IDENTIFIER)`), `NSPhotoLibraryUsageDescription`. |
+
+**App Group id:** `group.com.lifeos.lifeosApp`, after the bundle id `com.lifeos.lifeosApp`. PBI-037 (iOS widget) should use the same one.
+
+No Dart file changed (AC7). All four plists parse.
+
+### Still to do on the Mac, in order
+1. `flutter config --enable-swift-package-manager` (the plugin is SPM-only; the repo has no `ios/Podfile`).
+2. Xcode → File → New → Target → **Share Extension**, named exactly `Share Extension`, deployment target iOS 15.0 like Runner. When Xcode creates its own `ShareViewController.swift`, `Info.plist` and `MainInterface.storyboard`, keep the versions in this folder (discard Xcode's, then add these files to the target).
+3. Extension target → General → Frameworks and Libraries → **+** → `receive-sharing-intent`.
+4. Signing & Capabilities on **both** targets: **App Groups** → `group.com.lifeos.lifeosApp`. Point `CODE_SIGN_ENTITLEMENTS` at `Runner/Runner.entitlements` and `Share Extension/Share Extension.entitlements`.
+5. Build Settings on **both** targets: user-defined `CUSTOM_GROUP_ID = group.com.lifeos.lifeosApp`. Extension bundle id: `com.lifeos.lifeosApp.ShareExtension`.
+6. Runner → Build Phases: drag **Embed Foundation Extensions** above **Thin Binary**.
+7. Build on a device and run the AC list. Check the activation predicate in particular: a photo, a Live Photo, a PDF from Files, text from Messages/WhatsApp and a Safari link should show LifeOS; a video should not.
+

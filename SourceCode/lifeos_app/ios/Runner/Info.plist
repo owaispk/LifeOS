@@ -74,5 +74,20 @@
 	<string>LifeOS shows your calendar events alongside your tasks. It only reads them and never changes your calendar.</string>
 	<key>NSCalendarsFullAccessUsageDescription</key>
 	<string>LifeOS shows your calendar events alongside your tasks. It only reads them and never changes your calendar.</string>
+	<key>AppGroupId</key>
+	<string>$(CUSTOM_GROUP_ID)</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>ShareMedia-$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+			</array>
+		</dict>
+	</array>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>LifeOS saves the photos you share to it in your Vault, on your phone.</string>
 </dict>
 </plist>
