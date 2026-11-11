@@ -144,6 +144,14 @@ class SettingsScreen extends ConsumerWidget {
             onChanged: (v) =>
                 set(UserSettingsCompanion(screenshotBlock: Value(v))),
           ),
+          ListTile(
+            key: const ValueKey('set-share-history'),
+            leading: const Icon(Icons.history),
+            title: Text(l.shHistory),
+            subtitle: Text(l.shHistorySub),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => context.go('/more/settings/shares'),
+          ),
           SectionHeader(l.calSection),
           const _CalendarSettings(),
           SectionHeader(l.settingsNotifications),

@@ -8,6 +8,7 @@ import '../../shared/widgets/empty_state.dart';
 import '../capture/capture_entry.dart';
 import 'data/vault_service.dart';
 import 'domain/vault_rules.dart';
+import 'bundle_screen.dart' show bundleLocation;
 import 'ui/document_tile.dart';
 import 'ui/vault_sheets.dart';
 import 'vault_providers.dart';
@@ -33,13 +34,27 @@ class UnfiledScope extends VaultScope {
 }
 
 /// 3.2 Folder / Person view: that scope's documents, favourites first.
-class VaultListScreen extends ConsumerWidget {
+/// Long-press starts multi-select → "Share as one PDF" (PBI-028a).
+class VaultListScreen extends ConsumerStatefulWidget {
   const VaultListScreen({super.key, required this.scope});
 
   final VaultScope scope;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<VaultListScreen> createState() => _VaultListScreenState();
+}
+
+class _VaultListScreenState extends ConsumerState<VaultListScreen> {
+  /// Selected document ids, in the order they were picked.
+  final _selected = <String>[];
+
+  void _toggle(String id) => setState(
+    () => _selected.contains(id) ? _selected.remove(id) : _selected.add(id),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    final scope = widget.scope;
     final docs = ref.watch(documentsProvider).value ?? const <Document>[];
     final folders = ref.watch(foldersProvider).value ?? const <Folder>[];
     final persons = ref.watch(personsProvider).value ?? const <Person>[];
@@ -75,8 +90,31 @@ class VaultListScreen extends ConsumerWidget {
     // Archived documents leave folder lists (still searchable).
     final list = sortDocuments(scoped.where((d) => d.archivedAt == null));
 
+    final selecting = _selected.isNotEmpty;
     return Scaffold(
-      appBar: AppBar(title: Text(title), actions: actions),
+      appBar: selecting
+          ? AppBar(
+              leading: IconButton(
+                key: const ValueKey('select-clear'),
+                tooltip: l.shClearSelection,
+                icon: const Icon(Icons.close),
+                onPressed: () => setState(_selected.clear),
+              ),
+              title: Text(l.shSelected('${_selected.length}')),
+              actions: [
+                IconButton(
+                  key: const ValueKey('select-share-pdf'),
+                  tooltip: l.shShareAsPdf,
+                  icon: const Icon(Icons.picture_as_pdf_outlined),
+                  onPressed: () {
+                    final ids = [..._selected];
+                    setState(_selected.clear);
+                    context.push(bundleLocation(ids: ids));
+                  },
+                ),
+              ],
+            )
+          : AppBar(title: Text(title), actions: actions),
       body: list.isEmpty
           ? EmptyState(
               emoji: '📂',
@@ -98,7 +136,15 @@ class VaultListScreen extends ConsumerWidget {
           : ListView(
               key: const ValueKey('vault-list'),
               padding: EdgeInsets.only(bottom: Tokens.listEnd),
-              children: [for (final d in list) DocumentTile(document: d)],
+              children: [
+                for (final d in list)
+                  DocumentTile(
+                    document: d,
+                    selected: selecting ? _selected.contains(d.id) : null,
+                    onTap: selecting ? () => _toggle(d.id) : null,
+                    onLongPress: () => _toggle(d.id),
+                  ),
+              ],
             ),
     );
   }

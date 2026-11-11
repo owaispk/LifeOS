@@ -1284,6 +1284,161 @@
   "settingsPremiumSub": "Coming soon",
   "settingsSecurity": "Security",
   "settingsTitle": "Settings",
+  "shAddDocuments": "Add documents",
+  "shBundleDefaultTitle": "Shared PDF · {date}",
+  "@shBundleDefaultTitle": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "shClearSelection": "Clear selection",
+  "shDeletePack": "Delete share pack",
+  "shDeletedDoc": "Deleted document",
+  "shDocuments": "Documents",
+  "shDone": "Done",
+  "shFailed": "Couldn't prepare the share. Please try again.",
+  "shHistory": "Share history",
+  "shHistoryEmptyMessage": "Documents you share from the Vault appear here.",
+  "shHistoryEmptyTitle": "Nothing shared yet",
+  "shHistorySub": "What you've shared, kept only on this phone",
+  "shJobPack": "Job Application Pack",
+  "shJobPackSub": "Degree, CNIC, CV and photo",
+  "shMissingDocs": "{n, plural, =1{1 document in this pack is no longer in the Vault} other{{n} documents in this pack are no longer in the Vault}}",
+  "@shMissingDocs": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "shNewPack": "New share pack",
+  "shNoDocuments": "Add at least one document",
+  "shPackCount": "{n, plural, =1{1 document} other{{n} documents}}",
+  "@shPackCount": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "shPackSaved": "Share pack saved",
+  "shPackTitle": "Title",
+  "shPackTitleHint": "e.g. Job Application Pack",
+  "shPacks": "Share packs",
+  "shPacksSub": "Documents you often send together",
+  "shPickDocuments": "Choose documents",
+  "shPreparing": "Preparing… {done} of {total} pages",
+  "@shPreparing": {
+    "placeholders": {
+      "done": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "shPurpose": "Purpose (optional)",
+  "shPurposeHint": "e.g. account opening",
+  "shRecipientRequired": "Enter who it's for",
+  "shRemove": "Remove",
+  "shReorderHint": "Drag to change the order",
+  "shSaveFolder": "Folder",
+  "shSavePack": "Save as share pack",
+  "shSaveToVault": "Also save to the Vault",
+  "shSavedToVault": "Also saved to the Vault",
+  "shSelected": "{n} selected",
+  "@shSelected": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "shShare": "Share",
+  "shShareAsPdf": "Share as one PDF",
+  "shShareFile": "Share file",
+  "shShareFileSub": "The document as it is",
+  "shShareWatermark": "Share with watermark…",
+  "shShareWatermarkSub": "Stamp who it's for, so the copy can't be reused",
+  "shSharedTimes": "{n, plural, =1{Shared once} other{Shared {n} times}}",
+  "@shSharedTimes": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "shSharedWith": "Shared with",
+  "shSharedWithHint": "e.g. ABC Bank",
+  "shTo": "To {recipient}",
+  "@shTo": {
+    "placeholders": {
+      "recipient": {
+        "type": "String"
+      }
+    }
+  },
+  "shWatermarkTitle": "Add watermark",
+  "shWatermarked": "Watermarked",
+  "shWmFull": "Shared by {name} with {recipient} for {purpose} — {date}",
+  "@shWmFull": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "recipient": {
+        "type": "String"
+      },
+      "purpose": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "shWmNoName": "Shared with {recipient} for {purpose} — {date}",
+  "@shWmNoName": {
+    "placeholders": {
+      "recipient": {
+        "type": "String"
+      },
+      "purpose": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "shWmNoNameNoPurpose": "Shared with {recipient} — {date}",
+  "@shWmNoNameNoPurpose": {
+    "placeholders": {
+      "recipient": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "shWmNoPurpose": "Shared by {name} with {recipient} — {date}",
+  "@shWmNoPurpose": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "recipient": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "skip": "Skip",
   "speak": "Speak",
   "templateClassic": "Classic · large text",

@@ -14,9 +14,21 @@ import 'document_pages.dart' show fileBytesProvider;
 
 /// One document row: thumbnail · title · type chip · date · person · ★.
 class DocumentTile extends ConsumerWidget {
-  const DocumentTile({super.key, required this.document, this.snippet});
+  const DocumentTile({
+    super.key,
+    required this.document,
+    this.snippet,
+    this.selected,
+    this.onTap,
+    this.onLongPress,
+  });
 
   final Document document;
+
+  /// In multi-select (PBI-028a): checked or not; null outside it.
+  final bool? selected;
+  final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
 
   /// Search snippet with the match wrapped in « » (PBI-006).
   final String? snippet;
@@ -32,8 +44,12 @@ class DocumentTile extends ConsumerWidget {
     return ListTile(
       key: ValueKey('doc-${document.id}'),
       minTileHeight: Tokens.rowTwoLine,
-      onTap: () => context.push('/doc/${document.id}'),
-      leading: _Thumbnail(document: document, page: page),
+      onTap: onTap ?? () => context.push('/doc/${document.id}'),
+      onLongPress: onLongPress,
+      selected: selected ?? false,
+      leading: selected == null
+          ? _Thumbnail(document: document, page: page)
+          : Checkbox(value: selected, onChanged: (_) => onTap?.call()),
       title: Text(document.title, maxLines: 2, overflow: TextOverflow.ellipsis),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

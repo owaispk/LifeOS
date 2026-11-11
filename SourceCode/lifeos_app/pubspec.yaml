@@ -64,10 +64,15 @@ dependencies:
   package_info_plus: ^10.2.2
   device_info_plus: ^13.3.0
   home_widget: ^0.10.0
-  device_calendar: ^3.9.0
+  device_calendar: ^4.3.3
   app_settings: ^9.0.1
   in_app_purchase: ^3.3.1
   http: ^1.6.0
+
+# device_calendar 4.3.3 still pins timezone ^0.9.0; the TZDateTime and
+# location APIs it uses are unchanged in 0.11, which the notifications need.
+dependency_overrides:
+  timezone: ^0.11.2
 
 dev_dependencies:
   flutter_test:

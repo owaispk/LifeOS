@@ -1924,6 +1924,201 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsTitle => 'Settings';
 
   @override
+  String get shAddDocuments => 'Add documents';
+
+  @override
+  String shBundleDefaultTitle(String date) {
+    return 'Shared PDF · $date';
+  }
+
+  @override
+  String get shClearSelection => 'Clear selection';
+
+  @override
+  String get shDeletePack => 'Delete share pack';
+
+  @override
+  String get shDeletedDoc => 'Deleted document';
+
+  @override
+  String get shDocuments => 'Documents';
+
+  @override
+  String get shDone => 'Done';
+
+  @override
+  String get shFailed => 'Couldn\'t prepare the share. Please try again.';
+
+  @override
+  String get shHistory => 'Share history';
+
+  @override
+  String get shHistoryEmptyMessage =>
+      'Documents you share from the Vault appear here.';
+
+  @override
+  String get shHistoryEmptyTitle => 'Nothing shared yet';
+
+  @override
+  String get shHistorySub => 'What you\'ve shared, kept only on this phone';
+
+  @override
+  String get shJobPack => 'Job Application Pack';
+
+  @override
+  String get shJobPackSub => 'Degree, CNIC, CV and photo';
+
+  @override
+  String shMissingDocs(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n documents in this pack are no longer in the Vault',
+      one: '1 document in this pack is no longer in the Vault',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get shNewPack => 'New share pack';
+
+  @override
+  String get shNoDocuments => 'Add at least one document';
+
+  @override
+  String shPackCount(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n documents',
+      one: '1 document',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get shPackSaved => 'Share pack saved';
+
+  @override
+  String get shPackTitle => 'Title';
+
+  @override
+  String get shPackTitleHint => 'e.g. Job Application Pack';
+
+  @override
+  String get shPacks => 'Share packs';
+
+  @override
+  String get shPacksSub => 'Documents you often send together';
+
+  @override
+  String get shPickDocuments => 'Choose documents';
+
+  @override
+  String shPreparing(String done, String total) {
+    return 'Preparing… $done of $total pages';
+  }
+
+  @override
+  String get shPurpose => 'Purpose (optional)';
+
+  @override
+  String get shPurposeHint => 'e.g. account opening';
+
+  @override
+  String get shRecipientRequired => 'Enter who it\'s for';
+
+  @override
+  String get shRemove => 'Remove';
+
+  @override
+  String get shReorderHint => 'Drag to change the order';
+
+  @override
+  String get shSaveFolder => 'Folder';
+
+  @override
+  String get shSavePack => 'Save as share pack';
+
+  @override
+  String get shSaveToVault => 'Also save to the Vault';
+
+  @override
+  String get shSavedToVault => 'Also saved to the Vault';
+
+  @override
+  String shSelected(String n) {
+    return '$n selected';
+  }
+
+  @override
+  String get shShare => 'Share';
+
+  @override
+  String get shShareAsPdf => 'Share as one PDF';
+
+  @override
+  String get shShareFile => 'Share file';
+
+  @override
+  String get shShareFileSub => 'The document as it is';
+
+  @override
+  String get shShareWatermark => 'Share with watermark…';
+
+  @override
+  String get shShareWatermarkSub =>
+      'Stamp who it\'s for, so the copy can\'t be reused';
+
+  @override
+  String shSharedTimes(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'Shared $n times',
+      one: 'Shared once',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get shSharedWith => 'Shared with';
+
+  @override
+  String get shSharedWithHint => 'e.g. ABC Bank';
+
+  @override
+  String shTo(String recipient) {
+    return 'To $recipient';
+  }
+
+  @override
+  String get shWatermarkTitle => 'Add watermark';
+
+  @override
+  String get shWatermarked => 'Watermarked';
+
+  @override
+  String shWmFull(String name, String recipient, String purpose, String date) {
+    return 'Shared by $name with $recipient for $purpose — $date';
+  }
+
+  @override
+  String shWmNoName(String recipient, String purpose, String date) {
+    return 'Shared with $recipient for $purpose — $date';
+  }
+
+  @override
+  String shWmNoNameNoPurpose(String recipient, String date) {
+    return 'Shared with $recipient — $date';
+  }
+
+  @override
+  String shWmNoPurpose(String name, String recipient, String date) {
+    return 'Shared by $name with $recipient — $date';
+  }
+
+  @override
   String get skip => 'Skip';
 
   @override

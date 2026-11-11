@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -9,6 +10,7 @@ import 'package:path_provider/path_provider.dart';
 
 import 'app.dart';
 import 'core/log/app_log.dart';
+import 'core/plaintext_cache.dart';
 import 'core/log/diagnostics.dart';
 import 'data/data_providers.dart';
 import 'features/calendar/calendar_providers.dart';
@@ -52,6 +54,15 @@ Future<void> main() async {
   }
   captureErrors();
   LogLifecycle();
+  // Plaintext a crash or a plugin left in the cache goes (PBI-024).
+  if (!kIsWeb) {
+    unawaited(
+      getTemporaryDirectory().then(sweepPlaintextCache).catchError((Object e) {
+        AppLog.w('vault', 'cache sweep failed: ${e.runtimeType}');
+        return 0;
+      }),
+    );
+  }
   final facts = await deviceFacts();
   AppLog.i('app', 'start ${facts.values.join(' · ')}');
 

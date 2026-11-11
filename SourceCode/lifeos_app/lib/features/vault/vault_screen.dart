@@ -63,6 +63,12 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
             onPressed: () => importFiles(context),
           ),
           IconButton(
+            key: const ValueKey('vault-packs'),
+            tooltip: l.shPacks,
+            icon: const Icon(Icons.folder_copy_outlined),
+            onPressed: () => context.push('/vault/packs'),
+          ),
+          IconButton(
             key: const ValueKey('vault-trash'),
             tooltip: l.trash,
             icon: const Icon(Icons.delete_outline),

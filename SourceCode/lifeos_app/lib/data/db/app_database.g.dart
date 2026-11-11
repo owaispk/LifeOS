@@ -12461,6 +12461,1230 @@ class ScoreSnapshotsCompanion extends UpdateCompanion<ScoreSnapshot> {
   }
 }
 
+class $ShareEventsTable extends ShareEvents
+    with TableInfo<$ShareEventsTable, ShareEvent> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ShareEventsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: fallbackIds.next,
+  );
+  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
+  @override
+  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
+    'user_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: () => '',
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<int> updatedAt = GeneratedColumn<int>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    clientDefault: systemClock,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<int> deletedAt = GeneratedColumn<int>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _versionMeta = const VerificationMeta(
+    'version',
+  );
+  @override
+  late final GeneratedColumn<int> version = GeneratedColumn<int>(
+    'version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _sharedAtMeta = const VerificationMeta(
+    'sharedAt',
+  );
+  @override
+  late final GeneratedColumn<int> sharedAt = GeneratedColumn<int>(
+    'shared_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _documentIdsMeta = const VerificationMeta(
+    'documentIds',
+  );
+  @override
+  late final GeneratedColumn<String> documentIds = GeneratedColumn<String>(
+    'document_ids',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _recipientMeta = const VerificationMeta(
+    'recipient',
+  );
+  @override
+  late final GeneratedColumn<String> recipient = GeneratedColumn<String>(
+    'recipient',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _purposeMeta = const VerificationMeta(
+    'purpose',
+  );
+  @override
+  late final GeneratedColumn<String> purpose = GeneratedColumn<String>(
+    'purpose',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _watermarkedMeta = const VerificationMeta(
+    'watermarked',
+  );
+  @override
+  late final GeneratedColumn<bool> watermarked = GeneratedColumn<bool>(
+    'watermarked',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("watermarked" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _bundleTitleMeta = const VerificationMeta(
+    'bundleTitle',
+  );
+  @override
+  late final GeneratedColumn<String> bundleTitle = GeneratedColumn<String>(
+    'bundle_title',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _kindMeta = const VerificationMeta('kind');
+  @override
+  late final GeneratedColumn<String> kind = GeneratedColumn<String>(
+    'kind',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('file'),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    userId,
+    updatedAt,
+    deletedAt,
+    version,
+    sharedAt,
+    documentIds,
+    recipient,
+    purpose,
+    watermarked,
+    bundleTitle,
+    kind,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'share_events';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ShareEvent> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('user_id')) {
+      context.handle(
+        _userIdMeta,
+        userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    if (data.containsKey('version')) {
+      context.handle(
+        _versionMeta,
+        version.isAcceptableOrUnknown(data['version']!, _versionMeta),
+      );
+    }
+    if (data.containsKey('shared_at')) {
+      context.handle(
+        _sharedAtMeta,
+        sharedAt.isAcceptableOrUnknown(data['shared_at']!, _sharedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_sharedAtMeta);
+    }
+    if (data.containsKey('document_ids')) {
+      context.handle(
+        _documentIdsMeta,
+        documentIds.isAcceptableOrUnknown(
+          data['document_ids']!,
+          _documentIdsMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_documentIdsMeta);
+    }
+    if (data.containsKey('recipient')) {
+      context.handle(
+        _recipientMeta,
+        recipient.isAcceptableOrUnknown(data['recipient']!, _recipientMeta),
+      );
+    }
+    if (data.containsKey('purpose')) {
+      context.handle(
+        _purposeMeta,
+        purpose.isAcceptableOrUnknown(data['purpose']!, _purposeMeta),
+      );
+    }
+    if (data.containsKey('watermarked')) {
+      context.handle(
+        _watermarkedMeta,
+        watermarked.isAcceptableOrUnknown(
+          data['watermarked']!,
+          _watermarkedMeta,
+        ),
+      );
+    }
+    if (data.containsKey('bundle_title')) {
+      context.handle(
+        _bundleTitleMeta,
+        bundleTitle.isAcceptableOrUnknown(
+          data['bundle_title']!,
+          _bundleTitleMeta,
+        ),
+      );
+    }
+    if (data.containsKey('kind')) {
+      context.handle(
+        _kindMeta,
+        kind.isAcceptableOrUnknown(data['kind']!, _kindMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ShareEvent map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ShareEvent(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      userId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}user_id'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      sharedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}shared_at'],
+      )!,
+      documentIds: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}document_ids'],
+      )!,
+      recipient: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}recipient'],
+      ),
+      purpose: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}purpose'],
+      ),
+      watermarked: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}watermarked'],
+      )!,
+      bundleTitle: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}bundle_title'],
+      ),
+      kind: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}kind'],
+      )!,
+    );
+  }
+
+  @override
+  $ShareEventsTable createAlias(String alias) {
+    return $ShareEventsTable(attachedDatabase, alias);
+  }
+}
+
+class ShareEvent extends DataClass implements Insertable<ShareEvent> {
+  final String id;
+  final String userId;
+  final int updatedAt;
+  final int? deletedAt;
+  final int version;
+
+  /// When it was shared (epoch ms).
+  final int sharedAt;
+
+  /// JSON list of document ids, in share order.
+  final String documentIds;
+
+  /// Who it went to and why (typed by the user; optional for plain shares).
+  final String? recipient;
+  final String? purpose;
+  final bool watermarked;
+
+  /// The bundle's title, when several documents went as one PDF.
+  final String? bundleTitle;
+
+  /// file | link (link arrives with PBI-028b).
+  final String kind;
+  const ShareEvent({
+    required this.id,
+    required this.userId,
+    required this.updatedAt,
+    this.deletedAt,
+    required this.version,
+    required this.sharedAt,
+    required this.documentIds,
+    this.recipient,
+    this.purpose,
+    required this.watermarked,
+    this.bundleTitle,
+    required this.kind,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['user_id'] = Variable<String>(userId);
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    map['version'] = Variable<int>(version);
+    map['shared_at'] = Variable<int>(sharedAt);
+    map['document_ids'] = Variable<String>(documentIds);
+    if (!nullToAbsent || recipient != null) {
+      map['recipient'] = Variable<String>(recipient);
+    }
+    if (!nullToAbsent || purpose != null) {
+      map['purpose'] = Variable<String>(purpose);
+    }
+    map['watermarked'] = Variable<bool>(watermarked);
+    if (!nullToAbsent || bundleTitle != null) {
+      map['bundle_title'] = Variable<String>(bundleTitle);
+    }
+    map['kind'] = Variable<String>(kind);
+    return map;
+  }
+
+  ShareEventsCompanion toCompanion(bool nullToAbsent) {
+    return ShareEventsCompanion(
+      id: Value(id),
+      userId: Value(userId),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      version: Value(version),
+      sharedAt: Value(sharedAt),
+      documentIds: Value(documentIds),
+      recipient: recipient == null && nullToAbsent
+          ? const Value.absent()
+          : Value(recipient),
+      purpose: purpose == null && nullToAbsent
+          ? const Value.absent()
+          : Value(purpose),
+      watermarked: Value(watermarked),
+      bundleTitle: bundleTitle == null && nullToAbsent
+          ? const Value.absent()
+          : Value(bundleTitle),
+      kind: Value(kind),
+    );
+  }
+
+  factory ShareEvent.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ShareEvent(
+      id: serializer.fromJson<String>(json['id']),
+      userId: serializer.fromJson<String>(json['userId']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+      version: serializer.fromJson<int>(json['version']),
+      sharedAt: serializer.fromJson<int>(json['sharedAt']),
+      documentIds: serializer.fromJson<String>(json['documentIds']),
+      recipient: serializer.fromJson<String?>(json['recipient']),
+      purpose: serializer.fromJson<String?>(json['purpose']),
+      watermarked: serializer.fromJson<bool>(json['watermarked']),
+      bundleTitle: serializer.fromJson<String?>(json['bundleTitle']),
+      kind: serializer.fromJson<String>(json['kind']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'userId': serializer.toJson<String>(userId),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+      'version': serializer.toJson<int>(version),
+      'sharedAt': serializer.toJson<int>(sharedAt),
+      'documentIds': serializer.toJson<String>(documentIds),
+      'recipient': serializer.toJson<String?>(recipient),
+      'purpose': serializer.toJson<String?>(purpose),
+      'watermarked': serializer.toJson<bool>(watermarked),
+      'bundleTitle': serializer.toJson<String?>(bundleTitle),
+      'kind': serializer.toJson<String>(kind),
+    };
+  }
+
+  ShareEvent copyWith({
+    String? id,
+    String? userId,
+    int? updatedAt,
+    Value<int?> deletedAt = const Value.absent(),
+    int? version,
+    int? sharedAt,
+    String? documentIds,
+    Value<String?> recipient = const Value.absent(),
+    Value<String?> purpose = const Value.absent(),
+    bool? watermarked,
+    Value<String?> bundleTitle = const Value.absent(),
+    String? kind,
+  }) => ShareEvent(
+    id: id ?? this.id,
+    userId: userId ?? this.userId,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    version: version ?? this.version,
+    sharedAt: sharedAt ?? this.sharedAt,
+    documentIds: documentIds ?? this.documentIds,
+    recipient: recipient.present ? recipient.value : this.recipient,
+    purpose: purpose.present ? purpose.value : this.purpose,
+    watermarked: watermarked ?? this.watermarked,
+    bundleTitle: bundleTitle.present ? bundleTitle.value : this.bundleTitle,
+    kind: kind ?? this.kind,
+  );
+  ShareEvent copyWithCompanion(ShareEventsCompanion data) {
+    return ShareEvent(
+      id: data.id.present ? data.id.value : this.id,
+      userId: data.userId.present ? data.userId.value : this.userId,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      version: data.version.present ? data.version.value : this.version,
+      sharedAt: data.sharedAt.present ? data.sharedAt.value : this.sharedAt,
+      documentIds: data.documentIds.present
+          ? data.documentIds.value
+          : this.documentIds,
+      recipient: data.recipient.present ? data.recipient.value : this.recipient,
+      purpose: data.purpose.present ? data.purpose.value : this.purpose,
+      watermarked: data.watermarked.present
+          ? data.watermarked.value
+          : this.watermarked,
+      bundleTitle: data.bundleTitle.present
+          ? data.bundleTitle.value
+          : this.bundleTitle,
+      kind: data.kind.present ? data.kind.value : this.kind,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ShareEvent(')
+          ..write('id: $id, ')
+          ..write('userId: $userId, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('version: $version, ')
+          ..write('sharedAt: $sharedAt, ')
+          ..write('documentIds: $documentIds, ')
+          ..write('recipient: $recipient, ')
+          ..write('purpose: $purpose, ')
+          ..write('watermarked: $watermarked, ')
+          ..write('bundleTitle: $bundleTitle, ')
+          ..write('kind: $kind')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    userId,
+    updatedAt,
+    deletedAt,
+    version,
+    sharedAt,
+    documentIds,
+    recipient,
+    purpose,
+    watermarked,
+    bundleTitle,
+    kind,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ShareEvent &&
+          other.id == this.id &&
+          other.userId == this.userId &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt &&
+          other.version == this.version &&
+          other.sharedAt == this.sharedAt &&
+          other.documentIds == this.documentIds &&
+          other.recipient == this.recipient &&
+          other.purpose == this.purpose &&
+          other.watermarked == this.watermarked &&
+          other.bundleTitle == this.bundleTitle &&
+          other.kind == this.kind);
+}
+
+class ShareEventsCompanion extends UpdateCompanion<ShareEvent> {
+  final Value<String> id;
+  final Value<String> userId;
+  final Value<int> updatedAt;
+  final Value<int?> deletedAt;
+  final Value<int> version;
+  final Value<int> sharedAt;
+  final Value<String> documentIds;
+  final Value<String?> recipient;
+  final Value<String?> purpose;
+  final Value<bool> watermarked;
+  final Value<String?> bundleTitle;
+  final Value<String> kind;
+  final Value<int> rowid;
+  const ShareEventsCompanion({
+    this.id = const Value.absent(),
+    this.userId = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.version = const Value.absent(),
+    this.sharedAt = const Value.absent(),
+    this.documentIds = const Value.absent(),
+    this.recipient = const Value.absent(),
+    this.purpose = const Value.absent(),
+    this.watermarked = const Value.absent(),
+    this.bundleTitle = const Value.absent(),
+    this.kind = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ShareEventsCompanion.insert({
+    this.id = const Value.absent(),
+    this.userId = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.version = const Value.absent(),
+    required int sharedAt,
+    required String documentIds,
+    this.recipient = const Value.absent(),
+    this.purpose = const Value.absent(),
+    this.watermarked = const Value.absent(),
+    this.bundleTitle = const Value.absent(),
+    this.kind = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : sharedAt = Value(sharedAt),
+       documentIds = Value(documentIds);
+  static Insertable<ShareEvent> custom({
+    Expression<String>? id,
+    Expression<String>? userId,
+    Expression<int>? updatedAt,
+    Expression<int>? deletedAt,
+    Expression<int>? version,
+    Expression<int>? sharedAt,
+    Expression<String>? documentIds,
+    Expression<String>? recipient,
+    Expression<String>? purpose,
+    Expression<bool>? watermarked,
+    Expression<String>? bundleTitle,
+    Expression<String>? kind,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (userId != null) 'user_id': userId,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (version != null) 'version': version,
+      if (sharedAt != null) 'shared_at': sharedAt,
+      if (documentIds != null) 'document_ids': documentIds,
+      if (recipient != null) 'recipient': recipient,
+      if (purpose != null) 'purpose': purpose,
+      if (watermarked != null) 'watermarked': watermarked,
+      if (bundleTitle != null) 'bundle_title': bundleTitle,
+      if (kind != null) 'kind': kind,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ShareEventsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? userId,
+    Value<int>? updatedAt,
+    Value<int?>? deletedAt,
+    Value<int>? version,
+    Value<int>? sharedAt,
+    Value<String>? documentIds,
+    Value<String?>? recipient,
+    Value<String?>? purpose,
+    Value<bool>? watermarked,
+    Value<String?>? bundleTitle,
+    Value<String>? kind,
+    Value<int>? rowid,
+  }) {
+    return ShareEventsCompanion(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      version: version ?? this.version,
+      sharedAt: sharedAt ?? this.sharedAt,
+      documentIds: documentIds ?? this.documentIds,
+      recipient: recipient ?? this.recipient,
+      purpose: purpose ?? this.purpose,
+      watermarked: watermarked ?? this.watermarked,
+      bundleTitle: bundleTitle ?? this.bundleTitle,
+      kind: kind ?? this.kind,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<String>(userId.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (sharedAt.present) {
+      map['shared_at'] = Variable<int>(sharedAt.value);
+    }
+    if (documentIds.present) {
+      map['document_ids'] = Variable<String>(documentIds.value);
+    }
+    if (recipient.present) {
+      map['recipient'] = Variable<String>(recipient.value);
+    }
+    if (purpose.present) {
+      map['purpose'] = Variable<String>(purpose.value);
+    }
+    if (watermarked.present) {
+      map['watermarked'] = Variable<bool>(watermarked.value);
+    }
+    if (bundleTitle.present) {
+      map['bundle_title'] = Variable<String>(bundleTitle.value);
+    }
+    if (kind.present) {
+      map['kind'] = Variable<String>(kind.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ShareEventsCompanion(')
+          ..write('id: $id, ')
+          ..write('userId: $userId, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('version: $version, ')
+          ..write('sharedAt: $sharedAt, ')
+          ..write('documentIds: $documentIds, ')
+          ..write('recipient: $recipient, ')
+          ..write('purpose: $purpose, ')
+          ..write('watermarked: $watermarked, ')
+          ..write('bundleTitle: $bundleTitle, ')
+          ..write('kind: $kind, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $BundleTemplatesTable extends BundleTemplates
+    with TableInfo<$BundleTemplatesTable, BundleTemplate> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $BundleTemplatesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: fallbackIds.next,
+  );
+  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
+  @override
+  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
+    'user_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: () => '',
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<int> updatedAt = GeneratedColumn<int>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    clientDefault: systemClock,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<int> deletedAt = GeneratedColumn<int>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _versionMeta = const VerificationMeta(
+    'version',
+  );
+  @override
+  late final GeneratedColumn<int> version = GeneratedColumn<int>(
+    'version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _documentIdsMeta = const VerificationMeta(
+    'documentIds',
+  );
+  @override
+  late final GeneratedColumn<String> documentIds = GeneratedColumn<String>(
+    'document_ids',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('[]'),
+  );
+  static const VerificationMeta _sortOrderMeta = const VerificationMeta(
+    'sortOrder',
+  );
+  @override
+  late final GeneratedColumn<int> sortOrder = GeneratedColumn<int>(
+    'sort_order',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    userId,
+    updatedAt,
+    deletedAt,
+    version,
+    name,
+    documentIds,
+    sortOrder,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'bundle_templates';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<BundleTemplate> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('user_id')) {
+      context.handle(
+        _userIdMeta,
+        userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    if (data.containsKey('version')) {
+      context.handle(
+        _versionMeta,
+        version.isAcceptableOrUnknown(data['version']!, _versionMeta),
+      );
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('document_ids')) {
+      context.handle(
+        _documentIdsMeta,
+        documentIds.isAcceptableOrUnknown(
+          data['document_ids']!,
+          _documentIdsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('sort_order')) {
+      context.handle(
+        _sortOrderMeta,
+        sortOrder.isAcceptableOrUnknown(data['sort_order']!, _sortOrderMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  BundleTemplate map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return BundleTemplate(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      userId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}user_id'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      documentIds: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}document_ids'],
+      )!,
+      sortOrder: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}sort_order'],
+      )!,
+    );
+  }
+
+  @override
+  $BundleTemplatesTable createAlias(String alias) {
+    return $BundleTemplatesTable(attachedDatabase, alias);
+  }
+}
+
+class BundleTemplate extends DataClass implements Insertable<BundleTemplate> {
+  final String id;
+  final String userId;
+  final int updatedAt;
+  final int? deletedAt;
+  final int version;
+  final String name;
+
+  /// JSON list of document ids, in order.
+  final String documentIds;
+  final int sortOrder;
+  const BundleTemplate({
+    required this.id,
+    required this.userId,
+    required this.updatedAt,
+    this.deletedAt,
+    required this.version,
+    required this.name,
+    required this.documentIds,
+    required this.sortOrder,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['user_id'] = Variable<String>(userId);
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    map['version'] = Variable<int>(version);
+    map['name'] = Variable<String>(name);
+    map['document_ids'] = Variable<String>(documentIds);
+    map['sort_order'] = Variable<int>(sortOrder);
+    return map;
+  }
+
+  BundleTemplatesCompanion toCompanion(bool nullToAbsent) {
+    return BundleTemplatesCompanion(
+      id: Value(id),
+      userId: Value(userId),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      version: Value(version),
+      name: Value(name),
+      documentIds: Value(documentIds),
+      sortOrder: Value(sortOrder),
+    );
+  }
+
+  factory BundleTemplate.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return BundleTemplate(
+      id: serializer.fromJson<String>(json['id']),
+      userId: serializer.fromJson<String>(json['userId']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+      version: serializer.fromJson<int>(json['version']),
+      name: serializer.fromJson<String>(json['name']),
+      documentIds: serializer.fromJson<String>(json['documentIds']),
+      sortOrder: serializer.fromJson<int>(json['sortOrder']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'userId': serializer.toJson<String>(userId),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+      'version': serializer.toJson<int>(version),
+      'name': serializer.toJson<String>(name),
+      'documentIds': serializer.toJson<String>(documentIds),
+      'sortOrder': serializer.toJson<int>(sortOrder),
+    };
+  }
+
+  BundleTemplate copyWith({
+    String? id,
+    String? userId,
+    int? updatedAt,
+    Value<int?> deletedAt = const Value.absent(),
+    int? version,
+    String? name,
+    String? documentIds,
+    int? sortOrder,
+  }) => BundleTemplate(
+    id: id ?? this.id,
+    userId: userId ?? this.userId,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    version: version ?? this.version,
+    name: name ?? this.name,
+    documentIds: documentIds ?? this.documentIds,
+    sortOrder: sortOrder ?? this.sortOrder,
+  );
+  BundleTemplate copyWithCompanion(BundleTemplatesCompanion data) {
+    return BundleTemplate(
+      id: data.id.present ? data.id.value : this.id,
+      userId: data.userId.present ? data.userId.value : this.userId,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      version: data.version.present ? data.version.value : this.version,
+      name: data.name.present ? data.name.value : this.name,
+      documentIds: data.documentIds.present
+          ? data.documentIds.value
+          : this.documentIds,
+      sortOrder: data.sortOrder.present ? data.sortOrder.value : this.sortOrder,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BundleTemplate(')
+          ..write('id: $id, ')
+          ..write('userId: $userId, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('version: $version, ')
+          ..write('name: $name, ')
+          ..write('documentIds: $documentIds, ')
+          ..write('sortOrder: $sortOrder')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    userId,
+    updatedAt,
+    deletedAt,
+    version,
+    name,
+    documentIds,
+    sortOrder,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is BundleTemplate &&
+          other.id == this.id &&
+          other.userId == this.userId &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt &&
+          other.version == this.version &&
+          other.name == this.name &&
+          other.documentIds == this.documentIds &&
+          other.sortOrder == this.sortOrder);
+}
+
+class BundleTemplatesCompanion extends UpdateCompanion<BundleTemplate> {
+  final Value<String> id;
+  final Value<String> userId;
+  final Value<int> updatedAt;
+  final Value<int?> deletedAt;
+  final Value<int> version;
+  final Value<String> name;
+  final Value<String> documentIds;
+  final Value<int> sortOrder;
+  final Value<int> rowid;
+  const BundleTemplatesCompanion({
+    this.id = const Value.absent(),
+    this.userId = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.version = const Value.absent(),
+    this.name = const Value.absent(),
+    this.documentIds = const Value.absent(),
+    this.sortOrder = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  BundleTemplatesCompanion.insert({
+    this.id = const Value.absent(),
+    this.userId = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.version = const Value.absent(),
+    required String name,
+    this.documentIds = const Value.absent(),
+    this.sortOrder = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : name = Value(name);
+  static Insertable<BundleTemplate> custom({
+    Expression<String>? id,
+    Expression<String>? userId,
+    Expression<int>? updatedAt,
+    Expression<int>? deletedAt,
+    Expression<int>? version,
+    Expression<String>? name,
+    Expression<String>? documentIds,
+    Expression<int>? sortOrder,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (userId != null) 'user_id': userId,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (version != null) 'version': version,
+      if (name != null) 'name': name,
+      if (documentIds != null) 'document_ids': documentIds,
+      if (sortOrder != null) 'sort_order': sortOrder,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  BundleTemplatesCompanion copyWith({
+    Value<String>? id,
+    Value<String>? userId,
+    Value<int>? updatedAt,
+    Value<int?>? deletedAt,
+    Value<int>? version,
+    Value<String>? name,
+    Value<String>? documentIds,
+    Value<int>? sortOrder,
+    Value<int>? rowid,
+  }) {
+    return BundleTemplatesCompanion(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      version: version ?? this.version,
+      name: name ?? this.name,
+      documentIds: documentIds ?? this.documentIds,
+      sortOrder: sortOrder ?? this.sortOrder,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<String>(userId.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (documentIds.present) {
+      map['document_ids'] = Variable<String>(documentIds.value);
+    }
+    if (sortOrder.present) {
+      map['sort_order'] = Variable<int>(sortOrder.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BundleTemplatesCompanion(')
+          ..write('id: $id, ')
+          ..write('userId: $userId, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('version: $version, ')
+          ..write('name: $name, ')
+          ..write('documentIds: $documentIds, ')
+          ..write('sortOrder: $sortOrder, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $PendingOpsTable extends PendingOps
     with TableInfo<$PendingOpsTable, PendingOp> {
   @override
@@ -13791,6 +15015,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $PaymentsTable payments = $PaymentsTable(this);
   late final $ExpensesTable expenses = $ExpensesTable(this);
   late final $ScoreSnapshotsTable scoreSnapshots = $ScoreSnapshotsTable(this);
+  late final $ShareEventsTable shareEvents = $ShareEventsTable(this);
+  late final $BundleTemplatesTable bundleTemplates = $BundleTemplatesTable(
+    this,
+  );
   late final $PendingOpsTable pendingOps = $PendingOpsTable(this);
   late final $ConflictLogTable conflictLog = $ConflictLogTable(this);
   late final $BlobCacheTable blobCache = $BlobCacheTable(this);
@@ -13818,6 +15046,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     payments,
     expenses,
     scoreSnapshots,
+    shareEvents,
+    bundleTemplates,
     pendingOps,
     conflictLog,
     blobCache,
@@ -23208,6 +24438,628 @@ typedef $$ScoreSnapshotsTableProcessedTableManager =
       ScoreSnapshot,
       PrefetchHooks Function()
     >;
+typedef $$ShareEventsTableCreateCompanionBuilder =
+    ShareEventsCompanion Function({
+      Value<String> id,
+      Value<String> userId,
+      Value<int> updatedAt,
+      Value<int?> deletedAt,
+      Value<int> version,
+      required int sharedAt,
+      required String documentIds,
+      Value<String?> recipient,
+      Value<String?> purpose,
+      Value<bool> watermarked,
+      Value<String?> bundleTitle,
+      Value<String> kind,
+      Value<int> rowid,
+    });
+typedef $$ShareEventsTableUpdateCompanionBuilder =
+    ShareEventsCompanion Function({
+      Value<String> id,
+      Value<String> userId,
+      Value<int> updatedAt,
+      Value<int?> deletedAt,
+      Value<int> version,
+      Value<int> sharedAt,
+      Value<String> documentIds,
+      Value<String?> recipient,
+      Value<String?> purpose,
+      Value<bool> watermarked,
+      Value<String?> bundleTitle,
+      Value<String> kind,
+      Value<int> rowid,
+    });
+
+class $$ShareEventsTableFilterComposer
+    extends Composer<_$AppDatabase, $ShareEventsTable> {
+  $$ShareEventsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get sharedAt => $composableBuilder(
+    column: $table.sharedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get documentIds => $composableBuilder(
+    column: $table.documentIds,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get recipient => $composableBuilder(
+    column: $table.recipient,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get purpose => $composableBuilder(
+    column: $table.purpose,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get watermarked => $composableBuilder(
+    column: $table.watermarked,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get bundleTitle => $composableBuilder(
+    column: $table.bundleTitle,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ShareEventsTableOrderingComposer
+    extends Composer<_$AppDatabase, $ShareEventsTable> {
+  $$ShareEventsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get sharedAt => $composableBuilder(
+    column: $table.sharedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get documentIds => $composableBuilder(
+    column: $table.documentIds,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get recipient => $composableBuilder(
+    column: $table.recipient,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get purpose => $composableBuilder(
+    column: $table.purpose,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get watermarked => $composableBuilder(
+    column: $table.watermarked,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get bundleTitle => $composableBuilder(
+    column: $table.bundleTitle,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ShareEventsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ShareEventsTable> {
+  $$ShareEventsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get userId =>
+      $composableBuilder(column: $table.userId, builder: (column) => column);
+
+  GeneratedColumn<int> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<int> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<int> get version =>
+      $composableBuilder(column: $table.version, builder: (column) => column);
+
+  GeneratedColumn<int> get sharedAt =>
+      $composableBuilder(column: $table.sharedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get documentIds => $composableBuilder(
+    column: $table.documentIds,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get recipient =>
+      $composableBuilder(column: $table.recipient, builder: (column) => column);
+
+  GeneratedColumn<String> get purpose =>
+      $composableBuilder(column: $table.purpose, builder: (column) => column);
+
+  GeneratedColumn<bool> get watermarked => $composableBuilder(
+    column: $table.watermarked,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get bundleTitle => $composableBuilder(
+    column: $table.bundleTitle,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get kind =>
+      $composableBuilder(column: $table.kind, builder: (column) => column);
+}
+
+class $$ShareEventsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ShareEventsTable,
+          ShareEvent,
+          $$ShareEventsTableFilterComposer,
+          $$ShareEventsTableOrderingComposer,
+          $$ShareEventsTableAnnotationComposer,
+          $$ShareEventsTableCreateCompanionBuilder,
+          $$ShareEventsTableUpdateCompanionBuilder,
+          (
+            ShareEvent,
+            BaseReferences<_$AppDatabase, $ShareEventsTable, ShareEvent>,
+          ),
+          ShareEvent,
+          PrefetchHooks Function()
+        > {
+  $$ShareEventsTableTableManager(_$AppDatabase db, $ShareEventsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ShareEventsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ShareEventsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ShareEventsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> userId = const Value.absent(),
+                Value<int> updatedAt = const Value.absent(),
+                Value<int?> deletedAt = const Value.absent(),
+                Value<int> version = const Value.absent(),
+                Value<int> sharedAt = const Value.absent(),
+                Value<String> documentIds = const Value.absent(),
+                Value<String?> recipient = const Value.absent(),
+                Value<String?> purpose = const Value.absent(),
+                Value<bool> watermarked = const Value.absent(),
+                Value<String?> bundleTitle = const Value.absent(),
+                Value<String> kind = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ShareEventsCompanion(
+                id: id,
+                userId: userId,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                version: version,
+                sharedAt: sharedAt,
+                documentIds: documentIds,
+                recipient: recipient,
+                purpose: purpose,
+                watermarked: watermarked,
+                bundleTitle: bundleTitle,
+                kind: kind,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> userId = const Value.absent(),
+                Value<int> updatedAt = const Value.absent(),
+                Value<int?> deletedAt = const Value.absent(),
+                Value<int> version = const Value.absent(),
+                required int sharedAt,
+                required String documentIds,
+                Value<String?> recipient = const Value.absent(),
+                Value<String?> purpose = const Value.absent(),
+                Value<bool> watermarked = const Value.absent(),
+                Value<String?> bundleTitle = const Value.absent(),
+                Value<String> kind = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ShareEventsCompanion.insert(
+                id: id,
+                userId: userId,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                version: version,
+                sharedAt: sharedAt,
+                documentIds: documentIds,
+                recipient: recipient,
+                purpose: purpose,
+                watermarked: watermarked,
+                bundleTitle: bundleTitle,
+                kind: kind,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$ShareEventsTable, ShareEvent>(table),
+                  BaseReferences<_$AppDatabase, $ShareEventsTable, ShareEvent>(
+                    db,
+                    table,
+                    e,
+                  ),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ShareEventsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ShareEventsTable,
+      ShareEvent,
+      $$ShareEventsTableFilterComposer,
+      $$ShareEventsTableOrderingComposer,
+      $$ShareEventsTableAnnotationComposer,
+      $$ShareEventsTableCreateCompanionBuilder,
+      $$ShareEventsTableUpdateCompanionBuilder,
+      (
+        ShareEvent,
+        BaseReferences<_$AppDatabase, $ShareEventsTable, ShareEvent>,
+      ),
+      ShareEvent,
+      PrefetchHooks Function()
+    >;
+typedef $$BundleTemplatesTableCreateCompanionBuilder =
+    BundleTemplatesCompanion Function({
+      Value<String> id,
+      Value<String> userId,
+      Value<int> updatedAt,
+      Value<int?> deletedAt,
+      Value<int> version,
+      required String name,
+      Value<String> documentIds,
+      Value<int> sortOrder,
+      Value<int> rowid,
+    });
+typedef $$BundleTemplatesTableUpdateCompanionBuilder =
+    BundleTemplatesCompanion Function({
+      Value<String> id,
+      Value<String> userId,
+      Value<int> updatedAt,
+      Value<int?> deletedAt,
+      Value<int> version,
+      Value<String> name,
+      Value<String> documentIds,
+      Value<int> sortOrder,
+      Value<int> rowid,
+    });
+
+class $$BundleTemplatesTableFilterComposer
+    extends Composer<_$AppDatabase, $BundleTemplatesTable> {
+  $$BundleTemplatesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get documentIds => $composableBuilder(
+    column: $table.documentIds,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get sortOrder => $composableBuilder(
+    column: $table.sortOrder,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$BundleTemplatesTableOrderingComposer
+    extends Composer<_$AppDatabase, $BundleTemplatesTable> {
+  $$BundleTemplatesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get documentIds => $composableBuilder(
+    column: $table.documentIds,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get sortOrder => $composableBuilder(
+    column: $table.sortOrder,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$BundleTemplatesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $BundleTemplatesTable> {
+  $$BundleTemplatesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get userId =>
+      $composableBuilder(column: $table.userId, builder: (column) => column);
+
+  GeneratedColumn<int> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<int> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<int> get version =>
+      $composableBuilder(column: $table.version, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get documentIds => $composableBuilder(
+    column: $table.documentIds,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get sortOrder =>
+      $composableBuilder(column: $table.sortOrder, builder: (column) => column);
+}
+
+class $$BundleTemplatesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $BundleTemplatesTable,
+          BundleTemplate,
+          $$BundleTemplatesTableFilterComposer,
+          $$BundleTemplatesTableOrderingComposer,
+          $$BundleTemplatesTableAnnotationComposer,
+          $$BundleTemplatesTableCreateCompanionBuilder,
+          $$BundleTemplatesTableUpdateCompanionBuilder,
+          (
+            BundleTemplate,
+            BaseReferences<
+              _$AppDatabase,
+              $BundleTemplatesTable,
+              BundleTemplate
+            >,
+          ),
+          BundleTemplate,
+          PrefetchHooks Function()
+        > {
+  $$BundleTemplatesTableTableManager(
+    _$AppDatabase db,
+    $BundleTemplatesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$BundleTemplatesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$BundleTemplatesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$BundleTemplatesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> userId = const Value.absent(),
+                Value<int> updatedAt = const Value.absent(),
+                Value<int?> deletedAt = const Value.absent(),
+                Value<int> version = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<String> documentIds = const Value.absent(),
+                Value<int> sortOrder = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => BundleTemplatesCompanion(
+                id: id,
+                userId: userId,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                version: version,
+                name: name,
+                documentIds: documentIds,
+                sortOrder: sortOrder,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> userId = const Value.absent(),
+                Value<int> updatedAt = const Value.absent(),
+                Value<int?> deletedAt = const Value.absent(),
+                Value<int> version = const Value.absent(),
+                required String name,
+                Value<String> documentIds = const Value.absent(),
+                Value<int> sortOrder = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => BundleTemplatesCompanion.insert(
+                id: id,
+                userId: userId,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                version: version,
+                name: name,
+                documentIds: documentIds,
+                sortOrder: sortOrder,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$BundleTemplatesTable, BundleTemplate>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $BundleTemplatesTable,
+                    BundleTemplate
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$BundleTemplatesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $BundleTemplatesTable,
+      BundleTemplate,
+      $$BundleTemplatesTableFilterComposer,
+      $$BundleTemplatesTableOrderingComposer,
+      $$BundleTemplatesTableAnnotationComposer,
+      $$BundleTemplatesTableCreateCompanionBuilder,
+      $$BundleTemplatesTableUpdateCompanionBuilder,
+      (
+        BundleTemplate,
+        BaseReferences<_$AppDatabase, $BundleTemplatesTable, BundleTemplate>,
+      ),
+      BundleTemplate,
+      PrefetchHooks Function()
+    >;
 typedef $$PendingOpsTableCreateCompanionBuilder = PendingOpsCompanion Function({
   required String id,
   required String targetTable,
@@ -24008,6 +25860,10 @@ class $AppDatabaseManager {
       $$ExpensesTableTableManager(_db, _db.expenses);
   $$ScoreSnapshotsTableTableManager get scoreSnapshots =>
       $$ScoreSnapshotsTableTableManager(_db, _db.scoreSnapshots);
+  $$ShareEventsTableTableManager get shareEvents =>
+      $$ShareEventsTableTableManager(_db, _db.shareEvents);
+  $$BundleTemplatesTableTableManager get bundleTemplates =>
+      $$BundleTemplatesTableTableManager(_db, _db.bundleTemplates);
   $$PendingOpsTableTableManager get pendingOps =>
       $$PendingOpsTableTableManager(_db, _db.pendingOps);
   $$ConflictLogTableTableManager get conflictLog =>

@@ -21,8 +21,10 @@ import '../../features/settings/diagnostics_screen.dart';
 import '../../features/settings/settings_screen.dart';
 import '../../features/tasks/tasks_screen.dart';
 import '../../features/tasks/ui/task_detail_screen.dart';
+import '../../features/vault/bundle_screen.dart';
 import '../../features/vault/document_viewer_screen.dart';
 import '../../features/vault/expiring_screen.dart';
+import '../../features/vault/share_history_screen.dart';
 import '../../features/vault/trash_screen.dart';
 import '../../features/vault/vault_list_screen.dart';
 import '../../features/vault/vault_screen.dart';
@@ -65,6 +67,23 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => VaultGate(
           child: DocumentViewerScreen(documentId: state.pathParameters['id']!),
         ),
+      ),
+      // Share as one PDF, above the tabs (PBI-028a).
+      GoRoute(
+        path: bundleRoute,
+        builder: (context, state) {
+          final q = state.uri.queryParameters;
+          return VaultGate(
+            child: BundleScreen(
+              ids: [
+                for (final id in (q['ids'] ?? '').split(','))
+                  if (id.isNotEmpty) id,
+              ],
+              pack: q['pack'],
+              preset: q['preset'],
+            ),
+          );
+        },
       ),
       // Full-screen capture confirm step, above the tabs (PBI-003).
       GoRoute(
@@ -130,6 +149,11 @@ final routerProvider = Provider<GoRouter>((ref) {
                     VaultGate(child: const TrashScreen()),
               ),
               GoRoute(
+                path: 'packs',
+                builder: (context, state) =>
+                    const VaultGate(child: SharePacksScreen()),
+              ),
+              GoRoute(
                 path: 'unfiled',
                 builder: (context, state) => const VaultGate(
                   child: VaultListScreen(scope: UnfiledScope()),
@@ -154,6 +178,10 @@ final routerProvider = Provider<GoRouter>((ref) {
                 path: 'settings',
                 builder: (context, state) => const SettingsScreen(),
                 routes: [
+                  GoRoute(
+                    path: 'shares',
+                    builder: (context, state) => const ShareHistoryScreen(),
+                  ),
                   GoRoute(
                     path: 'diagnostics',
                     builder: (context, state) => const DiagnosticsScreen(),

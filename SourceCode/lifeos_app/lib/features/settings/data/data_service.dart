@@ -48,12 +48,16 @@ class DataService {
     _db.payments,
     _db.expenses,
     _db.scoreSnapshots,
+    _db.shareEvents,
+    _db.bundleTemplates,
   ];
 
   /// [_tables] with every row deleted before the rows it references, so
   /// the enforced foreign keys never block "Delete everything" (an ATC rule
   /// points at a category, a payment at a task, a task at a document…).
   List<TableInfo<Table, Object?>> get _deleteOrder => [
+    _db.shareEvents,
+    _db.bundleTemplates,
     _db.expenses,
     _db.payments,
     _db.taskReminders,

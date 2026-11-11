@@ -9,6 +9,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../security/security_providers.dart';
 
+import '../../../core/plaintext_cache.dart';
 import '../../../core/l10n.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../data/db/app_database.dart';
@@ -80,8 +81,9 @@ final shareFilesProvider = Provider<Future<void> Function(List<DocumentFile>)>(
         ),
       );
     } finally {
-      // No plaintext left behind (PBI-024).
+      // No plaintext left behind (PBI-024), share_plus's copy included.
       if (await dir.exists()) await dir.delete(recursive: true);
+      await clearShareSheetCopies(tmp);
     }
   },
 );
@@ -210,7 +212,10 @@ class _PdfxPagesState extends ConsumerState<_PdfxPages> {
     document: ref
         .read(vaultFilesProvider)
         .read(widget.file)
-        .then(PdfDocument.openData),
+        .then(
+          (bytes) async =>
+              openPdfPrivately(await getTemporaryDirectory(), bytes),
+        ),
   );
 
   @override

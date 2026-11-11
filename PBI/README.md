@@ -44,8 +44,13 @@
 
 | # | PBI | Epic | SP | Depends on | Status |
 |---|---|---|---|---|---|
+| 26a | [PBI-026a Optional Account & Recovery Phrase](PBI-026a-account-recovery.md) | E5 Platform / Cloud | 8 | 024, 029, 025 | Ready |
+| 26b | [PBI-026b End-to-End Encrypted Backup & Restore](PBI-026b-encrypted-backup-restore.md) | E5 Platform / Cloud | 13 | 026a, 024, 029 | Ready (blocked by 026a) |
+| 26c | [PBI-026c Multi-Device Sync](PBI-026c-multi-device-sync.md) | E5 Platform / Cloud | 13 | 026a, 026b | Ready (blocked by 026b) |
 | 27a | [PBI-027a Premium AI: Bring-Your-Own-Key (no backend)](PBI-027a-premium-ai-byok.md) | E3 ATC / E1 Vault | 5 | 004, 024, 029 | Done |
 | 27b | [PBI-027b Premium AI: Managed Mode + Lightweight Proxy](PBI-027b-premium-ai-managed.md) | E3 ATC / E1 Vault | 5 | 027a, 029 | Done (client); proxy undeployed |
+| 28a | [PBI-028a Share Watermark & Document Bundles](PBI-028a-share-watermark-bundles.md) | E1 Vault | 5 | 007, 024, 025 | Done (device QA 2026-11-11) |
+| 28b | [PBI-028b Share-Safe Expiring Links (Premium)](PBI-028b-expiring-share-links.md) | E1 Vault / Cloud | 8 | 026a, 026b, 028a, 029 | Ready (blocked by 026b) |
 | 29 | [PBI-029 Premium Subscription & Free-Tier Limits](PBI-029-premium-free-tier.md) | E5 Platform | 8 | 002, 013, 003 | Done (store setup pending) |
 | 30 | [PBI-030 Diagnostics Log & Share](PBI-030-diagnostics-log.md) | E5 Platform | 3 | 025, 007 | Done |
 | 31 | [PBI-031 Flagship: Compact, Professional Layout](PBI-031-flagship-compact-layout.md) | E5 Platform / Design | 5 | 001, 025 | Done |
@@ -80,7 +85,5 @@
 **All 6 MVP sprints are closed (25/25 PBIs, 158 SP).** Device QA ran on 2026-11-09 on an Android 17 emulator: launch, camera scan, on-device OCR, PDF view, OS share sheet, an offline reminder and a reminder after reboot. Two bugs found and fixed: neutral share file names (PBI-007) and multi-group reference numbers (PBI-004). Remaining for a physical phone: OCR accuracy on photos of real paper documents.
 
 ## Not yet groomed (post-MVP, will become PBIs before development)
-- PBI-026 Supabase backend + offline sync (push/pull, conflict rules) + E2E encrypted cloud backup (premium)
-- PBI-028 Share-safe expiring links, watermark, bundles
 - V2 (P1): Health, People, Work/Study, Soul, Goals, full Money, Emergency Card, appointments OCR
 - V3 (P2): Family sharing, AI weekly plan, HealthKit/steps, multi-currency, Arabic

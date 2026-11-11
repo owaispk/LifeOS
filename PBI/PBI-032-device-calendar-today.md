@@ -71,3 +71,6 @@ Schema v10 adds `user_settings.calendar_on` (false) and `calendar_calendars_off`
 - An existing settings test needed `ensureVisible` before tapping **Delete everything**: the new Calendar section made the list long enough that `scrollUntilVisible` left the row just below the fold.
 
 **Not verified:** no device pass. The real permission dialog, actual `CalendarContract` data, recurring-event expansion and the all-day timezone behaviour all need a phone — recurrence and all-day handling are exactly where a real calendar is likely to disagree with a fake. iOS additionally needs a run on a Mac; `NSCalendarsUsageDescription` and `NSCalendarsFullAccessUsageDescription` are in place but untested.
+
+## Follow-up (2026-11-11)
+- `device_calendar` 3.9.0 doesn't build for Android with current Flutter: it still uses the removed v1 plugin API (`Registrar`), and its Gradle file calls `jcenter()`. Upgraded to **4.3.3** during PBI-028a device QA, with a `timezone ^0.11.2` dependency override, because 4.3.3 pins `^0.9` and the notifications need 0.11. The calendar code needed no change: event times are now `TZDateTime`, a `DateTime` subclass. Calendar tests pass. Reading a real device calendar on the phone has not been re-checked since the upgrade.

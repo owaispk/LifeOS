@@ -3236,6 +3236,312 @@ abstract class AppLocalizations {
   /// **'Settings'**
   String get settingsTitle;
 
+  /// No description provided for @shAddDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'Add documents'**
+  String get shAddDocuments;
+
+  /// No description provided for @shBundleDefaultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared PDF · {date}'**
+  String shBundleDefaultTitle(String date);
+
+  /// No description provided for @shClearSelection.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear selection'**
+  String get shClearSelection;
+
+  /// No description provided for @shDeletePack.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete share pack'**
+  String get shDeletePack;
+
+  /// No description provided for @shDeletedDoc.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleted document'**
+  String get shDeletedDoc;
+
+  /// No description provided for @shDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents'**
+  String get shDocuments;
+
+  /// No description provided for @shDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get shDone;
+
+  /// No description provided for @shFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t prepare the share. Please try again.'**
+  String get shFailed;
+
+  /// No description provided for @shHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Share history'**
+  String get shHistory;
+
+  /// No description provided for @shHistoryEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents you share from the Vault appear here.'**
+  String get shHistoryEmptyMessage;
+
+  /// No description provided for @shHistoryEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing shared yet'**
+  String get shHistoryEmptyTitle;
+
+  /// No description provided for @shHistorySub.
+  ///
+  /// In en, this message translates to:
+  /// **'What you\'ve shared, kept only on this phone'**
+  String get shHistorySub;
+
+  /// No description provided for @shJobPack.
+  ///
+  /// In en, this message translates to:
+  /// **'Job Application Pack'**
+  String get shJobPack;
+
+  /// No description provided for @shJobPackSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Degree, CNIC, CV and photo'**
+  String get shJobPackSub;
+
+  /// No description provided for @shMissingDocs.
+  ///
+  /// In en, this message translates to:
+  /// **'{n, plural, =1{1 document in this pack is no longer in the Vault} other{{n} documents in this pack are no longer in the Vault}}'**
+  String shMissingDocs(int n);
+
+  /// No description provided for @shNewPack.
+  ///
+  /// In en, this message translates to:
+  /// **'New share pack'**
+  String get shNewPack;
+
+  /// No description provided for @shNoDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'Add at least one document'**
+  String get shNoDocuments;
+
+  /// No description provided for @shPackCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{n, plural, =1{1 document} other{{n} documents}}'**
+  String shPackCount(int n);
+
+  /// No description provided for @shPackSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Share pack saved'**
+  String get shPackSaved;
+
+  /// No description provided for @shPackTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get shPackTitle;
+
+  /// No description provided for @shPackTitleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Job Application Pack'**
+  String get shPackTitleHint;
+
+  /// No description provided for @shPacks.
+  ///
+  /// In en, this message translates to:
+  /// **'Share packs'**
+  String get shPacks;
+
+  /// No description provided for @shPacksSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents you often send together'**
+  String get shPacksSub;
+
+  /// No description provided for @shPickDocuments.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose documents'**
+  String get shPickDocuments;
+
+  /// No description provided for @shPreparing.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing… {done} of {total} pages'**
+  String shPreparing(String done, String total);
+
+  /// No description provided for @shPurpose.
+  ///
+  /// In en, this message translates to:
+  /// **'Purpose (optional)'**
+  String get shPurpose;
+
+  /// No description provided for @shPurposeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. account opening'**
+  String get shPurposeHint;
+
+  /// No description provided for @shRecipientRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter who it\'s for'**
+  String get shRecipientRequired;
+
+  /// No description provided for @shRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get shRemove;
+
+  /// No description provided for @shReorderHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Drag to change the order'**
+  String get shReorderHint;
+
+  /// No description provided for @shSaveFolder.
+  ///
+  /// In en, this message translates to:
+  /// **'Folder'**
+  String get shSaveFolder;
+
+  /// No description provided for @shSavePack.
+  ///
+  /// In en, this message translates to:
+  /// **'Save as share pack'**
+  String get shSavePack;
+
+  /// No description provided for @shSaveToVault.
+  ///
+  /// In en, this message translates to:
+  /// **'Also save to the Vault'**
+  String get shSaveToVault;
+
+  /// No description provided for @shSavedToVault.
+  ///
+  /// In en, this message translates to:
+  /// **'Also saved to the Vault'**
+  String get shSavedToVault;
+
+  /// No description provided for @shSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'{n} selected'**
+  String shSelected(String n);
+
+  /// No description provided for @shShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get shShare;
+
+  /// No description provided for @shShareAsPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Share as one PDF'**
+  String get shShareAsPdf;
+
+  /// No description provided for @shShareFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Share file'**
+  String get shShareFile;
+
+  /// No description provided for @shShareFileSub.
+  ///
+  /// In en, this message translates to:
+  /// **'The document as it is'**
+  String get shShareFileSub;
+
+  /// No description provided for @shShareWatermark.
+  ///
+  /// In en, this message translates to:
+  /// **'Share with watermark…'**
+  String get shShareWatermark;
+
+  /// No description provided for @shShareWatermarkSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Stamp who it\'s for, so the copy can\'t be reused'**
+  String get shShareWatermarkSub;
+
+  /// No description provided for @shSharedTimes.
+  ///
+  /// In en, this message translates to:
+  /// **'{n, plural, =1{Shared once} other{Shared {n} times}}'**
+  String shSharedTimes(int n);
+
+  /// No description provided for @shSharedWith.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared with'**
+  String get shSharedWith;
+
+  /// No description provided for @shSharedWithHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. ABC Bank'**
+  String get shSharedWithHint;
+
+  /// No description provided for @shTo.
+  ///
+  /// In en, this message translates to:
+  /// **'To {recipient}'**
+  String shTo(String recipient);
+
+  /// No description provided for @shWatermarkTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add watermark'**
+  String get shWatermarkTitle;
+
+  /// No description provided for @shWatermarked.
+  ///
+  /// In en, this message translates to:
+  /// **'Watermarked'**
+  String get shWatermarked;
+
+  /// No description provided for @shWmFull.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared by {name} with {recipient} for {purpose} — {date}'**
+  String shWmFull(String name, String recipient, String purpose, String date);
+
+  /// No description provided for @shWmNoName.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared with {recipient} for {purpose} — {date}'**
+  String shWmNoName(String recipient, String purpose, String date);
+
+  /// No description provided for @shWmNoNameNoPurpose.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared with {recipient} — {date}'**
+  String shWmNoNameNoPurpose(String recipient, String date);
+
+  /// No description provided for @shWmNoPurpose.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared by {name} with {recipient} — {date}'**
+  String shWmNoPurpose(String name, String recipient, String date);
+
   /// No description provided for @skip.
   ///
   /// In en, this message translates to:

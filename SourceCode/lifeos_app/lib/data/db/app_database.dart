@@ -24,6 +24,8 @@ part 'app_database.g.dart';
     Payments,
     Expenses,
     ScoreSnapshots,
+    ShareEvents,
+    BundleTemplates,
     PendingOps,
     ConflictLog,
     BlobCache,
@@ -45,7 +47,7 @@ class AppDatabase extends _$AppDatabase {
   );
 
   @override
-  int get schemaVersion => 12;
+  int get schemaVersion => 13;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -126,6 +128,11 @@ class AppDatabase extends _$AppDatabase {
         await m.addColumn(userSettings, userSettings.aiBaseUrl);
         await m.addColumn(userSettings, userSettings.aiModel);
         await m.addColumn(userSettings, userSettings.aiConsent);
+      }
+      // v13 (PBI-028a): share history and saved share packs.
+      if (from < 13) {
+        await m.createTable(shareEvents);
+        await m.createTable(bundleTemplates);
       }
     },
     beforeOpen: (details) async {

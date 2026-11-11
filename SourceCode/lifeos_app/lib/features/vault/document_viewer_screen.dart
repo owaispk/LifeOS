@@ -18,7 +18,9 @@ import '../capture/capture_entry.dart';
 import 'domain/expiry_ladder.dart';
 import 'domain/vault_rules.dart';
 import 'ui/document_pages.dart';
+import 'share_providers.dart';
 import 'ui/document_sheet.dart';
+import 'ui/share_flow.dart';
 import 'vault_providers.dart';
 
 final documentFilesProvider = StreamProvider.family<List<DocumentFile>, String>(
@@ -94,7 +96,7 @@ class DocumentViewerScreen extends ConsumerWidget {
                 label: context.l10n.vtShare,
                 onTap: files.isEmpty
                     ? null
-                    : () => ref.read(shareFilesProvider)(files),
+                    : () => showShareChoice(context, ref, doc, files),
               ),
               _Action(
                 key: const ValueKey('viewer-edit'),
@@ -245,6 +247,15 @@ class _InfoPanel extends ConsumerWidget {
               key: const ValueKey('viewer-details'),
               style: theme.textTheme.titleMedium,
             ),
+            // How often it left the phone (PBI-028a AC5).
+            if ((ref.watch(shareCountProvider(doc.id)).value ?? 0) > 0)
+              Text(
+                context.l10n.shSharedTimes(
+                  ref.watch(shareCountProvider(doc.id)).value!,
+                ),
+                key: const ValueKey('viewer-shared-count'),
+                style: theme.textTheme.bodySmall,
+              ),
             SizedBox(height: Tokens.spaceM),
             // One-time "Does this document expire?" (PBI-008).
             if (expiringTypes.contains(doc.docType) &&

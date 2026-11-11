@@ -349,6 +349,42 @@ class ScoreSnapshots extends Table with SyncColumns {
   ];
 }
 
+// ───────────────────────────── Sharing (PBI-028a) ─────────────────────────
+
+/// One share that left the phone: a file, a watermarked copy, a bundle
+/// (or, with PBI-028b, a link). On-device audit trail (schema v13).
+@DataClassName('ShareEvent')
+class ShareEvents extends Table with SyncColumns {
+  /// When it was shared (epoch ms).
+  IntColumn get sharedAt => integer()();
+
+  /// JSON list of document ids, in share order.
+  TextColumn get documentIds => text()();
+
+  /// Who it went to and why (typed by the user; optional for plain shares).
+  TextColumn get recipient => text().nullable()();
+  TextColumn get purpose => text().nullable()();
+  BoolColumn get watermarked => boolean().withDefault(const Constant(false))();
+
+  /// The bundle's title, when several documents went as one PDF.
+  TextColumn get bundleTitle => text().nullable()();
+
+  /// file | link (link arrives with PBI-028b).
+  TextColumn get kind => text().withDefault(const Constant('file'))();
+}
+
+/// A saved "share pack" such as "Job Application Pack" (schema v13). It
+/// remembers which documents, not copies: a renewed document is followed
+/// to its replacement when the pack is used.
+@DataClassName('BundleTemplate')
+class BundleTemplates extends Table with SyncColumns {
+  TextColumn get name => text()();
+
+  /// JSON list of document ids, in order.
+  TextColumn get documentIds => text().withDefault(const Constant('[]'))();
+  IntColumn get sortOrder => integer().withDefault(const Constant(0))();
+}
+
 // ─────────────────────── Local-only tables (data model §8.3) ───────────────
 
 /// Sync outbox: one row per local write, pushed by PBI-026.

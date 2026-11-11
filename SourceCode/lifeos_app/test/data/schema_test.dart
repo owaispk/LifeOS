@@ -24,13 +24,14 @@ void main() {
       'user_settings', 'persons', 'folders', 'documents', 'document_files',
       'extracted_fields', 'atc_rules', 'tasks', 'subtasks', 'task_reminders',
       'categories', 'payments', 'expenses', 'score_snapshots',
+      'share_events', 'bundle_templates', // PBI-028a
       // local-only (data model §8.3) + app meta
       'pending_ops', 'conflict_log', 'blob_cache', 'app_meta',
       // full-text search (PBI-006) + FTS5's internal shadow tables
       'documents_fts', 'documents_fts_data', 'documents_fts_idx',
       'documents_fts_docsize', 'documents_fts_config',
     });
-    expect(db.schemaVersion, 12);
+    expect(db.schemaVersion, 13);
   });
 
   test('every synced table carries sync metadata columns', () async {

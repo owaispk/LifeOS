@@ -1922,6 +1922,201 @@ class AppLocalizationsUr extends AppLocalizations {
   String get settingsTitle => 'سیٹنگز';
 
   @override
+  String get shAddDocuments => 'دستاویزات شامل کریں';
+
+  @override
+  String shBundleDefaultTitle(String date) {
+    return 'شیئر کی گئی PDF · $date';
+  }
+
+  @override
+  String get shClearSelection => 'انتخاب ختم کریں';
+
+  @override
+  String get shDeletePack => 'شیئر پیک حذف کریں';
+
+  @override
+  String get shDeletedDoc => 'حذف شدہ دستاویز';
+
+  @override
+  String get shDocuments => 'دستاویزات';
+
+  @override
+  String get shDone => 'ہو گیا';
+
+  @override
+  String get shFailed => 'شیئر تیار نہیں ہو سکا۔ دوبارہ کوشش کریں۔';
+
+  @override
+  String get shHistory => 'شیئر کی تاریخ';
+
+  @override
+  String get shHistoryEmptyMessage =>
+      'والٹ سے شیئر کی گئی دستاویزات یہاں نظر آئیں گی۔';
+
+  @override
+  String get shHistoryEmptyTitle => 'ابھی کچھ شیئر نہیں ہوا';
+
+  @override
+  String get shHistorySub => 'آپ نے کیا شیئر کیا، صرف اسی فون پر محفوظ';
+
+  @override
+  String get shJobPack => 'ملازمت کی درخواست کا پیک';
+
+  @override
+  String get shJobPackSub => 'ڈگری، شناختی کارڈ، سی وی اور تصویر';
+
+  @override
+  String shMissingDocs(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'اس پیک کی $n دستاویزات اب والٹ میں نہیں',
+      one: 'اس پیک کی 1 دستاویز اب والٹ میں نہیں',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get shNewPack => 'نیا شیئر پیک';
+
+  @override
+  String get shNoDocuments => 'کم از کم ایک دستاویز شامل کریں';
+
+  @override
+  String shPackCount(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n دستاویزات',
+      one: '1 دستاویز',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get shPackSaved => 'شیئر پیک محفوظ ہو گیا';
+
+  @override
+  String get shPackTitle => 'عنوان';
+
+  @override
+  String get shPackTitleHint => 'مثلاً ملازمت کی درخواست کا پیک';
+
+  @override
+  String get shPacks => 'شیئر پیک';
+
+  @override
+  String get shPacksSub => 'دستاویزات جو آپ اکثر ایک ساتھ بھیجتے ہیں';
+
+  @override
+  String get shPickDocuments => 'دستاویزات چنیں';
+
+  @override
+  String shPreparing(String done, String total) {
+    return 'تیار ہو رہا ہے… $total میں سے $done صفحات';
+  }
+
+  @override
+  String get shPurpose => 'مقصد (اختیاری)';
+
+  @override
+  String get shPurposeHint => 'مثلاً اکاؤنٹ کھولنا';
+
+  @override
+  String get shRecipientRequired => 'لکھیں کہ کس کے لیے ہے';
+
+  @override
+  String get shRemove => 'ہٹائیں';
+
+  @override
+  String get shReorderHint => 'ترتیب بدلنے کے لیے کھینچیں';
+
+  @override
+  String get shSaveFolder => 'فولڈر';
+
+  @override
+  String get shSavePack => 'شیئر پیک کے طور پر محفوظ کریں';
+
+  @override
+  String get shSaveToVault => 'والٹ میں بھی محفوظ کریں';
+
+  @override
+  String get shSavedToVault => 'والٹ میں بھی محفوظ ہو گیا';
+
+  @override
+  String shSelected(String n) {
+    return '$n منتخب';
+  }
+
+  @override
+  String get shShare => 'شیئر کریں';
+
+  @override
+  String get shShareAsPdf => 'ایک PDF کے طور پر شیئر کریں';
+
+  @override
+  String get shShareFile => 'فائل شیئر کریں';
+
+  @override
+  String get shShareFileSub => 'دستاویز جیسی ہے ویسی';
+
+  @override
+  String get shShareWatermark => 'واٹر مارک کے ساتھ شیئر کریں…';
+
+  @override
+  String get shShareWatermarkSub =>
+      'لکھ دیں کہ کس کے لیے ہے، تاکہ کاپی کہیں اور استعمال نہ ہو';
+
+  @override
+  String shSharedTimes(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n بار شیئر ہوئی',
+      one: 'ایک بار شیئر ہوئی',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get shSharedWith => 'کس کے ساتھ';
+
+  @override
+  String get shSharedWithHint => 'مثلاً اے بی سی بینک';
+
+  @override
+  String shTo(String recipient) {
+    return '$recipient کو';
+  }
+
+  @override
+  String get shWatermarkTitle => 'واٹر مارک لگائیں';
+
+  @override
+  String get shWatermarked => 'واٹر مارک شدہ';
+
+  @override
+  String shWmFull(String name, String recipient, String purpose, String date) {
+    return '$name کی طرف سے $recipient کو $purpose کے لیے — $date';
+  }
+
+  @override
+  String shWmNoName(String recipient, String purpose, String date) {
+    return '$recipient کو $purpose کے لیے — $date';
+  }
+
+  @override
+  String shWmNoNameNoPurpose(String recipient, String date) {
+    return '$recipient کو شیئر کیا گیا — $date';
+  }
+
+  @override
+  String shWmNoPurpose(String name, String recipient, String date) {
+    return '$name کی طرف سے $recipient کو — $date';
+  }
+
+  @override
   String get skip => 'چھوڑیں';
 
   @override

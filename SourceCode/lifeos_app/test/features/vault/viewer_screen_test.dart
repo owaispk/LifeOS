@@ -248,6 +248,8 @@ void main() {
     );
     await openDoc(tester, 'identity', d, app);
     await tester.tap(find.byKey(const ValueKey('viewer-share')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('share-file')));
     await settle(tester);
     expect(shared.single.map((f) => f.pageNo), [1, 2]);
   }, extra: extras);
