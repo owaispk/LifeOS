@@ -60,6 +60,8 @@
 | 35 | [PBI-035 Profile & Personalization (neutral defaults)](PBI-035-profile-personalization.md) | E5 Platform / E6 Engagement | 5 | 021, 025 | Done |
 | 36 | [PBI-036 iOS Share Extension](PBI-036-ios-share-extension.md) | E5 Platform | 5 | 003, 034 | In progress — config files written; Xcode target + device QA need a Mac |
 | 37 | [PBI-037 iOS Home-Screen Widget (WidgetKit)](PBI-037-ios-home-screen-widget.md) | E6 Engagement | 8 | 033 | Ready (blocked: needs a Mac) |
+| 38 | [PBI-038 Testing Feedback (Nov 2026 test pass)](PBI-038-testing-feedback.md) | Cross-cutting | TBD | per item | Open — collecting feedback (not Ready) |
+| 39 | [PBI-039 Personal AI: Ask, Plan and Insights](PBI-039-personal-ai.md) | E7 Personal AI | 39 (7 slices, max 8) | 027a, 027b, 029 + per slice | Ready — 039a first |
 
 ## Suggested sprint plan (2 devs, 2-week sprints, ~27 SP/sprint → 6 sprints ≈ 3 months)
 
@@ -86,4 +88,4 @@
 
 ## Not yet groomed (post-MVP, will become PBIs before development)
 - V2 (P1): Health, People, Work/Study, Soul, Goals, full Money, Emergency Card, appointments OCR
-- V3 (P2): Family sharing, AI weekly plan, HealthKit/steps, multi-currency, Arabic
+- V3 (P2): Family sharing, HealthKit/steps, multi-currency, Arabic
