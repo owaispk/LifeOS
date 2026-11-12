@@ -202,8 +202,7 @@ class _UpcomingList extends StatelessWidget {
             title: relativeDay(day, now) == l.tomorrow
                 ? l.tkTomorrowOn(formatDay(day))
                 : formatDay(day, now: now),
-            count:
-                (days[day]?.length ?? 0) + (events[day]?.length ?? 0),
+            count: (days[day]?.length ?? 0) + (events[day]?.length ?? 0),
           ),
           // Events first: they are fixed points the tasks fit around.
           for (final e in events[day] ?? const <CalEvent>[])
@@ -238,7 +237,7 @@ class _DomainList extends StatelessWidget {
           _SectionHeader(
             title: domainLabel(entry.key),
             count: entry.value.length,
-            dotColor: domainColor(entry.key),
+            dotColor: domainColor(entry.key, Theme.of(context).brightness),
           ),
           for (final t in entry.value) TaskTile(task: t, showDomain: false),
         ],

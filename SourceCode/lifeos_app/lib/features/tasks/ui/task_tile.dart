@@ -10,9 +10,10 @@ import '../domain/task_rules.dart';
 import '../tasks_providers.dart';
 import 'task_actions.dart';
 
-Color domainColor(String domain) {
+/// A life area's accent for the given brightness (dots and chips only).
+Color domainColor(String domain, [Brightness brightness = Brightness.light]) {
   final d = LifeDomain.values.where((e) => e.name == domain).firstOrNull;
-  return d == null ? Tokens.domain(LifeDomain.mind) : Tokens.domain(d);
+  return Tokens.domain(d ?? LifeDomain.mind, brightness);
 }
 
 /// A life area's name, in the app's language.
@@ -210,7 +211,7 @@ class _Chips extends StatelessWidget {
               width: 8,
               height: 8,
               decoration: BoxDecoration(
-                color: domainColor(domain!),
+                color: domainColor(domain!, Theme.of(context).brightness),
                 shape: BoxShape.circle,
               ),
             ),

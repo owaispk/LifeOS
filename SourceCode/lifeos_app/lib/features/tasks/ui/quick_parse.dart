@@ -32,8 +32,7 @@ class QuickParse {
 
   /// The title: the input minus the words of the parts still applied.
   /// Dropping a chip puts its words back ("Meet Friday" the person).
-  String get title =>
-      titleFrom(input, matchedWords(parsed, dropped: dropped));
+  String get title => titleFrom(input, matchedWords(parsed, dropped: dropped));
 
   QuickParse drop(ParsedPart p) => QuickParse(input, parsed, {...dropped, p});
 }
@@ -89,12 +88,17 @@ class ParseChips extends StatelessWidget {
           formatTime(DateTime(0, 1, 1, p.hour!, p.minute)),
         ),
       if (p.highPriority) (ParsedPart.priority, const Text('‼'), l.parseHigh),
-      if (p.amount != null)
-        (ParsedPart.amount, const Text('💰'), p.amount!),
+      if (p.amount != null) (ParsedPart.amount, const Text('💰'), p.amount!),
       if (p.domain != null)
         (
           ParsedPart.domain,
-          CircleAvatar(radius: 5, backgroundColor: domainColor(p.domain!)),
+          CircleAvatar(
+            radius: 5,
+            backgroundColor: domainColor(
+              p.domain!,
+              Theme.of(context).brightness,
+            ),
+          ),
           domainLabel(p.domain!),
         ),
     ];

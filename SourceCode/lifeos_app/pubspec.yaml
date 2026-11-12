@@ -103,6 +103,28 @@ flutter:
   assets:
     - assets/score_weights.json
 
+  # Bundled fonts (Design/design-system.md §3.2), both under the SIL Open
+  # Font License (licence texts beside the files). Nothing is downloaded at
+  # run time. Inter carries Latin text and all numerals; Noto Naskh Arabic
+  # is the fallback that Urdu text picks up.
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Inter-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Inter-SemiBold.ttf
+          weight: 600
+    - family: Noto Naskh Arabic
+      fonts:
+        - asset: assets/fonts/NotoNaskhArabic-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/NotoNaskhArabic-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/NotoNaskhArabic-SemiBold.ttf
+          weight: 600
+
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

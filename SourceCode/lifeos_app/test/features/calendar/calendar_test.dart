@@ -58,17 +58,14 @@ Future<void> turnOn(TestApp app, WidgetTester tester, {bool on = true}) =>
       );
     });
 
-Future<void> hideCalendar(
-  TestApp app,
-  WidgetTester tester,
-  String id,
-) => app.write(tester, () async {
-  final row = (await app.repos.userSettings.getAll()).first;
-  await app.repos.userSettings.update(
-    row.id,
-    UserSettingsCompanion(calendarsOff: Value(id)),
-  );
-});
+Future<void> hideCalendar(TestApp app, WidgetTester tester, String id) =>
+    app.write(tester, () async {
+      final row = (await app.repos.userSettings.getAll()).first;
+      await app.repos.userSettings.update(
+        row.id,
+        UserSettingsCompanion(calendarsOff: Value(id)),
+      );
+    });
 
 void main() {
   group('which events fall on a day', () {
@@ -78,10 +75,7 @@ void main() {
         event('a', start: DateTime(2026, 11, 8, 9)),
         event('allday', start: DateTime(2026, 11, 8), allDay: true),
       ];
-      expect(
-        eventsOnDay(events, _now).map((e) => e.id),
-        ['allday', 'a', 'b'],
-      );
+      expect(eventsOnDay(events, _now).map((e) => e.id), ['allday', 'a', 'b']);
     });
 
     test('an event on another day is left out', () {
@@ -149,223 +143,215 @@ void main() {
   });
 
   group('the flow', () {
-    appTest(
-      'AC5: with the toggle off nothing reaches the calendar',
-      (tester, app) async {
-        await openTab(tester, 'Tasks');
-        await settle(tester);
-        expect(
-          cal.calls,
-          0,
-          reason: 'no permission check, no read, no prompt',
-        );
-        expect(find.byKey(const ValueKey('section-events')), findsNothing);
-      },
-      extra: withCalendar,
-    );
+    appTest('AC5: with the toggle off nothing reaches the calendar', (
+      tester,
+      app,
+    ) async {
+      await openTab(tester, 'Tasks');
+      await settle(tester);
+      expect(cal.calls, 0, reason: 'no permission check, no read, no prompt');
+      expect(find.byKey(const ValueKey('section-events')), findsNothing);
+    }, extra: withCalendar);
 
-    appTest(
-      'AC1: today\'s events show above tasks, all-day first',
-      (tester, app) async {
-        cal.events = [
-          event('meeting', start: DateTime(2026, 11, 8, 15), title: 'Standup'),
-          event(
-            'holiday',
-            start: DateTime(2026, 11, 8),
-            allDay: true,
-            title: 'Iqbal Day',
-            calendarId: 'c2',
+    appTest('AC1: today\'s events show above tasks, all-day first', (
+      tester,
+      app,
+    ) async {
+      cal.events = [
+        event('meeting', start: DateTime(2026, 11, 8, 15), title: 'Standup'),
+        event(
+          'holiday',
+          start: DateTime(2026, 11, 8),
+          allDay: true,
+          title: 'Iqbal Day',
+          calendarId: 'c2',
+        ),
+      ];
+      await turnOn(app, tester);
+      await openTab(tester, 'Tasks');
+      await settle(tester);
+
+      expect(find.byKey(const ValueKey('section-events')), findsOneWidget);
+      expect(find.text('Iqbal Day'), findsOneWidget);
+      expect(find.text('Standup'), findsOneWidget);
+
+      // All-day pinned above the timed one, and both above the tasks.
+      final events = find.byKey(const ValueKey('today-list'));
+      expect(events, findsOneWidget);
+      final allDayY = tester.getTopLeft(find.text('Iqbal Day')).dy;
+      final timedY = tester.getTopLeft(find.text('Standup')).dy;
+      expect(allDayY, lessThan(timedY));
+    }, extra: withCalendar);
+
+    appTest('AC4: unticking a calendar drops its events straight away', (
+      tester,
+      app,
+    ) async {
+      cal.events = [
+        event(
+          'holiday',
+          start: DateTime(2026, 11, 8),
+          allDay: true,
+          title: 'Iqbal Day',
+          calendarId: 'c2',
+        ),
+        event('meeting', start: DateTime(2026, 11, 8, 15), title: 'Standup'),
+      ];
+      await turnOn(app, tester);
+      await openTab(tester, 'Tasks');
+      await settle(tester);
+      expect(find.text('Iqbal Day'), findsOneWidget);
+
+      await hideCalendar(app, tester, 'c2');
+      await settle(tester);
+      expect(find.text('Iqbal Day'), findsNothing);
+      expect(find.text('Standup'), findsOneWidget);
+    }, extra: withCalendar);
+
+    appTest('AC7: a calendar that will not be read leaves tasks alone', (
+      tester,
+      app,
+    ) async {
+      cal
+        ..events = [event('meeting', start: DateTime(2026, 11, 8, 15))]
+        ..failWith = StateError('calendar store unavailable');
+      await turnOn(app, tester);
+      await openTab(tester, 'Tasks');
+      await settle(tester);
+
+      // No error screen, no events section — just the tasks.
+      expect(find.byKey(const ValueKey('section-events')), findsNothing);
+      expect(find.text(' '), findsNothing);
+      expect(find.byType(ErrorWidget), findsNothing);
+    }, extra: withCalendar);
+
+    appTest('AC6: events are never stored and never become tasks', (
+      tester,
+      app,
+    ) async {
+      cal.events = [
+        event('meeting', start: DateTime(2026, 11, 8, 15), title: 'Standup'),
+      ];
+      await turnOn(app, tester);
+      await openTab(tester, 'Tasks');
+      await settle(tester);
+      expect(find.text('Standup'), findsOneWidget);
+
+      final tasks = (await tester.runAsync(app.repos.tasks.getAll))!;
+      expect(tasks, isEmpty, reason: 'an event is not a task');
+      final reminders = (await tester.runAsync(
+        app.repos.taskReminders.getAll,
+      ))!;
+      expect(reminders, isEmpty, reason: 'an event schedules nothing');
+    }, extra: withCalendar);
+
+    appTest('AC6: the Life Score is the same with events as without', (
+      tester,
+      app,
+    ) async {
+      await openTab(tester, 'Home');
+      await settle(tester);
+      final before = tester
+          .widget<Text>(find.byKey(const ValueKey('score-value')))
+          .data;
+
+      cal.events = [
+        event('meeting', start: DateTime(2026, 11, 8, 15), title: 'Standup'),
+      ];
+      await turnOn(app, tester);
+      await settle(tester);
+
+      final after = tester
+          .widget<Text>(find.byKey(const ValueKey('score-value')))
+          .data;
+      expect(after, before);
+    }, extra: withCalendar);
+
+    appTest('AC2: Upcoming shows events on their day, beside the tasks', (
+      tester,
+      app,
+    ) async {
+      cal.events = [
+        event('dentist', start: DateTime(2026, 11, 10, 11), title: 'Dentist'),
+      ];
+      await app.write(tester, () async {
+        await app.repos.tasks.insert(
+          TasksCompanion.insert(
+            title: 'Pay the gas bill',
+            dueAt: Value(DateTime(2026, 11, 10, 9).millisecondsSinceEpoch),
+            allDay: const Value(false),
           ),
-        ];
-        await turnOn(app, tester);
-        await openTab(tester, 'Tasks');
-        await settle(tester);
-
-        expect(find.byKey(const ValueKey('section-events')), findsOneWidget);
-        expect(find.text('Iqbal Day'), findsOneWidget);
-        expect(find.text('Standup'), findsOneWidget);
-
-        // All-day pinned above the timed one, and both above the tasks.
-        final events = find.byKey(const ValueKey('today-list'));
-        expect(events, findsOneWidget);
-        final allDayY = tester.getTopLeft(find.text('Iqbal Day')).dy;
-        final timedY = tester.getTopLeft(find.text('Standup')).dy;
-        expect(allDayY, lessThan(timedY));
-      },
-      extra: withCalendar,
-    );
-
-    appTest(
-      'AC4: unticking a calendar drops its events straight away',
-      (tester, app) async {
-        cal.events = [
-          event('holiday', start: DateTime(2026, 11, 8), allDay: true,
-              title: 'Iqbal Day', calendarId: 'c2'),
-          event('meeting', start: DateTime(2026, 11, 8, 15), title: 'Standup'),
-        ];
-        await turnOn(app, tester);
-        await openTab(tester, 'Tasks');
-        await settle(tester);
-        expect(find.text('Iqbal Day'), findsOneWidget);
-
-        await hideCalendar(app, tester, 'c2');
-        await settle(tester);
-        expect(find.text('Iqbal Day'), findsNothing);
-        expect(find.text('Standup'), findsOneWidget);
-      },
-      extra: withCalendar,
-    );
-
-    appTest(
-      'AC7: a calendar that will not be read leaves tasks alone',
-      (tester, app) async {
-        cal
-          ..events = [event('meeting', start: DateTime(2026, 11, 8, 15))]
-          ..failWith = StateError('calendar store unavailable');
-        await turnOn(app, tester);
-        await openTab(tester, 'Tasks');
-        await settle(tester);
-
-        // No error screen, no events section — just the tasks.
-        expect(find.byKey(const ValueKey('section-events')), findsNothing);
-        expect(find.text(' '), findsNothing);
-        expect(find.byType(ErrorWidget), findsNothing);
-      },
-      extra: withCalendar,
-    );
-
-    appTest(
-      'AC6: events are never stored and never become tasks',
-      (tester, app) async {
-        cal.events = [
-          event('meeting', start: DateTime(2026, 11, 8, 15), title: 'Standup'),
-        ];
-        await turnOn(app, tester);
-        await openTab(tester, 'Tasks');
-        await settle(tester);
-        expect(find.text('Standup'), findsOneWidget);
-
-        final tasks = (await tester.runAsync(app.repos.tasks.getAll))!;
-        expect(tasks, isEmpty, reason: 'an event is not a task');
-        final reminders = (await tester.runAsync(app.repos.taskReminders.getAll))!;
-        expect(reminders, isEmpty, reason: 'an event schedules nothing');
-      },
-      extra: withCalendar,
-    );
-
-    appTest(
-      'AC6: the Life Score is the same with events as without',
-      (tester, app) async {
-        await openTab(tester, 'Home');
-        await settle(tester);
-        final before = tester
-            .widget<Text>(find.byKey(const ValueKey('score-value')))
-            .data;
-
-        cal.events = [
-          event('meeting', start: DateTime(2026, 11, 8, 15), title: 'Standup'),
-        ];
-        await turnOn(app, tester);
-        await settle(tester);
-
-        final after = tester
-            .widget<Text>(find.byKey(const ValueKey('score-value')))
-            .data;
-        expect(after, before);
-      },
-      extra: withCalendar,
-    );
-
-    appTest(
-      'AC2: Upcoming shows events on their day, beside the tasks',
-      (tester, app) async {
-        cal.events = [
-          event(
-            'dentist',
-            start: DateTime(2026, 11, 10, 11),
-            title: 'Dentist',
-          ),
-        ];
-        await app.write(tester, () async {
-          await app.repos.tasks.insert(
-            TasksCompanion.insert(
-              title: 'Pay the gas bill',
-              dueAt: Value(DateTime(2026, 11, 10, 9).millisecondsSinceEpoch),
-              allDay: const Value(false),
-            ),
-          );
-        });
-        await turnOn(app, tester);
-        await openTab(tester, 'Tasks');
-        await tester.tap(find.text('Upcoming'));
-        await settle(tester);
-
-        expect(find.text('Dentist'), findsOneWidget);
-        expect(find.text('Pay the gas bill'), findsOneWidget);
-      },
-      extra: withCalendar,
-    );
-
-    appTest(
-      'AC3: refusing the permission leaves the toggle off and says so',
-      (tester, app) async {
-        cal
-          ..permission = false
-          ..grants = false;
-        await openTab(tester, 'More');
-        await tester.tap(find.byKey(const ValueKey('more-settings')));
-        await tester.pumpAndSettle();
-
-        await tester.scrollUntilVisible(
-          find.byKey(const ValueKey('set-calendar')),
-          100,
-          scrollable: find.byType(Scrollable).first,
         );
-        await tester.tap(find.byKey(const ValueKey('set-calendar')));
-        await settle(tester);
+      });
+      await turnOn(app, tester);
+      await openTab(tester, 'Tasks');
+      await tester.tap(find.text('Upcoming'));
+      await settle(tester);
 
-        expect(cal.asks, 1, reason: 'asked once, in context');
-        expect(find.byKey(const ValueKey('calendar-denied')), findsOneWidget);
-        final settings = (await tester.runAsync(
-          app.repos.userSettings.getAll,
-        ))!;
-        expect(settings.first.calendarOn, isFalse);
-      },
-      extra: withCalendar,
-    );
+      expect(find.text('Dentist'), findsOneWidget);
+      expect(find.text('Pay the gas bill'), findsOneWidget);
+    }, extra: withCalendar);
 
-    appTest(
-      'AC3: allowing it turns events on and asks only that once',
-      (tester, app) async {
-        cal
-          ..permission = false
-          ..grants = true
-          ..events = [
-            event('meeting', start: DateTime(2026, 11, 8, 15), title: 'Standup'),
-          ];
-        await openTab(tester, 'More');
-        await tester.tap(find.byKey(const ValueKey('more-settings')));
-        await tester.pumpAndSettle();
-        await tester.scrollUntilVisible(
-          find.byKey(const ValueKey('set-calendar')),
-          100,
-          scrollable: find.byType(Scrollable).first,
-        );
-        await tester.tap(find.byKey(const ValueKey('set-calendar')));
-        await settle(tester);
+    appTest('AC3: refusing the permission leaves the toggle off and says so', (
+      tester,
+      app,
+    ) async {
+      cal
+        ..permission = false
+        ..grants = false;
+      await openTab(tester, 'More');
+      await tester.tap(find.byKey(const ValueKey('more-settings')));
+      await tester.pumpAndSettle();
 
-        expect(cal.asks, 1);
-        final settings = (await tester.runAsync(
-          app.repos.userSettings.getAll,
-        ))!;
-        expect(settings.first.calendarOn, isTrue);
+      await tester.scrollUntilVisible(
+        find.byKey(const ValueKey('set-calendar')),
+        100,
+        scrollable: find.byType(Scrollable).first,
+      );
+      // Clear of the floating ➕, which sits over the foot of the list.
+      await tester.ensureVisible(find.byKey(const ValueKey('set-calendar')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('set-calendar')));
+      await settle(tester);
 
-        await openTab(tester, 'Tasks');
-        await settle(tester);
-        expect(find.text('Standup'), findsOneWidget);
-        expect(cal.asks, 1, reason: 'never asked again unprompted');
-      },
-      extra: withCalendar,
-    );
+      expect(cal.asks, 1, reason: 'asked once, in context');
+      expect(find.byKey(const ValueKey('calendar-denied')), findsOneWidget);
+      final settings = (await tester.runAsync(app.repos.userSettings.getAll))!;
+      expect(settings.first.calendarOn, isFalse);
+    }, extra: withCalendar);
+
+    appTest('AC3: allowing it turns events on and asks only that once', (
+      tester,
+      app,
+    ) async {
+      cal
+        ..permission = false
+        ..grants = true
+        ..events = [
+          event('meeting', start: DateTime(2026, 11, 8, 15), title: 'Standup'),
+        ];
+      await openTab(tester, 'More');
+      await tester.tap(find.byKey(const ValueKey('more-settings')));
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(
+        find.byKey(const ValueKey('set-calendar')),
+        100,
+        scrollable: find.byType(Scrollable).first,
+      );
+      // Clear of the floating ➕, which sits over the foot of the list.
+      await tester.ensureVisible(find.byKey(const ValueKey('set-calendar')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('set-calendar')));
+      await settle(tester);
+
+      expect(cal.asks, 1);
+      final settings = (await tester.runAsync(app.repos.userSettings.getAll))!;
+      expect(settings.first.calendarOn, isTrue);
+
+      await openTab(tester, 'Tasks');
+      await settle(tester);
+      expect(find.text('Standup'), findsOneWidget);
+      expect(cal.asks, 1, reason: 'never asked again unprompted');
+    }, extra: withCalendar);
   });
 }

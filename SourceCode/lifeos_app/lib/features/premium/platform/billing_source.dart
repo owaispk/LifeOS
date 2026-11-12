@@ -188,6 +188,39 @@ class StoreBilling implements BillingSource {
   Future<String?> entitlementToken() async => _token;
 }
 
+/// Build with `--dart-define=LIFEOS_TEST_PREMIUM=true` to swap the real
+/// store for [TestPremiumBilling] on a test phone. Off by default, so a
+/// normal build always uses the real store.
+const testPremiumBuild = bool.fromEnvironment('LIFEOS_TEST_PREMIUM');
+
+/// A stand-in store for test phones, before the Play product exists:
+/// the subscription is always on sale and every purchase succeeds, with
+/// no charge and no billing channel touched. It carries no purchase
+/// token, so managed AI (PBI-027b) stays unavailable — the proxy would
+/// reject it anyway.
+class TestPremiumBilling implements BillingSource {
+  const TestPremiumBilling();
+
+  @override
+  Future<bool> isAvailable() async => true;
+
+  @override
+  Future<PremiumProduct?> product() async =>
+      const PremiumProduct(id: premiumProductId, price: 'Test build');
+
+  @override
+  Future<bool?> isSubscribed() async => true;
+
+  @override
+  Future<bool> subscribe() async => true;
+
+  @override
+  Future<bool> restore() async => true;
+
+  @override
+  Future<String?> entitlementToken() async => null;
+}
+
 /// No store: the default everywhere until `main()` wires the real one,
 /// and in tests. Nothing here reaches a billing channel.
 class NoBilling implements BillingSource {

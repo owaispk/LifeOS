@@ -166,7 +166,11 @@ Future<void> main() async {
           calendarSourceProvider.overrideWithValue(DeviceCalendarSource()),
           // Store billing (PBI-029). The plugin wants to be listened to
           // from launch or purchases made outside the app are missed.
-          billingSourceProvider.overrideWithValue(StoreBilling()),
+          // A test build (LIFEOS_TEST_PREMIUM) gets a stand-in store
+          // where subscribing always succeeds.
+          billingSourceProvider.overrideWithValue(
+            testPremiumBuild ? const TestPremiumBilling() : StoreBilling(),
+          ),
           // The AI key lives in the Keystore/Keychain, never in the
           // database or the export (PBI-027a AC6).
           aiSecretStoreProvider.overrideWithValue(

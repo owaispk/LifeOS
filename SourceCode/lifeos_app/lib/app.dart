@@ -43,12 +43,13 @@ class LifeOsApp extends ConsumerWidget {
     final look = templateOf(settings);
     // Spacing and density follow the look (PBI-031).
     AppSpacing.current = AppTheme.spacingFor(look);
+    AppRadius.current = AppTheme.radiusFor(look);
     final scale = textScaleOf(settings);
     return MaterialApp.router(
       onGenerateTitle: (context) => 'LifeOS',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.light(look),
-      darkTheme: AppTheme.dark(look),
+      theme: AppTheme.light(look, AppLocale.current),
+      darkTheme: AppTheme.dark(look, AppLocale.current),
       themeMode: themeModeOf(settings),
       // Language switches instantly; Urdu lays out right-to-left (PBI-025).
       locale: localeOf(settings),
@@ -75,9 +76,7 @@ class LifeOsApp extends ConsumerWidget {
           // (PBI-033) — the target shows after unlock.
           child: LockGate(
             child: PremiumRefresher(
-              child: ShareInListener(
-                child: WidgetClickListener(child: child!),
-              ),
+              child: ShareInListener(child: WidgetClickListener(child: child!)),
             ),
           ),
         );

@@ -76,11 +76,16 @@ class CategoryBreakdown extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                SizedBox(
-                  width: 52,
+                // A minimum, not a fixed width: "100%" in large text grows
+                // the column instead of wrapping; the gap keeps it off the
+                // amount when it does.
+                SizedBox(width: Tokens.spaceXs),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(minWidth: 52),
                   child: Text(
                     '${s.sharePercent(totalMinor)}%',
                     textAlign: TextAlign.end,
+                    softWrap: false,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),

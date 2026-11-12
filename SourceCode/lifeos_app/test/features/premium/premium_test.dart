@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lifeos_app/data/db/app_database.dart';
 import 'package:lifeos_app/features/premium/domain/limits.dart';
+import 'package:lifeos_app/features/premium/platform/billing_source.dart';
 import 'package:lifeos_app/features/premium/premium_providers.dart';
 import 'package:image/image.dart' as img;
 import 'package:path/path.dart' as p;
@@ -115,6 +116,18 @@ void main() {
           .subtract(entitlementRecheck)
           .millisecondsSinceEpoch;
       expect(dueForCheck(anHourAgo, _now), isTrue);
+    });
+
+    test('the test-phone store is off unless the build asks for it', () async {
+      expect(testPremiumBuild, isFalse, reason: 'a normal build is real');
+      const store = TestPremiumBilling();
+      expect(await store.isAvailable(), isTrue);
+      expect((await store.product())?.id, premiumProductId);
+      expect(await store.subscribe(), isTrue);
+      expect(await store.restore(), isTrue);
+      expect(await store.isSubscribed(), isTrue);
+      // No purchase token: managed AI must not think it has one.
+      expect(await store.entitlementToken(), isNull);
     });
   });
 

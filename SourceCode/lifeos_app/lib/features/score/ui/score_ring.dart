@@ -38,7 +38,7 @@ class ScoreRing extends StatelessWidget {
           child: CustomPaint(
             painter: _RingPainter(
               fraction: value / 100,
-              color: Tokens.scoreColor(score),
+              color: Tokens.scoreColor(score, theme.brightness),
               track: theme.colorScheme.surfaceContainerHighest,
               stroke: stroke,
             ),

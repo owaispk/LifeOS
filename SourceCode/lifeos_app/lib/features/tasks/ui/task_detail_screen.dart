@@ -223,7 +223,7 @@ class _TaskDetailBodyState extends ConsumerState<_TaskDetailBody> {
             for (final d in domainOrder)
               ChoiceChip(
                 avatar: CircleAvatar(
-                  backgroundColor: domainColor(d),
+                  backgroundColor: domainColor(d, Theme.of(context).brightness),
                   radius: 5,
                 ),
                 label: Text(domainLabel(d)),

@@ -288,7 +288,10 @@ class _NewTaskSheetState extends ConsumerState<NewTaskSheet> {
                   for (final d in domainOrder)
                     ChoiceChip(
                       avatar: CircleAvatar(
-                        backgroundColor: domainColor(d),
+                        backgroundColor: domainColor(
+                          d,
+                          Theme.of(context).brightness,
+                        ),
                         radius: 5,
                       ),
                       label: Text(domainLabel(d)),
