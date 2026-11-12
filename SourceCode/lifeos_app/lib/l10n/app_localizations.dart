@@ -1976,6 +1976,18 @@ abstract class AppLocalizations {
   /// **'Add'**
   String get mnAdd;
 
+  /// No description provided for @mnAddBill.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a bill to pay'**
+  String get mnAddBill;
+
+  /// No description provided for @mnAddBillSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Not paid yet. It shows in the forecast, with a reminder before it\'s due.'**
+  String get mnAddBillSub;
+
   /// No description provided for @mnAddExpense.
   ///
   /// In en, this message translates to:
@@ -1993,6 +2005,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add your salary to see the share'**
   String get mnAddSalary;
+
+  /// No description provided for @mnAddSalaryLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your income to see what\'s left'**
+  String get mnAddSalaryLeft;
 
   /// No description provided for @mnAmountError.
   ///
@@ -2017,6 +2035,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'📎 Attach receipt?'**
   String get mnAttachReceipt;
+
+  /// Snackbar after adding a one-off bill.
+  ///
+  /// In en, this message translates to:
+  /// **'Bill added for {date}'**
+  String mnBillAdded(String date);
+
+  /// No description provided for @mnBillNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Plumber, car service, wedding gift'**
+  String get mnBillNameHint;
+
+  /// Bills paid out of the month's bills.
+  ///
+  /// In en, this message translates to:
+  /// **'{paid} of {total}'**
+  String mnBillsPaidValue(int paid, int total);
 
   /// No description provided for @mnBreakdownItem.
   ///
@@ -2090,6 +2126,12 @@ abstract class AppLocalizations {
   /// **'Change salary'**
   String get mnChangeSalary;
 
+  /// No description provided for @mnComingUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming up'**
+  String get mnComingUp;
+
   /// No description provided for @mnDate.
   ///
   /// In en, this message translates to:
@@ -2125,6 +2167,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{month} fixed payments: {total} across {n, plural, =1{1 item} other{{n} items}}'**
   String mnDigest(String month, String total, int n);
+
+  /// No description provided for @mnDueDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Due date'**
+  String get mnDueDate;
 
   /// No description provided for @mnEditExpense.
   ///
@@ -2180,6 +2228,30 @@ abstract class AppLocalizations {
   /// **'Mark paid'**
   String get mnMarkPaid;
 
+  /// No description provided for @mnMarkUnpaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as unpaid'**
+  String get mnMarkUnpaid;
+
+  /// No description provided for @mnMarkUnpaidBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The expense logged for it is removed and its task opens again. A receipt you attached goes to Trash.'**
+  String get mnMarkUnpaidBody;
+
+  /// Confirm title for reversing a paid payment (PBI-038 F-06).
+  ///
+  /// In en, this message translates to:
+  /// **'Mark {title} as unpaid?'**
+  String mnMarkUnpaidTitle(String title);
+
+  /// No description provided for @mnMarkedUnpaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Marked as unpaid'**
+  String get mnMarkedUnpaid;
+
   /// No description provided for @mnMonthlySalary.
   ///
   /// In en, this message translates to:
@@ -2216,11 +2288,23 @@ abstract class AppLocalizations {
   /// **'No fixed payments this month'**
   String get mnNoFixedTitle;
 
+  /// No description provided for @mnNotPaidYet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not paid yet? Add it as a bill to pay'**
+  String get mnNotPaidYet;
+
   /// No description provided for @mnNoteHint.
   ///
   /// In en, this message translates to:
   /// **'Note (optional)'**
   String get mnNoteHint;
+
+  /// No description provided for @mnNothingDue.
+  ///
+  /// In en, this message translates to:
+  /// **'No bills left to pay this month.'**
+  String get mnNothingDue;
 
   /// No description provided for @mnOverview.
   ///
@@ -2252,6 +2336,12 @@ abstract class AppLocalizations {
   /// **'Paid on day'**
   String get mnPaidOnDay;
 
+  /// No description provided for @mnPickDueDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a date'**
+  String get mnPickDueDate;
+
   /// No description provided for @mnPrevMonth.
   ///
   /// In en, this message translates to:
@@ -2269,6 +2359,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Receipt — {title}'**
   String mnReceiptTitle(String title);
+
+  /// Reminder lead time for a one-off bill (PBI-038 F-05).
+  ///
+  /// In en, this message translates to:
+  /// **'{n, plural, =1{1 day before} other{{n} days before}}'**
+  String mnRemindDaysBefore(int n);
+
+  /// No description provided for @mnRemindOnDay.
+  ///
+  /// In en, this message translates to:
+  /// **'On the day'**
+  String get mnRemindOnDay;
+
+  /// Caption under the salary progress bar.
+  ///
+  /// In en, this message translates to:
+  /// **'{left} left of {salary}'**
+  String mnSalaryLeft(String left, String salary);
+
+  /// Caption when spending passed the salary.
+  ///
+  /// In en, this message translates to:
+  /// **'{over} over your {salary} income'**
+  String mnSalaryOver(String over, String salary);
 
   /// No description provided for @mnSalaryShare.
   ///
@@ -2288,6 +2402,18 @@ abstract class AppLocalizations {
   /// **'Scan'**
   String get mnScan;
 
+  /// Shows every day of the month's expenses.
+  ///
+  /// In en, this message translates to:
+  /// **'{n, plural, =1{See 1 expense} other{See all {n} expenses}}'**
+  String mnSeeAllExpenses(int n);
+
+  /// No description provided for @mnSeeForecast.
+  ///
+  /// In en, this message translates to:
+  /// **'See forecast'**
+  String get mnSeeForecast;
+
   /// No description provided for @mnSpendingByCategory.
   ///
   /// In en, this message translates to:
@@ -2299,6 +2425,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Spent'**
   String get mnSpent;
+
+  /// Hero label for a past month (PBI-038 F-02).
+  ///
+  /// In en, this message translates to:
+  /// **'Spent in {month}'**
+  String mnSpentIn(String month);
+
+  /// No description provided for @mnSpentThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Spent this month'**
+  String get mnSpentThisMonth;
+
+  /// No description provided for @mnStatBiggest.
+  ///
+  /// In en, this message translates to:
+  /// **'Biggest'**
+  String get mnStatBiggest;
+
+  /// No description provided for @mnStatBillsPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Bills paid'**
+  String get mnStatBillsPaid;
+
+  /// No description provided for @mnStatPerDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Per day'**
+  String get mnStatPerDay;
 
   /// No description provided for @mnStatusOverdue.
   ///
@@ -2323,6 +2479,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Upcoming · planned'**
   String get mnStatusUpcomingPlanned;
+
+  /// Amount of this month's bills not paid yet.
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} still to pay'**
+  String mnStillToPay(String amount);
 
   /// No description provided for @mnTitle.
   ///
@@ -3386,6 +3548,12 @@ abstract class AppLocalizations {
   /// **'Preparing… {done} of {total} pages'**
   String shPreparing(String done, String total);
 
+  /// No description provided for @shPromoLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared with LifeOS. Scan to get the free app for Android and iPhone.'**
+  String get shPromoLine;
+
   /// No description provided for @shPurpose.
   ///
   /// In en, this message translates to:
@@ -3469,6 +3637,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The document as it is'**
   String get shShareFileSub;
+
+  /// No description provided for @shShareFileSubFree.
+  ///
+  /// In en, this message translates to:
+  /// **'One PDF, with a small LifeOS line at the bottom'**
+  String get shShareFileSubFree;
 
   /// No description provided for @shShareWatermark.
   ///
@@ -3704,6 +3878,30 @@ abstract class AppLocalizations {
   /// **'Coming soon ({pbi}).'**
   String tkComingSoon(String pbi);
 
+  /// No description provided for @tkCompletedEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Tasks you tick off show here, newest first.'**
+  String get tkCompletedEmptyBody;
+
+  /// No description provided for @tkCompletedEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing completed yet'**
+  String get tkCompletedEmptyTitle;
+
+  /// No description provided for @tkCompletedTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed tasks'**
+  String get tkCompletedTasks;
+
+  /// No description provided for @tkCompletedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get tkCompletedTitle;
+
   /// No description provided for @tkCreatedAuto.
   ///
   /// In en, this message translates to:
@@ -3799,6 +3997,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Done'**
   String get tkDone;
+
+  /// When a completed task was ticked off (PBI-038 F-01).
+  ///
+  /// In en, this message translates to:
+  /// **'Done at {time}'**
+  String tkDoneAt(String time);
 
   /// No description provided for @tkDoneNext.
   ///
@@ -3955,6 +4159,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Mark \"{title}\" done'**
   String tkMarkDone(String title);
+
+  /// No description provided for @tkMarkNotDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as not done'**
+  String get tkMarkNotDone;
 
   /// No description provided for @tkMedium.
   ///
@@ -4213,6 +4423,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Renew {what}'**
   String tkRenewTitle(String what);
+
+  /// No description provided for @tkReopened.
+  ///
+  /// In en, this message translates to:
+  /// **'Back in your tasks'**
+  String get tkReopened;
 
   /// No description provided for @tkRepeat.
   ///

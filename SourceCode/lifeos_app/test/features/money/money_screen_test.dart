@@ -109,7 +109,11 @@ void main() {
     expect(find.byKey(ValueKey('category-row-$util')), findsOneWidget);
     expect(find.byKey(const ValueKey('category-row-none')), findsOneWidget);
     expect(find.text('90%'), findsOneWidget); // 45,000 of 50,000
-    expect(find.text('EXPENSES · 3'), findsOneWidget);
+    // Expenses are listed by day, each with its total (PBI-038 F-02).
+    for (final day in ['2026-11-01', '2026-11-03', '2026-11-04']) {
+      expect(find.byKey(ValueKey('money-day-$day')), findsOneWidget);
+    }
+    expect(find.text('Rs 45,000'), findsWidgets);
   });
 
   appTest('AC4: month navigation updates every figure', (tester, app) async {
@@ -130,7 +134,12 @@ void main() {
     expect(monthLabel(tester), 'October 2026');
     expect(totalText(tester), 'Rs 1,000');
     expect(find.text('New · nothing in Sep'), findsOneWidget);
-    expect(find.text('EXPENSES · 1'), findsOneWidget);
+    expect(find.byKey(const ValueKey('money-day-2026-10-12')), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('money-coming-up')),
+      findsNothing,
+      reason: 'bills still to pay belong to the current month',
+    );
 
     await tester.tap(find.byKey(const ValueKey('month-prev')));
     await tester.pumpAndSettle();

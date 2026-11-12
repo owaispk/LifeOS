@@ -1193,6 +1193,13 @@ class AppLocalizationsUr extends AppLocalizations {
   String get mnAdd => 'شامل کریں';
 
   @override
+  String get mnAddBill => 'ادا کرنے کا بل شامل کریں';
+
+  @override
+  String get mnAddBillSub =>
+      'ابھی ادا نہیں ہوا۔ یہ پیشگوئی میں دکھے گا، اور مقررہ تاریخ سے پہلے یاد دہانی آئے گی۔';
+
+  @override
   String get mnAddExpense => 'خرچ شامل کریں';
 
   @override
@@ -1200,6 +1207,9 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get mnAddSalary => 'حصہ دیکھنے کے لیے اپنی تنخواہ درج کریں';
+
+  @override
+  String get mnAddSalaryLeft => 'باقی رقم دیکھنے کے لیے اپنی آمدنی درج کریں';
 
   @override
   String get mnAmountError => '0 سے زیادہ رقم درج کریں';
@@ -1212,6 +1222,19 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get mnAttachReceipt => '📎 رسید لگائیں؟';
+
+  @override
+  String mnBillAdded(String date) {
+    return '$date کے لیے بل شامل ہو گیا';
+  }
+
+  @override
+  String get mnBillNameHint => 'پلمبر، گاڑی کی سروس، شادی کا تحفہ';
+
+  @override
+  String mnBillsPaidValue(int paid, int total) {
+    return '$total میں سے $paid';
+  }
 
   @override
   String mnBreakdownItem(String name, String amount, String percent) {
@@ -1254,6 +1277,9 @@ class AppLocalizationsUr extends AppLocalizations {
   String get mnChangeSalary => 'تنخواہ تبدیل کریں';
 
   @override
+  String get mnComingUp => 'آنے والے';
+
+  @override
   String get mnDate => 'تاریخ';
 
   @override
@@ -1286,6 +1312,9 @@ class AppLocalizationsUr extends AppLocalizations {
   }
 
   @override
+  String get mnDueDate => 'مقررہ تاریخ';
+
+  @override
   String get mnEditExpense => 'خرچ میں ترمیم';
 
   @override
@@ -1315,6 +1344,21 @@ class AppLocalizationsUr extends AppLocalizations {
   String get mnMarkPaid => 'ادا شدہ کریں';
 
   @override
+  String get mnMarkUnpaid => 'غیر ادا شدہ کریں';
+
+  @override
+  String get mnMarkUnpaidBody =>
+      'اس کا درج شدہ خرچ ہٹا دیا جائے گا اور اس کا کام دوبارہ کھل جائے گا۔ منسلک رسید ردی میں چلی جائے گی۔';
+
+  @override
+  String mnMarkUnpaidTitle(String title) {
+    return '$title کو غیر ادا شدہ کریں؟';
+  }
+
+  @override
+  String get mnMarkedUnpaid => 'غیر ادا شدہ کر دیا گیا';
+
+  @override
   String get mnMonthlySalary => 'ماہانہ تنخواہ';
 
   @override
@@ -1336,7 +1380,14 @@ class AppLocalizationsUr extends AppLocalizations {
   String get mnNoFixedTitle => 'اس مہینے کوئی مقررہ ادائیگی نہیں';
 
   @override
+  String get mnNotPaidYet =>
+      'ابھی ادا نہیں کیا؟ اسے ادا کرنے کے بل کے طور پر شامل کریں';
+
+  @override
   String get mnNoteHint => 'نوٹ (اختیاری)';
+
+  @override
+  String get mnNothingDue => 'اس مہینے کوئی بل باقی نہیں۔';
 
   @override
   String get mnOverview => 'خلاصہ';
@@ -1358,6 +1409,9 @@ class AppLocalizationsUr extends AppLocalizations {
   String get mnPaidOnDay => 'ادائیگی کا دن';
 
   @override
+  String get mnPickDueDate => 'تاریخ منتخب کریں';
+
+  @override
   String get mnPrevMonth => 'پچھلا مہینہ';
 
   @override
@@ -1366,6 +1420,30 @@ class AppLocalizationsUr extends AppLocalizations {
   @override
   String mnReceiptTitle(String title) {
     return 'رسید — $title';
+  }
+
+  @override
+  String mnRemindDaysBefore(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n دن پہلے',
+      one: '1 دن پہلے',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get mnRemindOnDay => 'اسی دن';
+
+  @override
+  String mnSalaryLeft(String left, String salary) {
+    return '$salary میں سے $left باقی';
+  }
+
+  @override
+  String mnSalaryOver(String over, String salary) {
+    return 'آپ کی $salary آمدنی سے $over زیادہ';
   }
 
   @override
@@ -1380,10 +1458,41 @@ class AppLocalizationsUr extends AppLocalizations {
   String get mnScan => 'اسکین';
 
   @override
+  String mnSeeAllExpenses(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'تمام $n اخراجات دیکھیں',
+      one: '1 خرچ دیکھیں',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get mnSeeForecast => 'پیشگوئی دیکھیں';
+
+  @override
   String get mnSpendingByCategory => 'زمرہ وار خرچ';
 
   @override
   String get mnSpent => 'خرچ';
+
+  @override
+  String mnSpentIn(String month) {
+    return '$month میں خرچ';
+  }
+
+  @override
+  String get mnSpentThisMonth => 'اس مہینے کا خرچ';
+
+  @override
+  String get mnStatBiggest => 'سب سے بڑا';
+
+  @override
+  String get mnStatBillsPaid => 'ادا شدہ بل';
+
+  @override
+  String get mnStatPerDay => 'روزانہ';
 
   @override
   String get mnStatusOverdue => 'تاریخ گزر گئی 🔴';
@@ -1396,6 +1505,11 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get mnStatusUpcomingPlanned => 'آنے والی · منصوبہ';
+
+  @override
+  String mnStillToPay(String amount) {
+    return '$amount ابھی ادا کرنا ہے';
+  }
 
   @override
   String get mnTitle => 'پیسے';
@@ -2018,6 +2132,10 @@ class AppLocalizationsUr extends AppLocalizations {
   }
 
   @override
+  String get shPromoLine =>
+      'LifeOS سے شیئر کیا گیا۔ اینڈرائیڈ اور آئی فون کے لیے مفت ایپ حاصل کرنے کو اسکین کریں۔';
+
+  @override
   String get shPurpose => 'مقصد (اختیاری)';
 
   @override
@@ -2060,6 +2178,10 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get shShareFileSub => 'دستاویز جیسی ہے ویسی';
+
+  @override
+  String get shShareFileSubFree =>
+      'ایک PDF، نیچے LifeOS کی ایک چھوٹی سطر کے ساتھ';
 
   @override
   String get shShareWatermark => 'واٹر مارک کے ساتھ شیئر کریں…';
@@ -2200,6 +2322,19 @@ class AppLocalizationsUr extends AppLocalizations {
   }
 
   @override
+  String get tkCompletedEmptyBody =>
+      'جو کام آپ مکمل کریں گے وہ یہاں دکھیں گے، تازہ ترین پہلے۔';
+
+  @override
+  String get tkCompletedEmptyTitle => 'ابھی کچھ مکمل نہیں ہوا';
+
+  @override
+  String get tkCompletedTasks => 'مکمل کام';
+
+  @override
+  String get tkCompletedTitle => 'مکمل';
+
+  @override
   String get tkCreatedAuto => 'خودکار طور پر بنا';
 
   @override
@@ -2264,6 +2399,11 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get tkDone => 'مکمل';
+
+  @override
+  String tkDoneAt(String time) {
+    return '$time پر مکمل';
+  }
 
   @override
   String get tkDoneNext => 'مکمل — اگلا طے ہو گیا';
@@ -2379,6 +2519,9 @@ class AppLocalizationsUr extends AppLocalizations {
   String tkMarkDone(String title) {
     return '\"$title\" مکمل کریں';
   }
+
+  @override
+  String get tkMarkNotDone => 'نامکمل کریں';
 
   @override
   String get tkMedium => 'درمیانی';
@@ -2519,6 +2662,9 @@ class AppLocalizationsUr extends AppLocalizations {
   String tkRenewTitle(String what) {
     return '$what کی تجدید';
   }
+
+  @override
+  String get tkReopened => 'دوبارہ آپ کے کاموں میں';
 
   @override
   String get tkRepeat => 'دہرائیں';

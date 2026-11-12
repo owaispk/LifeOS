@@ -342,21 +342,44 @@ class _PreparedFile {
 Future<(Uint8List, String?)> _prepareOffThread(Uint8List raw) =>
     Isolate.run(() => _toJpeg(raw));
 
-/// Normalises a page to an upright JPEG and hashes it (runs in a background
-/// isolate).
+/// Longest edge, in pixels, a stored page keeps (PBI-038 F-04). An A4 page
+/// at this size still has print several times taller than the 16–20 px a
+/// character needs to stay readable; a 12–50 MP camera page is 3–5× the
+/// file size for no visible gain. OCR is not affected: it reads the
+/// scanner's original file before this step.
+const maxPageEdge = 2400;
+
+/// JPEG quality for a page that had to be shrunk.
+const shrunkPageQuality = 85;
+
+/// Normalises a page to an upright JPEG no larger than [maxPageEdge] and
+/// hashes it (runs in a background isolate).
 ///
 /// Camera/scanner JPEGs often store pixels sideways plus an EXIF
 /// orientation tag. `decodeImage` already bakes that rotation into the
 /// pixels, so a tagged JPEG is re-encoded from the decoded image; keeping
 /// the raw bytes would leave the rotation to each viewer / the PDF writer,
-/// which renders the page rotated.
+/// which renders the page rotated. An upright JPEG within the size limit
+/// is kept byte for byte.
 (Uint8List, String?) _toJpeg(Uint8List raw) {
   final image = img.decodeImage(raw);
   if (image == null) return (raw, null);
+  // The hash comes from the page as captured, like the duplicate check's.
+  final hash = differenceHash(image);
   final isJpeg = raw.length > 2 && raw[0] == 0xFF && raw[1] == 0xD8;
-  final keepRaw = isJpeg && !_hasRotation(raw);
-  final bytes = keepRaw ? raw : img.encodeJpg(image, quality: 90);
-  return (bytes, differenceHash(image));
+  final tooBig = image.width > maxPageEdge || image.height > maxPageEdge;
+  if (!tooBig) {
+    final keepRaw = isJpeg && !_hasRotation(raw);
+    return (keepRaw ? raw : img.encodeJpg(image, quality: 90), hash);
+  }
+  final landscape = image.width >= image.height;
+  final shrunk = img.copyResize(
+    image,
+    width: landscape ? maxPageEdge : null,
+    height: landscape ? null : maxPageEdge,
+    interpolation: img.Interpolation.average,
+  );
+  return (img.encodeJpg(shrunk, quality: shrunkPageQuality), hash);
 }
 
 /// True if a JPEG carries an EXIF orientation other than "upright".

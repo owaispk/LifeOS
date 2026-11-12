@@ -120,7 +120,20 @@ void main() {
       8,
     );
     await openTab(tester, 'Money');
-    expect(visible(tester, 'expense-'), greaterThanOrEqualTo(6));
+    // Since PBI-038 F-02 (dense summary, owner decision 2026-11-11) the
+    // first Money screen is the month at a glance — total, salary left,
+    // three stats, categories and bills still to pay — and the expense
+    // rows follow below it, instead of six expense rows.
+    expect(
+      visible(
+        tester,
+        'money-',
+        where: (k) =>
+            const {'money-hero', 'money-stats', 'money-coming-up'}.contains(k),
+      ),
+      3,
+      reason: 'hero, stat tiles and coming up fit on one screen',
+    );
   });
 
   for (final rtl in [false, true]) {

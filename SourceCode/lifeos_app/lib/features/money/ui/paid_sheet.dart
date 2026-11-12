@@ -190,3 +190,55 @@ class _PaidSheetState extends State<_PaidSheet> {
     );
   }
 }
+
+/// "Mark as unpaid" (PBI-038 F-06): confirms, then reverses the whole
+/// completion chain for [paymentId] — at any time, not only during the
+/// 5-second Undo. Returns true when the payment was reversed.
+Future<bool> confirmMarkUnpaid(
+  BuildContext context,
+  WidgetRef ref, {
+  required String paymentId,
+  required String title,
+}) async {
+  final l = context.l10n;
+  final messenger = ScaffoldMessenger.of(context);
+  final ok = await showDialog<bool>(
+    context: context,
+    useRootNavigator: true,
+    builder: (context) {
+      final scheme = Theme.of(context).colorScheme;
+      return AlertDialog(
+        title: Text(l.mnMarkUnpaidTitle(title)),
+        content: Text(l.mnMarkUnpaidBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(l.cancel),
+          ),
+          FilledButton(
+            key: const ValueKey('mark-unpaid-confirm'),
+            style: FilledButton.styleFrom(
+              backgroundColor: scheme.error,
+              foregroundColor: scheme.onError,
+            ),
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(l.mnMarkUnpaid),
+          ),
+        ],
+      );
+    },
+  );
+  if (ok != true) return false;
+  final done = await ref.read(paymentServiceProvider).markUnpaid(paymentId);
+  if (done) {
+    messenger
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          key: const ValueKey('unpaid-snackbar'),
+          content: Text(l.mnMarkedUnpaid),
+        ),
+      );
+  }
+  return done;
+}

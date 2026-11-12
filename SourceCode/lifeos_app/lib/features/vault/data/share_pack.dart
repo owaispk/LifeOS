@@ -13,8 +13,10 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
 import 'package:pdfx/pdfx.dart' as pdfx;
+import 'package:qr/qr.dart';
 
 import '../../../core/plaintext_cache.dart';
+import '../../../core/theme/tokens.dart';
 import '../../../data/db/app_database.dart';
 
 /// "Shared by {name} with {recipient} for {purpose} — {date}".
@@ -23,6 +25,18 @@ class Watermark {
 
   /// The full line, already worded in the app's language.
   final String text;
+}
+
+/// The free-tier footer (PBI-038 F-03): one short line and a QR code to
+/// the app's download page, on a strip added under every shared page.
+class PromoFooter {
+  const PromoFooter({required this.text, required this.url});
+
+  /// The line, already worded in the app's language.
+  final String text;
+
+  /// What the QR code opens.
+  final String url;
 }
 
 /// Turns a PDF into page images (JPEG or PNG), one per page, at about [dpi].
@@ -106,6 +120,7 @@ class SharePackBuilder {
   Future<List<Uint8List>> finalPages(
     List<List<DocumentFile>> documents, {
     Watermark? watermark,
+    PromoFooter? promo,
     TextDirection direction = TextDirection.ltr,
     void Function(int done, int total)? onPage,
   }) async {
@@ -118,11 +133,24 @@ class SharePackBuilder {
       await for (final page in pagesOf(d)) {
         total++;
         jobs.add(
-          (watermark == null
+          (watermark == null && promo == null
                   ? Future.value(page)
-                  : slots.run(
-                      () => stampWatermark(page, watermark.text, direction),
-                    ))
+                  : slots.run(() async {
+                      var out = page;
+                      if (watermark != null) {
+                        out = await stampWatermark(
+                          out,
+                          watermark.text,
+                          direction,
+                        );
+                      }
+                      // Below the page, so it never covers the watermark's
+                      // footer or anything on the document.
+                      if (promo != null) {
+                        out = await stampPromo(out, promo, direction);
+                      }
+                      return out;
+                    }))
               .then((out) {
                 onPage?.call(++done, total);
                 return out;
@@ -143,6 +171,7 @@ class SharePackBuilder {
   Future<Uint8List> build(
     List<List<DocumentFile>> documents, {
     Watermark? watermark,
+    PromoFooter? promo,
     String? title,
     TextDirection direction = TextDirection.ltr,
     void Function(int done, int total)? onPage,
@@ -150,6 +179,7 @@ class SharePackBuilder {
     final stamped = await finalPages(
       documents,
       watermark: watermark,
+      promo: promo,
       direction: direction,
       onPage: onPage,
     );
@@ -285,6 +315,118 @@ Future<Uint8List> stampWatermark(
     );
   });
 }
+
+/// Adds a white strip under [pageImage] with a QR code to [promo]'s link
+/// at the start side and its line beside it, and returns a JPEG. The page
+/// itself is untouched: the strip makes the image taller (PBI-038 F-03).
+Future<Uint8List> stampPromo(
+  Uint8List pageImage,
+  PromoFooter promo,
+  TextDirection direction,
+) async {
+  final codec = await ui.instantiateImageCodec(pageImage);
+  final frame = await codec.getNextFrame();
+  final page = frame.image;
+  final w = page.width.toDouble();
+  final h = page.height.toDouble();
+  // About 9% of the width: the QR code prints ~14 mm wide on A4, with a
+  // white margin around it, and the text stays readable.
+  final strip = math.max(64.0, (w * 0.09).roundToDouble());
+  final pad = strip * 0.12;
+  final qrSize = strip - pad * 2;
+
+  final recorder = ui.PictureRecorder();
+  final canvas = Canvas(recorder, Rect.fromLTWH(0, 0, w, h + strip));
+  canvas.drawRect(
+    Rect.fromLTWH(0, 0, w, h + strip),
+    Paint()..color = Tokens.printPaper,
+  );
+  canvas.drawImage(page, Offset.zero, Paint());
+  canvas.drawLine(
+    Offset(0, h),
+    Offset(w, h),
+    Paint()
+      ..color = Tokens.printMuted.withValues(alpha: 0.3)
+      ..strokeWidth = math.max(1, strip * 0.01),
+  );
+
+  final rtl = direction == TextDirection.rtl;
+  final qrLeft = rtl ? w - pad - qrSize : pad;
+  _paintQr(canvas, promo.url, Rect.fromLTWH(qrLeft, h + pad, qrSize, qrSize));
+
+  final textWidth = w - qrSize - pad * 4;
+  final line = TextPainter(
+    text: TextSpan(
+      text: promo.text,
+      style: TextStyle(
+        color: Tokens.printMuted,
+        fontFamily: Tokens.fontFamily,
+        fontFamilyFallback: Tokens.fontFallback,
+        fontSize: strip * 0.2,
+        fontWeight: FontWeight.w500,
+      ),
+    ),
+    textDirection: direction,
+    textAlign: rtl ? TextAlign.right : TextAlign.left,
+    maxLines: 2,
+    ellipsis: '…',
+  )..layout(maxWidth: textWidth);
+  final textLeft = rtl
+      ? qrLeft - pad * 2 - line.width
+      : qrLeft + qrSize + pad * 2;
+  line.paint(canvas, Offset(textLeft, h + (strip - line.height) / 2));
+
+  final picture = recorder.endRecording();
+  final out = await picture.toImage(page.width, (h + strip).round());
+  final raw = await out.toByteData(format: ui.ImageByteFormat.rawRgba);
+  final width = out.width;
+  final height = out.height;
+  page.dispose();
+  out.dispose();
+  return _encodeJpeg(raw!.buffer.asUint8List(), width, height);
+}
+
+/// Draws [data] as a QR code filling [box] (medium error correction, so a
+/// slightly blurred print still scans), dark modules on paper.
+void _paintQr(Canvas canvas, String data, Rect box) {
+  final code = QrImage(
+    QrCode.fromData(data: data, errorCorrectLevel: QrErrorCorrectLevel.M),
+  );
+  final n = code.moduleCount;
+  final cell = box.width / n;
+  final ink = Paint()..color = Tokens.printInk;
+  for (var y = 0; y < n; y++) {
+    for (var x = 0; x < n; x++) {
+      if (code.isDark(y, x)) {
+        // A hair of overlap avoids white seams between modules.
+        canvas.drawRect(
+          Rect.fromLTWH(
+            box.left + x * cell,
+            box.top + y * cell,
+            cell + 0.5,
+            cell + 0.5,
+          ),
+          ink,
+        );
+      }
+    }
+  }
+}
+
+/// RGBA pixels to JPEG, off the UI thread (pure Dart).
+Future<Uint8List> _encodeJpeg(Uint8List pixels, int width, int height) =>
+    Isolate.run(() {
+      final rgba = img.Image.fromBytes(
+        width: width,
+        height: height,
+        bytes: pixels.buffer,
+        numChannels: 4,
+      );
+      // 4:2:0 like any camera or scanner: less work, smaller file.
+      return Uint8List.fromList(
+        img.encodeJpg(rgba, quality: 85, chroma: img.JpegChroma.yuv420),
+      );
+    });
 
 /// The bundle's file name: its title, made safe, or the neutral name.
 String bundleFileName(String? title) {

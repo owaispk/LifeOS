@@ -801,13 +801,38 @@
   "lockedTitle": "LifeOS is locked",
   "lookTemplate": "Look",
   "mnAdd": "Add",
+  "mnAddBill": "Add a bill to pay",
+  "mnAddBillSub": "Not paid yet. It shows in the forecast, with a reminder before it's due.",
   "mnAddExpense": "Add expense",
   "mnAddExpenseAction": "💸 Add expense",
   "mnAddSalary": "Add your salary to see the share",
+  "mnAddSalaryLeft": "Add your income to see what's left",
   "mnAmountError": "Enter an amount above 0",
   "mnAmountPaid": "Amount paid",
   "mnAmountPending": "amount pending",
   "mnAttachReceipt": "📎 Attach receipt?",
+  "mnBillAdded": "Bill added for {date}",
+  "@mnBillAdded": {
+    "description": "Snackbar after adding a one-off bill.",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "mnBillNameHint": "Plumber, car service, wedding gift",
+  "mnBillsPaidValue": "{paid} of {total}",
+  "@mnBillsPaidValue": {
+    "description": "Bills paid out of the month's bills.",
+    "placeholders": {
+      "paid": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
   "mnBreakdownItem": "{name} {amount}, {percent} percent",
   "@mnBreakdownItem": {
     "placeholders": {
@@ -840,6 +865,7 @@
   "mnCatUtilities": "Utilities",
   "mnCategory": "Category",
   "mnChangeSalary": "Change salary",
+  "mnComingUp": "Coming up",
   "mnDate": "Date",
   "mnDelete": "Delete",
   "mnDeltaNew": "New · nothing in {month}",
@@ -883,6 +909,7 @@
       }
     }
   },
+  "mnDueDate": "Due date",
   "mnEditExpense": "Edit expense",
   "mnExpensesCount": "Expenses · {n}",
   "@mnExpensesCount": {
@@ -899,6 +926,18 @@
   "mnLoggedFromPayment": "Logged from a payment",
   "mnLoggedInMoney": "Logged in Money",
   "mnMarkPaid": "Mark paid",
+  "mnMarkUnpaid": "Mark as unpaid",
+  "mnMarkUnpaidBody": "The expense logged for it is removed and its task opens again. A receipt you attached goes to Trash.",
+  "mnMarkUnpaidTitle": "Mark {title} as unpaid?",
+  "@mnMarkUnpaidTitle": {
+    "description": "Confirm title for reversing a paid payment (PBI-038 F-06).",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "mnMarkedUnpaid": "Marked as unpaid",
   "mnMonthlySalary": "Monthly salary",
   "mnNextMonth": "Next month",
   "mnNoExpensesBody": "Paid bills and quick expenses will add up here.",
@@ -912,7 +951,9 @@
   },
   "mnNoFixedBody": "Add what you pay regularly in More → Auto Tasks and the forecast fills itself.",
   "mnNoFixedTitle": "No fixed payments this month",
+  "mnNotPaidYet": "Not paid yet? Add it as a bill to pay",
   "mnNoteHint": "Note (optional)",
+  "mnNothingDue": "No bills left to pay this month.",
   "mnOverview": "Overview",
   "mnPaidAmountLine": "✓ {title} — {amount} paid",
   "@mnPaidAmountLine": {
@@ -935,12 +976,47 @@
     }
   },
   "mnPaidOnDay": "Paid on day",
+  "mnPickDueDate": "Pick a date",
   "mnPrevMonth": "Previous month",
   "mnReceiptAttached": "Receipt attached",
   "mnReceiptTitle": "Receipt — {title}",
   "@mnReceiptTitle": {
     "placeholders": {
       "title": {
+        "type": "String"
+      }
+    }
+  },
+  "mnRemindDaysBefore": "{n, plural, =1{1 day before} other{{n} days before}}",
+  "@mnRemindDaysBefore": {
+    "description": "Reminder lead time for a one-off bill (PBI-038 F-05).",
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "mnRemindOnDay": "On the day",
+  "mnSalaryLeft": "{left} left of {salary}",
+  "@mnSalaryLeft": {
+    "description": "Caption under the salary progress bar.",
+    "placeholders": {
+      "left": {
+        "type": "String"
+      },
+      "salary": {
+        "type": "String"
+      }
+    }
+  },
+  "mnSalaryOver": "{over} over your {salary} income",
+  "@mnSalaryOver": {
+    "description": "Caption when spending passed the salary.",
+    "placeholders": {
+      "over": {
+        "type": "String"
+      },
+      "salary": {
         "type": "String"
       }
     }
@@ -955,12 +1031,44 @@
   },
   "mnSave": "Save",
   "mnScan": "Scan",
+  "mnSeeAllExpenses": "{n, plural, =1{See 1 expense} other{See all {n} expenses}}",
+  "@mnSeeAllExpenses": {
+    "description": "Shows every day of the month's expenses.",
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "mnSeeForecast": "See forecast",
   "mnSpendingByCategory": "Spending by category",
   "mnSpent": "Spent",
+  "mnSpentIn": "Spent in {month}",
+  "@mnSpentIn": {
+    "description": "Hero label for a past month (PBI-038 F-02).",
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "mnSpentThisMonth": "Spent this month",
+  "mnStatBiggest": "Biggest",
+  "mnStatBillsPaid": "Bills paid",
+  "mnStatPerDay": "Per day",
   "mnStatusOverdue": "Overdue 🔴",
   "mnStatusPaid": "Paid ✓",
   "mnStatusUpcoming": "Upcoming",
   "mnStatusUpcomingPlanned": "Upcoming · planned",
+  "mnStillToPay": "{amount} still to pay",
+  "@mnStillToPay": {
+    "description": "Amount of this month's bills not paid yet.",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "mnTitle": "Money",
   "mnTotals": "{total} total · {paid} paid · {remaining} remaining",
   "@mnTotals": {
@@ -1340,6 +1448,7 @@
       }
     }
   },
+  "shPromoLine": "Shared with LifeOS. Scan to get the free app for Android and iPhone.",
   "shPurpose": "Purpose (optional)",
   "shPurposeHint": "e.g. account opening",
   "shRecipientRequired": "Enter who it's for",
@@ -1361,6 +1470,7 @@
   "shShareAsPdf": "Share as one PDF",
   "shShareFile": "Share file",
   "shShareFileSub": "The document as it is",
+  "shShareFileSubFree": "One PDF, with a small LifeOS line at the bottom",
   "shShareWatermark": "Share with watermark…",
   "shShareWatermarkSub": "Stamp who it's for, so the copy can't be reused",
   "shSharedTimes": "{n, plural, =1{Shared once} other{Shared {n} times}}",
@@ -1473,6 +1583,10 @@
       }
     }
   },
+  "tkCompletedEmptyBody": "Tasks you tick off show here, newest first.",
+  "tkCompletedEmptyTitle": "Nothing completed yet",
+  "tkCompletedTasks": "Completed tasks",
+  "tkCompletedTitle": "Completed",
   "tkCreatedAuto": "Created automatically",
   "tkCreatedByRule": "Created by rule: {name}",
   "@tkCreatedByRule": {
@@ -1564,6 +1678,15 @@
   "tkDomainVault": "Vault",
   "tkDomains": "Domains",
   "tkDone": "Done",
+  "tkDoneAt": "Done at {time}",
+  "@tkDoneAt": {
+    "description": "When a completed task was ticked off (PBI-038 F-01).",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "tkDoneNext": "Done — next one scheduled",
   "tkDoneTitle": "Done: {title}",
   "@tkDoneTitle": {
@@ -1659,6 +1782,7 @@
       }
     }
   },
+  "tkMarkNotDone": "Mark as not done",
   "tkMedium": "Medium",
   "tkMinutes": "{n} min",
   "@tkMinutes": {
@@ -1737,6 +1861,7 @@
       }
     }
   },
+  "tkReopened": "Back in your tasks",
   "tkRepeat": "Repeat",
   "tkRulePaused": "Rule paused — no new tasks from it",
   "tkSkipCycle": "Skip this cycle",

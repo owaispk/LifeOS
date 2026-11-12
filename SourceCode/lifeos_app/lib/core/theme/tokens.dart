@@ -56,6 +56,12 @@ abstract final class Tokens {
   /// Brand seed for the Material 3 colour scheme.
   static const Color seed = Color(0xFF5C6BC0);
 
+  // Ink and paper for marks burned into shared pages (watermark, footer):
+  // printed output, so fixed, never themed.
+  static const Color printPaper = Color(0xFFFFFFFF);
+  static const Color printInk = Color(0xFF202020);
+  static const Color printMuted = Color(0xFF5A5A5A);
+
   // Fonts, bundled with the app (pubspec.yaml). Inter carries Latin text
   // and all numerals; Urdu falls back to Noto Naskh Arabic.
   static const String fontFamily = 'Inter';

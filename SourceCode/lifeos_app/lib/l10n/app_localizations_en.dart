@@ -1192,6 +1192,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mnAdd => 'Add';
 
   @override
+  String get mnAddBill => 'Add a bill to pay';
+
+  @override
+  String get mnAddBillSub =>
+      'Not paid yet. It shows in the forecast, with a reminder before it\'s due.';
+
+  @override
   String get mnAddExpense => 'Add expense';
 
   @override
@@ -1199,6 +1206,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mnAddSalary => 'Add your salary to see the share';
+
+  @override
+  String get mnAddSalaryLeft => 'Add your income to see what\'s left';
 
   @override
   String get mnAmountError => 'Enter an amount above 0';
@@ -1211,6 +1221,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mnAttachReceipt => '📎 Attach receipt?';
+
+  @override
+  String mnBillAdded(String date) {
+    return 'Bill added for $date';
+  }
+
+  @override
+  String get mnBillNameHint => 'Plumber, car service, wedding gift';
+
+  @override
+  String mnBillsPaidValue(int paid, int total) {
+    return '$paid of $total';
+  }
 
   @override
   String mnBreakdownItem(String name, String amount, String percent) {
@@ -1253,6 +1276,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mnChangeSalary => 'Change salary';
 
   @override
+  String get mnComingUp => 'Coming up';
+
+  @override
   String get mnDate => 'Date';
 
   @override
@@ -1285,6 +1311,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get mnDueDate => 'Due date';
+
+  @override
   String get mnEditExpense => 'Edit expense';
 
   @override
@@ -1314,6 +1343,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mnMarkPaid => 'Mark paid';
 
   @override
+  String get mnMarkUnpaid => 'Mark as unpaid';
+
+  @override
+  String get mnMarkUnpaidBody =>
+      'The expense logged for it is removed and its task opens again. A receipt you attached goes to Trash.';
+
+  @override
+  String mnMarkUnpaidTitle(String title) {
+    return 'Mark $title as unpaid?';
+  }
+
+  @override
+  String get mnMarkedUnpaid => 'Marked as unpaid';
+
+  @override
   String get mnMonthlySalary => 'Monthly salary';
 
   @override
@@ -1336,7 +1380,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mnNoFixedTitle => 'No fixed payments this month';
 
   @override
+  String get mnNotPaidYet => 'Not paid yet? Add it as a bill to pay';
+
+  @override
   String get mnNoteHint => 'Note (optional)';
+
+  @override
+  String get mnNothingDue => 'No bills left to pay this month.';
 
   @override
   String get mnOverview => 'Overview';
@@ -1358,6 +1408,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mnPaidOnDay => 'Paid on day';
 
   @override
+  String get mnPickDueDate => 'Pick a date';
+
+  @override
   String get mnPrevMonth => 'Previous month';
 
   @override
@@ -1366,6 +1419,30 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String mnReceiptTitle(String title) {
     return 'Receipt — $title';
+  }
+
+  @override
+  String mnRemindDaysBefore(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n days before',
+      one: '1 day before',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get mnRemindOnDay => 'On the day';
+
+  @override
+  String mnSalaryLeft(String left, String salary) {
+    return '$left left of $salary';
+  }
+
+  @override
+  String mnSalaryOver(String over, String salary) {
+    return '$over over your $salary income';
   }
 
   @override
@@ -1380,10 +1457,41 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mnScan => 'Scan';
 
   @override
+  String mnSeeAllExpenses(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'See all $n expenses',
+      one: 'See 1 expense',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get mnSeeForecast => 'See forecast';
+
+  @override
   String get mnSpendingByCategory => 'Spending by category';
 
   @override
   String get mnSpent => 'Spent';
+
+  @override
+  String mnSpentIn(String month) {
+    return 'Spent in $month';
+  }
+
+  @override
+  String get mnSpentThisMonth => 'Spent this month';
+
+  @override
+  String get mnStatBiggest => 'Biggest';
+
+  @override
+  String get mnStatBillsPaid => 'Bills paid';
+
+  @override
+  String get mnStatPerDay => 'Per day';
 
   @override
   String get mnStatusOverdue => 'Overdue 🔴';
@@ -1396,6 +1504,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mnStatusUpcomingPlanned => 'Upcoming · planned';
+
+  @override
+  String mnStillToPay(String amount) {
+    return '$amount still to pay';
+  }
 
   @override
   String get mnTitle => 'Money';
@@ -2020,6 +2133,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get shPromoLine =>
+      'Shared with LifeOS. Scan to get the free app for Android and iPhone.';
+
+  @override
   String get shPurpose => 'Purpose (optional)';
 
   @override
@@ -2062,6 +2179,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get shShareFileSub => 'The document as it is';
+
+  @override
+  String get shShareFileSubFree =>
+      'One PDF, with a small LifeOS line at the bottom';
 
   @override
   String get shShareWatermark => 'Share with watermark…';
@@ -2202,6 +2323,19 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get tkCompletedEmptyBody =>
+      'Tasks you tick off show here, newest first.';
+
+  @override
+  String get tkCompletedEmptyTitle => 'Nothing completed yet';
+
+  @override
+  String get tkCompletedTasks => 'Completed tasks';
+
+  @override
+  String get tkCompletedTitle => 'Completed';
+
+  @override
   String get tkCreatedAuto => 'Created automatically';
 
   @override
@@ -2266,6 +2400,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tkDone => 'Done';
+
+  @override
+  String tkDoneAt(String time) {
+    return 'Done at $time';
+  }
 
   @override
   String get tkDoneNext => 'Done — next one scheduled';
@@ -2381,6 +2520,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String tkMarkDone(String title) {
     return 'Mark \"$title\" done';
   }
+
+  @override
+  String get tkMarkNotDone => 'Mark as not done';
 
   @override
   String get tkMedium => 'Medium';
@@ -2521,6 +2663,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String tkRenewTitle(String what) {
     return 'Renew $what';
   }
+
+  @override
+  String get tkReopened => 'Back in your tasks';
 
   @override
   String get tkRepeat => 'Repeat';

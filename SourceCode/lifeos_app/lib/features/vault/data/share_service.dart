@@ -80,6 +80,7 @@ class ShareService {
   Future<Uint8List> buildPdf(
     List<String> documentIds, {
     Watermark? watermark,
+    PromoFooter? promo,
     String? title,
     TextDirection direction = TextDirection.ltr,
     void Function(int done, int total)? onPage,
@@ -89,6 +90,7 @@ class ShareService {
     final pdf = await builder.build(
       docs.where((d) => d.isNotEmpty).toList(),
       watermark: watermark,
+      promo: promo,
       title: title,
       direction: direction,
       onPage: onPage,
@@ -96,6 +98,7 @@ class ShareService {
     AppLog.i(
       'share',
       'built ${documentIds.length} docs, watermark ${watermark != null}, '
+          'footer ${promo != null}, '
           '${sw.elapsedMilliseconds} ms (${builder.lastTimings})',
     );
     return pdf;

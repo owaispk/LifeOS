@@ -5,6 +5,7 @@ import '../../../data/db/app_database.dart';
 import '../../../data/repositories/repositories.dart';
 import '../../capture/data/capture_service.dart';
 import '../../tasks/data/task_service.dart';
+import '../../atc/domain/atc_schedule.dart' show reminderFor;
 import '../domain/money_rules.dart' show isoDate;
 import '../../../core/log/app_log.dart';
 
@@ -56,6 +57,53 @@ class PaymentService {
       (p) => p.taskId.equals(taskId) & p.status.isNotIn(['paid', 'skipped']),
     );
     return list.firstOrNull;
+  }
+
+  /// A one-off bill to pay on [due] (PBI-038 F-05): one task, one payment
+  /// and a reminder [remindDaysBefore] days ahead, with no Auto Tasks rule
+  /// behind it — so it shows in the Forecast and the month's "still to
+  /// pay", and the completion chain pays it like any other payment.
+  Future<Payment> addBill({
+    required String title,
+    required DateTime due,
+    int? amountMinor,
+    String? categoryId,
+    int remindDaysBefore = 1,
+  }) {
+    final trimmed = title.trim();
+    if (trimmed.isEmpty) throw ArgumentError.value(title, 'title', 'empty');
+    final day = DateTime(due.year, due.month, due.day);
+    return _db.transaction(() async {
+      final task = await _repos.tasks.insert(
+        TasksCompanion.insert(
+          title: trimmed,
+          domain: const Value('money'),
+          dueAt: Value(day.millisecondsSinceEpoch),
+          durationMin: const Value(15),
+        ),
+      );
+      final payment = await _repos.payments.insert(
+        PaymentsCompanion.insert(
+          title: trimmed,
+          dueDate: isoDate(day),
+          periodMonth: isoDate(DateTime(day.year, day.month)),
+          taskId: Value(task.id),
+          categoryId: Value(categoryId),
+          amountMinor: Value(amountMinor),
+        ),
+      );
+      final remindAt = reminderFor(day, remindDaysBefore);
+      if (remindAt.isAfter(_now())) {
+        await _repos.taskReminders.insert(
+          TaskRemindersCompanion.insert(
+            taskId: task.id,
+            fireAt: remindAt.millisecondsSinceEpoch,
+          ),
+        );
+      }
+      AppLog.i('money', 'bill added');
+      return payment;
+    });
   }
 
   /// Marks [paymentId] paid. All writes happen in one transaction; if any
@@ -169,6 +217,61 @@ class PaymentService {
       if (receiptId != null) await capture?.discardFiles(receiptId!);
       rethrow;
     }
+  }
+
+  /// Reverses a payment marked paid, at any time (PBI-038 F-06). The
+  /// snackbar's [undo] works from what [markPaid] returned; this rebuilds
+  /// the same reversal from the database: payment back to upcoming, its
+  /// logged expense removed, its receipt to Trash, its task reopened, an
+  /// installment counted back. Returns false when [paymentId] isn't paid.
+  Future<bool> markUnpaid(String paymentId) {
+    return _db.transaction(() async {
+      final p = await _repos.payments.getById(paymentId);
+      if (p == null || p.status != 'paid') return false;
+      await _repos.payments.update(
+        p.id,
+        const PaymentsCompanion(
+          status: Value('upcoming'),
+          paidAt: Value(null),
+          receiptDocumentId: Value(null),
+        ),
+      );
+      for (final e in await _repos.expenses.getWhere(
+        (e) => e.paymentId.equals(p.id),
+      )) {
+        await _repos.expenses.softDelete(e.id);
+      }
+      if (p.receiptDocumentId != null &&
+          await _repos.documents.getById(p.receiptDocumentId!) != null) {
+        await _repos.documents.softDelete(p.receiptDocumentId!); // → Trash
+      }
+      if (p.taskId != null) {
+        final task = await _repos.tasks.getById(p.taskId!);
+        if (task != null && task.status == 'done') {
+          await TaskService(_repos, now: _now).reopen(task.id);
+        }
+      }
+      final rule = p.atcRuleId == null
+          ? null
+          : await _repos.atcRules.getById(p.atcRuleId!);
+      if (rule?.installmentTotal != null && (rule!.installmentDone ?? 0) > 0) {
+        final done = rule.installmentDone! - 1;
+        await _repos.atcRules.update(
+          rule.id,
+          AtcRulesCompanion(
+            installmentDone: Value(done),
+            // The last installment ended the rule; it is open again.
+            status: Value(
+              rule.status == 'ended' && done < rule.installmentTotal!
+                  ? 'active'
+                  : rule.status,
+            ),
+          ),
+        );
+      }
+      AppLog.i('money', 'payment marked unpaid');
+      return true;
+    });
   }
 
   /// Reverses [markPaid] (5 s Undo, AC5).

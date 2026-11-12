@@ -300,13 +300,31 @@ void main() {
       expect(events.single.watermarked, isTrue);
       expect(idsOf(events.single.documentIds), [d.id]);
 
-      // A plain share is logged too; Details shows the count.
+      // A plain share is logged too; Details shows the count. On the free
+      // plan it is one PDF with the LifeOS footer, not the raw file
+      // (PBI-038 F-03).
       await tester.tap(find.byKey(const ValueKey('viewer-share')));
       await tester.pumpAndSettle();
+      expect(
+        find.text('One PDF, with a small LifeOS line at the bottom'),
+        findsOneWidget,
+      );
       await tester.tap(find.byKey(const ValueKey('share-file')));
+      for (var i = 0; i < 100 && sentPdfs.length < 2; i++) {
+        await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 50)),
+        );
+        await tester.pump(const Duration(milliseconds: 50));
+      }
       await settle(tester);
-      expect(sharedFiles, hasLength(1));
-      expect(await history(app, tester), hasLength(2));
+      expect(sharedFiles, isEmpty, reason: 'free: never the raw file');
+      expect(sentPdfs, hasLength(2));
+      expect(sentPdfs.last.$2, 'Document.pdf');
+      expect(pdfPages(sentPdfs.last.$1), 1);
+      // Same clock for both shares: find the plain one by its flag.
+      final events2 = await history(app, tester);
+      expect(events2, hasLength(2));
+      expect(events2.where((e) => !e.watermarked), hasLength(1));
       await pumpUntilFound(tester, find.text('Shared 2 times'));
     },
     extra: extras,

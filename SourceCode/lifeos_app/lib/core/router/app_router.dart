@@ -19,6 +19,7 @@ import '../../features/profile/profile_screen.dart';
 import '../../features/score/score_screen.dart';
 import '../../features/settings/diagnostics_screen.dart';
 import '../../features/settings/settings_screen.dart';
+import '../../features/tasks/completed_screen.dart';
 import '../../features/tasks/tasks_screen.dart';
 import '../../features/tasks/ui/task_detail_screen.dart';
 import '../../features/vault/bundle_screen.dart';
@@ -111,6 +112,10 @@ final routerProvider = Provider<GoRouter>((ref) {
             Routes.tasks,
             const TasksScreen(),
             routes: [
+              GoRoute(
+                path: 'completed',
+                builder: (context, state) => const CompletedTasksScreen(),
+              ),
               GoRoute(
                 path: 'task/:id',
                 builder: (context, state) =>

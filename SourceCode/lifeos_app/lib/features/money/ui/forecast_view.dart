@@ -12,6 +12,7 @@ import '../../../shared/format.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../atc/atc_providers.dart';
 import '../domain/forecast.dart';
+import 'bill_sheet.dart';
 import 'paid_sheet.dart';
 
 final userSettingsRowProvider = StreamProvider<UserSettingsRow?>(
@@ -60,6 +61,8 @@ class ForecastView extends ConsumerWidget {
             emoji: '📆',
             title: l.mnNoFixedTitle,
             message: l.mnNoFixedBody,
+            actionLabel: l.mnAddBill,
+            onAction: () => showBillSheet(context),
           )
         else ...[
           // Digest card (PBI-019; the notification is PBI-023).
@@ -100,7 +103,7 @@ class ForecastView extends ConsumerWidget {
                   else
                     TextButton.icon(
                       key: const ValueKey('forecast-set-salary'),
-                      onPressed: () => _editSalary(context, ref, settings),
+                      onPressed: () => editSalary(context, ref, settings),
                       icon: const Icon(Icons.payments_outlined),
                       label: Text(l.mnAddSalary),
                     ),
@@ -110,10 +113,22 @@ class ForecastView extends ConsumerWidget {
           ),
           _CalendarStrip(month: month, items: f.items, now: now),
           for (final i in f.items) _ForecastRow(item: i, now: now),
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: Tokens.spaceS),
+              child: TextButton.icon(
+                key: const ValueKey('forecast-add-bill'),
+                onPressed: () => showBillSheet(context),
+                icon: const Icon(Icons.add),
+                label: Text(l.mnAddBill),
+              ),
+            ),
+          ),
           if (f.salaryPercent != null)
             Center(
               child: TextButton(
-                onPressed: () => _editSalary(context, ref, settings),
+                onPressed: () => editSalary(context, ref, settings),
                 child: Text(l.mnChangeSalary),
               ),
             ),
@@ -123,7 +138,8 @@ class ForecastView extends ConsumerWidget {
   }
 }
 
-Future<void> _editSalary(
+/// The salary dialog (amount and payday), shared by Overview and Forecast.
+Future<void> editSalary(
   BuildContext context,
   WidgetRef ref,
   UserSettingsRow? settings,
@@ -292,6 +308,18 @@ class _ForecastRow extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(amount, style: theme.textTheme.bodyLarge),
+          if (item.paymentId != null && item.status == ForecastStatus.paid)
+            IconButton(
+              key: ValueKey('mark-unpaid-${item.paymentId}'),
+              tooltip: l.mnMarkUnpaid,
+              icon: const Icon(Icons.undo),
+              onPressed: () => confirmMarkUnpaid(
+                context,
+                ref,
+                paymentId: item.paymentId!,
+                title: item.title,
+              ),
+            ),
           if (item.paymentId != null && item.status != ForecastStatus.paid)
             IconButton(
               key: ValueKey('mark-paid-${item.paymentId}'),

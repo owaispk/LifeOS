@@ -10,7 +10,9 @@ import '../../../shared/format.dart';
 import '../data/expense_service.dart';
 import '../domain/money_rules.dart';
 import '../money_providers.dart';
+import 'bill_sheet.dart';
 import 'category_colors.dart';
+import 'paid_sheet.dart' show confirmMarkUnpaid;
 
 /// 4.4 Add Expense (bottom sheet) — also used to edit an existing expense.
 Future<void> showExpenseSheet(BuildContext context, {Expense? existing}) {
@@ -90,6 +92,17 @@ class _ExpenseSheetState extends ConsumerState<ExpenseSheet> {
     } on PaymentLinkedExpenseException {
       // The button is hidden for these; nothing else to do.
     }
+  }
+
+  Future<void> _markUnpaid() async {
+    final e = widget.existing!;
+    final done = await confirmMarkUnpaid(
+      context,
+      ref,
+      paymentId: e.paymentId!,
+      title: e.note ?? categoryName(null),
+    );
+    if (done && mounted) Navigator.pop(context);
   }
 
   @override
@@ -173,6 +186,23 @@ class _ExpenseSheetState extends ConsumerState<ExpenseSheet> {
                 if (picked != null) setState(() => _date = picked);
               },
             ),
+            // Expenses are money already spent; a bill due later goes to
+            // the Forecast instead (PBI-038 F-05).
+            if (!_editing)
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: TextButton.icon(
+                  key: const ValueKey('expense-to-bill'),
+                  onPressed: () {
+                    final nav = Navigator.of(context);
+                    final host = nav.context;
+                    nav.pop();
+                    showBillSheet(host);
+                  },
+                  icon: const Icon(Icons.event_note_outlined),
+                  label: Text(l.mnNotPaidYet),
+                ),
+              ),
             TextField(
               key: const ValueKey('expense-note'),
               controller: _note,
@@ -197,12 +227,29 @@ class _ExpenseSheetState extends ConsumerState<ExpenseSheet> {
                   ),
                 if (linked)
                   Expanded(
-                    child: Text(
-                      l.mnLinkedNote,
-                      key: const ValueKey('expense-linked-note'),
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l.mnLinkedNote,
+                          key: const ValueKey('expense-linked-note'),
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                        // The only way to remove a payment's expense is to
+                        // reverse the payment itself (PBI-038 F-06).
+                        TextButton.icon(
+                          key: const ValueKey('expense-mark-unpaid'),
+                          style: TextButton.styleFrom(
+                            foregroundColor: theme.colorScheme.error,
+                            padding: EdgeInsets.zero,
+                          ),
+                          onPressed: _markUnpaid,
+                          icon: const Icon(Icons.undo),
+                          label: Text(l.mnMarkUnpaid),
+                        ),
+                      ],
                     ),
                   )
                 else

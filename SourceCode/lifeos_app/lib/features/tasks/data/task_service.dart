@@ -194,6 +194,42 @@ class TaskService {
     });
   }
 
+  /// Reopens a done task at any time (PBI-038 F-01, F-06), without the
+  /// [CompletionResult] that [undoComplete] needs. For a repeating task the
+  /// occurrence its completion created is removed again while it is still
+  /// open: the newest open copy (same title and repeat rule, created after
+  /// this task) due exactly when [complete] scheduled the next one.
+  Future<void> reopen(String id) {
+    return _db.transaction(() async {
+      final task = await _require(id);
+      if (task.status != 'done') return;
+      String? nextId;
+      final rule = RepeatRule.parse(task.repeatRule);
+      if (rule != null && task.completedAt != null) {
+        final doneAt = DateTime.fromMillisecondsSinceEpoch(task.completedAt!);
+        final base = task.dueAt == null ? startOfDay(doneAt) : localDue(task);
+        final nextDue = rule.nextOccurrence(base, doneAt);
+        final copies = (await _repos.tasks.getWhere(
+          (t) =>
+              t.status.equals('open') &
+              t.title.equals(task.title) &
+              t.repeatRule.equals(task.repeatRule!) &
+              t.dueAt.equals(nextDue.millisecondsSinceEpoch) &
+              t.id.isBiggerThanValue(task.id), // UUIDv7 = age
+        )).toList()..sort((a, b) => b.id.compareTo(a.id));
+        nextId = copies.firstOrNull?.id;
+      }
+      await undoComplete(CompletionResult(id, nextId));
+    });
+  }
+
+  /// Done tasks, most recently completed first (PBI-038 F-01).
+  Stream<List<Task>> watchCompleted() => _repos.tasks.watchAll().map(
+    (all) =>
+        all.where((t) => t.status == 'done' && t.completedAt != null).toList()
+          ..sort((a, b) => b.completedAt!.compareTo(a.completedAt!)),
+  );
+
   /// Moves a task to [to]; snoozed tasks become timed.
   Future<Task> snooze(String id, DateTime to) =>
       reschedule(id, to, allDay: false);

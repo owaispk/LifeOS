@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/l10n.dart';
 import '../../core/theme/tokens.dart';
@@ -84,6 +85,20 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
             ),
           ],
         ),
+        actions: [
+          PopupMenuButton<String>(
+            key: const ValueKey('tasks-overflow'),
+            tooltip: l.tkMoreOptions,
+            onSelected: (_) => context.push('/tasks/completed'),
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                key: const ValueKey('tasks-completed'),
+                value: 'completed',
+                child: Text(l.tkCompletedTasks),
+              ),
+            ],
+          ),
+        ],
       ),
       body: tasks.when(
         loading: () => const Center(child: CircularProgressIndicator()),

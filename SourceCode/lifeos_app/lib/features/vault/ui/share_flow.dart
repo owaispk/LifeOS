@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../../../core/app_links.dart';
 import '../../../core/l10n.dart';
 import '../../../core/log/app_log.dart';
 import '../../../core/now_provider.dart';
@@ -14,6 +15,7 @@ import '../../../shared/format.dart' show dayMonth;
 import '../../../data/db/app_database.dart';
 import '../../capture/capture_providers.dart';
 import '../../capture/data/capture_service.dart';
+import '../../premium/premium_providers.dart' show premiumProvider;
 import '../../profile/profile_screen.dart' show selfPersonProvider;
 import '../data/share_pack.dart';
 import '../share_providers.dart';
@@ -40,7 +42,11 @@ Future<void> showShareChoice(
             key: const ValueKey('share-file'),
             leading: const Icon(Icons.ios_share),
             title: Text(context.l10n.shShareFile),
-            subtitle: Text(context.l10n.shShareFileSub),
+            subtitle: Text(
+              ref.read(premiumProvider)
+                  ? context.l10n.shShareFileSub
+                  : context.l10n.shShareFileSubFree,
+            ),
             onTap: () => Navigator.pop(context, 'file'),
           ),
           ListTile(
@@ -56,6 +62,12 @@ Future<void> showShareChoice(
   );
   if (choice == null || !context.mounted) return;
   if (choice == 'file') {
+    // Free shares carry the LifeOS footer, so they go out as one PDF with
+    // it on every page; Premium sends the file as it is (PBI-038 F-03).
+    if (!ref.read(premiumProvider)) {
+      await sharePdf(context, ref, documentIds: [doc.id]);
+      return;
+    }
     await ref.read(shareFilesProvider)(files);
     await ref.read(shareServiceProvider).record(documentIds: [doc.id]);
     return;
@@ -178,6 +190,11 @@ class WatermarkFields extends StatelessWidget {
   }
 }
 
+/// The footer free-tier shares carry (PBI-038 F-03), or null on Premium.
+PromoFooter? freeTierFooter(WidgetRef ref) => ref.read(premiumProvider)
+    ? null
+    : PromoFooter(text: l10nNow.shPromoLine, url: promoDownloadUrl);
+
 /// Builds the flattened PDF of [documentIds] (watermarked when
 /// [watermark] is set), shows progress, sends it, records the share, and
 /// optionally files a copy in the Vault. Returns whether it was shared.
@@ -218,6 +235,7 @@ Future<bool> sharePdf(
     final pdf = await service.buildPdf(
       documentIds,
       watermark: wm,
+      promo: freeTierFooter(ref),
       title: title,
       direction: watermarkDirection,
       onPage: (done, total) => progress.value = (done, total),

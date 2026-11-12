@@ -12,6 +12,7 @@ import 'package:path/path.dart' as p;
 
 import '../../widget_test_utils.dart';
 import '../capture/image_fixtures.dart';
+import '../premium/premium_test.dart' show setPremium;
 
 late Directory tmp;
 final shared = <List<DocumentFile>>[];
@@ -234,11 +235,14 @@ void main() {
     expect(find.text('Trash is empty'), findsOneWidget);
   }, extra: extras);
 
-  appTest('AC5: Share sends the files only, with a neutral message', (
+  appTest('AC5 (Premium): Share sends the files only, neutral message', (
     tester,
     app,
   ) async {
     await useTallScreen(tester);
+    // Free shares go out as one PDF with the LifeOS footer (PBI-038 F-03,
+    // share_flow_test); Premium sends the stored files untouched.
+    await setPremium(app, tester, on: true);
     final d = await docWithPages(
       app,
       tester,
