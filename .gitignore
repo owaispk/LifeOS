@@ -1,2 +1,5 @@
 # Local agent workspace (chat attachments, logs) — never part of the repo
 .opencode/
+
+# Sales outreach material — unrelated to the app, kept local
+prospects/
