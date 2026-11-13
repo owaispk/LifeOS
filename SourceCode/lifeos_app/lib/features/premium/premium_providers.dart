@@ -17,6 +17,10 @@ final billingSourceProvider = Provider<BillingSource>((ref) => const NoBilling()
 /// **The** premium flag. Everything that gates on Premium reads this and
 /// nothing else — Vault, ATC, Settings, and PBI-027a/b when they land.
 final premiumProvider = Provider<bool>((ref) {
+  // DEV BUILD: Premium always ON for testing. Set to false for production.
+  const devPremiumOverride = true;
+  if (devPremiumOverride) return true;
+
   final s = ref.watch(settingsProvider).value;
   return isPremiumAt(s?.premiumUntil, ref.watch(nowProvider)());
 });

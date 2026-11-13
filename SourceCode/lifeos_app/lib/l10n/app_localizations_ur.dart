@@ -3326,4 +3326,690 @@ class AppLocalizationsUr extends AppLocalizations {
 
   @override
   String get yesterday => 'گزشتہ کل';
+
+  @override
+  String get inboxTitle => 'ان باکس';
+
+  @override
+  String get inboxEmptyTitle => 'آپ کا ان باکس خالی ہے';
+
+  @override
+  String get inboxEmptyBody =>
+      'خیالات، کام، اخراجات — شامل کرنے کے لیے + دبائیں۔';
+
+  @override
+  String get inboxCapture => 'نوٹ کریں';
+
+  @override
+  String get inboxCaptureText => 'متن';
+
+  @override
+  String get inboxCaptureVoice => 'آواز';
+
+  @override
+  String get inboxCapturePhoto => 'تصویر';
+
+  @override
+  String get inboxCloseCapture => 'بند کریں';
+
+  @override
+  String get inboxQuickCapture => 'فوری نوٹ';
+
+  @override
+  String get inboxCaptureHint => 'کیا ذہن میں ہے؟';
+
+  @override
+  String get inboxCaptureHelp =>
+      'ہم اسے بعد میں کام، خرچ یا دستاویز میں بدلنے میں مدد کریں گے۔';
+
+  @override
+  String get inboxSaveToInbox => 'ان باکس میں محفوظ کریں';
+
+  @override
+  String get inboxCaptured => 'محفوظ ہو گیا';
+
+  @override
+  String get inboxDismissed => 'ہٹا دیا گیا';
+
+  @override
+  String get inboxUntitled => 'بغیر عنوان';
+
+  @override
+  String get inboxError => 'کچھ غلط ہو گیا';
+
+  @override
+  String get inboxClassify => 'یہ کیا ہے؟';
+
+  @override
+  String get inboxClassifyAs => 'بنائیں بطور';
+
+  @override
+  String get inboxTypeTask => 'کام';
+
+  @override
+  String get inboxTypeExpense => 'خرچ';
+
+  @override
+  String get inboxTypeDocument => 'دستاویز';
+
+  @override
+  String get inboxTypeNote => 'نوٹ';
+
+  @override
+  String get inboxCreatedTask => 'کام بن گیا';
+
+  @override
+  String get inboxCreatedExpense => 'خرچ درج ہو گیا';
+
+  @override
+  String get inboxCreatedDocument => 'دستاویز شروع ہو گئی';
+
+  @override
+  String get inboxCreatedNote => 'نوٹ محفوظ ہو گیا';
+
+  @override
+  String inboxBadge(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n آئٹمز',
+      one: '1 آئٹم',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get briefTitle => 'آپ کا روزانہ خلاصہ';
+
+  @override
+  String get briefButtonTitle => 'اپنا خلاصہ سنیں';
+
+  @override
+  String briefButtonSubtitle(int score, int tasks) {
+    return 'اسکور $score · $tasks کام آج';
+  }
+
+  @override
+  String get briefSpeak => 'سنائیں';
+
+  @override
+  String get briefStop => 'رکیں';
+
+  @override
+  String get briefError => 'خلاصہ لوڈ نہیں ہو سکا';
+
+  @override
+  String get briefAiGenerated => 'اے آئی سے بہتر';
+
+  @override
+  String get briefStatTasks => 'کام';
+
+  @override
+  String get briefStatOverdue => 'تاخیر';
+
+  @override
+  String get briefStatExpiring => 'ختم ہونے والے';
+
+  @override
+  String get briefStatBudget => 'بجٹ';
+
+  @override
+  String get briefPremiumTitle => 'اے آئی خلاصہ';
+
+  @override
+  String get briefPremiumBody =>
+      'پریمیم لیں اور اے آئی سے قدرتی صبح کا خلاصہ حاصل کریں۔';
+
+  @override
+  String briefScoreExcellent(int score) {
+    return 'زبردست! آپ کا لائف اسکور $score ہے — سب اچھا چل رہا ہے۔';
+  }
+
+  @override
+  String briefScoreSteady(int score) {
+    return 'آپ کا لائف اسکور $score ہے۔ کچھ چیزیں توجہ چاہتی ہیں۔';
+  }
+
+  @override
+  String briefScoreTriage(int score) {
+    return 'آپ کا لائف اسکور $score ہے۔ آج سب سے اہم کاموں پر توجہ دیں۔';
+  }
+
+  @override
+  String get briefNoTasks => 'آج کوئی کام نہیں ہے۔';
+
+  @override
+  String briefTasks(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'آج $n کام ہیں۔',
+      one: 'آج 1 کام ہے۔',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String briefOverduePayments(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n ادائیگیاں تاخیر میں ہیں۔',
+      one: '1 ادائیگی تاخیر میں ہے۔',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String briefExpiringDocs(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n دستاویزات جلد ختم ہو رہی ہیں۔',
+      one: '1 دستاویز جلد ختم ہو رہی ہے۔',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String briefBudgetWarning(int percent) {
+    return 'آپ نے اپنے ماہانہ بجٹ کا $percent% استعمال کر لیا ہے۔';
+  }
+
+  @override
+  String get briefAllClear => 'آپ کا دن صاف ہے!';
+
+  @override
+  String get briefPreviewClear => 'آج سب صاف ہے ✨';
+
+  @override
+  String get briefPreviewUrgent => 'کچھ چیزیں توجہ چاہتی ہیں';
+
+  @override
+  String briefPreviewNormal(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: 'آج $n کام',
+      one: 'آج 1 کام',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get briefSettingsTitle => 'خلاصے کی ترتیبات';
+
+  @override
+  String get briefEnabled => 'صبح کا خلاصہ';
+
+  @override
+  String get briefEnabledSub => 'روزانہ آواز سے خلاصہ کی اطلاع حاصل کریں';
+
+  @override
+  String get briefTime => 'خلاصے کا وقت';
+
+  @override
+  String get briefTimeSub => 'صبح کا خلاصہ کب چاہتے ہیں';
+
+  @override
+  String get briefTtsRate => 'بولنے کی رفتار';
+
+  @override
+  String get briefTtsRateSub => 'خلاصہ کتنی تیزی سے بولا جائے';
+
+  @override
+  String get briefTtsSlow => 'آہستہ';
+
+  @override
+  String get briefTtsFast => 'تیز';
+
+  @override
+  String get briefTtsTest => 'آواز آزمائیں';
+
+  @override
+  String get briefAiConsent => 'اے آئی خلاصہ';
+
+  @override
+  String get briefAiConsentSub => 'اے آئی سے قدرتی خلاصہ بنائیں';
+
+  @override
+  String get briefAiReady => 'اے آئی ترتیب دیا گیا اور تیار ہے';
+
+  @override
+  String get briefNotifTitle => 'آپ کا صبح کا خلاصہ';
+
+  @override
+  String briefNotifBody(int score, int tasks) {
+    return 'لائف اسکور $score · آج $tasks کام';
+  }
+
+  @override
+  String get accountTitle => 'Account';
+
+  @override
+  String get accountCreateTitle => 'Create Account';
+
+  @override
+  String get accountCreateDescription =>
+      'Create an account to back up your vault and sync across devices.';
+
+  @override
+  String get accountRecoveryPhrase => 'Recovery Phrase';
+
+  @override
+  String get accountRecoveryPhraseDescription =>
+      'A 12-word phrase that lets you recover your account on any device.';
+
+  @override
+  String get accountEncryption => 'End-to-End Encryption';
+
+  @override
+  String get accountEncryptionDescription =>
+      'Your data is encrypted with your recovery phrase. Only you can read it.';
+
+  @override
+  String get accountGetStarted => 'Get Started';
+
+  @override
+  String get accountNotNow => 'Not Now';
+
+  @override
+  String get accountYourRecoveryPhrase => 'Your Recovery Phrase';
+
+  @override
+  String get accountWriteDown =>
+      'Write down these 12 words in order. You\'ll need them to recover your account.';
+
+  @override
+  String get accountCopy => 'Copy to clipboard';
+
+  @override
+  String get accountCopied => 'Copied to clipboard';
+
+  @override
+  String get accountWarning =>
+      'If you lose this phrase, you\'ll lose access to your encrypted data. There is no way to recover it.';
+
+  @override
+  String get accountWroteItDown => 'I wrote it down';
+
+  @override
+  String get accountVerify => 'Verify Your Phrase';
+
+  @override
+  String get accountEnterWords =>
+      'Enter these words from your phrase to verify you wrote it down correctly.';
+
+  @override
+  String get accountWord => 'Word';
+
+  @override
+  String get accountVerifyButton => 'Verify';
+
+  @override
+  String get accountVerificationFailed =>
+      'Verification failed. Please check the words and try again.';
+
+  @override
+  String get accountCreated => 'Account Created!';
+
+  @override
+  String get accountCreatedDescription =>
+      'Your account is ready. Your vault is now encrypted with your recovery phrase.';
+
+  @override
+  String get accountDone => 'Done';
+
+  @override
+  String get accountRecover => 'Recover Account';
+
+  @override
+  String get accountRecoverDescription =>
+      'Enter your 12-word recovery phrase to recover your account.';
+
+  @override
+  String get accountRecoverPlaceholder =>
+      'Enter your 12-word recovery phrase...';
+
+  @override
+  String get accountRecoverButton => 'Recover';
+
+  @override
+  String get accountRecoverSuccess => 'Account recovered successfully!';
+
+  @override
+  String get accountRecoverFailed =>
+      'Invalid recovery phrase. Please check and try again.';
+
+  @override
+  String get accountViewPhrase => 'View Recovery Phrase';
+
+  @override
+  String get accountViewPhraseDescription =>
+      'View your recovery phrase to back it up again.';
+
+  @override
+  String get accountNoAccount => 'No account created';
+
+  @override
+  String get accountNoAccountDescription =>
+      'Create an account to enable backup and sync.';
+
+  @override
+  String get inbox => 'Inbox';
+
+  @override
+  String get inboxEmpty => 'Inbox is clear';
+
+  @override
+  String get inboxEmptyHint =>
+      'Tap + to capture a thought, photo, or voice note.';
+
+  @override
+  String get inboxHelp => 'About Inbox';
+
+  @override
+  String get inboxHelpText =>
+      'The inbox holds your quick captures until you\'re ready to sort them into tasks, expenses, documents, or notes.';
+
+  @override
+  String get classify => 'Sort';
+
+  @override
+  String get classifyAs => 'Sort this as...';
+
+  @override
+  String get captureDeleted => 'Capture deleted';
+
+  @override
+  String get undo => 'Undo';
+
+  @override
+  String get quickCapture => 'Quick Capture';
+
+  @override
+  String get captureHint => 'What\'s on your mind?';
+
+  @override
+  String get captureHintSubtle => 'We\'ll help you sort it later.';
+
+  @override
+  String get captureSaved => 'Captured';
+
+  @override
+  String get text => 'Text';
+
+  @override
+  String get voice => 'Voice';
+
+  @override
+  String get photo => 'Photo';
+
+  @override
+  String get task => 'Task';
+
+  @override
+  String get expense => 'Expense';
+
+  @override
+  String get document => 'Document';
+
+  @override
+  String get note => 'Note';
+
+  @override
+  String get taskCreated => 'Task created';
+
+  @override
+  String get savedAsNote => 'Saved as note';
+
+  @override
+  String get textAsDocument => 'Create as document?';
+
+  @override
+  String get textAsDocumentHint =>
+      'This will save the text as a searchable document in your vault.';
+
+  @override
+  String get keepAsNote => 'Keep as note';
+
+  @override
+  String get createDocument => 'Create document';
+
+  @override
+  String get justNow => 'Just now';
+
+  @override
+  String get minutesAgo => 'min ago';
+
+  @override
+  String get hoursAgo => 'h ago';
+
+  @override
+  String get daysAgo => 'd ago';
+
+  @override
+  String get dailyBrief => 'Daily Brief';
+
+  @override
+  String get todayAtAGlance => 'Today at a Glance';
+
+  @override
+  String get tasks => 'Tasks';
+
+  @override
+  String get overdue => 'Overdue';
+
+  @override
+  String get expiring => 'Expiring';
+
+  @override
+  String get lifeScore => 'Life Score';
+
+  @override
+  String get speakBrief => 'Speak Brief';
+
+  @override
+  String get stop => 'Stop';
+
+  @override
+  String get speechRate => 'Speech Rate';
+
+  @override
+  String get briefSettings => 'Brief Settings';
+
+  @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get heavyWeek => 'Heavy week ahead';
+
+  @override
+  String get greatDay => 'Great day ahead!';
+
+  @override
+  String get goodMorning => 'Good morning';
+
+  @override
+  String get morningBrief => 'Morning brief';
+
+  @override
+  String get afternoonBrief => 'Afternoon update';
+
+  @override
+  String get eveningBrief => 'Evening summary';
+
+  @override
+  String get ok => 'OK';
+
+  @override
+  String get acctCreateTitle => 'اکاؤنٹ بنائیں';
+
+  @override
+  String get acctWhyCreate => 'اکاؤنٹ کیوں بنائیں؟';
+
+  @override
+  String get acctBenefitRecover => 'اپنا ڈیٹا واپس لائیں';
+
+  @override
+  String get acctBenefitRecoverDesc =>
+      'اگر آپ کا فون گم ہو جائے یا ایپ دوبارہ انسٹال کریں، تو آپ کے 12 الفاظ سب کچھ واپس لے آتے ہیں۔';
+
+  @override
+  String get acctBenefitSecure => 'اضافی سیکیورٹی';
+
+  @override
+  String get acctBenefitSecureDesc =>
+      'آپ کا والٹ آپ کے الفاظ سے بنی کلید سے محفوظ ہے — صرف آپ اسے کھول سکتے ہیں۔';
+
+  @override
+  String get acctBenefitOffline => 'آف لائن کام کرتا ہے';
+
+  @override
+  String get acctBenefitOfflineDesc =>
+      'کسی انٹرنیٹ یا سرور کی ضرورت نہیں۔ آپ کے الفاظ ہی واحد بیک اپ ہیں۔';
+
+  @override
+  String get acctNoServerNote =>
+      'لائف او ایس کبھی آپ کے الفاظ یا ڈیٹا کسی سرور پر نہیں رکھتا۔ سب کچھ آپ کے فون پر رہتا ہے۔';
+
+  @override
+  String get acctCreateButton => 'اکاؤنٹ بنائیں';
+
+  @override
+  String get acctRecoverExisting => 'میرے پاس ریکوری الفاظ ہیں';
+
+  @override
+  String get acctRecoveryPhrase => 'آپ کے ریکوری الفاظ';
+
+  @override
+  String get acctCopyPhrase => 'الفاظ کاپی کریں';
+
+  @override
+  String get acctPhraseCopied => 'الفاظ کلپ بورڈ میں کاپی ہو گئے';
+
+  @override
+  String get acctPhraseWarning =>
+      'یہ الفاظ لکھ کر محفوظ جگہ رکھیں۔ اگر یہ کھو گئے تو آپ اکاؤنٹ واپس نہیں لا سکتے۔';
+
+  @override
+  String get acctPhraseInstruction =>
+      'یہ 12 الفاظ آپ کے ریکوری الفاظ ہیں۔ انہیں ترتیب سے لکھیں اور محفوظ جگہ رکھیں۔';
+
+  @override
+  String get acctPhraseTips => 'محفوظ رکھنے کے لیے';
+
+  @override
+  String get acctPhraseTip1 => 'کاغذ پر لکھ کر محفوظ جگہ رکھیں';
+
+  @override
+  String get acctPhraseTip2 => 'کسی کے ساتھ شیئر نہ کریں';
+
+  @override
+  String get acctPhraseTip3 => 'تصاویر یا نوٹس ایپ میں نہ رکھیں';
+
+  @override
+  String get acctPhraseConfirmLabel => 'میں نے ریکوری الفاظ لکھ لیے ہیں';
+
+  @override
+  String get acctPhraseVerify => 'الفاظ کی تصدیق کریں';
+
+  @override
+  String get acctVerifyTitle => 'الفاظ کی تصدیق';
+
+  @override
+  String get acctVerifyInstruction =>
+      'اپنے ریکوری الفاظ میں سے کچھ الفاظ درج کریں تاکہ تصدیق ہو کہ آپ نے درست لکھے ہیں۔';
+
+  @override
+  String acctVerifyWordN(String n) {
+    return 'لفظ نمبر $n';
+  }
+
+  @override
+  String get acctVerifyWordHint => 'لفظ لکھیں';
+
+  @override
+  String get acctVerifyFillAll => 'براہ کرم تمام الفاظ درج کریں';
+
+  @override
+  String get acctVerifyWrong =>
+      'ایک یا زیادہ الفاظ غلط ہیں۔ اپنے لکھے ہوئے الفاظ دیکھیں اور دوبارہ کوشش کریں۔';
+
+  @override
+  String get acctVerifyButton => 'اکاؤنٹ بنائیں';
+
+  @override
+  String get acctVerifyGoBack => 'الفاظ دیکھنے واپس جائیں';
+
+  @override
+  String get acctCreated => 'اکاؤنٹ کامیابی سے بن گیا';
+
+  @override
+  String get acctRecoverTitle => 'اکاؤنٹ واپس لائیں';
+
+  @override
+  String get acctRecoverInstruction =>
+      'اپنے 12 ریکوری الفاظ درج کریں تاکہ اکاؤنٹ واپس آئے۔';
+
+  @override
+  String get acctRecoverFillAll => 'براہ کرم تمام 12 الفاظ درج کریں';
+
+  @override
+  String get acctRecoverInvalid => 'یہ درست ریکوری الفاظ نہیں لگتے';
+
+  @override
+  String get acctRecoverButton => 'اکاؤنٹ واپس لائیں';
+
+  @override
+  String get acctRecovered => 'اکاؤنٹ کامیابی سے واپس آ گیا';
+
+  @override
+  String get acctViewPhraseTitle => 'ریکوری الفاظ';
+
+  @override
+  String get acctViewSecurityNote =>
+      'آپ کی سیکیورٹی کے لیے، دیکھنے سے پہلے اپنے الفاظ کی تصدیق کریں۔';
+
+  @override
+  String get acctViewInstruction =>
+      'تصدیق کے لیے اپنے 12 ریکوری الفاظ درج کریں۔';
+
+  @override
+  String get acctViewPhraseHint => 'اپنے 12 الفاظ خالی جگہ سے الگ کر کے لکھیں';
+
+  @override
+  String get acctViewEnterPhrase => 'براہ کرم اپنے ریکوری الفاظ درج کریں';
+
+  @override
+  String get acctViewWrongPhrase => 'یہ الفاظ اکاؤنٹ سے میل نہیں کھاتے';
+
+  @override
+  String get acctViewVerifyButton => 'تصدیق کریں';
+
+  @override
+  String get acctViewVerified => 'الفاظ کی تصدیق ہو گئی';
+
+  @override
+  String get acctViewYourPhrase =>
+      'یہ آپ کے ریکوری الفاظ ہیں۔ انہیں محفوظ رکھیں!';
+
+  @override
+  String get acctSettingsTitle => 'اکاؤنٹ';
+
+  @override
+  String get acctSettingsNoAccount => 'کوئی اکاؤنٹ نہیں بنا';
+
+  @override
+  String get acctSettingsNoAccountSub => 'ریکوری کے لیے اکاؤنٹ بنائیں';
+
+  @override
+  String get acctSettingsHasAccount => 'اکاؤنٹ فعال ہے';
+
+  @override
+  String get acctSettingsHasAccountSub =>
+      'آپ کا ڈیٹا آپ کے الفاظ سے واپس آ سکتا ہے';
+
+  @override
+  String get acctSettingsViewPhrase => 'ریکوری الفاظ دیکھیں';
 }

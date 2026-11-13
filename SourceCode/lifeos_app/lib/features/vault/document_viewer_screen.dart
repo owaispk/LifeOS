@@ -125,8 +125,27 @@ class DocumentViewerScreen extends ConsumerWidget {
                 icon: Icons.delete_outline,
                 label: context.l10n.vtDelete,
                 onTap: () async {
-                  final messenger = ScaffoldMessenger.of(context);
                   final l = context.l10n;
+                  final ok = await showDialog<bool>(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text(l.vtDeleteDocTitle),
+                      content: Text(l.vtDeleteDocBody(doc.title)),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, false),
+                          child: Text(l.cancel),
+                        ),
+                        FilledButton(
+                          key: const ValueKey('confirm-delete-viewer'),
+                          onPressed: () => Navigator.pop(context, true),
+                          child: Text(l.vtDelete),
+                        ),
+                      ],
+                    ),
+                  );
+                  if (ok != true) return;
+                  final messenger = ScaffoldMessenger.of(context);
                   await service.deleteDocument(doc.id);
                   messenger
                     ..hideCurrentSnackBar()

@@ -13,6 +13,7 @@ import '../../core/l10n.dart';
 import '../../core/theme/tokens.dart';
 import '../../data/data_providers.dart';
 import '../../data/db/app_database.dart';
+import '../account/account_providers.dart';
 import '../ai/ai_providers.dart';
 import '../ai/ui/ai_settings_screen.dart' show aiSettingsRoute;
 import '../calendar/calendar_providers.dart';
@@ -329,6 +330,8 @@ class SettingsScreen extends ConsumerWidget {
             trailing: const Icon(Icons.chevron_right),
             onTap: () => context.go(premiumRoute),
           ),
+          SectionHeader(l.acctSettingsTitle),
+          const _AccountSettings(),
         ],
       ),
     );
@@ -579,6 +582,39 @@ class _CalendarSettings extends ConsumerWidget {
                       ),
               ),
       ],
+    );
+  }
+}
+
+/// Account settings section (PBI-026a).
+class _AccountSettings extends ConsumerWidget {
+  const _AccountSettings();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = context.l10n;
+    final hasAccount = ref.watch(hasAccountProvider);
+
+    return hasAccount.when(
+      loading: () => const SizedBox.shrink(),
+      error: (_, _) => const SizedBox.shrink(),
+      data: (hasAccount) => hasAccount
+          ? ListTile(
+              key: const ValueKey('set-account-active'),
+              leading: const Icon(Icons.key_rounded),
+              title: Text(l.acctSettingsHasAccount),
+              subtitle: Text(l.acctSettingsHasAccountSub),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.go(viewPhraseRoute),
+            )
+          : ListTile(
+              key: const ValueKey('set-account-create'),
+              leading: const Icon(Icons.key_off_outlined),
+              title: Text(l.acctSettingsNoAccount),
+              subtitle: Text(l.acctSettingsNoAccountSub),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.go(createAccountRoute),
+            ),
     );
   }
 }

@@ -4,13 +4,21 @@ import 'package:go_router/go_router.dart';
 
 import '../log/app_log.dart';
 
+import '../../features/account/ui/create_account_screen.dart';
+import '../../features/account/ui/recover_account_screen.dart';
+import '../../features/account/ui/recovery_phrase_screen.dart';
+import '../../features/account/ui/verify_phrase_screen.dart';
+import '../../features/account/ui/view_phrase_screen.dart';
 import '../../features/ai/ui/ai_settings_screen.dart';
+import '../../features/brief/ui/brief_screen.dart';
+import '../../features/brief/ui/brief_settings_screen.dart';
 import '../../features/atc/atc_rules_screen.dart';
 import '../../features/atc/rule_detail_screen.dart';
 import '../../features/capture/capture_entry.dart';
 import '../../features/capture/review_screen.dart';
 import '../../features/home/attention_screen.dart';
 import '../../features/home/home_screen.dart';
+import '../../features/inbox/ui/inbox_screen.dart';
 import '../../features/money/money_screen.dart';
 import '../../features/more/more_screen.dart';
 import '../../features/onboarding/onboarding_screen.dart';
@@ -90,6 +98,16 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: captureRoute,
         builder: (context, state) => const CaptureReviewScreen(),
+      ),
+      // Daily Voice Brief (PBI-039a).
+      GoRoute(
+        path: briefRoute,
+        builder: (context, state) => const BriefScreen(),
+      ),
+      // Quick Capture Inbox (PBI-026).
+      GoRoute(
+        path: '/inbox',
+        builder: (context, state) => const InboxScreen(),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, shell) => AppShell(navigationShell: shell),
@@ -194,6 +212,30 @@ final routerProvider = Provider<GoRouter>((ref) {
                   GoRoute(
                     path: 'ai',
                     builder: (context, state) => const AiSettingsScreen(),
+                  ),
+                  GoRoute(
+                    path: 'brief',
+                    builder: (context, state) => const BriefSettingsScreen(),
+                  ),
+                  GoRoute(
+                    path: 'account/create',
+                    builder: (context, state) => const CreateAccountScreen(),
+                  ),
+                  GoRoute(
+                    path: 'account/phrase',
+                    builder: (context, state) => const RecoveryPhraseScreen(),
+                  ),
+                  GoRoute(
+                    path: 'account/verify',
+                    builder: (context, state) => const VerifyPhraseScreen(),
+                  ),
+                  GoRoute(
+                    path: 'account/recover',
+                    builder: (context, state) => const RecoverAccountScreen(),
+                  ),
+                  GoRoute(
+                    path: 'account/view-phrase',
+                    builder: (context, state) => const ViewPhraseScreen(),
                   ),
                 ],
               ),

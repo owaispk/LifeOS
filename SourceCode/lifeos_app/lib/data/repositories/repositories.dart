@@ -22,7 +22,9 @@ class Repositories {
       expenses = SyncRepository(db, db.expenses, context),
       scoreSnapshots = SyncRepository(db, db.scoreSnapshots, context),
       shareEvents = SyncRepository(db, db.shareEvents, context),
-      bundleTemplates = SyncRepository(db, db.bundleTemplates, context);
+      bundleTemplates = SyncRepository(db, db.bundleTemplates, context),
+      captures = SyncRepository(db, db.captures, context),
+      smsTransactions = SyncRepository(db, db.smsTransactions, context);
 
   /// Opens repositories, creating the local (pre-signup) user id on first
   /// run. No account is needed to use the app (features spec §13).
@@ -82,4 +84,6 @@ class Repositories {
   final SyncRepository<$ScoreSnapshotsTable, ScoreSnapshot> scoreSnapshots;
   final SyncRepository<$ShareEventsTable, ShareEvent> shareEvents;
   final SyncRepository<$BundleTemplatesTable, BundleTemplate> bundleTemplates;
+  final SyncRepository<$CapturesTable, Capture> captures;
+  final SyncRepository<$SmsTransactionsTable, SmsTransaction> smsTransactions;
 }

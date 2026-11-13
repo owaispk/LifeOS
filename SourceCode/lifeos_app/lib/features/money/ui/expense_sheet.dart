@@ -15,19 +15,44 @@ import 'category_colors.dart';
 import 'paid_sheet.dart' show confirmMarkUnpaid;
 
 /// 4.4 Add Expense (bottom sheet) — also used to edit an existing expense.
-Future<void> showExpenseSheet(BuildContext context, {Expense? existing}) {
+/// For PBI-040, accepts prefill values from SMS transactions.
+Future<void> showExpenseSheet(
+  BuildContext context, {
+  Expense? existing,
+  int? prefillAmount,
+  String? prefillNote,
+  DateTime? prefillDate,
+  Future<void> Function(Expense)? onSaved,
+}) {
   return showModalBottomSheet<void>(
     context: context,
     useRootNavigator: true, // above the tab bar and its ➕ button
     isScrollControlled: true,
-    builder: (context) => ExpenseSheet(existing: existing),
+    builder: (context) => ExpenseSheet(
+      existing: existing,
+      prefillAmount: prefillAmount,
+      prefillNote: prefillNote,
+      prefillDate: prefillDate,
+      onSaved: onSaved,
+    ),
   );
 }
 
 class ExpenseSheet extends ConsumerStatefulWidget {
-  const ExpenseSheet({super.key, this.existing});
+  const ExpenseSheet({
+    super.key,
+    this.existing,
+    this.prefillAmount,
+    this.prefillNote,
+    this.prefillDate,
+    this.onSaved,
+  });
 
   final Expense? existing;
+  final int? prefillAmount;
+  final String? prefillNote;
+  final DateTime? prefillDate;
+  final Future<void> Function(Expense)? onSaved;
 
   @override
   ConsumerState<ExpenseSheet> createState() => _ExpenseSheetState();
@@ -35,15 +60,19 @@ class ExpenseSheet extends ConsumerStatefulWidget {
 
 class _ExpenseSheetState extends ConsumerState<ExpenseSheet> {
   late final _amount = TextEditingController(
-    text: widget.existing == null
-        ? ''
-        : Money.formatPlain(widget.existing!.amountMinor),
+    text: widget.existing != null
+        ? Money.formatPlain(widget.existing!.amountMinor)
+        : widget.prefillAmount != null
+            ? Money.formatPlain(widget.prefillAmount!)
+            : '',
   );
-  late final _note = TextEditingController(text: widget.existing?.note ?? '');
+  late final _note = TextEditingController(
+    text: widget.existing?.note ?? widget.prefillNote ?? '',
+  );
   late String? _categoryId = widget.existing?.categoryId;
-  late DateTime? _date = widget.existing == null
-      ? null
-      : parseIsoDate(widget.existing!.spentOn);
+  late DateTime? _date = widget.existing != null
+      ? parseIsoDate(widget.existing!.spentOn)
+      : widget.prefillDate;
   bool _saving = false;
 
   bool get _editing => widget.existing != null;
@@ -66,8 +95,9 @@ class _ExpenseSheetState extends ConsumerState<ExpenseSheet> {
     setState(() => _saving = true);
     final service = ref.read(expenseServiceProvider);
     final date = _date ?? today;
+    Expense expense;
     if (_editing) {
-      await service.edit(
+      expense = await service.edit(
         widget.existing!.id,
         amountMinor: amount,
         spentOn: date,
@@ -75,12 +105,15 @@ class _ExpenseSheetState extends ConsumerState<ExpenseSheet> {
         note: _note.text,
       );
     } else {
-      await service.add(
+      expense = await service.add(
         amountMinor: amount,
         spentOn: date,
         categoryId: _categoryId,
         note: _note.text,
       );
+    }
+    if (widget.onSaved != null) {
+      await widget.onSaved!(expense);
     }
     if (mounted) Navigator.pop(context);
   }

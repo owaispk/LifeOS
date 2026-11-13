@@ -92,3 +92,29 @@ bool gateAllowsCall(AiGate gate) => gate == AiGate.send;
 /// and not its id, so re-scanning the same paper is free (AC3).
 String textHash(String text) =>
     sha256.convert(utf8.encode(text.trim())).toString();
+
+// ── AI task types (PBI-039a) ──
+
+/// Different AI features that may have separate consent settings.
+enum AiTaskType {
+  /// Document extraction (PBI-027a).
+  extraction,
+
+  /// Daily Voice Brief (PBI-039a).
+  brief,
+}
+
+/// Gate for brief AI calls — simpler than document extraction.
+AiGate briefAiGate({
+  required bool premium,
+  required bool configured,
+  required AiConsent consent,
+}) {
+  if (!premium) return AiGate.notPremium;
+  if (!configured) return AiGate.notConfigured;
+  return switch (consent) {
+    AiConsent.never => AiGate.refused,
+    AiConsent.ask => AiGate.ask,
+    AiConsent.always => AiGate.send,
+  };
+}

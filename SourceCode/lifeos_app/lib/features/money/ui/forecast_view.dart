@@ -335,8 +335,68 @@ class _ForecastRow extends ConsumerWidget {
                 }
               },
             ),
+          // Delete button for unpaid one-off bills (no rule)
+          if (item.paymentId != null && 
+              item.status != ForecastStatus.paid && 
+              item.ruleId == null)
+            IconButton(
+              key: ValueKey('delete-bill-${item.paymentId}'),
+              tooltip: l.mnDelete,
+              icon: Icon(Icons.delete_outline, 
+                color: theme.colorScheme.error.withValues(alpha: 0.7)),
+              onPressed: () => _confirmDeleteBill(
+                context, 
+                ref, 
+                paymentId: item.paymentId!, 
+                title: item.title,
+              ),
+            ),
         ],
       ),
     );
+  }
+
+  Future<void> _confirmDeleteBill(
+    BuildContext context,
+    WidgetRef ref, {
+    required String paymentId,
+    required String title,
+  }) async {
+    final l = context.l10n;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l.mnDelete),
+        content: Text('Delete "$title"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(l.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(l.mnDelete, 
+              style: TextStyle(color: Theme.of(context).colorScheme.error)),
+          ),
+        ],
+      ),
+    );
+    
+    if (confirmed == true && context.mounted) {
+      try {
+        await ref.read(paymentServiceProvider).deleteBill(paymentId);
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('$title deleted')),
+          );
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Could not delete: $e')),
+          );
+        }
+      }
+    }
   }
 }

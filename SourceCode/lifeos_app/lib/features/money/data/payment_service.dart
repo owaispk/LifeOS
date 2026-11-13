@@ -106,6 +106,43 @@ class PaymentService {
     });
   }
 
+  /// Deletes a bill (one-off payment) and its associated task.
+  /// Only works for unpaid bills without an ATC rule.
+  Future<void> deleteBill(String paymentId) async {
+    await _db.transaction(() async {
+      final payment = await _repos.payments.getById(paymentId);
+      if (payment == null) return;
+      
+      // Don't delete rule-generated payments
+      if (payment.atcRuleId != null) {
+        throw StateError('Cannot delete rule-generated payment');
+      }
+      
+      // Don't delete paid payments
+      if (payment.status == 'paid') {
+        throw StateError('Cannot delete paid payment');
+      }
+      
+      // Delete associated task and reminders
+      if (payment.taskId != null) {
+        // Delete reminders first
+        final reminders = await _repos.taskReminders.getWhere(
+          (r) => r.taskId.equals(payment.taskId!),
+        );
+        for (final r in reminders) {
+          await _repos.taskReminders.softDelete(r.id);
+        }
+        // Delete the task
+        await _repos.tasks.softDelete(payment.taskId!);
+      }
+      
+      // Delete the payment
+      await _repos.payments.softDelete(paymentId);
+      
+      AppLog.i('money', 'bill deleted');
+    });
+  }
+
   /// Marks [paymentId] paid. All writes happen in one transaction; if any
   /// fails, nothing is kept — not even receipt files (AC3). Paying twice is
   /// a no-op (AC4). [amountMinor] fills a payment whose amount is unknown.

@@ -133,6 +133,8 @@ void main() {
         quietStart: '13:00',
         quietEnd: '14:00',
         digestTime: '08:15',
+        briefTime: '07:30',
+        briefEnabled: true,
         notifDomains: '{"money":false}',
       );
       expect(day.isQuiet(DateTime(2026, 11, 8, 13, 30)), isTrue);

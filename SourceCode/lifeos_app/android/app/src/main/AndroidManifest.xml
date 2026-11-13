@@ -10,6 +10,10 @@
          Read-only — LifeOS never writes, so no WRITE_CALENDAR. Asked for
          in context, the first time the user turns events on. -->
     <uses-permission android:name="android.permission.READ_CALENDAR"/>
+    <!-- PBI-040: read bank SMS for auto-expense logging.
+         Opt-in only — requested when the user enables "Read bank SMS" in
+         Money settings. No SMS content is stored; only parsed transactions. -->
+    <uses-permission android:name="android.permission.READ_SMS"/>
     <application
         android:label="LifeOS"
         android:name="${applicationName}"

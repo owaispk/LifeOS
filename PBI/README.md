@@ -38,7 +38,8 @@
 | 23 | [PBI-023 Notification Diet](PBI-023-notification-diet.md) | E5 Platform | 5 | 012, 020 | Done |
 | 24 | [PBI-024 App Lock & Encryption](PBI-024-app-lock-encryption.md) | E5 Security | 8 | 003 | Done |
 | 25 | [PBI-025 Settings, Export, EN/UR](PBI-025-settings-export-language.md) | E5 Platform | 5 | 001, 024 | Done |
-| | **MVP total** | | **158** | | |
+| 26 | [PBI-026 Quick Capture Inbox](PBI-026-quick-capture-inbox.md) | E2 Mind / E4 Money / E1 Vault | 8 | 002, 003, 009, 010, 018 | Ready |
+| | **MVP total** | | **166** | | |
 
 ## Post-MVP backlog (groomed)
 
@@ -63,7 +64,7 @@
 | 38 | [PBI-038 Testing Feedback (Nov 2026 test pass)](PBI-038-testing-feedback.md) | Cross-cutting | 13 | per item | F-01–F-06 dev complete — device QA pending; log open for new feedback |
 | 39 | [PBI-039 Personal AI: Ask, Plan and Insights](PBI-039-personal-ai.md) | E7 Personal AI | 39 (7 slices, max 8) | 027a, 027b, 029 + per slice | Ready — 039a first |
 
-## Suggested sprint plan (2 devs, 2-week sprints, ~27 SP/sprint → 6 sprints ≈ 3 months)
+## Suggested sprint plan (2 devs, 2-week sprints, ~27 SP/sprint → 7 sprints ≈ 3.5 months)
 
 | Sprint | PBIs | SP |
 |---|---|---|
@@ -73,6 +74,7 @@
 | S4 | 008, 013, 016, 017, 019 | 26 |
 | S5 | 014, 015, 020, 021 | 26 |
 | S6 | 010, 022, 023, 024, 025 | 31 |
+| S7 | 026 | 8 |
 
 ## Sprint status
 | Sprint | Done | Dev complete, device QA pending | In review |
@@ -83,8 +85,11 @@
 | S4 | 008, 013, 016, 017, 019 | — | — |
 | S5 | 014, 015, 020, 021 | — | — |
 | S6 | 010, 022, 023, 024, 025 | — | — |
+| S7 | — | — | Ready to start |
 
-**All 6 MVP sprints are closed (25/25 PBIs, 158 SP).** Device QA ran on 2026-11-09 on an Android 17 emulator: launch, camera scan, on-device OCR, PDF view, OS share sheet, an offline reminder and a reminder after reboot. Two bugs found and fixed: neutral share file names (PBI-007) and multi-group reference numbers (PBI-004). Remaining for a physical phone: OCR accuracy on photos of real paper documents.
+**All 6 core MVP sprints are closed (25/25 PBIs, 158 SP).** Device QA ran on 2026-11-09 on an Android 17 emulator: launch, camera scan, on-device OCR, PDF view, OS share sheet, an offline reminder and a reminder after reboot. Two bugs found and fixed: neutral share file names (PBI-007) and multi-group reference numbers (PBI-004). Remaining for a physical phone: OCR accuracy on photos of real paper documents.
+
+**MVP+1 additions:** PBI-026 (Quick Capture Inbox, 8 SP, 2026-11-13) added to boost daily retention and pair with PBI-039c (Brain Dump to Plan).
 
 ## Not yet groomed (post-MVP, will become PBIs before development)
 - V2 (P1): Health, People, Work/Study, Soul, Goals, full Money, Emergency Card, appointments OCR

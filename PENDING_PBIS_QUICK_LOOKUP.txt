@@ -1,0 +1,301 @@
+================================================================================
+                    PENDING PBIS — QUICK LOOKUP GUIDE
+                           2026-11-13
+================================================================================
+
+📊 AT A GLANCE
+================================================================================
+
+Pending PBIs:         26 items
+Total Story Points:   176 SP
+Estimated Timeline:   6–7 sprints (12–14 weeks, 2-dev team)
+
+Ready Now:            6 PBIs (50 SP)    → Start immediately
+Blocked:              4 PBIs (34 SP)    → After dependency
+In Progress:          3 PBIs (26 SP)    → Finish device QA
+Already Done:        14 PBIs (74 SP)    → Shipped
+
+
+🟢 READY NOW (6 PBIs, 50 SP) — START IMMEDIATELY
+================================================================================
+
+026   Quick Capture Inbox                      8 SP
+      Dump text/voice/photo/file to inbox, sort later
+      Epic: E2 Mind / E4 Money / E1 Vault
+      Blocker: None ✅
+      Depends: PBI-002, 003, 009, 010, 018 (all done)
+      
+026a  Account & Recovery Phrase               8 SP
+      Optional login + recovery phrase (key to unlock vault)
+      Epic: E5 Platform
+      Blocker: None ✅
+      Depends: PBI-024, 029, 025 (all done)
+      
+037   iOS Home-Screen Widget                  8 SP
+      WidgetKit widget for iOS (show tasks, score, etc.)
+      Epic: E6 Engagement
+      Blocker: Needs a Mac (tooling, not LifeOS blocker)
+      Depends: PBI-033 (device widget framework, done)
+      
+039   Personal AI: Ask, Plan, Insights       39 SP (7 slices)
+      Multi-feature AI: Brief, Ask LifeOS, Brain Dump, Weekly Brief, etc.
+      Epic: E7 Personal AI
+      Blocker: None for design; 039a needs 027b proxy deployed
+      Depends: PBI-027a, 027b, 029 (all done)
+      
+      Slices (max 8 SP each):
+        039a — Daily Voice Brief (10 SP)     ← Start here (MVP+1)
+        039b — Ask LifeOS (8 SP)              ← Demo this
+        039c — Brain Dump to Plan (5 SP)
+        039d — Weekly Brief (5 SP)
+        039e — Money Insights (5 SP)
+        039f — Renewal Checklist (5 SP)
+        039g — Document Actions (3 SP)
+      
+Total: 4 PBIs ready now
+
+
+🟠 READY BUT BLOCKED (4 PBIs, 34 SP) — AFTER DEPENDENCY
+================================================================================
+
+026b  E2E Encrypted Backup & Restore         13 SP
+      Full backup & restore with E2E encryption
+      Epic: E5 Platform
+      Blocker: PBI-026a (Account & Recovery) — need key system first
+      Estimated Start: S8 (after 026a starts)
+      
+026c  Multi-Device Sync                      13 SP
+      Sync vault across user's devices
+      Epic: E5 Platform
+      Blocker: PBI-026b (backup framework) — need encryption layer first
+      Estimated Start: S9 (after 026b progresses)
+      
+028b  Share-Safe Expiring Links               8 SP
+      Send expiring share links to others (premium)
+      Epic: E1 Vault
+      Blocker: PBI-026b (need encrypted link infrastructure)
+      Estimated Start: S9 (parallel with 026c)
+      
+Total: 3 PBIs with dependency chain
+
+
+🔵 IN PROGRESS (3 PBIs, 26 SP) — FINISH DEVICE QA
+================================================================================
+
+033   Home-Screen Widget                      8 SP
+      Android widget (show today's tasks, score, next bill)
+      Status: Dev complete, device QA pending
+      Epic: E6 Engagement
+      What's Left: Test on real Android phone
+      Estimated Finish: This week
+      
+036   iOS Share Extension                     5 SP
+      iOS share sheet extension (add to Vault from other apps)
+      Status: Config files written, Xcode target created
+      Epic: E5 Platform
+      What's Left: Build in Xcode + device QA (needs Mac)
+      Estimated Finish: When Mac available
+      
+038   Testing Feedback (Nov 2026 test pass)  13 SP
+      Collect + address feedback from Nov 2026 testing
+      Status: F-01 to F-06 dev complete
+      Epic: Cross-cutting
+      What's Left: Device QA on real phone + log remaining issues
+      Estimated Finish: This week
+
+
+✅ ALREADY DONE (14 PBIs, 74 SP)
+================================================================================
+
+027a  Premium AI: BYOK                        5 SP  ✅ Done
+      User brings own OpenAI/Claude key
+      
+027b  Premium AI: Managed                     5 SP  ✅ Client done
+      ⚠️  Proxy not deployed yet (blocker for 039a)
+      
+028a  Share Watermark & Bundles               5 SP  ✅ Done
+      Share documents with watermark, create bundles
+      
+029   Premium Subscription                    8 SP  ✅ Done
+      ⚠️  Store setup pending (not LifeOS code blocker)
+      
+030   Diagnostics Log & Share                 3 SP  ✅ Done
+      Debug log + share for support
+      
+031   Flagship: Compact Layout                5 SP  ✅ Done
+      Professional, space-efficient layout
+      
+032   Device Calendar in Today                5 SP  ✅ Done
+      Show device calendar events in Today view
+      
+034   Share Text to Task                      3 SP  ✅ Done (Android)
+      Android intent to add text as task
+      
+035   Profile & Personalization               5 SP  ✅ Done
+      User profile + neutral-by-default settings
+
+
+📋 LOOKUP BY PBI NUMBER
+================================================================================
+
+026   Quick Capture Inbox                   8 SP  🟢 Ready
+026a  Account & Recovery Phrase            8 SP  🟢 Ready
+026b  E2E Encrypted Backup                13 SP  🟠 Blocked by 026a
+026c  Multi-Device Sync                   13 SP  🟠 Blocked by 026b
+027a  Premium AI: BYOK                     5 SP  ✅ Done
+027b  Premium AI: Managed                  5 SP  ✅ Client done
+028a  Share Watermark & Bundles            5 SP  ✅ Done
+028b  Share-Safe Expiring Links            8 SP  🟠 Blocked by 026b
+029   Premium Subscription                 8 SP  ✅ Done (store pending)
+030   Diagnostics Log                      3 SP  ✅ Done
+031   Flagship Layout                      5 SP  ✅ Done
+032   Device Calendar                      5 SP  ✅ Done
+033   Home-Screen Widget                   8 SP  🔵 In progress
+034   Share Text to Task                   3 SP  ✅ Done
+035   Profile & Personalization            5 SP  ✅ Done
+036   iOS Share Extension                  5 SP  🔵 In progress
+037   iOS Home-Screen Widget               8 SP  🟢 Ready
+038   Testing Feedback                    13 SP  🔵 In progress
+039   Personal AI (7 slices)              39 SP  🟢 Ready
+039a  Daily Voice Brief                   10 SP  🟢 Ready (MVP+1)
+039b  Ask LifeOS                           8 SP  🟢 Ready
+039c  Brain Dump to Plan                  5 SP  🟢 Ready
+039d  Weekly Brief                        5 SP  🟢 Ready
+039e  Money Insights                      5 SP  🟢 Ready
+039f  Renewal Checklist                   5 SP  🟢 Ready
+039g  Document Actions                    3 SP  🟢 Ready
+
+
+📈 SPRINT ROADMAP
+================================================================================
+
+S7 (Next Sprint)
+  ✓ PBI-026 (Quick Capture Inbox, 8 SP)
+  ✓ Finish device QA: 033, 036, 038
+  ✓ Design: 026a, 039a for S8
+
+S8
+  ✓ PBI-039a (Voice Brief, 10 SP) — *if 027b proxy deployed*
+  ✓ PBI-026a (Account & Recovery, 8 SP)
+
+S9
+  ✓ PBI-039b (Ask LifeOS, 8 SP)
+  ✓ PBI-026b (E2E Backup, 13 SP)
+
+S10+
+  ✓ PBI-026c (Multi-Device Sync, 13 SP)
+  ✓ PBI-039c–g (AI slices, 21 SP)
+  ✓ PBI-028b (Expiring Links, 8 SP)
+
+
+🚨 CRITICAL BLOCKERS
+================================================================================
+
+1. PBI-027b PROXY NOT DEPLOYED
+   Impact:   Cannot start PBI-039a (Voice Brief) dev
+   Action:   Schedule tech spike to deploy + test
+   Timeline: 1 week
+
+2. MAC HARDWARE NEEDED
+   Impact:   PBI-036 (iOS Share Ext), 037 (iOS Widget) stuck
+   Action:   Procure Mac or find iOS dev access
+   Timeline: After device QA (low priority)
+
+
+💡 QUICK DECISION MATRIX
+================================================================================
+
+Want to start immediately?
+  → PBI-026 (Quick Capture, 8 SP, no blockers)
+
+Want a foundation for AI?
+  → PBI-039a (Voice Brief, 10 SP, blocks other AI slices)
+  → But first: Deploy 027b proxy (tech spike)
+
+Want cloud sync features?
+  → PBI-026a → 026b → 026c (chain of 34 SP over 3 sprints)
+
+Want to maximize engagement?
+  → PBI-026 + 039a (daily retention stack, 18 SP)
+
+Want to finish existing work first?
+  → Finish: 033, 036, 038 (device QA)
+
+
+📊 EFFORT BY EPIC
+================================================================================
+
+E1 Vault            → 1 PBI pending (028b, 8 SP, blocked)
+E2 Mind             → 1 PBI ready (026, 8 SP)
+E3 ATC              → 0 PBIs pending (all done)
+E4 Money            → 0 PBIs pending (all done)
+E5 Platform         → 7 PBIs pending (50 SP ready, 34 blocked)
+E6 Engagement       → 2 PBIs pending (1 ready 8 SP, 1 in progress 8 SP)
+E7 Personal AI      → 1 PBI ready (39 SP, sliced into 7)
+Cross-Cutting       → 1 in progress (038, 13 SP)
+
+
+✅ RECOMMENDATION
+================================================================================
+
+Next 2 Weeks:
+  1. Finish device QA on MVP + in-progress PBIs
+  2. Deploy 027b proxy (tech spike)
+  3. Groom PBI-026 for S7 dev
+
+Next Sprint (S7):
+  1. Start PBI-026 (Quick Capture, 8 SP)
+  2. Start PBI-026a design (for S8)
+  3. Test 027b proxy deployment
+
+Sprint S8:
+  1. Start PBI-039a (Voice Brief, 10 SP)
+  2. Start PBI-026a dev (Account & Recovery, 8 SP)
+
+Result by Sprint 9:
+  ✅ Daily retention stack live (026 + 039a)
+  ✅ Cloud account infrastructure started (026a)
+  ✅ Premium AI ready to extend (039a foundation)
+
+
+📁 FIND DETAILS IN
+================================================================================
+
+Quick Overview:        This file (you are here)
+Detailed Reference:    PENDING_PBIS_LIST.md
+All PBIs (MVP + more): ALL_PBIS_REFERENCE.md
+Daily Retention:       DAILY_RETENTION_STRATEGY.md
+New Features:          README_NEW_FEATURES.md or INDEX_NEW_FEATURES.md
+
+
+📞 QUICK QUESTIONS ANSWERED
+================================================================================
+
+Q: Can we start PBI-026 now?
+A: Yes. No blockers. Start S7.
+
+Q: Can we start PBI-039a now?
+A: Design + schema yes. Dev blocked on 027b proxy deployment.
+
+Q: How many PBIs are truly blocked?
+A: 4 PBIs in a chain (026b → 026c + 028b). Total 34 SP.
+   Can do parallel work on other ready PBIs in the meantime.
+
+Q: How long to do all pending PBIs?
+A: 26 PBIs × 176 SP ÷ 2 devs = 6–7 sprints (12–14 weeks)
+
+Q: What should we do first?
+A: PBI-026 (Quick Capture). No blockers, high daily-retention value.
+
+Q: What about the 039 slices?
+A: 039a is the foundation. Start after 027b proxy deployed.
+   039b–g can run in parallel once 039a done (or in parallel prep).
+
+Q: iOS or Android first?
+A: PBI-036, 037 both need Mac. Do Android (033) first if only one Mac.
+
+================================================================================
+For full details: See PENDING_PBIS_LIST.md
+For new features: See FEATURE_UPDATES_2026-11-13.md
+For strategy:    See DAILY_RETENTION_STRATEGY.md
+================================================================================

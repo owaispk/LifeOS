@@ -117,6 +117,34 @@ class UserSettings extends Table with SyncColumns {
   /// default), 'always' or 'never'.
   TextColumn get aiConsent => text().withDefault(const Constant('ask'))();
 
+  // ── Daily Voice Brief (PBI-039a) ──
+
+  /// Time of day for the morning brief notification (HH:mm).
+  TextColumn get briefTime => text().withDefault(const Constant('07:30'))();
+
+  /// TTS speech rate (0.5–1.5).
+  RealColumn get ttsRate => real().withDefault(const Constant(1.0))();
+
+  /// Brief AI consent: 'ask', 'always', 'never'.
+  TextColumn get briefConsent => text().withDefault(const Constant('ask'))();
+
+  /// Whether brief notifications are enabled.
+  BoolColumn get briefEnabled => boolean().withDefault(const Constant(true))();
+
+  // ── SMS Transaction Reader (PBI-040) ──
+
+  /// Whether SMS reading is enabled (requires READ_SMS permission).
+  BoolColumn get smsReadEnabled => boolean().withDefault(const Constant(false))();
+
+  /// Auto-log debit SMS as expenses without manual confirmation.
+  BoolColumn get smsAutoLog => boolean().withDefault(const Constant(false))();
+
+  /// Auto-complete matching ATC payment tasks from SMS.
+  BoolColumn get smsAutoComplete => boolean().withDefault(const Constant(true))();
+
+  /// Show daily summary notification of SMS transactions.
+  BoolColumn get smsDailySummary => boolean().withDefault(const Constant(true))();
+
   @override
   List<Set<Column<Object>>> get uniqueKeys => [
     {userId},
@@ -385,6 +413,42 @@ class BundleTemplates extends Table with SyncColumns {
   IntColumn get sortOrder => integer().withDefault(const Constant(0))();
 }
 
+// ───────────────────────── 3.6 Quick Capture Inbox (PBI-026) ───────────────
+
+/// One captured item waiting to be processed: text, voice, photo or file.
+@DataClassName('Capture')
+class Captures extends Table with SyncColumns {
+  /// text | voice | photo | file
+  TextColumn get captureType => text()();
+
+  /// The text content (for text/voice captures).
+  TextColumn get content => text().nullable()();
+
+  /// Path to media file (for voice/photo/file captures).
+  TextColumn get mediaPath => text().nullable()();
+
+  /// MIME type of the media file.
+  TextColumn get mediaMime => text().nullable()();
+
+  /// Size of the media file in bytes.
+  IntColumn get mediaSizeBytes => integer().nullable()();
+
+  /// When this capture was processed (filed to its destination).
+  IntColumn get processedAt => integer().nullable()();
+
+  /// pending | done | deleted
+  TextColumn get status => text().withDefault(const Constant('pending'))();
+
+  /// The id of the created task/expense/document/note.
+  TextColumn get destinationId => text().nullable()();
+
+  /// task | expense | document | note
+  TextColumn get destinationType => text().nullable()();
+
+  /// User notes added during classification.
+  TextColumn get notes => text().nullable()();
+}
+
 // ─────────────────────── Local-only tables (data model §8.3) ───────────────
 
 /// Sync outbox: one row per local write, pushed by PBI-026.
@@ -432,4 +496,77 @@ class AppMeta extends Table {
 
   @override
   Set<Column<Object>> get primaryKey => {key};
+}
+
+// ───────────────────── SMS Transactions (PBI-040) ─────────────────────────
+
+/// Parsed bank SMS transactions for auto-expense logging (schema v17).
+@DataClassName('SmsTransaction')
+class SmsTransactions extends Table with SyncColumns {
+  /// Normalized bank name (e.g., "HBL", "JazzCash").
+  TextColumn get smsSender => text()();
+
+  /// SHA-256 hash of sender+timestamp+amount for deduplication.
+  TextColumn get smsHash => text().unique()();
+
+  /// Transaction amount in minor units (paisa).
+  IntColumn get amountMinor => integer()();
+
+  /// 'debit' | 'credit'
+  TextColumn get transactionType => text()();
+
+  /// Extracted merchant or description.
+  TextColumn get merchant => text().nullable()();
+
+  /// Masked account number, e.g., "***1234".
+  TextColumn get accountMasked => text().nullable()();
+
+  /// Masked card number, e.g., "****5678".
+  TextColumn get cardMasked => text().nullable()();
+
+  /// Remaining balance after transaction (minor units).
+  IntColumn get balanceMinor => integer().nullable()();
+
+  /// When the SMS was received (epoch ms).
+  IntColumn get smsTimestamp => integer()();
+
+  /// When we parsed this SMS (epoch ms).
+  IntColumn get parsedAt => integer()();
+
+  /// Linked expense id if logged.
+  TextColumn get expenseId => text().nullable().references(Expenses, #id)();
+
+  /// Whether this was auto-logged (vs manual).
+  BoolColumn get autoLogged => boolean().withDefault(const Constant(false))();
+
+  /// Whether the user dismissed/ignored this transaction.
+  BoolColumn get ignored => boolean().withDefault(const Constant(false))();
+
+  /// Matched payment id if linked to an ATC payment task.
+  TextColumn get paymentId => text().nullable().references(Payments, #id)();
+}
+
+// ────────────────────────── Accounts (PBI-026a) ──────────────────────────
+
+/// Optional account with recovery phrase for data recovery (schema v14).
+///
+/// The recovery phrase itself is never stored — only a SHA-256 hash for
+/// verification during recovery. The master key derived from the phrase
+/// lives only in secure storage.
+@DataClassName('AccountRow')
+class Accounts extends Table {
+  TextColumn get id => text()();
+  TextColumn get userId => text()();
+
+  /// SHA-256 hash of the 12-word recovery phrase.
+  TextColumn get recoveryPhraseHash => text()();
+
+  /// When the account was created (epoch ms).
+  IntColumn get createdAt => integer()();
+
+  /// Whether this is the currently active account.
+  BoolColumn get isActive => boolean().withDefault(const Constant(true))();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
 }

@@ -13,7 +13,7 @@ const maxScheduled = 60;
 /// Snooze length for notification actions (a setting arrives in PBI-023).
 const snoozeMinutes = 60;
 
-enum ReminderKind { task, payment, expiry, digest }
+enum ReminderKind { task, payment, expiry, digest, brief }
 
 /// Action ids shared by the planner, the platform gateway and the handler.
 abstract final class ReminderActions {
@@ -28,6 +28,7 @@ abstract final class ReminderActions {
     ReminderKind.payment => const [paid, snooze],
     ReminderKind.expiry => const [renew, dismiss],
     ReminderKind.digest => const [],
+    ReminderKind.brief => const [],
   };
 }
 
@@ -90,6 +91,8 @@ class NotifyPrefs {
     this.quietStart = const Duration(hours: 22),
     this.quietEnd = const Duration(hours: 7),
     this.digestAt = const Duration(hours: 7, minutes: 30),
+    this.briefAt = const Duration(hours: 7, minutes: 30),
+    this.briefEnabled = true,
     this.domains = const {},
   });
 
@@ -98,6 +101,8 @@ class NotifyPrefs {
     required String quietStart,
     required String quietEnd,
     required String digestTime,
+    required String briefTime,
+    required bool briefEnabled,
     required String notifDomains,
   }) {
     Duration hm(String s) {
@@ -117,6 +122,8 @@ class NotifyPrefs {
       quietStart: hm(quietStart),
       quietEnd: hm(quietEnd),
       digestAt: hm(digestTime),
+      briefAt: hm(briefTime),
+      briefEnabled: briefEnabled,
       domains: domains,
     );
   }
@@ -124,6 +131,8 @@ class NotifyPrefs {
   final Duration quietStart;
   final Duration quietEnd;
   final Duration digestAt;
+  final Duration briefAt;
+  final bool briefEnabled;
 
   /// Domain → on/off; a missing domain is on.
   final Map<String, bool> domains;
@@ -154,6 +163,15 @@ class NotifyPrefs {
     }
     return at;
   }
+
+  /// The next brief time strictly after [now].
+  DateTime nextBrief(DateTime now) {
+    var at = DateTime(now.year, now.month, now.day).add(briefAt);
+    if (!at.isAfter(now)) {
+      at = DateTime(now.year, now.month, now.day + 1).add(briefAt);
+    }
+    return at;
+  }
 }
 
 /// The morning digest's words, written by the caller (localised).
@@ -163,8 +181,18 @@ class DigestText {
   final String body;
 }
 
+/// The brief notification's words, written by the caller (localised).
+class BriefText {
+  const BriefText(this.title, this.body);
+  final String title;
+  final String body;
+}
+
 /// Fixed id for the single digest notification.
 const digestNotificationId = 1;
+
+/// Fixed id for the single brief notification.
+const briefNotificationId = 2;
 
 /// The domain a reminder belongs to, for the per-domain switches.
 String notifyDomainOf(Task task, ReminderKind kind) => switch (kind) {
@@ -198,6 +226,7 @@ List<PlannedNotification> planNotifications({
   int limit = maxScheduled,
   NotifyPrefs prefs = const NotifyPrefs(),
   DigestText? digest,
+  BriefText? brief,
 }) {
   final taskById = {for (final t in tasks) t.id: t};
   final paymentByTask = {
@@ -205,6 +234,10 @@ List<PlannedNotification> planNotifications({
       if (p.taskId != null && p.deletedAt == null) p.taskId!: p,
   };
   final nowMs = now.millisecondsSinceEpoch;
+
+  // Count slots needed for special notifications
+  final specialSlots = (digest != null ? 1 : 0) +
+      (brief != null && prefs.briefEnabled ? 1 : 0);
 
   final planned = <PlannedNotification>[];
   for (final r in reminders) {
@@ -233,7 +266,8 @@ List<PlannedNotification> planNotifications({
     );
   }
   planned.sort((a, b) => a.fireAt.compareTo(b.fireAt));
-  final out = planned.take(digest == null ? limit : limit - 1).toList();
+  final out = planned.take(limit - specialSlots).toList();
+
   // One morning digest, never switched off by a domain (AC1, AC3).
   if (digest != null) {
     out.add(
@@ -247,8 +281,24 @@ List<PlannedNotification> planNotifications({
         body: digest.body,
       ),
     );
-    out.sort((a, b) => a.fireAt.compareTo(b.fireAt));
   }
+
+  // Daily Voice Brief notification (PBI-039a).
+  if (brief != null && prefs.briefEnabled) {
+    out.add(
+      PlannedNotification(
+        id: briefNotificationId,
+        reminderId: 'brief',
+        taskId: '',
+        kind: ReminderKind.brief,
+        fireAt: prefs.nextBrief(now),
+        title: brief.title,
+        body: brief.body,
+      ),
+    );
+  }
+
+  out.sort((a, b) => a.fireAt.compareTo(b.fireAt));
   return out;
 }
 
@@ -314,6 +364,8 @@ List<PlannedNotification> planNotifications({
       );
     case ReminderKind.digest:
       return ('', '');
+    case ReminderKind.brief:
+      return ('', ''); // Brief text is passed separately
     case ReminderKind.task:
       if (appLock) return (l.tkNotifTaskTitle, hidden);
       return (task.title, due == null ? l.tkNotifReminder : l.tkNotifDue(due));

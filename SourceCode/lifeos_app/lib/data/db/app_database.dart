@@ -26,6 +26,9 @@ part 'app_database.g.dart';
     ScoreSnapshots,
     ShareEvents,
     BundleTemplates,
+    Captures,
+    Accounts,
+    SmsTransactions,
     PendingOps,
     ConflictLog,
     BlobCache,
@@ -47,7 +50,7 @@ class AppDatabase extends _$AppDatabase {
   );
 
   @override
-  int get schemaVersion => 13;
+  int get schemaVersion => 17;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -133,6 +136,29 @@ class AppDatabase extends _$AppDatabase {
       if (from < 13) {
         await m.createTable(shareEvents);
         await m.createTable(bundleTemplates);
+      }
+      // v14 (PBI-026): Quick Capture Inbox.
+      if (from < 14) {
+        await m.createTable(captures);
+      }
+      // v15 (PBI-039a): Daily Voice Brief settings.
+      if (from < 15) {
+        await m.addColumn(userSettings, userSettings.briefTime);
+        await m.addColumn(userSettings, userSettings.ttsRate);
+        await m.addColumn(userSettings, userSettings.briefConsent);
+        await m.addColumn(userSettings, userSettings.briefEnabled);
+      }
+      // v16 (PBI-026a): Optional account with recovery phrase.
+      if (from < 16) {
+        await m.createTable(accounts);
+      }
+      // v17 (PBI-040): SMS transaction reader for auto-expense logging.
+      if (from < 17) {
+        await m.createTable(smsTransactions);
+        await m.addColumn(userSettings, userSettings.smsReadEnabled);
+        await m.addColumn(userSettings, userSettings.smsAutoLog);
+        await m.addColumn(userSettings, userSettings.smsAutoComplete);
+        await m.addColumn(userSettings, userSettings.smsDailySummary);
       }
     },
     beforeOpen: (details) async {

@@ -2243,5 +2243,350 @@
       }
     }
   },
-  "yesterday": "Yesterday"
+  "yesterday": "Yesterday",
+
+  "inboxTitle": "Inbox",
+  "inboxEmptyTitle": "Your inbox is clear",
+  "inboxEmptyBody": "Capture ideas, tasks, expenses — tap + to add something.",
+  "inboxCapture": "Capture",
+  "inboxCaptureText": "Text",
+  "inboxCaptureVoice": "Voice",
+  "inboxCapturePhoto": "Photo",
+  "inboxCloseCapture": "Close",
+  "inboxQuickCapture": "Quick capture",
+  "inboxCaptureHint": "What's on your mind?",
+  "inboxCaptureHelp": "We'll help you turn this into a task, expense, or document later.",
+  "inboxSaveToInbox": "Save to Inbox",
+  "inboxCaptured": "Captured",
+  "inboxDismissed": "Dismissed",
+  "inboxUntitled": "Untitled capture",
+  "inboxError": "Something went wrong",
+  "inboxClassify": "What is this?",
+  "inboxClassifyAs": "Create as",
+  "inboxTypeTask": "Task",
+  "inboxTypeExpense": "Expense",
+  "inboxTypeDocument": "Document",
+  "inboxTypeNote": "Note",
+  "inboxCreatedTask": "Task created",
+  "inboxCreatedExpense": "Expense logged",
+  "inboxCreatedDocument": "Document started",
+  "inboxCreatedNote": "Note saved",
+  "inboxBadge": "{n, plural, =1{1 item} other{{n} items}}",
+  "@inboxBadge": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+
+  "briefTitle": "Your Daily Brief",
+  "briefButtonTitle": "Get your brief",
+  "briefButtonSubtitle": "Score {score} · {tasks} tasks today",
+  "@briefButtonSubtitle": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      },
+      "tasks": {
+        "type": "int"
+      }
+    }
+  },
+  "briefSpeak": "Speak",
+  "briefStop": "Stop",
+  "briefError": "Couldn't load your brief",
+  "briefAiGenerated": "AI-enhanced",
+  "briefStatTasks": "Tasks",
+  "briefStatOverdue": "Overdue",
+  "briefStatExpiring": "Expiring",
+  "briefStatBudget": "Budget",
+  "briefPremiumTitle": "AI-powered briefs",
+  "briefPremiumBody": "Upgrade to Premium for natural, conversational morning briefings powered by AI.",
+  "briefScoreExcellent": "Great news! Your Life Score is {score} — you're doing well.",
+  "@briefScoreExcellent": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "briefScoreSteady": "Your Life Score is {score}. A few things need your attention.",
+  "@briefScoreSteady": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "briefScoreTriage": "Your Life Score is {score}. Let's focus on what matters most today.",
+  "@briefScoreTriage": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      }
+    }
+  },
+  "briefNoTasks": "No tasks due today.",
+  "briefTasks": "{n, plural, =1{You have 1 task due today.} other{You have {n} tasks due today.}}",
+  "@briefTasks": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "briefOverduePayments": "{n, plural, =1{1 payment is overdue.} other{{n} payments are overdue.}}",
+  "@briefOverduePayments": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "briefExpiringDocs": "{n, plural, =1{1 document expires soon.} other{{n} documents expire soon.}}",
+  "@briefExpiringDocs": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "briefBudgetWarning": "You've used {percent}% of your monthly budget.",
+  "@briefBudgetWarning": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "briefAllClear": "Enjoy your clear day!",
+  "briefPreviewClear": "All clear today ✨",
+  "briefPreviewUrgent": "Some things need attention",
+  "briefPreviewNormal": "{n, plural, =1{1 task today} other{{n} tasks today}}",
+  "@briefPreviewNormal": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "briefSettingsTitle": "Brief Settings",
+  "briefEnabled": "Morning brief",
+  "briefEnabledSub": "Get a daily voice brief notification",
+  "briefTime": "Brief time",
+  "briefTimeSub": "When you'd like your morning brief",
+  "briefTtsRate": "Speaking speed",
+  "briefTtsRateSub": "How fast the brief is spoken",
+  "briefTtsSlow": "Slow",
+  "briefTtsFast": "Fast",
+  "briefTtsTest": "Test voice",
+  "briefAiConsent": "AI-enhanced briefs",
+  "briefAiConsentSub": "Use AI to generate natural, conversational briefs",
+  "briefAiReady": "AI is configured and ready",
+  "briefNotifTitle": "Your morning brief",
+  "briefNotifBody": "Life Score {score} · {tasks} tasks today",
+  "@briefNotifBody": {
+    "placeholders": {
+      "score": {
+        "type": "int"
+      },
+      "tasks": {
+        "type": "int"
+      }
+    }
+  },
+
+  "accountTitle": "Account",
+  "accountCreateTitle": "Create Account",
+  "accountCreateDescription": "Create an account to back up your vault and sync across devices.",
+  "accountRecoveryPhrase": "Recovery Phrase",
+  "accountRecoveryPhraseDescription": "A 12-word phrase that lets you recover your account on any device.",
+  "accountEncryption": "End-to-End Encryption",
+  "accountEncryptionDescription": "Your data is encrypted with your recovery phrase. Only you can read it.",
+  "accountGetStarted": "Get Started",
+  "accountNotNow": "Not Now",
+  "accountYourRecoveryPhrase": "Your Recovery Phrase",
+  "accountWriteDown": "Write down these 12 words in order. You'll need them to recover your account.",
+  "accountCopy": "Copy to clipboard",
+  "accountCopied": "Copied to clipboard",
+  "accountWarning": "If you lose this phrase, you'll lose access to your encrypted data. There is no way to recover it.",
+  "accountWroteItDown": "I wrote it down",
+  "accountVerify": "Verify Your Phrase",
+  "accountEnterWords": "Enter these words from your phrase to verify you wrote it down correctly.",
+  "accountWord": "Word",
+  "accountVerifyButton": "Verify",
+  "accountVerificationFailed": "Verification failed. Please check the words and try again.",
+  "accountCreated": "Account Created!",
+  "accountCreatedDescription": "Your account is ready. Your vault is now encrypted with your recovery phrase.",
+  "accountDone": "Done",
+  "accountRecover": "Recover Account",
+  "accountRecoverDescription": "Enter your 12-word recovery phrase to recover your account.",
+  "accountRecoverPlaceholder": "Enter your 12-word recovery phrase...",
+  "accountRecoverButton": "Recover",
+  "accountRecoverSuccess": "Account recovered successfully!",
+  "accountRecoverFailed": "Invalid recovery phrase. Please check and try again.",
+  "accountViewPhrase": "View Recovery Phrase",
+  "accountViewPhraseDescription": "View your recovery phrase to back it up again.",
+  "accountNoAccount": "No account created",
+  "accountNoAccountDescription": "Create an account to enable backup and sync.",
+
+  "inbox": "Inbox",
+  "inboxEmpty": "Inbox is clear",
+  "inboxEmptyHint": "Tap + to capture a thought, photo, or voice note.",
+  "inboxHelp": "About Inbox",
+  "inboxHelpText": "The inbox holds your quick captures until you're ready to sort them into tasks, expenses, documents, or notes.",
+  "classify": "Sort",
+  "classifyAs": "Sort this as...",
+  "captureDeleted": "Capture deleted",
+  "undo": "Undo",
+  "quickCapture": "Quick Capture",
+  "captureHint": "What's on your mind?",
+  "captureHintSubtle": "We'll help you sort it later.",
+  "captureSaved": "Captured",
+  "text": "Text",
+  "voice": "Voice",
+  "photo": "Photo",
+  "task": "Task",
+  "expense": "Expense",
+  "document": "Document",
+  "note": "Note",
+  "taskCreated": "Task created",
+  "savedAsNote": "Saved as note",
+  "textAsDocument": "Create as document?",
+  "textAsDocumentHint": "This will save the text as a searchable document in your vault.",
+  "keepAsNote": "Keep as note",
+  "createDocument": "Create document",
+  "justNow": "Just now",
+  "minutesAgo": "min ago",
+  "hoursAgo": "h ago",
+  "daysAgo": "d ago",
+
+  "dailyBrief": "Daily Brief",
+  "todayAtAGlance": "Today at a Glance",
+  "tasks": "Tasks",
+  "overdue": "Overdue",
+  "expiring": "Expiring",
+  "lifeScore": "Life Score",
+  "speakBrief": "Speak Brief",
+  "stop": "Stop",
+  "speechRate": "Speech Rate",
+  "briefSettings": "Brief Settings",
+  "notifications": "Notifications",
+  "heavyWeek": "Heavy week ahead",
+  "greatDay": "Great day ahead!",
+  "goodMorning": "Good morning",
+  "morningBrief": "Morning brief",
+  "afternoonBrief": "Afternoon update",
+  "eveningBrief": "Evening summary",
+  "ok": "OK",
+
+  "acctCreateTitle": "Create Account",
+  "acctWhyCreate": "Why create an account?",
+  "acctBenefitRecover": "Recover your data",
+  "acctBenefitRecoverDesc": "If you lose your phone or reinstall the app, your 12-word recovery phrase brings everything back.",
+  "acctBenefitSecure": "Extra security",
+  "acctBenefitSecureDesc": "Your vault is encrypted with a key derived from your phrase — only you can unlock it.",
+  "acctBenefitOffline": "Works offline",
+  "acctBenefitOfflineDesc": "No internet or server needed. Your phrase is the only backup you need.",
+  "acctNoServerNote": "LifeOS never stores your phrase or data on any server. Everything stays on your phone.",
+  "acctCreateButton": "Create account",
+  "acctRecoverExisting": "I have a recovery phrase",
+
+  "acctRecoveryPhrase": "Your Recovery Phrase",
+  "acctCopyPhrase": "Copy phrase",
+  "acctPhraseCopied": "Phrase copied to clipboard",
+  "acctPhraseWarning": "Write this phrase down and store it safely. If you lose it, you cannot recover your account.",
+  "acctPhraseInstruction": "These 12 words are your recovery phrase. Write them down in order and keep them in a safe place.",
+  "acctPhraseTips": "Tips for keeping it safe",
+  "acctPhraseTip1": "Write it on paper and store it somewhere secure",
+  "acctPhraseTip2": "Never share it with anyone",
+  "acctPhraseTip3": "Don't store it in photos or notes apps",
+  "acctPhraseConfirmLabel": "I have written down my recovery phrase",
+  "acctPhraseVerify": "Verify phrase",
+
+  "acctVerifyTitle": "Verify Phrase",
+  "acctVerifyInstruction": "Enter the words from your recovery phrase to verify you wrote it down correctly.",
+  "acctVerifyWordN": "Word #{n}",
+  "@acctVerifyWordN": {
+    "placeholders": {
+      "n": {
+        "type": "String"
+      }
+    }
+  },
+  "acctVerifyWordHint": "Enter word",
+  "acctVerifyFillAll": "Please fill in all words",
+  "acctVerifyWrong": "One or more words are incorrect. Check your written phrase and try again.",
+  "acctVerifyButton": "Create account",
+  "acctVerifyGoBack": "Go back to see phrase",
+  "acctCreated": "Account created successfully",
+
+  "acctRecoverTitle": "Recover Account",
+  "acctRecoverInstruction": "Enter your 12-word recovery phrase to recover your account.",
+  "acctRecoverFillAll": "Please enter all 12 words",
+  "acctRecoverInvalid": "This doesn't look like a valid recovery phrase",
+  "acctRecoverButton": "Recover account",
+  "acctRecovered": "Account recovered successfully",
+
+  "acctViewPhraseTitle": "Recovery Phrase",
+  "acctViewSecurityNote": "For your security, you need to verify your phrase before viewing it.",
+  "acctViewInstruction": "Enter your 12-word recovery phrase to confirm you have access.",
+  "acctViewPhraseHint": "Enter your 12 words separated by spaces",
+  "acctViewEnterPhrase": "Please enter your recovery phrase",
+  "acctViewWrongPhrase": "This phrase doesn't match the account",
+  "acctViewVerifyButton": "Verify",
+  "acctViewVerified": "Phrase verified",
+  "acctViewYourPhrase": "This is your recovery phrase. Keep it safe!",
+
+  "acctSettingsTitle": "Account",
+  "acctSettingsNoAccount": "No account created",
+  "acctSettingsNoAccountSub": "Create an account to enable recovery",
+  "acctSettingsHasAccount": "Account active",
+  "acctSettingsHasAccountSub": "Your data can be recovered with your phrase",
+  "acctSettingsViewPhrase": "View recovery phrase",
+
+  "smsTitle": "SMS Transactions",
+  "smsSyncNow": "Sync now",
+  "smsSyncSuccess": "{n, plural, =1{Found 1 new transaction} other{Found {n} new transactions}}",
+  "@smsSyncSuccess": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "smsSyncNoNew": "No new transactions found",
+  "smsPermissionDenied": "SMS permission denied. Enable it in Settings to read bank messages.",
+  "smsUnavailableTitle": "Unable to load",
+  "smsUnavailableBody": "There was a problem loading SMS transactions.",
+  "smsEmptyTitle": "No transactions yet",
+  "smsEmptyBody": "Tap Sync to read bank SMS messages and track your spending automatically.",
+  "smsIosTitle": "Not available on iPhone",
+  "smsIosBody": "Apple doesn't allow apps to read SMS messages. You can still add expenses manually, or forward bank SMS to your email.",
+  "smsLogged": "Logged",
+  "smsLogAsExpense": "Log as expense",
+  "smsIgnore": "Ignore this transaction",
+  "smsSettingsTitle": "SMS Transactions",
+  "smsReadEnabled": "Read bank SMS",
+  "smsReadEnabledSub": "Automatically detect transactions from bank messages",
+  "smsAutoLog": "Auto-log expenses",
+  "smsAutoLogSub": "Create expenses from debits without asking",
+  "smsAutoComplete": "Auto-complete payment tasks",
+  "smsAutoCompleteSub": "Mark ATC tasks as paid when matching SMS arrives",
+  "smsDailySummary": "Daily summary",
+  "smsDailySummarySub": "Get a notification at 9 PM with today's transactions",
+  "smsSummaryTitle": "Today's transactions",
+  "smsSummaryBody": "{count, plural, =1{1 transaction} other{{count} transactions}}, {amount} spent",
+  "@smsSummaryBody": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "smsViewAll": "View all SMS transactions"
 }

@@ -14,6 +14,7 @@ import '../calendar/calendar_providers.dart';
 import '../capture/capture_entry.dart';
 import '../score/score_providers.dart';
 import '../score/ui/score_ring.dart';
+import '../inbox/inbox_providers.dart' show pendingCountProvider;
 import '../settings/settings_providers.dart'
     show greetStyleOf, settingsProvider;
 import '../tasks/domain/task_rules.dart';
@@ -21,6 +22,7 @@ import '../tasks/tasks_providers.dart' show allTasksProvider;
 import '../tasks/ui/new_task_sheet.dart';
 import '../tasks/ui/task_tile.dart';
 import '../vault/vault_providers.dart' show documentsProvider;
+import '../brief/ui/brief_button.dart';
 import 'domain/attention.dart';
 import 'ui/attention_tile.dart';
 
@@ -77,6 +79,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final isNew = tasks.isEmpty && docs.isEmpty && rules.isEmpty;
     final l = context.l10n;
 
+    final inboxCount = ref.watch(pendingCountProvider).value ?? 0;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -89,6 +93,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           key: const ValueKey('home-greeting'),
         ),
         actions: [
+          IconButton(
+            key: const ValueKey('home-inbox'),
+            tooltip: l.inboxTitle,
+            onPressed: () => context.go('/inbox'),
+            icon: Badge(
+              isLabelVisible: inboxCount > 0,
+              label: Text('$inboxCount'),
+              child: const Icon(Icons.inbox_outlined),
+            ),
+          ),
           IconButton(
             key: const ValueKey('home-bell'),
             tooltip: l.hmNeedsAttention,
@@ -122,6 +136,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               score: score.score,
               delta: delta,
               attentionCount: attention.length,
+            ),
+            // Daily Voice Brief button (PBI-039a)
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: Tokens.gutter,
+                vertical: Tokens.spaceS,
+              ),
+              child: const BriefButton(),
             ),
             if (isNew)
               const _NewUserPrompts()

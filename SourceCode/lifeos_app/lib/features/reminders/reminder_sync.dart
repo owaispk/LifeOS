@@ -49,6 +49,8 @@ class ReminderSync {
             quietStart: settings.quietStart,
             quietEnd: settings.quietEnd,
             digestTime: settings.digestTime,
+            briefTime: settings.briefTime,
+            briefEnabled: settings.briefEnabled,
             notifDomains: settings.notifDomains,
           );
     final planned = planNotifications(

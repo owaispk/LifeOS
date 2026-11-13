@@ -3343,6 +3343,57 @@ class $UserSettingsTable extends UserSettings
     requiredDuringInsert: false,
     defaultValue: const Constant('ask'),
   );
+  static const VerificationMeta _briefTimeMeta = const VerificationMeta(
+    'briefTime',
+  );
+  @override
+  late final GeneratedColumn<String> briefTime = GeneratedColumn<String>(
+    'brief_time',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('07:30'),
+  );
+  static const VerificationMeta _ttsRateMeta = const VerificationMeta(
+    'ttsRate',
+  );
+  @override
+  late final GeneratedColumn<double> ttsRate = GeneratedColumn<double>(
+    'tts_rate',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1.0),
+  );
+  static const VerificationMeta _briefConsentMeta = const VerificationMeta(
+    'briefConsent',
+  );
+  @override
+  late final GeneratedColumn<String> briefConsent = GeneratedColumn<String>(
+    'brief_consent',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('ask'),
+  );
+  static const VerificationMeta _briefEnabledMeta = const VerificationMeta(
+    'briefEnabled',
+  );
+  @override
+  late final GeneratedColumn<bool> briefEnabled = GeneratedColumn<bool>(
+    'brief_enabled',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("brief_enabled" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -3379,6 +3430,10 @@ class $UserSettingsTable extends UserSettings
     aiBaseUrl,
     aiModel,
     aiConsent,
+    briefTime,
+    ttsRate,
+    briefConsent,
+    briefEnabled,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -3629,6 +3684,36 @@ class $UserSettingsTable extends UserSettings
         aiConsent.isAcceptableOrUnknown(data['ai_consent']!, _aiConsentMeta),
       );
     }
+    if (data.containsKey('brief_time')) {
+      context.handle(
+        _briefTimeMeta,
+        briefTime.isAcceptableOrUnknown(data['brief_time']!, _briefTimeMeta),
+      );
+    }
+    if (data.containsKey('tts_rate')) {
+      context.handle(
+        _ttsRateMeta,
+        ttsRate.isAcceptableOrUnknown(data['tts_rate']!, _ttsRateMeta),
+      );
+    }
+    if (data.containsKey('brief_consent')) {
+      context.handle(
+        _briefConsentMeta,
+        briefConsent.isAcceptableOrUnknown(
+          data['brief_consent']!,
+          _briefConsentMeta,
+        ),
+      );
+    }
+    if (data.containsKey('brief_enabled')) {
+      context.handle(
+        _briefEnabledMeta,
+        briefEnabled.isAcceptableOrUnknown(
+          data['brief_enabled']!,
+          _briefEnabledMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -3778,6 +3863,22 @@ class $UserSettingsTable extends UserSettings
         DriftSqlType.string,
         data['${effectivePrefix}ai_consent'],
       )!,
+      briefTime: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}brief_time'],
+      )!,
+      ttsRate: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}tts_rate'],
+      )!,
+      briefConsent: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}brief_consent'],
+      )!,
+      briefEnabled: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}brief_enabled'],
+      )!,
     );
   }
 
@@ -3869,6 +3970,18 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
   /// Consent for sending document text to that provider: 'ask' (the
   /// default), 'always' or 'never'.
   final String aiConsent;
+
+  /// Time of day for the morning brief notification (HH:mm).
+  final String briefTime;
+
+  /// TTS speech rate (0.5–1.5).
+  final double ttsRate;
+
+  /// Brief AI consent: 'ask', 'always', 'never'.
+  final String briefConsent;
+
+  /// Whether brief notifications are enabled.
+  final bool briefEnabled;
   const UserSettingsRow({
     required this.id,
     required this.userId,
@@ -3904,6 +4017,10 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     this.aiBaseUrl,
     this.aiModel,
     required this.aiConsent,
+    required this.briefTime,
+    required this.ttsRate,
+    required this.briefConsent,
+    required this.briefEnabled,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -3962,6 +4079,10 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
       map['ai_model'] = Variable<String>(aiModel);
     }
     map['ai_consent'] = Variable<String>(aiConsent);
+    map['brief_time'] = Variable<String>(briefTime);
+    map['tts_rate'] = Variable<double>(ttsRate);
+    map['brief_consent'] = Variable<String>(briefConsent);
+    map['brief_enabled'] = Variable<bool>(briefEnabled);
     return map;
   }
 
@@ -4021,6 +4142,10 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
           ? const Value.absent()
           : Value(aiModel),
       aiConsent: Value(aiConsent),
+      briefTime: Value(briefTime),
+      ttsRate: Value(ttsRate),
+      briefConsent: Value(briefConsent),
+      briefEnabled: Value(briefEnabled),
     );
   }
 
@@ -4064,6 +4189,10 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
       aiBaseUrl: serializer.fromJson<String?>(json['aiBaseUrl']),
       aiModel: serializer.fromJson<String?>(json['aiModel']),
       aiConsent: serializer.fromJson<String>(json['aiConsent']),
+      briefTime: serializer.fromJson<String>(json['briefTime']),
+      ttsRate: serializer.fromJson<double>(json['ttsRate']),
+      briefConsent: serializer.fromJson<String>(json['briefConsent']),
+      briefEnabled: serializer.fromJson<bool>(json['briefEnabled']),
     );
   }
   @override
@@ -4104,6 +4233,10 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
       'aiBaseUrl': serializer.toJson<String?>(aiBaseUrl),
       'aiModel': serializer.toJson<String?>(aiModel),
       'aiConsent': serializer.toJson<String>(aiConsent),
+      'briefTime': serializer.toJson<String>(briefTime),
+      'ttsRate': serializer.toJson<double>(ttsRate),
+      'briefConsent': serializer.toJson<String>(briefConsent),
+      'briefEnabled': serializer.toJson<bool>(briefEnabled),
     };
   }
 
@@ -4142,6 +4275,10 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     Value<String?> aiBaseUrl = const Value.absent(),
     Value<String?> aiModel = const Value.absent(),
     String? aiConsent,
+    String? briefTime,
+    double? ttsRate,
+    String? briefConsent,
+    bool? briefEnabled,
   }) => UserSettingsRow(
     id: id ?? this.id,
     userId: userId ?? this.userId,
@@ -4181,6 +4318,10 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     aiBaseUrl: aiBaseUrl.present ? aiBaseUrl.value : this.aiBaseUrl,
     aiModel: aiModel.present ? aiModel.value : this.aiModel,
     aiConsent: aiConsent ?? this.aiConsent,
+    briefTime: briefTime ?? this.briefTime,
+    ttsRate: ttsRate ?? this.ttsRate,
+    briefConsent: briefConsent ?? this.briefConsent,
+    briefEnabled: briefEnabled ?? this.briefEnabled,
   );
   UserSettingsRow copyWithCompanion(UserSettingsCompanion data) {
     return UserSettingsRow(
@@ -4252,6 +4393,14 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
       aiBaseUrl: data.aiBaseUrl.present ? data.aiBaseUrl.value : this.aiBaseUrl,
       aiModel: data.aiModel.present ? data.aiModel.value : this.aiModel,
       aiConsent: data.aiConsent.present ? data.aiConsent.value : this.aiConsent,
+      briefTime: data.briefTime.present ? data.briefTime.value : this.briefTime,
+      ttsRate: data.ttsRate.present ? data.ttsRate.value : this.ttsRate,
+      briefConsent: data.briefConsent.present
+          ? data.briefConsent.value
+          : this.briefConsent,
+      briefEnabled: data.briefEnabled.present
+          ? data.briefEnabled.value
+          : this.briefEnabled,
     );
   }
 
@@ -4291,7 +4440,11 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
           ..write('premiumCheckedAt: $premiumCheckedAt, ')
           ..write('aiBaseUrl: $aiBaseUrl, ')
           ..write('aiModel: $aiModel, ')
-          ..write('aiConsent: $aiConsent')
+          ..write('aiConsent: $aiConsent, ')
+          ..write('briefTime: $briefTime, ')
+          ..write('ttsRate: $ttsRate, ')
+          ..write('briefConsent: $briefConsent, ')
+          ..write('briefEnabled: $briefEnabled')
           ..write(')'))
         .toString();
   }
@@ -4332,6 +4485,10 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
     aiBaseUrl,
     aiModel,
     aiConsent,
+    briefTime,
+    ttsRate,
+    briefConsent,
+    briefEnabled,
   ]);
   @override
   bool operator ==(Object other) =>
@@ -4370,7 +4527,11 @@ class UserSettingsRow extends DataClass implements Insertable<UserSettingsRow> {
           other.premiumCheckedAt == this.premiumCheckedAt &&
           other.aiBaseUrl == this.aiBaseUrl &&
           other.aiModel == this.aiModel &&
-          other.aiConsent == this.aiConsent);
+          other.aiConsent == this.aiConsent &&
+          other.briefTime == this.briefTime &&
+          other.ttsRate == this.ttsRate &&
+          other.briefConsent == this.briefConsent &&
+          other.briefEnabled == this.briefEnabled);
 }
 
 class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
@@ -4408,6 +4569,10 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
   final Value<String?> aiBaseUrl;
   final Value<String?> aiModel;
   final Value<String> aiConsent;
+  final Value<String> briefTime;
+  final Value<double> ttsRate;
+  final Value<String> briefConsent;
+  final Value<bool> briefEnabled;
   final Value<int> rowid;
   const UserSettingsCompanion({
     this.id = const Value.absent(),
@@ -4444,6 +4609,10 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     this.aiBaseUrl = const Value.absent(),
     this.aiModel = const Value.absent(),
     this.aiConsent = const Value.absent(),
+    this.briefTime = const Value.absent(),
+    this.ttsRate = const Value.absent(),
+    this.briefConsent = const Value.absent(),
+    this.briefEnabled = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   UserSettingsCompanion.insert({
@@ -4481,6 +4650,10 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     this.aiBaseUrl = const Value.absent(),
     this.aiModel = const Value.absent(),
     this.aiConsent = const Value.absent(),
+    this.briefTime = const Value.absent(),
+    this.ttsRate = const Value.absent(),
+    this.briefConsent = const Value.absent(),
+    this.briefEnabled = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   static Insertable<UserSettingsRow> custom({
@@ -4518,6 +4691,10 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     Expression<String>? aiBaseUrl,
     Expression<String>? aiModel,
     Expression<String>? aiConsent,
+    Expression<String>? briefTime,
+    Expression<double>? ttsRate,
+    Expression<String>? briefConsent,
+    Expression<bool>? briefEnabled,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -4555,6 +4732,10 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
       if (aiBaseUrl != null) 'ai_base_url': aiBaseUrl,
       if (aiModel != null) 'ai_model': aiModel,
       if (aiConsent != null) 'ai_consent': aiConsent,
+      if (briefTime != null) 'brief_time': briefTime,
+      if (ttsRate != null) 'tts_rate': ttsRate,
+      if (briefConsent != null) 'brief_consent': briefConsent,
+      if (briefEnabled != null) 'brief_enabled': briefEnabled,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -4594,6 +4775,10 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     Value<String?>? aiBaseUrl,
     Value<String?>? aiModel,
     Value<String>? aiConsent,
+    Value<String>? briefTime,
+    Value<double>? ttsRate,
+    Value<String>? briefConsent,
+    Value<bool>? briefEnabled,
     Value<int>? rowid,
   }) {
     return UserSettingsCompanion(
@@ -4631,6 +4816,10 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
       aiBaseUrl: aiBaseUrl ?? this.aiBaseUrl,
       aiModel: aiModel ?? this.aiModel,
       aiConsent: aiConsent ?? this.aiConsent,
+      briefTime: briefTime ?? this.briefTime,
+      ttsRate: ttsRate ?? this.ttsRate,
+      briefConsent: briefConsent ?? this.briefConsent,
+      briefEnabled: briefEnabled ?? this.briefEnabled,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -4740,6 +4929,18 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
     if (aiConsent.present) {
       map['ai_consent'] = Variable<String>(aiConsent.value);
     }
+    if (briefTime.present) {
+      map['brief_time'] = Variable<String>(briefTime.value);
+    }
+    if (ttsRate.present) {
+      map['tts_rate'] = Variable<double>(ttsRate.value);
+    }
+    if (briefConsent.present) {
+      map['brief_consent'] = Variable<String>(briefConsent.value);
+    }
+    if (briefEnabled.present) {
+      map['brief_enabled'] = Variable<bool>(briefEnabled.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -4783,6 +4984,10 @@ class UserSettingsCompanion extends UpdateCompanion<UserSettingsRow> {
           ..write('aiBaseUrl: $aiBaseUrl, ')
           ..write('aiModel: $aiModel, ')
           ..write('aiConsent: $aiConsent, ')
+          ..write('briefTime: $briefTime, ')
+          ..write('ttsRate: $ttsRate, ')
+          ..write('briefConsent: $briefConsent, ')
+          ..write('briefEnabled: $briefEnabled, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -13685,6 +13890,1273 @@ class BundleTemplatesCompanion extends UpdateCompanion<BundleTemplate> {
   }
 }
 
+class $CapturesTable extends Captures with TableInfo<$CapturesTable, Capture> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CapturesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: fallbackIds.next,
+  );
+  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
+  @override
+  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
+    'user_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    clientDefault: () => '',
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<int> updatedAt = GeneratedColumn<int>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    clientDefault: systemClock,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<int> deletedAt = GeneratedColumn<int>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _versionMeta = const VerificationMeta(
+    'version',
+  );
+  @override
+  late final GeneratedColumn<int> version = GeneratedColumn<int>(
+    'version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _captureTypeMeta = const VerificationMeta(
+    'captureType',
+  );
+  @override
+  late final GeneratedColumn<String> captureType = GeneratedColumn<String>(
+    'capture_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _contentMeta = const VerificationMeta(
+    'content',
+  );
+  @override
+  late final GeneratedColumn<String> content = GeneratedColumn<String>(
+    'content',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _mediaPathMeta = const VerificationMeta(
+    'mediaPath',
+  );
+  @override
+  late final GeneratedColumn<String> mediaPath = GeneratedColumn<String>(
+    'media_path',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _mediaMimeMeta = const VerificationMeta(
+    'mediaMime',
+  );
+  @override
+  late final GeneratedColumn<String> mediaMime = GeneratedColumn<String>(
+    'media_mime',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _mediaSizeBytesMeta = const VerificationMeta(
+    'mediaSizeBytes',
+  );
+  @override
+  late final GeneratedColumn<int> mediaSizeBytes = GeneratedColumn<int>(
+    'media_size_bytes',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _processedAtMeta = const VerificationMeta(
+    'processedAt',
+  );
+  @override
+  late final GeneratedColumn<int> processedAt = GeneratedColumn<int>(
+    'processed_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('pending'),
+  );
+  static const VerificationMeta _destinationIdMeta = const VerificationMeta(
+    'destinationId',
+  );
+  @override
+  late final GeneratedColumn<String> destinationId = GeneratedColumn<String>(
+    'destination_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _destinationTypeMeta = const VerificationMeta(
+    'destinationType',
+  );
+  @override
+  late final GeneratedColumn<String> destinationType = GeneratedColumn<String>(
+    'destination_type',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+    'notes',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    userId,
+    updatedAt,
+    deletedAt,
+    version,
+    captureType,
+    content,
+    mediaPath,
+    mediaMime,
+    mediaSizeBytes,
+    processedAt,
+    status,
+    destinationId,
+    destinationType,
+    notes,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'captures';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Capture> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('user_id')) {
+      context.handle(
+        _userIdMeta,
+        userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    if (data.containsKey('version')) {
+      context.handle(
+        _versionMeta,
+        version.isAcceptableOrUnknown(data['version']!, _versionMeta),
+      );
+    }
+    if (data.containsKey('capture_type')) {
+      context.handle(
+        _captureTypeMeta,
+        captureType.isAcceptableOrUnknown(
+          data['capture_type']!,
+          _captureTypeMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_captureTypeMeta);
+    }
+    if (data.containsKey('content')) {
+      context.handle(
+        _contentMeta,
+        content.isAcceptableOrUnknown(data['content']!, _contentMeta),
+      );
+    }
+    if (data.containsKey('media_path')) {
+      context.handle(
+        _mediaPathMeta,
+        mediaPath.isAcceptableOrUnknown(data['media_path']!, _mediaPathMeta),
+      );
+    }
+    if (data.containsKey('media_mime')) {
+      context.handle(
+        _mediaMimeMeta,
+        mediaMime.isAcceptableOrUnknown(data['media_mime']!, _mediaMimeMeta),
+      );
+    }
+    if (data.containsKey('media_size_bytes')) {
+      context.handle(
+        _mediaSizeBytesMeta,
+        mediaSizeBytes.isAcceptableOrUnknown(
+          data['media_size_bytes']!,
+          _mediaSizeBytesMeta,
+        ),
+      );
+    }
+    if (data.containsKey('processed_at')) {
+      context.handle(
+        _processedAtMeta,
+        processedAt.isAcceptableOrUnknown(
+          data['processed_at']!,
+          _processedAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
+    if (data.containsKey('destination_id')) {
+      context.handle(
+        _destinationIdMeta,
+        destinationId.isAcceptableOrUnknown(
+          data['destination_id']!,
+          _destinationIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('destination_type')) {
+      context.handle(
+        _destinationTypeMeta,
+        destinationType.isAcceptableOrUnknown(
+          data['destination_type']!,
+          _destinationTypeMeta,
+        ),
+      );
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+        _notesMeta,
+        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Capture map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Capture(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      userId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}user_id'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+      version: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}version'],
+      )!,
+      captureType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}capture_type'],
+      )!,
+      content: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}content'],
+      ),
+      mediaPath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}media_path'],
+      ),
+      mediaMime: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}media_mime'],
+      ),
+      mediaSizeBytes: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}media_size_bytes'],
+      ),
+      processedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}processed_at'],
+      ),
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      destinationId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}destination_id'],
+      ),
+      destinationType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}destination_type'],
+      ),
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+    );
+  }
+
+  @override
+  $CapturesTable createAlias(String alias) {
+    return $CapturesTable(attachedDatabase, alias);
+  }
+}
+
+class Capture extends DataClass implements Insertable<Capture> {
+  final String id;
+  final String userId;
+  final int updatedAt;
+  final int? deletedAt;
+  final int version;
+
+  /// text | voice | photo | file
+  final String captureType;
+
+  /// The text content (for text/voice captures).
+  final String? content;
+
+  /// Path to media file (for voice/photo/file captures).
+  final String? mediaPath;
+
+  /// MIME type of the media file.
+  final String? mediaMime;
+
+  /// Size of the media file in bytes.
+  final int? mediaSizeBytes;
+
+  /// When this capture was processed (filed to its destination).
+  final int? processedAt;
+
+  /// pending | done | deleted
+  final String status;
+
+  /// The id of the created task/expense/document/note.
+  final String? destinationId;
+
+  /// task | expense | document | note
+  final String? destinationType;
+
+  /// User notes added during classification.
+  final String? notes;
+  const Capture({
+    required this.id,
+    required this.userId,
+    required this.updatedAt,
+    this.deletedAt,
+    required this.version,
+    required this.captureType,
+    this.content,
+    this.mediaPath,
+    this.mediaMime,
+    this.mediaSizeBytes,
+    this.processedAt,
+    required this.status,
+    this.destinationId,
+    this.destinationType,
+    this.notes,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['user_id'] = Variable<String>(userId);
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    map['version'] = Variable<int>(version);
+    map['capture_type'] = Variable<String>(captureType);
+    if (!nullToAbsent || content != null) {
+      map['content'] = Variable<String>(content);
+    }
+    if (!nullToAbsent || mediaPath != null) {
+      map['media_path'] = Variable<String>(mediaPath);
+    }
+    if (!nullToAbsent || mediaMime != null) {
+      map['media_mime'] = Variable<String>(mediaMime);
+    }
+    if (!nullToAbsent || mediaSizeBytes != null) {
+      map['media_size_bytes'] = Variable<int>(mediaSizeBytes);
+    }
+    if (!nullToAbsent || processedAt != null) {
+      map['processed_at'] = Variable<int>(processedAt);
+    }
+    map['status'] = Variable<String>(status);
+    if (!nullToAbsent || destinationId != null) {
+      map['destination_id'] = Variable<String>(destinationId);
+    }
+    if (!nullToAbsent || destinationType != null) {
+      map['destination_type'] = Variable<String>(destinationType);
+    }
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    return map;
+  }
+
+  CapturesCompanion toCompanion(bool nullToAbsent) {
+    return CapturesCompanion(
+      id: Value(id),
+      userId: Value(userId),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      version: Value(version),
+      captureType: Value(captureType),
+      content: content == null && nullToAbsent
+          ? const Value.absent()
+          : Value(content),
+      mediaPath: mediaPath == null && nullToAbsent
+          ? const Value.absent()
+          : Value(mediaPath),
+      mediaMime: mediaMime == null && nullToAbsent
+          ? const Value.absent()
+          : Value(mediaMime),
+      mediaSizeBytes: mediaSizeBytes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(mediaSizeBytes),
+      processedAt: processedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(processedAt),
+      status: Value(status),
+      destinationId: destinationId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(destinationId),
+      destinationType: destinationType == null && nullToAbsent
+          ? const Value.absent()
+          : Value(destinationType),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+    );
+  }
+
+  factory Capture.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Capture(
+      id: serializer.fromJson<String>(json['id']),
+      userId: serializer.fromJson<String>(json['userId']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+      version: serializer.fromJson<int>(json['version']),
+      captureType: serializer.fromJson<String>(json['captureType']),
+      content: serializer.fromJson<String?>(json['content']),
+      mediaPath: serializer.fromJson<String?>(json['mediaPath']),
+      mediaMime: serializer.fromJson<String?>(json['mediaMime']),
+      mediaSizeBytes: serializer.fromJson<int?>(json['mediaSizeBytes']),
+      processedAt: serializer.fromJson<int?>(json['processedAt']),
+      status: serializer.fromJson<String>(json['status']),
+      destinationId: serializer.fromJson<String?>(json['destinationId']),
+      destinationType: serializer.fromJson<String?>(json['destinationType']),
+      notes: serializer.fromJson<String?>(json['notes']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'userId': serializer.toJson<String>(userId),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+      'version': serializer.toJson<int>(version),
+      'captureType': serializer.toJson<String>(captureType),
+      'content': serializer.toJson<String?>(content),
+      'mediaPath': serializer.toJson<String?>(mediaPath),
+      'mediaMime': serializer.toJson<String?>(mediaMime),
+      'mediaSizeBytes': serializer.toJson<int?>(mediaSizeBytes),
+      'processedAt': serializer.toJson<int?>(processedAt),
+      'status': serializer.toJson<String>(status),
+      'destinationId': serializer.toJson<String?>(destinationId),
+      'destinationType': serializer.toJson<String?>(destinationType),
+      'notes': serializer.toJson<String?>(notes),
+    };
+  }
+
+  Capture copyWith({
+    String? id,
+    String? userId,
+    int? updatedAt,
+    Value<int?> deletedAt = const Value.absent(),
+    int? version,
+    String? captureType,
+    Value<String?> content = const Value.absent(),
+    Value<String?> mediaPath = const Value.absent(),
+    Value<String?> mediaMime = const Value.absent(),
+    Value<int?> mediaSizeBytes = const Value.absent(),
+    Value<int?> processedAt = const Value.absent(),
+    String? status,
+    Value<String?> destinationId = const Value.absent(),
+    Value<String?> destinationType = const Value.absent(),
+    Value<String?> notes = const Value.absent(),
+  }) => Capture(
+    id: id ?? this.id,
+    userId: userId ?? this.userId,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+    version: version ?? this.version,
+    captureType: captureType ?? this.captureType,
+    content: content.present ? content.value : this.content,
+    mediaPath: mediaPath.present ? mediaPath.value : this.mediaPath,
+    mediaMime: mediaMime.present ? mediaMime.value : this.mediaMime,
+    mediaSizeBytes: mediaSizeBytes.present
+        ? mediaSizeBytes.value
+        : this.mediaSizeBytes,
+    processedAt: processedAt.present ? processedAt.value : this.processedAt,
+    status: status ?? this.status,
+    destinationId: destinationId.present
+        ? destinationId.value
+        : this.destinationId,
+    destinationType: destinationType.present
+        ? destinationType.value
+        : this.destinationType,
+    notes: notes.present ? notes.value : this.notes,
+  );
+  Capture copyWithCompanion(CapturesCompanion data) {
+    return Capture(
+      id: data.id.present ? data.id.value : this.id,
+      userId: data.userId.present ? data.userId.value : this.userId,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      version: data.version.present ? data.version.value : this.version,
+      captureType: data.captureType.present
+          ? data.captureType.value
+          : this.captureType,
+      content: data.content.present ? data.content.value : this.content,
+      mediaPath: data.mediaPath.present ? data.mediaPath.value : this.mediaPath,
+      mediaMime: data.mediaMime.present ? data.mediaMime.value : this.mediaMime,
+      mediaSizeBytes: data.mediaSizeBytes.present
+          ? data.mediaSizeBytes.value
+          : this.mediaSizeBytes,
+      processedAt: data.processedAt.present
+          ? data.processedAt.value
+          : this.processedAt,
+      status: data.status.present ? data.status.value : this.status,
+      destinationId: data.destinationId.present
+          ? data.destinationId.value
+          : this.destinationId,
+      destinationType: data.destinationType.present
+          ? data.destinationType.value
+          : this.destinationType,
+      notes: data.notes.present ? data.notes.value : this.notes,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Capture(')
+          ..write('id: $id, ')
+          ..write('userId: $userId, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('version: $version, ')
+          ..write('captureType: $captureType, ')
+          ..write('content: $content, ')
+          ..write('mediaPath: $mediaPath, ')
+          ..write('mediaMime: $mediaMime, ')
+          ..write('mediaSizeBytes: $mediaSizeBytes, ')
+          ..write('processedAt: $processedAt, ')
+          ..write('status: $status, ')
+          ..write('destinationId: $destinationId, ')
+          ..write('destinationType: $destinationType, ')
+          ..write('notes: $notes')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    userId,
+    updatedAt,
+    deletedAt,
+    version,
+    captureType,
+    content,
+    mediaPath,
+    mediaMime,
+    mediaSizeBytes,
+    processedAt,
+    status,
+    destinationId,
+    destinationType,
+    notes,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Capture &&
+          other.id == this.id &&
+          other.userId == this.userId &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt &&
+          other.version == this.version &&
+          other.captureType == this.captureType &&
+          other.content == this.content &&
+          other.mediaPath == this.mediaPath &&
+          other.mediaMime == this.mediaMime &&
+          other.mediaSizeBytes == this.mediaSizeBytes &&
+          other.processedAt == this.processedAt &&
+          other.status == this.status &&
+          other.destinationId == this.destinationId &&
+          other.destinationType == this.destinationType &&
+          other.notes == this.notes);
+}
+
+class CapturesCompanion extends UpdateCompanion<Capture> {
+  final Value<String> id;
+  final Value<String> userId;
+  final Value<int> updatedAt;
+  final Value<int?> deletedAt;
+  final Value<int> version;
+  final Value<String> captureType;
+  final Value<String?> content;
+  final Value<String?> mediaPath;
+  final Value<String?> mediaMime;
+  final Value<int?> mediaSizeBytes;
+  final Value<int?> processedAt;
+  final Value<String> status;
+  final Value<String?> destinationId;
+  final Value<String?> destinationType;
+  final Value<String?> notes;
+  final Value<int> rowid;
+  const CapturesCompanion({
+    this.id = const Value.absent(),
+    this.userId = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.version = const Value.absent(),
+    this.captureType = const Value.absent(),
+    this.content = const Value.absent(),
+    this.mediaPath = const Value.absent(),
+    this.mediaMime = const Value.absent(),
+    this.mediaSizeBytes = const Value.absent(),
+    this.processedAt = const Value.absent(),
+    this.status = const Value.absent(),
+    this.destinationId = const Value.absent(),
+    this.destinationType = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  CapturesCompanion.insert({
+    this.id = const Value.absent(),
+    this.userId = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.version = const Value.absent(),
+    required String captureType,
+    this.content = const Value.absent(),
+    this.mediaPath = const Value.absent(),
+    this.mediaMime = const Value.absent(),
+    this.mediaSizeBytes = const Value.absent(),
+    this.processedAt = const Value.absent(),
+    this.status = const Value.absent(),
+    this.destinationId = const Value.absent(),
+    this.destinationType = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : captureType = Value(captureType);
+  static Insertable<Capture> custom({
+    Expression<String>? id,
+    Expression<String>? userId,
+    Expression<int>? updatedAt,
+    Expression<int>? deletedAt,
+    Expression<int>? version,
+    Expression<String>? captureType,
+    Expression<String>? content,
+    Expression<String>? mediaPath,
+    Expression<String>? mediaMime,
+    Expression<int>? mediaSizeBytes,
+    Expression<int>? processedAt,
+    Expression<String>? status,
+    Expression<String>? destinationId,
+    Expression<String>? destinationType,
+    Expression<String>? notes,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (userId != null) 'user_id': userId,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (version != null) 'version': version,
+      if (captureType != null) 'capture_type': captureType,
+      if (content != null) 'content': content,
+      if (mediaPath != null) 'media_path': mediaPath,
+      if (mediaMime != null) 'media_mime': mediaMime,
+      if (mediaSizeBytes != null) 'media_size_bytes': mediaSizeBytes,
+      if (processedAt != null) 'processed_at': processedAt,
+      if (status != null) 'status': status,
+      if (destinationId != null) 'destination_id': destinationId,
+      if (destinationType != null) 'destination_type': destinationType,
+      if (notes != null) 'notes': notes,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  CapturesCompanion copyWith({
+    Value<String>? id,
+    Value<String>? userId,
+    Value<int>? updatedAt,
+    Value<int?>? deletedAt,
+    Value<int>? version,
+    Value<String>? captureType,
+    Value<String?>? content,
+    Value<String?>? mediaPath,
+    Value<String?>? mediaMime,
+    Value<int?>? mediaSizeBytes,
+    Value<int?>? processedAt,
+    Value<String>? status,
+    Value<String?>? destinationId,
+    Value<String?>? destinationType,
+    Value<String?>? notes,
+    Value<int>? rowid,
+  }) {
+    return CapturesCompanion(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      version: version ?? this.version,
+      captureType: captureType ?? this.captureType,
+      content: content ?? this.content,
+      mediaPath: mediaPath ?? this.mediaPath,
+      mediaMime: mediaMime ?? this.mediaMime,
+      mediaSizeBytes: mediaSizeBytes ?? this.mediaSizeBytes,
+      processedAt: processedAt ?? this.processedAt,
+      status: status ?? this.status,
+      destinationId: destinationId ?? this.destinationId,
+      destinationType: destinationType ?? this.destinationType,
+      notes: notes ?? this.notes,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<String>(userId.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (version.present) {
+      map['version'] = Variable<int>(version.value);
+    }
+    if (captureType.present) {
+      map['capture_type'] = Variable<String>(captureType.value);
+    }
+    if (content.present) {
+      map['content'] = Variable<String>(content.value);
+    }
+    if (mediaPath.present) {
+      map['media_path'] = Variable<String>(mediaPath.value);
+    }
+    if (mediaMime.present) {
+      map['media_mime'] = Variable<String>(mediaMime.value);
+    }
+    if (mediaSizeBytes.present) {
+      map['media_size_bytes'] = Variable<int>(mediaSizeBytes.value);
+    }
+    if (processedAt.present) {
+      map['processed_at'] = Variable<int>(processedAt.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (destinationId.present) {
+      map['destination_id'] = Variable<String>(destinationId.value);
+    }
+    if (destinationType.present) {
+      map['destination_type'] = Variable<String>(destinationType.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CapturesCompanion(')
+          ..write('id: $id, ')
+          ..write('userId: $userId, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('version: $version, ')
+          ..write('captureType: $captureType, ')
+          ..write('content: $content, ')
+          ..write('mediaPath: $mediaPath, ')
+          ..write('mediaMime: $mediaMime, ')
+          ..write('mediaSizeBytes: $mediaSizeBytes, ')
+          ..write('processedAt: $processedAt, ')
+          ..write('status: $status, ')
+          ..write('destinationId: $destinationId, ')
+          ..write('destinationType: $destinationType, ')
+          ..write('notes: $notes, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $AccountsTable extends Accounts
+    with TableInfo<$AccountsTable, AccountRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AccountsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
+  @override
+  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
+    'user_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _recoveryPhraseHashMeta =
+      const VerificationMeta('recoveryPhraseHash');
+  @override
+  late final GeneratedColumn<String> recoveryPhraseHash =
+      GeneratedColumn<String>(
+        'recovery_phrase_hash',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _isActiveMeta = const VerificationMeta(
+    'isActive',
+  );
+  @override
+  late final GeneratedColumn<bool> isActive = GeneratedColumn<bool>(
+    'is_active',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_active" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    userId,
+    recoveryPhraseHash,
+    createdAt,
+    isActive,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'accounts';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<AccountRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('user_id')) {
+      context.handle(
+        _userIdMeta,
+        userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_userIdMeta);
+    }
+    if (data.containsKey('recovery_phrase_hash')) {
+      context.handle(
+        _recoveryPhraseHashMeta,
+        recoveryPhraseHash.isAcceptableOrUnknown(
+          data['recovery_phrase_hash']!,
+          _recoveryPhraseHashMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_recoveryPhraseHashMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('is_active')) {
+      context.handle(
+        _isActiveMeta,
+        isActive.isAcceptableOrUnknown(data['is_active']!, _isActiveMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  AccountRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return AccountRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      userId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}user_id'],
+      )!,
+      recoveryPhraseHash: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}recovery_phrase_hash'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      isActive: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_active'],
+      )!,
+    );
+  }
+
+  @override
+  $AccountsTable createAlias(String alias) {
+    return $AccountsTable(attachedDatabase, alias);
+  }
+}
+
+class AccountRow extends DataClass implements Insertable<AccountRow> {
+  final String id;
+  final String userId;
+
+  /// SHA-256 hash of the 12-word recovery phrase.
+  final String recoveryPhraseHash;
+
+  /// When the account was created (epoch ms).
+  final int createdAt;
+
+  /// Whether this is the currently active account.
+  final bool isActive;
+  const AccountRow({
+    required this.id,
+    required this.userId,
+    required this.recoveryPhraseHash,
+    required this.createdAt,
+    required this.isActive,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['user_id'] = Variable<String>(userId);
+    map['recovery_phrase_hash'] = Variable<String>(recoveryPhraseHash);
+    map['created_at'] = Variable<int>(createdAt);
+    map['is_active'] = Variable<bool>(isActive);
+    return map;
+  }
+
+  AccountsCompanion toCompanion(bool nullToAbsent) {
+    return AccountsCompanion(
+      id: Value(id),
+      userId: Value(userId),
+      recoveryPhraseHash: Value(recoveryPhraseHash),
+      createdAt: Value(createdAt),
+      isActive: Value(isActive),
+    );
+  }
+
+  factory AccountRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return AccountRow(
+      id: serializer.fromJson<String>(json['id']),
+      userId: serializer.fromJson<String>(json['userId']),
+      recoveryPhraseHash: serializer.fromJson<String>(
+        json['recoveryPhraseHash'],
+      ),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      isActive: serializer.fromJson<bool>(json['isActive']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'userId': serializer.toJson<String>(userId),
+      'recoveryPhraseHash': serializer.toJson<String>(recoveryPhraseHash),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'isActive': serializer.toJson<bool>(isActive),
+    };
+  }
+
+  AccountRow copyWith({
+    String? id,
+    String? userId,
+    String? recoveryPhraseHash,
+    int? createdAt,
+    bool? isActive,
+  }) => AccountRow(
+    id: id ?? this.id,
+    userId: userId ?? this.userId,
+    recoveryPhraseHash: recoveryPhraseHash ?? this.recoveryPhraseHash,
+    createdAt: createdAt ?? this.createdAt,
+    isActive: isActive ?? this.isActive,
+  );
+  AccountRow copyWithCompanion(AccountsCompanion data) {
+    return AccountRow(
+      id: data.id.present ? data.id.value : this.id,
+      userId: data.userId.present ? data.userId.value : this.userId,
+      recoveryPhraseHash: data.recoveryPhraseHash.present
+          ? data.recoveryPhraseHash.value
+          : this.recoveryPhraseHash,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      isActive: data.isActive.present ? data.isActive.value : this.isActive,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AccountRow(')
+          ..write('id: $id, ')
+          ..write('userId: $userId, ')
+          ..write('recoveryPhraseHash: $recoveryPhraseHash, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('isActive: $isActive')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, userId, recoveryPhraseHash, createdAt, isActive);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AccountRow &&
+          other.id == this.id &&
+          other.userId == this.userId &&
+          other.recoveryPhraseHash == this.recoveryPhraseHash &&
+          other.createdAt == this.createdAt &&
+          other.isActive == this.isActive);
+}
+
+class AccountsCompanion extends UpdateCompanion<AccountRow> {
+  final Value<String> id;
+  final Value<String> userId;
+  final Value<String> recoveryPhraseHash;
+  final Value<int> createdAt;
+  final Value<bool> isActive;
+  final Value<int> rowid;
+  const AccountsCompanion({
+    this.id = const Value.absent(),
+    this.userId = const Value.absent(),
+    this.recoveryPhraseHash = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.isActive = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  AccountsCompanion.insert({
+    required String id,
+    required String userId,
+    required String recoveryPhraseHash,
+    required int createdAt,
+    this.isActive = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       userId = Value(userId),
+       recoveryPhraseHash = Value(recoveryPhraseHash),
+       createdAt = Value(createdAt);
+  static Insertable<AccountRow> custom({
+    Expression<String>? id,
+    Expression<String>? userId,
+    Expression<String>? recoveryPhraseHash,
+    Expression<int>? createdAt,
+    Expression<bool>? isActive,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (userId != null) 'user_id': userId,
+      if (recoveryPhraseHash != null)
+        'recovery_phrase_hash': recoveryPhraseHash,
+      if (createdAt != null) 'created_at': createdAt,
+      if (isActive != null) 'is_active': isActive,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  AccountsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? userId,
+    Value<String>? recoveryPhraseHash,
+    Value<int>? createdAt,
+    Value<bool>? isActive,
+    Value<int>? rowid,
+  }) {
+    return AccountsCompanion(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      recoveryPhraseHash: recoveryPhraseHash ?? this.recoveryPhraseHash,
+      createdAt: createdAt ?? this.createdAt,
+      isActive: isActive ?? this.isActive,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<String>(userId.value);
+    }
+    if (recoveryPhraseHash.present) {
+      map['recovery_phrase_hash'] = Variable<String>(recoveryPhraseHash.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (isActive.present) {
+      map['is_active'] = Variable<bool>(isActive.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AccountsCompanion(')
+          ..write('id: $id, ')
+          ..write('userId: $userId, ')
+          ..write('recoveryPhraseHash: $recoveryPhraseHash, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('isActive: $isActive, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $PendingOpsTable extends PendingOps
     with TableInfo<$PendingOpsTable, PendingOp> {
   @override
@@ -15019,6 +16491,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $BundleTemplatesTable bundleTemplates = $BundleTemplatesTable(
     this,
   );
+  late final $CapturesTable captures = $CapturesTable(this);
+  late final $AccountsTable accounts = $AccountsTable(this);
   late final $PendingOpsTable pendingOps = $PendingOpsTable(this);
   late final $ConflictLogTable conflictLog = $ConflictLogTable(this);
   late final $BlobCacheTable blobCache = $BlobCacheTable(this);
@@ -15048,6 +16522,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     scoreSnapshots,
     shareEvents,
     bundleTemplates,
+    captures,
+    accounts,
     pendingOps,
     conflictLog,
     blobCache,
@@ -17565,6 +19041,10 @@ typedef $$UserSettingsTableCreateCompanionBuilder =
       Value<String?> aiBaseUrl,
       Value<String?> aiModel,
       Value<String> aiConsent,
+      Value<String> briefTime,
+      Value<double> ttsRate,
+      Value<String> briefConsent,
+      Value<bool> briefEnabled,
       Value<int> rowid,
     });
 typedef $$UserSettingsTableUpdateCompanionBuilder =
@@ -17603,6 +19083,10 @@ typedef $$UserSettingsTableUpdateCompanionBuilder =
       Value<String?> aiBaseUrl,
       Value<String?> aiModel,
       Value<String> aiConsent,
+      Value<String> briefTime,
+      Value<double> ttsRate,
+      Value<String> briefConsent,
+      Value<bool> briefEnabled,
       Value<int> rowid,
     });
 
@@ -17782,6 +19266,26 @@ class $$UserSettingsTableFilterComposer
 
   ColumnFilters<String> get aiConsent => $composableBuilder(
     column: $table.aiConsent,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get briefTime => $composableBuilder(
+    column: $table.briefTime,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get ttsRate => $composableBuilder(
+    column: $table.ttsRate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get briefConsent => $composableBuilder(
+    column: $table.briefConsent,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get briefEnabled => $composableBuilder(
+    column: $table.briefEnabled,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -17964,6 +19468,26 @@ class $$UserSettingsTableOrderingComposer
     column: $table.aiConsent,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get briefTime => $composableBuilder(
+    column: $table.briefTime,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get ttsRate => $composableBuilder(
+    column: $table.ttsRate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get briefConsent => $composableBuilder(
+    column: $table.briefConsent,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get briefEnabled => $composableBuilder(
+    column: $table.briefEnabled,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$UserSettingsTableAnnotationComposer
@@ -18110,6 +19634,22 @@ class $$UserSettingsTableAnnotationComposer
 
   GeneratedColumn<String> get aiConsent =>
       $composableBuilder(column: $table.aiConsent, builder: (column) => column);
+
+  GeneratedColumn<String> get briefTime =>
+      $composableBuilder(column: $table.briefTime, builder: (column) => column);
+
+  GeneratedColumn<double> get ttsRate =>
+      $composableBuilder(column: $table.ttsRate, builder: (column) => column);
+
+  GeneratedColumn<String> get briefConsent => $composableBuilder(
+    column: $table.briefConsent,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get briefEnabled => $composableBuilder(
+    column: $table.briefEnabled,
+    builder: (column) => column,
+  );
 }
 
 class $$UserSettingsTableTableManager
@@ -18177,6 +19717,10 @@ class $$UserSettingsTableTableManager
                 Value<String?> aiBaseUrl = const Value.absent(),
                 Value<String?> aiModel = const Value.absent(),
                 Value<String> aiConsent = const Value.absent(),
+                Value<String> briefTime = const Value.absent(),
+                Value<double> ttsRate = const Value.absent(),
+                Value<String> briefConsent = const Value.absent(),
+                Value<bool> briefEnabled = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => UserSettingsCompanion(
                 id: id,
@@ -18213,6 +19757,10 @@ class $$UserSettingsTableTableManager
                 aiBaseUrl: aiBaseUrl,
                 aiModel: aiModel,
                 aiConsent: aiConsent,
+                briefTime: briefTime,
+                ttsRate: ttsRate,
+                briefConsent: briefConsent,
+                briefEnabled: briefEnabled,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -18251,6 +19799,10 @@ class $$UserSettingsTableTableManager
                 Value<String?> aiBaseUrl = const Value.absent(),
                 Value<String?> aiModel = const Value.absent(),
                 Value<String> aiConsent = const Value.absent(),
+                Value<String> briefTime = const Value.absent(),
+                Value<double> ttsRate = const Value.absent(),
+                Value<String> briefConsent = const Value.absent(),
+                Value<bool> briefEnabled = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => UserSettingsCompanion.insert(
                 id: id,
@@ -18287,6 +19839,10 @@ class $$UserSettingsTableTableManager
                 aiBaseUrl: aiBaseUrl,
                 aiModel: aiModel,
                 aiConsent: aiConsent,
+                briefTime: briefTime,
+                ttsRate: ttsRate,
+                briefConsent: briefConsent,
+                briefEnabled: briefEnabled,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
@@ -25060,6 +26616,613 @@ typedef $$BundleTemplatesTableProcessedTableManager =
       BundleTemplate,
       PrefetchHooks Function()
     >;
+typedef $$CapturesTableCreateCompanionBuilder = CapturesCompanion Function({
+  Value<String> id,
+  Value<String> userId,
+  Value<int> updatedAt,
+  Value<int?> deletedAt,
+  Value<int> version,
+  required String captureType,
+  Value<String?> content,
+  Value<String?> mediaPath,
+  Value<String?> mediaMime,
+  Value<int?> mediaSizeBytes,
+  Value<int?> processedAt,
+  Value<String> status,
+  Value<String?> destinationId,
+  Value<String?> destinationType,
+  Value<String?> notes,
+  Value<int> rowid,
+});
+typedef $$CapturesTableUpdateCompanionBuilder = CapturesCompanion Function({
+  Value<String> id,
+  Value<String> userId,
+  Value<int> updatedAt,
+  Value<int?> deletedAt,
+  Value<int> version,
+  Value<String> captureType,
+  Value<String?> content,
+  Value<String?> mediaPath,
+  Value<String?> mediaMime,
+  Value<int?> mediaSizeBytes,
+  Value<int?> processedAt,
+  Value<String> status,
+  Value<String?> destinationId,
+  Value<String?> destinationType,
+  Value<String?> notes,
+  Value<int> rowid,
+});
+
+class $$CapturesTableFilterComposer
+    extends Composer<_$AppDatabase, $CapturesTable> {
+  $$CapturesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get captureType => $composableBuilder(
+    column: $table.captureType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get content => $composableBuilder(
+    column: $table.content,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get mediaPath => $composableBuilder(
+    column: $table.mediaPath,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get mediaMime => $composableBuilder(
+    column: $table.mediaMime,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get mediaSizeBytes => $composableBuilder(
+    column: $table.mediaSizeBytes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get processedAt => $composableBuilder(
+    column: $table.processedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get destinationId => $composableBuilder(
+    column: $table.destinationId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get destinationType => $composableBuilder(
+    column: $table.destinationType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$CapturesTableOrderingComposer
+    extends Composer<_$AppDatabase, $CapturesTable> {
+  $$CapturesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get version => $composableBuilder(
+    column: $table.version,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get captureType => $composableBuilder(
+    column: $table.captureType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get content => $composableBuilder(
+    column: $table.content,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get mediaPath => $composableBuilder(
+    column: $table.mediaPath,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get mediaMime => $composableBuilder(
+    column: $table.mediaMime,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get mediaSizeBytes => $composableBuilder(
+    column: $table.mediaSizeBytes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get processedAt => $composableBuilder(
+    column: $table.processedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get destinationId => $composableBuilder(
+    column: $table.destinationId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get destinationType => $composableBuilder(
+    column: $table.destinationType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$CapturesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CapturesTable> {
+  $$CapturesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get userId =>
+      $composableBuilder(column: $table.userId, builder: (column) => column);
+
+  GeneratedColumn<int> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<int> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<int> get version =>
+      $composableBuilder(column: $table.version, builder: (column) => column);
+
+  GeneratedColumn<String> get captureType => $composableBuilder(
+    column: $table.captureType,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get content =>
+      $composableBuilder(column: $table.content, builder: (column) => column);
+
+  GeneratedColumn<String> get mediaPath =>
+      $composableBuilder(column: $table.mediaPath, builder: (column) => column);
+
+  GeneratedColumn<String> get mediaMime =>
+      $composableBuilder(column: $table.mediaMime, builder: (column) => column);
+
+  GeneratedColumn<int> get mediaSizeBytes => $composableBuilder(
+    column: $table.mediaSizeBytes,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get processedAt => $composableBuilder(
+    column: $table.processedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<String> get destinationId => $composableBuilder(
+    column: $table.destinationId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get destinationType => $composableBuilder(
+    column: $table.destinationType,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => column);
+}
+
+class $$CapturesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $CapturesTable,
+          Capture,
+          $$CapturesTableFilterComposer,
+          $$CapturesTableOrderingComposer,
+          $$CapturesTableAnnotationComposer,
+          $$CapturesTableCreateCompanionBuilder,
+          $$CapturesTableUpdateCompanionBuilder,
+          (Capture, BaseReferences<_$AppDatabase, $CapturesTable, Capture>),
+          Capture,
+          PrefetchHooks Function()
+        > {
+  $$CapturesTableTableManager(_$AppDatabase db, $CapturesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CapturesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CapturesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$CapturesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> userId = const Value.absent(),
+                Value<int> updatedAt = const Value.absent(),
+                Value<int?> deletedAt = const Value.absent(),
+                Value<int> version = const Value.absent(),
+                Value<String> captureType = const Value.absent(),
+                Value<String?> content = const Value.absent(),
+                Value<String?> mediaPath = const Value.absent(),
+                Value<String?> mediaMime = const Value.absent(),
+                Value<int?> mediaSizeBytes = const Value.absent(),
+                Value<int?> processedAt = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<String?> destinationId = const Value.absent(),
+                Value<String?> destinationType = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CapturesCompanion(
+                id: id,
+                userId: userId,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                version: version,
+                captureType: captureType,
+                content: content,
+                mediaPath: mediaPath,
+                mediaMime: mediaMime,
+                mediaSizeBytes: mediaSizeBytes,
+                processedAt: processedAt,
+                status: status,
+                destinationId: destinationId,
+                destinationType: destinationType,
+                notes: notes,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> userId = const Value.absent(),
+                Value<int> updatedAt = const Value.absent(),
+                Value<int?> deletedAt = const Value.absent(),
+                Value<int> version = const Value.absent(),
+                required String captureType,
+                Value<String?> content = const Value.absent(),
+                Value<String?> mediaPath = const Value.absent(),
+                Value<String?> mediaMime = const Value.absent(),
+                Value<int?> mediaSizeBytes = const Value.absent(),
+                Value<int?> processedAt = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<String?> destinationId = const Value.absent(),
+                Value<String?> destinationType = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CapturesCompanion.insert(
+                id: id,
+                userId: userId,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                version: version,
+                captureType: captureType,
+                content: content,
+                mediaPath: mediaPath,
+                mediaMime: mediaMime,
+                mediaSizeBytes: mediaSizeBytes,
+                processedAt: processedAt,
+                status: status,
+                destinationId: destinationId,
+                destinationType: destinationType,
+                notes: notes,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$CapturesTable, Capture>(table),
+                  BaseReferences<_$AppDatabase, $CapturesTable, Capture>(
+                    db,
+                    table,
+                    e,
+                  ),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$CapturesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $CapturesTable,
+      Capture,
+      $$CapturesTableFilterComposer,
+      $$CapturesTableOrderingComposer,
+      $$CapturesTableAnnotationComposer,
+      $$CapturesTableCreateCompanionBuilder,
+      $$CapturesTableUpdateCompanionBuilder,
+      (Capture, BaseReferences<_$AppDatabase, $CapturesTable, Capture>),
+      Capture,
+      PrefetchHooks Function()
+    >;
+typedef $$AccountsTableCreateCompanionBuilder = AccountsCompanion Function({
+  required String id,
+  required String userId,
+  required String recoveryPhraseHash,
+  required int createdAt,
+  Value<bool> isActive,
+  Value<int> rowid,
+});
+typedef $$AccountsTableUpdateCompanionBuilder = AccountsCompanion Function({
+  Value<String> id,
+  Value<String> userId,
+  Value<String> recoveryPhraseHash,
+  Value<int> createdAt,
+  Value<bool> isActive,
+  Value<int> rowid,
+});
+
+class $$AccountsTableFilterComposer
+    extends Composer<_$AppDatabase, $AccountsTable> {
+  $$AccountsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get recoveryPhraseHash => $composableBuilder(
+    column: $table.recoveryPhraseHash,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isActive => $composableBuilder(
+    column: $table.isActive,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$AccountsTableOrderingComposer
+    extends Composer<_$AppDatabase, $AccountsTable> {
+  $$AccountsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get recoveryPhraseHash => $composableBuilder(
+    column: $table.recoveryPhraseHash,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isActive => $composableBuilder(
+    column: $table.isActive,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$AccountsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $AccountsTable> {
+  $$AccountsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get userId =>
+      $composableBuilder(column: $table.userId, builder: (column) => column);
+
+  GeneratedColumn<String> get recoveryPhraseHash => $composableBuilder(
+    column: $table.recoveryPhraseHash,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<bool> get isActive =>
+      $composableBuilder(column: $table.isActive, builder: (column) => column);
+}
+
+class $$AccountsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $AccountsTable,
+          AccountRow,
+          $$AccountsTableFilterComposer,
+          $$AccountsTableOrderingComposer,
+          $$AccountsTableAnnotationComposer,
+          $$AccountsTableCreateCompanionBuilder,
+          $$AccountsTableUpdateCompanionBuilder,
+          (
+            AccountRow,
+            BaseReferences<_$AppDatabase, $AccountsTable, AccountRow>,
+          ),
+          AccountRow,
+          PrefetchHooks Function()
+        > {
+  $$AccountsTableTableManager(_$AppDatabase db, $AccountsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$AccountsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$AccountsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$AccountsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> userId = const Value.absent(),
+                Value<String> recoveryPhraseHash = const Value.absent(),
+                Value<int> createdAt = const Value.absent(),
+                Value<bool> isActive = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => AccountsCompanion(
+                id: id,
+                userId: userId,
+                recoveryPhraseHash: recoveryPhraseHash,
+                createdAt: createdAt,
+                isActive: isActive,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String userId,
+                required String recoveryPhraseHash,
+                required int createdAt,
+                Value<bool> isActive = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => AccountsCompanion.insert(
+                id: id,
+                userId: userId,
+                recoveryPhraseHash: recoveryPhraseHash,
+                createdAt: createdAt,
+                isActive: isActive,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$AccountsTable, AccountRow>(table),
+                  BaseReferences<_$AppDatabase, $AccountsTable, AccountRow>(
+                    db,
+                    table,
+                    e,
+                  ),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$AccountsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $AccountsTable,
+      AccountRow,
+      $$AccountsTableFilterComposer,
+      $$AccountsTableOrderingComposer,
+      $$AccountsTableAnnotationComposer,
+      $$AccountsTableCreateCompanionBuilder,
+      $$AccountsTableUpdateCompanionBuilder,
+      (AccountRow, BaseReferences<_$AppDatabase, $AccountsTable, AccountRow>),
+      AccountRow,
+      PrefetchHooks Function()
+    >;
 typedef $$PendingOpsTableCreateCompanionBuilder = PendingOpsCompanion Function({
   required String id,
   required String targetTable,
@@ -25864,6 +28027,10 @@ class $AppDatabaseManager {
       $$ShareEventsTableTableManager(_db, _db.shareEvents);
   $$BundleTemplatesTableTableManager get bundleTemplates =>
       $$BundleTemplatesTableTableManager(_db, _db.bundleTemplates);
+  $$CapturesTableTableManager get captures =>
+      $$CapturesTableTableManager(_db, _db.captures);
+  $$AccountsTableTableManager get accounts =>
+      $$AccountsTableTableManager(_db, _db.accounts);
   $$PendingOpsTableTableManager get pendingOps =>
       $$PendingOpsTableTableManager(_db, _db.pendingOps);
   $$ConflictLogTableTableManager get conflictLog =>

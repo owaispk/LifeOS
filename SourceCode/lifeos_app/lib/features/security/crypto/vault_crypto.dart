@@ -13,6 +13,10 @@ abstract interface class KeyStore {
   Future<Uint8List?> read();
   Future<void> write(Uint8List key);
   Future<void> clear();
+
+  /// Reads the derived master key from an account's recovery phrase (PBI-026a).
+  /// Returns null if no account-derived key exists.
+  Future<Uint8List?> readDerivedKey() async => null;
 }
 
 /// Android Keystore / iOS Keychain-backed storage.
@@ -20,6 +24,7 @@ class SecureKeyStore implements KeyStore {
   const SecureKeyStore();
 
   static const _name = 'lifeos.master_key.v1';
+  static const _derivedName = 'lifeos.derived_master_key.v1';
   static const _storage = FlutterSecureStorage();
 
   @override
@@ -34,11 +39,18 @@ class SecureKeyStore implements KeyStore {
 
   @override
   Future<void> clear() => _storage.delete(key: _name);
+
+  @override
+  Future<Uint8List?> readDerivedKey() async {
+    final v = await _storage.read(key: _derivedName);
+    return v == null ? null : base64Decode(v);
+  }
 }
 
 /// In-memory key store for tests and the web preview.
 class MemoryKeyStore implements KeyStore {
   Uint8List? _key;
+  Uint8List? _derivedKey;
 
   @override
   Future<Uint8List?> read() async => _key;
@@ -48,6 +60,12 @@ class MemoryKeyStore implements KeyStore {
 
   @override
   Future<void> clear() async => _key = null;
+
+  @override
+  Future<Uint8List?> readDerivedKey() async => _derivedKey;
+
+  /// Sets the derived key (for testing).
+  void setDerivedKey(Uint8List? key) => _derivedKey = key;
 }
 
 /// One encrypted file: ciphertext (with its GCM tag) plus what the row
@@ -79,10 +97,21 @@ class VaultCrypto {
       Uint8List.fromList(List.generate(n, (_) => _rng.nextInt(256)));
 
   /// The Master Key, created on first use.
+  ///
+  /// Priority (PBI-026a):
+  /// 1. Use cached key in memory.
+  /// 2. Use account-derived key from recovery phrase if it exists.
+  /// 3. Use device-only key, creating it if needed.
   Future<Uint8List> _masterKey() async {
     final cached = _mk;
     if (cached != null) return cached;
-    var mk = await _store.read();
+
+    // Try the account-derived key first (PBI-026a).
+    var mk = await _store.readDerivedKey();
+    if (mk != null) return _mk = mk;
+
+    // Fall back to device-only key.
+    mk = await _store.read();
     if (mk == null) {
       mk = randomBytes(32);
       await _store.write(mk);

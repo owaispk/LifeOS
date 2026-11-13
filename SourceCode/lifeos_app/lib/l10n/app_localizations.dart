@@ -5605,6 +5605,1206 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Yesterday'**
   String get yesterday;
+
+  /// No description provided for @inboxTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Inbox'**
+  String get inboxTitle;
+
+  /// No description provided for @inboxEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your inbox is clear'**
+  String get inboxEmptyTitle;
+
+  /// No description provided for @inboxEmptyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Capture ideas, tasks, expenses — tap + to add something.'**
+  String get inboxEmptyBody;
+
+  /// No description provided for @inboxCapture.
+  ///
+  /// In en, this message translates to:
+  /// **'Capture'**
+  String get inboxCapture;
+
+  /// No description provided for @inboxCaptureText.
+  ///
+  /// In en, this message translates to:
+  /// **'Text'**
+  String get inboxCaptureText;
+
+  /// No description provided for @inboxCaptureVoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice'**
+  String get inboxCaptureVoice;
+
+  /// No description provided for @inboxCapturePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo'**
+  String get inboxCapturePhoto;
+
+  /// No description provided for @inboxCloseCapture.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get inboxCloseCapture;
+
+  /// No description provided for @inboxQuickCapture.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick capture'**
+  String get inboxQuickCapture;
+
+  /// No description provided for @inboxCaptureHint.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s on your mind?'**
+  String get inboxCaptureHint;
+
+  /// No description provided for @inboxCaptureHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll help you turn this into a task, expense, or document later.'**
+  String get inboxCaptureHelp;
+
+  /// No description provided for @inboxSaveToInbox.
+  ///
+  /// In en, this message translates to:
+  /// **'Save to Inbox'**
+  String get inboxSaveToInbox;
+
+  /// No description provided for @inboxCaptured.
+  ///
+  /// In en, this message translates to:
+  /// **'Captured'**
+  String get inboxCaptured;
+
+  /// No description provided for @inboxDismissed.
+  ///
+  /// In en, this message translates to:
+  /// **'Dismissed'**
+  String get inboxDismissed;
+
+  /// No description provided for @inboxUntitled.
+  ///
+  /// In en, this message translates to:
+  /// **'Untitled capture'**
+  String get inboxUntitled;
+
+  /// No description provided for @inboxError.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get inboxError;
+
+  /// No description provided for @inboxClassify.
+  ///
+  /// In en, this message translates to:
+  /// **'What is this?'**
+  String get inboxClassify;
+
+  /// No description provided for @inboxClassifyAs.
+  ///
+  /// In en, this message translates to:
+  /// **'Create as'**
+  String get inboxClassifyAs;
+
+  /// No description provided for @inboxTypeTask.
+  ///
+  /// In en, this message translates to:
+  /// **'Task'**
+  String get inboxTypeTask;
+
+  /// No description provided for @inboxTypeExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense'**
+  String get inboxTypeExpense;
+
+  /// No description provided for @inboxTypeDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'Document'**
+  String get inboxTypeDocument;
+
+  /// No description provided for @inboxTypeNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get inboxTypeNote;
+
+  /// No description provided for @inboxCreatedTask.
+  ///
+  /// In en, this message translates to:
+  /// **'Task created'**
+  String get inboxCreatedTask;
+
+  /// No description provided for @inboxCreatedExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense logged'**
+  String get inboxCreatedExpense;
+
+  /// No description provided for @inboxCreatedDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'Document started'**
+  String get inboxCreatedDocument;
+
+  /// No description provided for @inboxCreatedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Note saved'**
+  String get inboxCreatedNote;
+
+  /// No description provided for @inboxBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'{n, plural, =1{1 item} other{{n} items}}'**
+  String inboxBadge(int n);
+
+  /// No description provided for @briefTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Daily Brief'**
+  String get briefTitle;
+
+  /// No description provided for @briefButtonTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Get your brief'**
+  String get briefButtonTitle;
+
+  /// No description provided for @briefButtonSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Score {score} · {tasks} tasks today'**
+  String briefButtonSubtitle(int score, int tasks);
+
+  /// No description provided for @briefSpeak.
+  ///
+  /// In en, this message translates to:
+  /// **'Speak'**
+  String get briefSpeak;
+
+  /// No description provided for @briefStop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get briefStop;
+
+  /// No description provided for @briefError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load your brief'**
+  String get briefError;
+
+  /// No description provided for @briefAiGenerated.
+  ///
+  /// In en, this message translates to:
+  /// **'AI-enhanced'**
+  String get briefAiGenerated;
+
+  /// No description provided for @briefStatTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Tasks'**
+  String get briefStatTasks;
+
+  /// No description provided for @briefStatOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue'**
+  String get briefStatOverdue;
+
+  /// No description provided for @briefStatExpiring.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiring'**
+  String get briefStatExpiring;
+
+  /// No description provided for @briefStatBudget.
+  ///
+  /// In en, this message translates to:
+  /// **'Budget'**
+  String get briefStatBudget;
+
+  /// No description provided for @briefPremiumTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI-powered briefs'**
+  String get briefPremiumTitle;
+
+  /// No description provided for @briefPremiumBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to Premium for natural, conversational morning briefings powered by AI.'**
+  String get briefPremiumBody;
+
+  /// No description provided for @briefScoreExcellent.
+  ///
+  /// In en, this message translates to:
+  /// **'Great news! Your Life Score is {score} — you\'re doing well.'**
+  String briefScoreExcellent(int score);
+
+  /// No description provided for @briefScoreSteady.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Life Score is {score}. A few things need your attention.'**
+  String briefScoreSteady(int score);
+
+  /// No description provided for @briefScoreTriage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Life Score is {score}. Let\'s focus on what matters most today.'**
+  String briefScoreTriage(int score);
+
+  /// No description provided for @briefNoTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'No tasks due today.'**
+  String get briefNoTasks;
+
+  /// No description provided for @briefTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'{n, plural, =1{You have 1 task due today.} other{You have {n} tasks due today.}}'**
+  String briefTasks(int n);
+
+  /// No description provided for @briefOverduePayments.
+  ///
+  /// In en, this message translates to:
+  /// **'{n, plural, =1{1 payment is overdue.} other{{n} payments are overdue.}}'**
+  String briefOverduePayments(int n);
+
+  /// No description provided for @briefExpiringDocs.
+  ///
+  /// In en, this message translates to:
+  /// **'{n, plural, =1{1 document expires soon.} other{{n} documents expire soon.}}'**
+  String briefExpiringDocs(int n);
+
+  /// No description provided for @briefBudgetWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve used {percent}% of your monthly budget.'**
+  String briefBudgetWarning(int percent);
+
+  /// No description provided for @briefAllClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Enjoy your clear day!'**
+  String get briefAllClear;
+
+  /// No description provided for @briefPreviewClear.
+  ///
+  /// In en, this message translates to:
+  /// **'All clear today ✨'**
+  String get briefPreviewClear;
+
+  /// No description provided for @briefPreviewUrgent.
+  ///
+  /// In en, this message translates to:
+  /// **'Some things need attention'**
+  String get briefPreviewUrgent;
+
+  /// No description provided for @briefPreviewNormal.
+  ///
+  /// In en, this message translates to:
+  /// **'{n, plural, =1{1 task today} other{{n} tasks today}}'**
+  String briefPreviewNormal(int n);
+
+  /// No description provided for @briefSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Brief Settings'**
+  String get briefSettingsTitle;
+
+  /// No description provided for @briefEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Morning brief'**
+  String get briefEnabled;
+
+  /// No description provided for @briefEnabledSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Get a daily voice brief notification'**
+  String get briefEnabledSub;
+
+  /// No description provided for @briefTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Brief time'**
+  String get briefTime;
+
+  /// No description provided for @briefTimeSub.
+  ///
+  /// In en, this message translates to:
+  /// **'When you\'d like your morning brief'**
+  String get briefTimeSub;
+
+  /// No description provided for @briefTtsRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Speaking speed'**
+  String get briefTtsRate;
+
+  /// No description provided for @briefTtsRateSub.
+  ///
+  /// In en, this message translates to:
+  /// **'How fast the brief is spoken'**
+  String get briefTtsRateSub;
+
+  /// No description provided for @briefTtsSlow.
+  ///
+  /// In en, this message translates to:
+  /// **'Slow'**
+  String get briefTtsSlow;
+
+  /// No description provided for @briefTtsFast.
+  ///
+  /// In en, this message translates to:
+  /// **'Fast'**
+  String get briefTtsFast;
+
+  /// No description provided for @briefTtsTest.
+  ///
+  /// In en, this message translates to:
+  /// **'Test voice'**
+  String get briefTtsTest;
+
+  /// No description provided for @briefAiConsent.
+  ///
+  /// In en, this message translates to:
+  /// **'AI-enhanced briefs'**
+  String get briefAiConsent;
+
+  /// No description provided for @briefAiConsentSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Use AI to generate natural, conversational briefs'**
+  String get briefAiConsentSub;
+
+  /// No description provided for @briefAiReady.
+  ///
+  /// In en, this message translates to:
+  /// **'AI is configured and ready'**
+  String get briefAiReady;
+
+  /// No description provided for @briefNotifTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your morning brief'**
+  String get briefNotifTitle;
+
+  /// No description provided for @briefNotifBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Life Score {score} · {tasks} tasks today'**
+  String briefNotifBody(int score, int tasks);
+
+  /// No description provided for @accountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get accountTitle;
+
+  /// No description provided for @accountCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Account'**
+  String get accountCreateTitle;
+
+  /// No description provided for @accountCreateDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Create an account to back up your vault and sync across devices.'**
+  String get accountCreateDescription;
+
+  /// No description provided for @accountRecoveryPhrase.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery Phrase'**
+  String get accountRecoveryPhrase;
+
+  /// No description provided for @accountRecoveryPhraseDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'A 12-word phrase that lets you recover your account on any device.'**
+  String get accountRecoveryPhraseDescription;
+
+  /// No description provided for @accountEncryption.
+  ///
+  /// In en, this message translates to:
+  /// **'End-to-End Encryption'**
+  String get accountEncryption;
+
+  /// No description provided for @accountEncryptionDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data is encrypted with your recovery phrase. Only you can read it.'**
+  String get accountEncryptionDescription;
+
+  /// No description provided for @accountGetStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Started'**
+  String get accountGetStarted;
+
+  /// No description provided for @accountNotNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Not Now'**
+  String get accountNotNow;
+
+  /// No description provided for @accountYourRecoveryPhrase.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Recovery Phrase'**
+  String get accountYourRecoveryPhrase;
+
+  /// No description provided for @accountWriteDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Write down these 12 words in order. You\'ll need them to recover your account.'**
+  String get accountWriteDown;
+
+  /// No description provided for @accountCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy to clipboard'**
+  String get accountCopy;
+
+  /// No description provided for @accountCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied to clipboard'**
+  String get accountCopied;
+
+  /// No description provided for @accountWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'If you lose this phrase, you\'ll lose access to your encrypted data. There is no way to recover it.'**
+  String get accountWarning;
+
+  /// No description provided for @accountWroteItDown.
+  ///
+  /// In en, this message translates to:
+  /// **'I wrote it down'**
+  String get accountWroteItDown;
+
+  /// No description provided for @accountVerify.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify Your Phrase'**
+  String get accountVerify;
+
+  /// No description provided for @accountEnterWords.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter these words from your phrase to verify you wrote it down correctly.'**
+  String get accountEnterWords;
+
+  /// No description provided for @accountWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Word'**
+  String get accountWord;
+
+  /// No description provided for @accountVerifyButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify'**
+  String get accountVerifyButton;
+
+  /// No description provided for @accountVerificationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification failed. Please check the words and try again.'**
+  String get accountVerificationFailed;
+
+  /// No description provided for @accountCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Created!'**
+  String get accountCreated;
+
+  /// No description provided for @accountCreatedDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Your account is ready. Your vault is now encrypted with your recovery phrase.'**
+  String get accountCreatedDescription;
+
+  /// No description provided for @accountDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get accountDone;
+
+  /// No description provided for @accountRecover.
+  ///
+  /// In en, this message translates to:
+  /// **'Recover Account'**
+  String get accountRecover;
+
+  /// No description provided for @accountRecoverDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your 12-word recovery phrase to recover your account.'**
+  String get accountRecoverDescription;
+
+  /// No description provided for @accountRecoverPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your 12-word recovery phrase...'**
+  String get accountRecoverPlaceholder;
+
+  /// No description provided for @accountRecoverButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Recover'**
+  String get accountRecoverButton;
+
+  /// No description provided for @accountRecoverSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Account recovered successfully!'**
+  String get accountRecoverSuccess;
+
+  /// No description provided for @accountRecoverFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid recovery phrase. Please check and try again.'**
+  String get accountRecoverFailed;
+
+  /// No description provided for @accountViewPhrase.
+  ///
+  /// In en, this message translates to:
+  /// **'View Recovery Phrase'**
+  String get accountViewPhrase;
+
+  /// No description provided for @accountViewPhraseDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'View your recovery phrase to back it up again.'**
+  String get accountViewPhraseDescription;
+
+  /// No description provided for @accountNoAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'No account created'**
+  String get accountNoAccount;
+
+  /// No description provided for @accountNoAccountDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Create an account to enable backup and sync.'**
+  String get accountNoAccountDescription;
+
+  /// No description provided for @inbox.
+  ///
+  /// In en, this message translates to:
+  /// **'Inbox'**
+  String get inbox;
+
+  /// No description provided for @inboxEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Inbox is clear'**
+  String get inboxEmpty;
+
+  /// No description provided for @inboxEmptyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap + to capture a thought, photo, or voice note.'**
+  String get inboxEmptyHint;
+
+  /// No description provided for @inboxHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'About Inbox'**
+  String get inboxHelp;
+
+  /// No description provided for @inboxHelpText.
+  ///
+  /// In en, this message translates to:
+  /// **'The inbox holds your quick captures until you\'re ready to sort them into tasks, expenses, documents, or notes.'**
+  String get inboxHelpText;
+
+  /// No description provided for @classify.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort'**
+  String get classify;
+
+  /// No description provided for @classifyAs.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort this as...'**
+  String get classifyAs;
+
+  /// No description provided for @captureDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Capture deleted'**
+  String get captureDeleted;
+
+  /// No description provided for @undo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get undo;
+
+  /// No description provided for @quickCapture.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Capture'**
+  String get quickCapture;
+
+  /// No description provided for @captureHint.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s on your mind?'**
+  String get captureHint;
+
+  /// No description provided for @captureHintSubtle.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll help you sort it later.'**
+  String get captureHintSubtle;
+
+  /// No description provided for @captureSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Captured'**
+  String get captureSaved;
+
+  /// No description provided for @text.
+  ///
+  /// In en, this message translates to:
+  /// **'Text'**
+  String get text;
+
+  /// No description provided for @voice.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice'**
+  String get voice;
+
+  /// No description provided for @photo.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo'**
+  String get photo;
+
+  /// No description provided for @task.
+  ///
+  /// In en, this message translates to:
+  /// **'Task'**
+  String get task;
+
+  /// No description provided for @expense.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense'**
+  String get expense;
+
+  /// No description provided for @document.
+  ///
+  /// In en, this message translates to:
+  /// **'Document'**
+  String get document;
+
+  /// No description provided for @note.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get note;
+
+  /// No description provided for @taskCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Task created'**
+  String get taskCreated;
+
+  /// No description provided for @savedAsNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved as note'**
+  String get savedAsNote;
+
+  /// No description provided for @textAsDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'Create as document?'**
+  String get textAsDocument;
+
+  /// No description provided for @textAsDocumentHint.
+  ///
+  /// In en, this message translates to:
+  /// **'This will save the text as a searchable document in your vault.'**
+  String get textAsDocumentHint;
+
+  /// No description provided for @keepAsNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep as note'**
+  String get keepAsNote;
+
+  /// No description provided for @createDocument.
+  ///
+  /// In en, this message translates to:
+  /// **'Create document'**
+  String get createDocument;
+
+  /// No description provided for @justNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Just now'**
+  String get justNow;
+
+  /// No description provided for @minutesAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'min ago'**
+  String get minutesAgo;
+
+  /// No description provided for @hoursAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'h ago'**
+  String get hoursAgo;
+
+  /// No description provided for @daysAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'d ago'**
+  String get daysAgo;
+
+  /// No description provided for @dailyBrief.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Brief'**
+  String get dailyBrief;
+
+  /// No description provided for @todayAtAGlance.
+  ///
+  /// In en, this message translates to:
+  /// **'Today at a Glance'**
+  String get todayAtAGlance;
+
+  /// No description provided for @tasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Tasks'**
+  String get tasks;
+
+  /// No description provided for @overdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue'**
+  String get overdue;
+
+  /// No description provided for @expiring.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiring'**
+  String get expiring;
+
+  /// No description provided for @lifeScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Life Score'**
+  String get lifeScore;
+
+  /// No description provided for @speakBrief.
+  ///
+  /// In en, this message translates to:
+  /// **'Speak Brief'**
+  String get speakBrief;
+
+  /// No description provided for @stop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get stop;
+
+  /// No description provided for @speechRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Speech Rate'**
+  String get speechRate;
+
+  /// No description provided for @briefSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Brief Settings'**
+  String get briefSettings;
+
+  /// No description provided for @notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notifications;
+
+  /// No description provided for @heavyWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Heavy week ahead'**
+  String get heavyWeek;
+
+  /// No description provided for @greatDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Great day ahead!'**
+  String get greatDay;
+
+  /// No description provided for @goodMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Good morning'**
+  String get goodMorning;
+
+  /// No description provided for @morningBrief.
+  ///
+  /// In en, this message translates to:
+  /// **'Morning brief'**
+  String get morningBrief;
+
+  /// No description provided for @afternoonBrief.
+  ///
+  /// In en, this message translates to:
+  /// **'Afternoon update'**
+  String get afternoonBrief;
+
+  /// No description provided for @eveningBrief.
+  ///
+  /// In en, this message translates to:
+  /// **'Evening summary'**
+  String get eveningBrief;
+
+  /// No description provided for @ok.
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get ok;
+
+  /// No description provided for @acctCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Account'**
+  String get acctCreateTitle;
+
+  /// No description provided for @acctWhyCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Why create an account?'**
+  String get acctWhyCreate;
+
+  /// No description provided for @acctBenefitRecover.
+  ///
+  /// In en, this message translates to:
+  /// **'Recover your data'**
+  String get acctBenefitRecover;
+
+  /// No description provided for @acctBenefitRecoverDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'If you lose your phone or reinstall the app, your 12-word recovery phrase brings everything back.'**
+  String get acctBenefitRecoverDesc;
+
+  /// No description provided for @acctBenefitSecure.
+  ///
+  /// In en, this message translates to:
+  /// **'Extra security'**
+  String get acctBenefitSecure;
+
+  /// No description provided for @acctBenefitSecureDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Your vault is encrypted with a key derived from your phrase — only you can unlock it.'**
+  String get acctBenefitSecureDesc;
+
+  /// No description provided for @acctBenefitOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Works offline'**
+  String get acctBenefitOffline;
+
+  /// No description provided for @acctBenefitOfflineDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet or server needed. Your phrase is the only backup you need.'**
+  String get acctBenefitOfflineDesc;
+
+  /// No description provided for @acctNoServerNote.
+  ///
+  /// In en, this message translates to:
+  /// **'LifeOS never stores your phrase or data on any server. Everything stays on your phone.'**
+  String get acctNoServerNote;
+
+  /// No description provided for @acctCreateButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Create account'**
+  String get acctCreateButton;
+
+  /// No description provided for @acctRecoverExisting.
+  ///
+  /// In en, this message translates to:
+  /// **'I have a recovery phrase'**
+  String get acctRecoverExisting;
+
+  /// No description provided for @acctRecoveryPhrase.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Recovery Phrase'**
+  String get acctRecoveryPhrase;
+
+  /// No description provided for @acctCopyPhrase.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy phrase'**
+  String get acctCopyPhrase;
+
+  /// No description provided for @acctPhraseCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Phrase copied to clipboard'**
+  String get acctPhraseCopied;
+
+  /// No description provided for @acctPhraseWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Write this phrase down and store it safely. If you lose it, you cannot recover your account.'**
+  String get acctPhraseWarning;
+
+  /// No description provided for @acctPhraseInstruction.
+  ///
+  /// In en, this message translates to:
+  /// **'These 12 words are your recovery phrase. Write them down in order and keep them in a safe place.'**
+  String get acctPhraseInstruction;
+
+  /// No description provided for @acctPhraseTips.
+  ///
+  /// In en, this message translates to:
+  /// **'Tips for keeping it safe'**
+  String get acctPhraseTips;
+
+  /// No description provided for @acctPhraseTip1.
+  ///
+  /// In en, this message translates to:
+  /// **'Write it on paper and store it somewhere secure'**
+  String get acctPhraseTip1;
+
+  /// No description provided for @acctPhraseTip2.
+  ///
+  /// In en, this message translates to:
+  /// **'Never share it with anyone'**
+  String get acctPhraseTip2;
+
+  /// No description provided for @acctPhraseTip3.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t store it in photos or notes apps'**
+  String get acctPhraseTip3;
+
+  /// No description provided for @acctPhraseConfirmLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'I have written down my recovery phrase'**
+  String get acctPhraseConfirmLabel;
+
+  /// No description provided for @acctPhraseVerify.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify phrase'**
+  String get acctPhraseVerify;
+
+  /// No description provided for @acctVerifyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify Phrase'**
+  String get acctVerifyTitle;
+
+  /// No description provided for @acctVerifyInstruction.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the words from your recovery phrase to verify you wrote it down correctly.'**
+  String get acctVerifyInstruction;
+
+  /// No description provided for @acctVerifyWordN.
+  ///
+  /// In en, this message translates to:
+  /// **'Word #{n}'**
+  String acctVerifyWordN(String n);
+
+  /// No description provided for @acctVerifyWordHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter word'**
+  String get acctVerifyWordHint;
+
+  /// No description provided for @acctVerifyFillAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill in all words'**
+  String get acctVerifyFillAll;
+
+  /// No description provided for @acctVerifyWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'One or more words are incorrect. Check your written phrase and try again.'**
+  String get acctVerifyWrong;
+
+  /// No description provided for @acctVerifyButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Create account'**
+  String get acctVerifyButton;
+
+  /// No description provided for @acctVerifyGoBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Go back to see phrase'**
+  String get acctVerifyGoBack;
+
+  /// No description provided for @acctCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Account created successfully'**
+  String get acctCreated;
+
+  /// No description provided for @acctRecoverTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recover Account'**
+  String get acctRecoverTitle;
+
+  /// No description provided for @acctRecoverInstruction.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your 12-word recovery phrase to recover your account.'**
+  String get acctRecoverInstruction;
+
+  /// No description provided for @acctRecoverFillAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter all 12 words'**
+  String get acctRecoverFillAll;
+
+  /// No description provided for @acctRecoverInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'This doesn\'t look like a valid recovery phrase'**
+  String get acctRecoverInvalid;
+
+  /// No description provided for @acctRecoverButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Recover account'**
+  String get acctRecoverButton;
+
+  /// No description provided for @acctRecovered.
+  ///
+  /// In en, this message translates to:
+  /// **'Account recovered successfully'**
+  String get acctRecovered;
+
+  /// No description provided for @acctViewPhraseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery Phrase'**
+  String get acctViewPhraseTitle;
+
+  /// No description provided for @acctViewSecurityNote.
+  ///
+  /// In en, this message translates to:
+  /// **'For your security, you need to verify your phrase before viewing it.'**
+  String get acctViewSecurityNote;
+
+  /// No description provided for @acctViewInstruction.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your 12-word recovery phrase to confirm you have access.'**
+  String get acctViewInstruction;
+
+  /// No description provided for @acctViewPhraseHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your 12 words separated by spaces'**
+  String get acctViewPhraseHint;
+
+  /// No description provided for @acctViewEnterPhrase.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your recovery phrase'**
+  String get acctViewEnterPhrase;
+
+  /// No description provided for @acctViewWrongPhrase.
+  ///
+  /// In en, this message translates to:
+  /// **'This phrase doesn\'t match the account'**
+  String get acctViewWrongPhrase;
+
+  /// No description provided for @acctViewVerifyButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify'**
+  String get acctViewVerifyButton;
+
+  /// No description provided for @acctViewVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Phrase verified'**
+  String get acctViewVerified;
+
+  /// No description provided for @acctViewYourPhrase.
+  ///
+  /// In en, this message translates to:
+  /// **'This is your recovery phrase. Keep it safe!'**
+  String get acctViewYourPhrase;
+
+  /// No description provided for @acctSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get acctSettingsTitle;
+
+  /// No description provided for @acctSettingsNoAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'No account created'**
+  String get acctSettingsNoAccount;
+
+  /// No description provided for @acctSettingsNoAccountSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Create an account to enable recovery'**
+  String get acctSettingsNoAccountSub;
+
+  /// No description provided for @acctSettingsHasAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Account active'**
+  String get acctSettingsHasAccount;
+
+  /// No description provided for @acctSettingsHasAccountSub.
+  ///
+  /// In en, this message translates to:
+  /// **'Your data can be recovered with your phrase'**
+  String get acctSettingsHasAccountSub;
+
+  /// No description provided for @acctSettingsViewPhrase.
+  ///
+  /// In en, this message translates to:
+  /// **'View recovery phrase'**
+  String get acctSettingsViewPhrase;
 }
 
 class _AppLocalizationsDelegate
